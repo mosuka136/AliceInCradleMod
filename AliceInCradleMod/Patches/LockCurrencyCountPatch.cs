@@ -10,12 +10,13 @@ namespace BetterExperience
         private class LockCurrencyCountPatch
         {
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(CoinStorage), "addCount", new Type[] { typeof(int), typeof(CoinStorage.CTYPE), typeof(bool) })]
-            static bool AddCountPrefix(CoinStorage.CTYPE ctype)
+            [HarmonyPatch(typeof(CoinEntry), "Add")]
+            static bool AddPrefix(CoinEntry __instance)
             {
                 if (!ConfigManager.EnableLockCurrencyCount.Value)
                     return true;
 
+                var ctype = __instance.ctype;
                 if (ctype == CoinStorage.CTYPE.GOLD)
                 {
                     return DealWithCurrencyCount(
@@ -42,12 +43,13 @@ namespace BetterExperience
             }
 
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(CoinStorage), "reduceCount", new Type[] { typeof(int), typeof(CoinStorage.CTYPE), typeof(bool) })]
-            static bool ReduceCountPrefix(CoinStorage.CTYPE ctype)
+            [HarmonyPatch(typeof(CoinEntry), "Reduce")]
+            static bool ReducePrefix(CoinEntry __instance)
             {
                 if (!ConfigManager.EnableLockCurrencyCount.Value)
                     return true;
 
+                var ctype = __instance.ctype;
                 if (ctype == CoinStorage.CTYPE.GOLD)
                 {
                     return DealWithCurrencyCount(
@@ -71,46 +73,6 @@ namespace BetterExperience
                 }
 
                 return true;
-            }
-
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(UiItemStore), "confirmCheckout")]
-            static void ConfirmCheckoutPostfix(UiItemStore __instance, UiItemStore.StoreResult Res)
-            {
-                if (!ConfigManager.EnableLockCurrencyCount.Value || !ConfigManager.EnableLockCurrencyGoldCount.Value)
-                    return;
-
-                if (__instance == null)
-                {
-                    HLog.Error("UiItemStore instance is null.");
-                    return;
-                }
-
-                var centry = Traverse.Create(__instance).Field<CoinEntry>("CEntry").Value;
-                if (centry == null)
-                {
-                    HLog.Error("Failed to access UiItemStore.CEntry.");
-                    return;
-                }
-
-                var lockCountLong = ConfigManager.LockCurrencyGoldCount.Value;
-                if (lockCountLong < 0)
-                {
-                    if (Res.money_addition < 0)
-                        centry.Add(-Res.money_addition);
-                    else
-                        centry.Reduce(Res.money_addition);
-
-                    return;
-                }
-
-                if (!UInt32.TryParse(lockCountLong.ToString(), out var lockCount))
-                {
-                    HLog.Error($"Failed to parse lock count for GOLD currency. Value: {lockCountLong}");
-                    return;
-                }
-
-                centry.Set(lockCount, true);
             }
 
             private static bool DealWithCurrencyCount(bool isEnabled, long lockCount, CoinStorage.CTYPE type)
