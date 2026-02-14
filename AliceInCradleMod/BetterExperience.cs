@@ -1,6 +1,9 @@
 using BepInEx;
 using HarmonyLib;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace BetterExperience
@@ -47,8 +50,15 @@ namespace BetterExperience
                 ConfigManager.BepInExLogLevel.Value);
 
             var harmony = new Harmony(PatchInfo.HarmonyPluginId);
-            harmony.PatchAll(typeof(BetterExperience).Assembly);
-            LogPatchesInfo(harmony);
+            try
+            {
+                SafePatchAll(harmony, typeof(BetterExperience).Assembly);
+                LogPatchesInfo(harmony);
+            }
+            catch (Exception ex)
+            {
+                HLog.Error("Failed to patch", ex);
+            }
         }
 
         void Update()
@@ -77,6 +87,56 @@ namespace BetterExperience
                 Logger.LogInfo("Flushed all store!");
             }
         }
+
+        public void SafePatchAll(Harmony harmony, Assembly asm)
+        {
+            foreach (var t in GetTypesSafe(asm))
+            {
+                if (t == null)
+                    continue;
+
+                bool isPatchClass = false;
+                try
+                {
+                    isPatchClass = t.GetCustomAttributes(true)
+                        .Any(a => a.GetType().Name.StartsWith("HarmonyPatch"));
+
+                    foreach(var name in t.GetCustomAttributes(true).Select(a => a.GetType().Name))
+                    {
+                        HLog.Info($"Type {t.FullName} has attribute: {name}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error("Skip type (attribute load failed): " + t.FullName, ex);
+                    continue;
+                }
+
+                if (!isPatchClass) continue;
+
+                try
+                {
+                    harmony.CreateClassProcessor(t).Patch();
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error("Skip patch class: " + t.FullName, ex);
+                }
+            }
+        }
+
+        private IEnumerable<Type> GetTypesSafe(Assembly asm)
+        {
+            try
+            {
+                return asm.GetTypes();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                return e.Types.Where(t => t != null);
+            }
+        }
+
 
         private void LogPatchesInfo(Harmony harmony)
         {
