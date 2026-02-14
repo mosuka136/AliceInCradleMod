@@ -16,30 +16,7 @@ namespace BetterExperience
                 if (!ConfigManager.EnableLockCurrencyCount.Value)
                     return true;
 
-                var ctype = __instance.ctype;
-                if (ctype == CoinStorage.CTYPE.GOLD)
-                {
-                    return DealWithCurrencyCount(
-                        ConfigManager.EnableLockCurrencyGoldCount.Value,
-                        ConfigManager.LockCurrencyGoldCount.Value,
-                        ctype);
-                }
-                else if (ctype == CoinStorage.CTYPE.CRAFTS)
-                {
-                    return DealWithCurrencyCount(
-                        ConfigManager.EnableLockCurrencyCraftsCount.Value,
-                        ConfigManager.LockCurrencyCraftsCount.Value,
-                        ctype);
-                }
-                else if (ctype == CoinStorage.CTYPE.JUICE)
-                {
-                    return DealWithCurrencyCount(
-                        ConfigManager.EnableLockCurrencyJuiceCount.Value,
-                        ConfigManager.LockCurrencyJuiceCount.Value,
-                        ctype);
-                }
-
-                return true;
+                return DealWithCurrencyCount(__instance);
             }
 
             [HarmonyPrefix]
@@ -49,33 +26,45 @@ namespace BetterExperience
                 if (!ConfigManager.EnableLockCurrencyCount.Value)
                     return true;
 
-                var ctype = __instance.ctype;
+                return DealWithCurrencyCount(__instance);
+            }
+
+            private static bool DealWithCurrencyCount(CoinEntry centry)
+            {
+                var ctype = centry.ctype;
                 if (ctype == CoinStorage.CTYPE.GOLD)
                 {
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyGoldCount.Value,
                         ConfigManager.LockCurrencyGoldCount.Value,
-                        ctype);
+                        ctype,
+                        centry);
                 }
                 else if (ctype == CoinStorage.CTYPE.CRAFTS)
                 {
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyCraftsCount.Value,
                         ConfigManager.LockCurrencyCraftsCount.Value,
-                        ctype);
+                        ctype,
+                        centry);
                 }
                 else if (ctype == CoinStorage.CTYPE.JUICE)
                 {
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyJuiceCount.Value,
                         ConfigManager.LockCurrencyJuiceCount.Value,
-                        ctype);
+                        ctype,
+                        centry);
+                }
+                else if (ctype == CoinStorage.CTYPE._TEMPORARY)
+                {
                 }
 
                 return true;
             }
 
-            private static bool DealWithCurrencyCount(bool isEnabled, long lockCount, CoinStorage.CTYPE type)
+            private static bool DealWithCurrencyCount(
+                bool isEnabled, long lockCount, CoinStorage.CTYPE type, CoinEntry centry)
             {
                 if (!isEnabled)
                     return true;
@@ -89,18 +78,11 @@ namespace BetterExperience
                     return true;
                 }
 
-                uint count = CoinStorage.getCount(type);
+                uint count = centry.Get();
                 if (count == lockCountUInt)
                     return false;
 
-                var aentry = Traverse.Create(typeof(CoinStorage)).Field<CoinEntry[]>("Aentry").Value;
-                if (aentry == null)
-                {
-                    HLog.Error($"Failed to access CoinStorage.Aentry for {type} currency.");
-                    return true;
-                }
-
-                aentry[(int)type].Set(lockCountUInt, true);
+                centry.Set(lockCountUInt, true);
 
                 return false;
             }
