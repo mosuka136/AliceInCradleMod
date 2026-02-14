@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 internal sealed class HLog
 {
     private static LogLevel _logLevel;
-    private static LogLevel _bepinexLogLevel;
+    private static LogLevel _bepInExLogLevel;
 
     private static ManualLogSource _bepLog = null;
     private static int _seq = 0;
@@ -20,11 +20,11 @@ internal sealed class HLog
         string loggerName,
         ManualLogSource bepLog = null,
         LogLevel logLevel = LogLevel.Info,
-        LogLevel bepinexLogLevel = LogLevel.Warning)
+        LogLevel bepInExLogLevel = LogLevel.Warning)
     {
         _bepLog = bepLog;
         _logLevel = logLevel;
-        _bepinexLogLevel = bepinexLogLevel;
+        _bepInExLogLevel = bepInExLogLevel;
 
         if(!ConfigManager.EnableHarmonyLog.Value)
             return;
@@ -95,7 +95,7 @@ internal sealed class HLog
         if (logLevel >= _logLevel)
             FileLog.Log(final);
 
-        if (logLevel >= _bepinexLogLevel)
+        if (logLevel >= _bepInExLogLevel)
         {
             if (_bepLog == null)
             {

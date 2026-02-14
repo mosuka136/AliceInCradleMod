@@ -1,9 +1,7 @@
 using BepInEx;
 using HarmonyLib;
-using nel;
 using System.Collections.Generic;
 using UnityEngine;
-using XX;
 
 namespace BetterExperience
 {
@@ -44,7 +42,9 @@ namespace BetterExperience
             HLog.Initialize(
                 System.IO.Path.Combine(Paths.PluginPath, nameof(BetterExperience), "logs"),
                 PatchInfo.HarmonyLoggerName,
-                Logger);
+                Logger,
+                ConfigManager.HarmonyLogLevel.Value,
+                ConfigManager.BepInExLogLevel.Value);
 
             var harmony = new Harmony(PatchInfo.HarmonyPluginId);
             harmony.PatchAll(typeof(BetterExperience).Assembly);

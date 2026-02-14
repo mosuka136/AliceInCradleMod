@@ -14,10 +14,14 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyCount { get; private set; }
 
-        public static ConfigEntry<int> BackpackCapacity { get; private set; }
+        public static ConfigEntry<string> LogReadme { get; private set; }
+        public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
+        public static ConfigEntry<HLog.LogLevel> BepInExLogLevel { get; private set; }
 
         private static ConfigEntry<string> HotkeyReadme { get; set; }
         public static ConfigEntry<string> FlushAllStoreHotkey { get; private set; }
+
+        public static ConfigEntry<int> BackpackCapacity { get; private set; }
 
         public static ConfigEntry<bool> EnableLockCurrencyGoldCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyCraftsCount { get; private set; }
@@ -28,8 +32,9 @@ namespace BetterExperience
 
 
         private static string SectionGeneral = "General";
-        private static string SectionBackpack = "Backpack";
+        private static string SectionLog = "Log";
         private static string SectionHotkey = "Hotkey";
+        private static string SectionBackpack = "Backpack";
         private static string SectionCurrency = "Currency";
 
         public static void Initialization()
@@ -89,11 +94,27 @@ namespace BetterExperience
                 "Enable lock currency count. It will prevent the currency count from increasing or decreasing when you get gold, crafts or juice."
                 );
 
-            BackpackCapacity = BetterExperience.Instance.Config.Bind(
-                SectionBackpack,
-                nameof(BackpackCapacity),
-                500,
-                "The backpack capacity. Default is 500."
+            LogReadme = BetterExperience.Instance.Config.Bind(
+                SectionLog,
+                "_README",
+                "",
+                "Harmony log will be generated in BetterExperience/logs folder.\n" +
+                "The log level of Harmony log and BepInEx log can be set separately.\n" +
+                "If the log level is set to Info, it will log all messages.\n" +
+                "If the log level is set to Warning, it will only log warning and error messages.\n" +
+                "If the log level is set to Error, it will only log error messages."
+                );
+            HarmonyLogLevel = BetterExperience.Instance.Config.Bind(
+                SectionLog,
+                nameof(HarmonyLogLevel),
+                HLog.LogLevel.Info,
+                "The log level of Harmony log. Default is Info."
+                );
+            BepInExLogLevel = BetterExperience.Instance.Config.Bind(
+                SectionLog,
+                nameof(BepInExLogLevel),
+                HLog.LogLevel.Warning,
+                "The log level of BepInEx log. Default is Warning."
                 );
 
             HotkeyReadme = BetterExperience.Instance.Config.Bind(
@@ -101,22 +122,22 @@ namespace BetterExperience
             "_README",
             "",
             new ConfigDescription(
-                "热键写法说明：\n" +
-                "1) 单键：F / F1 / Space / Tab\n" +
-                "2) 组合键：Ctrl+Shift+F\n" +
-                "3) 手柄：GamepadStart+GamepadSouth\n" +
-                "4) 或：Ctrl+F, GamepadStart+GamepadSouth（逗号分隔）\n" +
+                "Hotkey notation guide:\n" +
+                "1) Single key:F / F1 / Space / Tab\n" +
+                "2) Combination:Ctrl+Shift+F\n" +
+                "3) Gamepad:GamepadStart+GamepadSouth\n" +
+                "4) Alternatives:Ctrl+F, GamepadStart+GamepadSouth(comma-separated)\n" +
                 "\n" +
-                "修饰键：\n" +
+                "Modifier keys:\n" +
                 "- Ctrl / Shift / Alt\n" +
-                "- 或：LeftCtrl / RightCtrl / LeftShift / RightShift / LeftAlt / RightAlt\n" +
+                "- Or:LeftCtrl / RightCtrl / LeftShift / RightShift / LeftAlt / RightAlt\n" +
                 "\n" +
-                "手柄键名：\n" +
+                "Gamepad button names:\n" +
                 "- GamepadSouth(A/×), GamepadEast(B/○), GamepadWest(X/□), GamepadNorth(Y/△)\n" +
                 "- GamepadStart, GamepadSelect, GamepadLeftShoulder(LB/L1), GamepadRightShoulder(RB/R1)\n" +
                 "- GamepadDpadUp/Down/Left/Right, GamepadLeftStick, GamepadRightStick\n" +
                 "\n" +
-                "示例：\n" +
+                "Examples:\n" +
                 "- Ctrl+F\n" +
                 "- LeftCtrl+RightShift+F\n" +
                 "- GamepadStart+GamepadSouth\n" +
@@ -128,6 +149,13 @@ namespace BetterExperience
                 nameof(FlushAllStoreHotkey),
                 "F",
                 "The hotkey to flush all store. Default is F."
+                );
+
+            BackpackCapacity = BetterExperience.Instance.Config.Bind(
+                SectionBackpack,
+                nameof(BackpackCapacity),
+                500,
+                "The backpack capacity. Default is 500."
                 );
 
             EnableLockCurrencyGoldCount = BetterExperience.Instance.Config.Bind(
