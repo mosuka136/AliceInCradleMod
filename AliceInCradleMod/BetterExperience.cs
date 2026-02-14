@@ -22,7 +22,8 @@ namespace BetterExperience
     [BepInPlugin(PatchInfo.BepInPluginId, nameof(BetterExperience), PatchInfo.BepInPluginVersion)]
     internal class BetterExperience : BaseUnityPlugin
     {
-        private HotkeyInputSystem _hotkey;
+        private HotkeyInputSystem _reloadConfigHotkey;
+        private HotkeyInputSystem _flushStoreHotkey;
 
         public static BetterExperience Instance { get; private set; }
 
@@ -66,22 +67,53 @@ namespace BetterExperience
             if (!ConfigManager.EnableBetterExperience.Value)
                 return;
 
-            if(!ConfigManager.EnableFlushAllStore.Value)
+            DealInputReloadConfig();
+            DealInputFlushStore();
+        }
+
+        private void DealInputReloadConfig()
+        {
+            if (_reloadConfigHotkey == null)
+            {
+                var h = ConfigManager.ReloadConfigHotkey.Value;
+                if (!HotkeyInputSystem.TryParse(h, out _reloadConfigHotkey))
+                {
+                    Logger.LogWarning("Invalid Hotkey: " + h);
+                    h = "Ctrl+R";
+                    HotkeyInputSystem.TryParse(h, out _reloadConfigHotkey);
+                }
+                Logger.LogInfo("Reload config hotkey set: " + h);
+            }
+
+            if (_reloadConfigHotkey != null && _reloadConfigHotkey.IsValid && _reloadConfigHotkey.WasPressedThisFrame())
+            {
+                ConfigManager.ReloadConfig();
+                Logger.LogInfo("Reloaded config!");
+
+                _reloadConfigHotkey = null;
+                _flushStoreHotkey = null;
+            }
+        }
+
+        private void DealInputFlushStore()
+        {
+            if (!ConfigManager.EnableFlushAllStore.Value)
                 return;
 
-            if (_hotkey == null)
+            if (_flushStoreHotkey == null)
             {
                 var h = ConfigManager.FlushAllStoreHotkey.Value;
-                if (!HotkeyInputSystem.TryParse(h, out _hotkey))
+                if (!HotkeyInputSystem.TryParse(h, out _flushStoreHotkey))
                 {
                     Logger.LogWarning("Invalid Hotkey: " + h);
 
                     h = "F";
-                    HotkeyInputSystem.TryParse(h, out _hotkey);
+                    HotkeyInputSystem.TryParse(h, out _flushStoreHotkey);
                 }
                 Logger.LogInfo("Flush store hotkey set: " + h);
             }
-            if (_hotkey != null && _hotkey.IsValid && _hotkey.WasPressedThisFrame())
+
+            if (_flushStoreHotkey != null && _flushStoreHotkey.IsValid && _flushStoreHotkey.WasPressedThisFrame())
             {
                 Patchs.FlushStorePatch.Flush();
                 Logger.LogInfo("Flushed all store!");

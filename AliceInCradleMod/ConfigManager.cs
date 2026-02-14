@@ -19,6 +19,7 @@ namespace BetterExperience
         public static ConfigEntry<HLog.LogLevel> BepInExLogLevel { get; private set; }
 
         private static ConfigEntry<string> HotkeyReadme { get; set; }
+        public static ConfigEntry<string> ReloadConfigHotkey { get; private set; }
         public static ConfigEntry<string> FlushAllStoreHotkey { get; private set; }
 
         public static ConfigEntry<int> BackpackCapacity { get; private set; }
@@ -39,6 +40,8 @@ namespace BetterExperience
 
         public static void Initialization()
         {
+            BetterExperience.Instance.Config.SaveOnConfigSet = false;
+
             EnableBetterExperience = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableBetterExperience),
@@ -144,6 +147,12 @@ namespace BetterExperience
                 "- Ctrl+Shift+F, GamepadStart+GamepadSouth\n" +
                 "\n"
             ));
+            ReloadConfigHotkey = BetterExperience.Instance.Config.Bind(
+                SectionHotkey,
+                nameof(ReloadConfigHotkey),
+                "Ctrl+R",
+                "The hotkey to reload config. Default is Ctrl+R."
+                );
             FlushAllStoreHotkey = BetterExperience.Instance.Config.Bind(
                 SectionHotkey,
                 nameof(FlushAllStoreHotkey),
@@ -194,6 +203,14 @@ namespace BetterExperience
                 -1L,
                 "The juice count to lock. It will be used when lock juice count is enabled. Set to -1 to maintain the original count"
                 );
+
+            BetterExperience.Instance.Config.SaveOnConfigSet = true;
+            BetterExperience.Instance.Config.Save();
+        }
+
+        public static void ReloadConfig()
+        {
+            BetterExperience.Instance.Config.Reload();
         }
     }
 }
