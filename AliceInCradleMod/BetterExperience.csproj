@@ -43,6 +43,10 @@
       <HintPath>D:\mine\B\programme\AliceInCradle\ver029a\BepInEx\core\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="pixelliner">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029b\AliceInCradle_Data\Managed\pixelliner.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -59,8 +63,15 @@
       <HintPath>D:\mine\B\programme\AliceInCradle\ver029a\AliceInCradle_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029b\AliceInCradle_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>D:\mine\B\programme\AliceInCradle\ver029a\AliceInCradle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029b\AliceInCradle_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
@@ -83,6 +94,8 @@
     <Compile Include="Patches\LockCurrencyCountPatch.cs" />
     <Compile Include="Patches\NoHpDamagePatch.cs" />
     <Compile Include="Patches\Patchs.cs" />
+    <Compile Include="Patches\ReplaceTexture\TextureManager.cs" />
+    <Compile Include="Patches\ReplaceTexture\ReplaceTexturePatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Patches\RemoveLimitInTreasureChestsPatch.cs" />
     <Compile Include="Patches\RemoveMosaicPatch.cs" />

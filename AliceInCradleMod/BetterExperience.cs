@@ -2,6 +2,7 @@ using BepInEx;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -44,7 +45,7 @@ namespace BetterExperience
             }
 
             HLog.Initialize(
-                System.IO.Path.Combine(Paths.PluginPath, nameof(BetterExperience), "logs"),
+                Path.Combine(Paths.PluginPath, nameof(BetterExperience), "logs"),
                 PatchInfo.HarmonyLoggerName,
                 Logger,
                 ConfigManager.HarmonyLogLevel.Value,
@@ -132,11 +133,6 @@ namespace BetterExperience
                 {
                     isPatchClass = t.GetCustomAttributes(true)
                         .Any(a => a.GetType().Name.StartsWith("HarmonyPatch"));
-
-                    foreach(var name in t.GetCustomAttributes(true).Select(a => a.GetType().Name))
-                    {
-                        HLog.Info($"Type {t.FullName} has attribute: {name}");
-                    }
                 }
                 catch (Exception ex)
                 {
