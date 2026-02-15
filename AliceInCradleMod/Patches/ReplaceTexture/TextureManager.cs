@@ -11,7 +11,7 @@ namespace BetterExperience.Patches.ReplaceTexture
     {
         private TextureManager()
         {
-            
+
         }
 
         static TextureManager()
@@ -22,15 +22,19 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         static public TextureManager Instance { get; private set; }
 
-        private const string RelativeImagePath = "ReplaceTexture";
-        public readonly string ImagePath = Path.Combine(Paths.PluginPath, nameof(BetterExperience), RelativeImagePath);
-        public readonly string SenstiveImagePath = Path.Combine(Paths.PluginPath, nameof(BetterExperience), RelativeImagePath, "Sensitive");
-        public readonly string[] SupportedExtensions = { ".png", ".btep"};
+        public static readonly string RelativeImagePath = Path.Combine(nameof(BetterExperience), "ReplaceTexture");
+        public static readonly string RelativeSenstiveImagePath = Path.Combine(RelativeImagePath, "Sensitive");
+        public static readonly string ImagePath = Path.Combine(Paths.PluginPath, RelativeImagePath);
+        public static readonly string SenstiveImagePath = Path.Combine(Paths.PluginPath, RelativeSenstiveImagePath);
+        public static readonly string[] SupportedExtensions = { ".png", ".btep" };
 
-        private Dictionary<string, ImageInfo> _imageInfos = new Dictionary<string, ImageInfo>();
+        private Dictionary<string, Texture2D> _imageInfos = new Dictionary<string, Texture2D>();
 
         public void Initialize()
         {
+            if (!ConfigManager.EnableReplaceTexture.Value)
+                return;
+
             try
             {
                 if (!Directory.Exists(ImagePath))
@@ -38,8 +42,16 @@ namespace BetterExperience.Patches.ReplaceTexture
                 if (!Directory.Exists(SenstiveImagePath))
                     Directory.CreateDirectory(SenstiveImagePath);
 
+                if (ConfigManager.EnableTextureImmediateReload.Value)
+                    return;
+
                 var imageFiles = Directory.GetFiles(ImagePath, "*.*", SearchOption.AllDirectories)
                     .Where(f => SupportedExtensions.Any(s => f.EndsWith(s)));
+
+                if (!ConfigManager.EnableSensitivities.Value)
+                {
+                    imageFiles = imageFiles.Where(f => !f.StartsWith(SenstiveImagePath, StringComparison.OrdinalIgnoreCase));
+                }
 
                 foreach (var file in imageFiles)
                 {
@@ -54,10 +66,7 @@ namespace BetterExperience.Patches.ReplaceTexture
                         continue;
                     }
 
-                    var imageInfo = new ImageInfo();
-                    imageInfo.Path = file;
-                    imageInfo.ReplaceTexture = CreateTexture(file, fileWithoutExtension);
-                    _imageInfos[fileWithoutExtension] = imageInfo;
+                    _imageInfos[fileWithoutExtension] = CreateTexture(file);
                 }
 
                 HLog.Info($"Initialized ImageManager with {_imageInfos.Count} images.");
@@ -68,12 +77,12 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
         }
 
-        public Texture2D CreateTexture(string imageName, string assetName)
+        public Texture2D CreateTexture(string imageName)
         {
             if (string.IsNullOrEmpty(imageName))
                 return null;
 
-            if(!CheckFileValid(imageName))
+            if (!CheckFileValid(imageName))
                 return null;
 
             try
@@ -137,33 +146,74 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
         }
 
-        public Texture2D GetReplaceTexture(string imageName)
+        public Texture2D GetReplaceTexture(string textureName)
         {
-            if (string.IsNullOrEmpty(imageName))
+            if (string.IsNullOrEmpty(textureName))
                 return null;
 
-            if (!_imageInfos.TryGetValue(imageName, out var imageInfo))
+            if (ConfigManager.EnableTextureImmediateReload.Value)
+            {
+                try
+                {
+                    if (textureName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                        return null;
+
+                    var imageFiles = Directory.GetFiles(ImagePath, $"{textureName}*", SearchOption.AllDirectories).Where(f => SupportedExtensions.Any(s => f.EndsWith(s)));
+
+                    if (!ConfigManager.EnableSensitivities.Value)
+                    {
+                        imageFiles = imageFiles.Where(f => !f.StartsWith(SenstiveImagePath, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    if (imageFiles.Count() == 0)
+                        return null;
+
+                    return CreateTexture(imageFiles.First());
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Failed to load texture '{textureName}' for immediate reload.", ex);
+                    return null;
+                }
+            }
+
+            if (!_imageInfos.TryGetValue(textureName, out var texture))
                 return null;
 
-            return imageInfo.ReplaceTexture;
+            return texture;
         }
 
-        public void TryReplace(string name, Type type, ref UnityEngine.Object destination)
+        public bool TryReplace(string name, Type type, ref UnityEngine.Object destination)
         {
+            if (string.IsNullOrEmpty(name) || type == null || destination == null)
+                return false;
+
             var replaceTexture = GetReplaceTexture(name);
             if (replaceTexture == null)
-                return;
+                return false;
 
-            if(type == typeof(Texture2D) || destination is Texture2D)
+            if (type == typeof(Texture2D) || destination is Texture2D)
             {
-                CopyTextureProperties(destination as Texture, replaceTexture);               
+                if (replaceTexture == destination)
+                    return false;
+
+                CopyTextureProperties(destination as Texture, replaceTexture);
                 destination = replaceTexture;
+
+                return true;
             }
-            else if(type == typeof(Sprite) || destination is Sprite)
+            else if (type == typeof(Sprite) || destination is Sprite)
             {
+                if (replaceTexture == destination)
+                    return false;
+
                 destination = Sprite.Create(replaceTexture, new Rect(0, 0, replaceTexture.width, replaceTexture.height), new Vector2(0.5f, 0.5f));
                 destination.name = name;
+
+                return true;
             }
+
+            return false;
         }
 
         public void CopyTextureProperties(Texture source, Texture destination)
@@ -180,12 +230,6 @@ namespace BetterExperience.Patches.ReplaceTexture
             destination.anisoLevel = source.anisoLevel;
             destination.mipMapBias = source.mipMapBias;
             destination.hideFlags = source.hideFlags;
-        }
-
-        public class ImageInfo
-        {
-            public string Path { get; set; }
-            public Texture2D ReplaceTexture { get; set; }
         }
     }
 }

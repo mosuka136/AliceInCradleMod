@@ -65,6 +65,7 @@
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029b\AliceInCradle_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>D:\mine\B\programme\AliceInCradle\ver029a\AliceInCradle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>

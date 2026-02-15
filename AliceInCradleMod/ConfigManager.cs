@@ -13,6 +13,7 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
         public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyCount { get; private set; }
+        public static ConfigEntry<bool> EnableReplaceTexture { get; private set; }
 
         public static ConfigEntry<string> LogReadme { get; private set; }
         public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
@@ -31,12 +32,15 @@ namespace BetterExperience
         public static ConfigEntry<long> LockCurrencyCraftsCount { get; private set; }
         public static ConfigEntry<long> LockCurrencyJuiceCount { get; private set; }
 
+        public static ConfigEntry<bool> EnableSensitivities { get; private set; }
+        public static ConfigEntry<bool> EnableTextureImmediateReload { get; private set; }
 
         private static string SectionGeneral = "General";
         private static string SectionLog = "Log";
         private static string SectionHotkey = "Hotkey";
         private static string SectionBackpack = "Backpack";
         private static string SectionCurrency = "Currency";
+        private static string SectionTexture = "Texture";
 
         public static void Initialization()
         {
@@ -95,6 +99,12 @@ namespace BetterExperience
                 nameof(EnableLockCurrencyCount),
                 false,
                 "Enable lock currency count. It will prevent the currency count from increasing or decreasing when you get gold, crafts or juice."
+                );
+            EnableReplaceTexture = BetterExperience.Instance.Config.Bind(
+                SectionGeneral,
+                nameof(EnableReplaceTexture),
+                true,
+                "Enable replace texture. It will use the texture from the BetterExperience\\ReplaceTexture folder to replace the original texture."
                 );
 
             LogReadme = BetterExperience.Instance.Config.Bind(
@@ -202,6 +212,19 @@ namespace BetterExperience
                 nameof(LockCurrencyJuiceCount),
                 -1L,
                 "The juice count to lock. It will be used when lock juice count is enabled. Set to -1 to maintain the original count"
+                );
+
+            EnableSensitivities = BetterExperience.Instance.Config.Bind(
+                SectionTexture,
+                nameof(EnableSensitivities),
+                true,
+                "Enable sensitivities. If disabled, textures in the BetterExperience\\ReplaceTexture\\Sensitive folder will not be loaded to replace the original textures."
+                );
+            EnableTextureImmediateReload = BetterExperience.Instance.Config.Bind(
+                SectionTexture,
+                nameof(EnableTextureImmediateReload),
+                false,
+                "Enable immediate reload. If enabled, the texture will be reloaded immediately after the texture is changed. "
                 );
 
             BetterExperience.Instance.Config.SaveOnConfigSet = true;
