@@ -1,7 +1,7 @@
 using BepInEx.Logging;
 using BetterExperience;
-using HarmonyLib;
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
@@ -9,12 +9,21 @@ using UnityEngine.SceneManagement;
 
 internal sealed class HLog
 {
+    private static StreamWriter _writer;
+    private static object _lock = new object();
+
     private static LogLevel _logLevel;
     private static LogLevel _bepInExLogLevel;
 
     private static ManualLogSource _bepLog = null;
     private static int _seq = 0;
 
+    private HLog()
+    {
+        
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void Initialize(
         string loggerPath,
         string loggerName,
@@ -26,15 +35,24 @@ internal sealed class HLog
         _logLevel = logLevel;
         _bepInExLogLevel = bepInExLogLevel;
 
-        if(!ConfigManager.EnableHarmonyLog.Value)
+        if (!ConfigManager.EnableHarmonyLog.Value)
             return;
 
-        if (!System.IO.Directory.Exists(loggerPath))
+        if (!Directory.Exists(loggerPath))
         {
-            System.IO.Directory.CreateDirectory(loggerPath);
+            Directory.CreateDirectory(loggerPath);
         }
-        FileLog.logPath = System.IO.Path.Combine(loggerPath, loggerName);
-        FileLog.Reset();
+
+        lock (_lock)
+        {
+            var fullPath = Path.Combine(loggerPath, $"{Path.GetFileNameWithoutExtension(loggerName)}-{DateTime.Now:yyyy-MM-dd-HH}.log");
+            var fs = new FileStream(fullPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            _writer = new StreamWriter(fs, Encoding.UTF8) { AutoFlush = true };
+
+            _writer.WriteLine($"{new string('-', 100)}LOG-START{new string('-', 100)}");
+        }
+
+        Application.quitting += Shutdown;
     }
 
     public static void Info(string msg,
@@ -53,7 +71,14 @@ internal sealed class HLog
     {
         if (!ConfigManager.EnableHarmonyLog.Value)
             return;
-        FileLog.Log("");
+
+        if (_writer == null)
+            return;
+
+        lock (_lock)
+        {
+            _writer.WriteLine();
+        }
     }
 
     private static void Write(
@@ -65,6 +90,9 @@ internal sealed class HLog
         int line)
     {
         if(!ConfigManager.EnableHarmonyLog.Value)
+            return;
+
+        if (_writer == null)
             return;
 
         var sb = new StringBuilder(256);
@@ -80,7 +108,7 @@ internal sealed class HLog
           .Append(" F").Append(frame)
           .Append(" S=").Append(scene)
           .Append(" ").Append(logLevel.ToString()).Append(" | ").Append(msg)
-          .Append(" (").Append(System.IO.Path.GetFileName(file))
+          .Append(" (").Append(Path.GetFileName(file))
           .Append(':').Append(line)
           .Append(" ").Append(member).Append(')');
 
@@ -92,8 +120,11 @@ internal sealed class HLog
 
         string final = sb.ToString();
 
-        if (logLevel >= _logLevel)
-            FileLog.Log(final);
+        lock (_lock)
+        {
+            if (logLevel >= _logLevel)
+                _writer.WriteLine(final);
+        }
 
         if (logLevel >= _bepInExLogLevel)
         {
@@ -137,6 +168,27 @@ internal sealed class HLog
             }
         }
         catch { return "?"; }
+    }
+
+    private static void Shutdown()
+    {
+        if (_writer != null)
+        {
+            lock (_lock)
+            {
+                try
+                {
+                    _writer.WriteLine($"{new string('-', 100)}LOG-END{new string('-', 100)}");
+                    _writer.WriteLine();
+                    _writer.WriteLine();
+
+                    _writer.Flush();
+                    _writer.Dispose();
+                    _writer = null;
+                }
+                catch { }
+            }
+        }
     }
 
     public enum LogLevel
