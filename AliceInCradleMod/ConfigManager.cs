@@ -110,7 +110,7 @@ namespace BetterExperience
                 nameof(EnableLockCurrencyCount),
                 false,
                 "Enable lock currency count. It will prevent the currency count from increasing or decreasing when you get gold, crafts or juice.\n" +
-                "启用货币数量锁定。开启后在获得 gold、crafts 或精萃时，数量不会增加或减少。"
+                "启用货币数量锁定。开启后在获得金币、兑锭或精萃时，数量不会增加或减少。"
                 );
             EnableReplaceTexture = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
@@ -246,7 +246,7 @@ namespace BetterExperience
                 nameof(EnableLockCurrencyCraftsCount),
                 false,
                 "Enable lock crafts count. It will prevent the crafts count from increasing or decreasing when you get crafts.\n" +
-                "启用 crafts 数量锁定。开启后在获得 crafts 时，数量不会增加或减少。"
+                "启用兑锭数量锁定。开启后在获得兑锭时，数量不会增加或减少。"
                 );
             EnableLockCurrencyJuiceCount = BetterExperience.Instance.Config.Bind(
                 SectionCurrency,
@@ -267,7 +267,7 @@ namespace BetterExperience
                 nameof(LockCurrencyCraftsCount),
                 -1L,
                 "The crafts count to lock. It will be used when lock crafts count is enabled. Set to -1 to maintain the original count.\n" +
-                "要锁定的 crafts 数量。在启用 crafts 数量锁定时生效。设为 -1 可保持原始数量。"
+                "要锁定的兑锭数量。在启用兑锭数量锁定时生效。设为 -1 可保持原始数量。"
                 );
             LockCurrencyJuiceCount = BetterExperience.Instance.Config.Bind(
                 SectionCurrency,
