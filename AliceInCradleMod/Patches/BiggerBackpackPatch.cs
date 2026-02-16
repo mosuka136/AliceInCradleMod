@@ -8,6 +8,8 @@ namespace BetterExperience
         [HarmonyPatch(typeof(NelItemManager), "readBinaryFrom")]
         private class BiggerBackpackPatch
         {
+            private static ItemStorage inventory;
+            private static int row_max;
             static void Postfix(NelItemManager __instance)
             {
                 if (!ConfigManager.EnableBiggerBackpack.Value)
@@ -18,13 +20,22 @@ namespace BetterExperience
                     HLog.Error("__instance is null.");
                     return;
                 }
-                var inventory = Traverse.Create(__instance).Field("StInventory").GetValue<ItemStorage>();
+                inventory = Traverse.Create(__instance).Field("StInventory").GetValue<ItemStorage>();
                 if (inventory == null)
                 {
                     HLog.Error("inventory is null.");
                     return;
                 }
+
+                row_max = inventory.row_max;
+                OnSiteProtectionManager.Instance.OnSiteProtectionActivated += RecoverRowMax;
+
                 inventory.row_max = ConfigManager.BackpackCapacity.Value;
+            }
+
+            private static void RecoverRowMax()
+            {
+                inventory.row_max = row_max;
             }
         }
     }
