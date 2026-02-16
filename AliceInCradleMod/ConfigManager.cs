@@ -7,10 +7,8 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableBetterExperience { get; private set; }
         public static ConfigEntry<bool> EnableHarmonyLog { get; private set; }
         public static ConfigEntry<bool> EnableMosaic { get; private set; }
-        public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }
         public static ConfigEntry<bool> EnableBiggerBackpack { get; private set; }
         public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
-        public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
         public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
         public static ConfigEntry<bool> EnableNoMpDamage { get; internal set; }
         public static ConfigEntry<bool> EnableLockCurrencyCount { get; private set; }
@@ -28,6 +26,9 @@ namespace BetterExperience
         public static ConfigEntry<string> ReloadConfigHotkey { get; private set; }
         public static ConfigEntry<string> FlushAllStoreHotkey { get; private set; }
 
+        public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }
+        public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
+
         public static ConfigEntry<int> BackpackCapacity { get; private set; }
 
         public static ConfigEntry<bool> EnableLockCurrencyGoldCount { get; private set; }
@@ -43,6 +44,7 @@ namespace BetterExperience
         private static string SectionGeneral = "General";
         private static string SectionLog = "Log";
         private static string SectionHotkey = "Hotkey";
+        private static string SectionReel = "Reel";
         private static string SectionBackpack = "Backpack";
         private static string SectionCurrency = "Currency";
         private static string SectionTexture = "Texture";
@@ -69,12 +71,6 @@ namespace BetterExperience
                 false,
                 "Enable mosaic effect.\n启用马赛克效果。"
                 );
-            EnableBetterReelEffect = BetterExperience.Instance.Config.Bind(
-                SectionGeneral,
-                nameof(EnableBetterReelEffect),
-                true,
-                "Enable better reel effect.\n启用更好的转轮效果。"
-                );
             EnableBiggerBackpack = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableBiggerBackpack),
@@ -86,12 +82,6 @@ namespace BetterExperience
                 nameof(EnableFlushAllStore),
                 false,
                 "Enable flush all store function.\n启用一键刷新商店功能。"
-                );
-            EnableRemoveLimitInTreasureChests = BetterExperience.Instance.Config.Bind(
-                SectionGeneral,
-                nameof(EnableRemoveLimitInTreasureChests),
-                true,
-                "Enable remove the limit on the number of items in treasure chests.\n启用移除宝箱物品数量上限。"
                 );
             EnableNoHpDamage = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
@@ -122,7 +112,7 @@ namespace BetterExperience
             EnableBetterSaveSite = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableBetterSaveSite),
-                true,
+                false,
                 "Enable better save site. It will allow saving anywhere.\n启用更好的存档点功能。允许在任意位置保存。"
                 );
             EnableRemoveLimitInPuppetNpcDefeated = BetterExperience.Instance.Config.Bind(
@@ -225,6 +215,19 @@ namespace BetterExperience
                 nameof(FlushAllStoreHotkey),
                 "F",
                 "The hotkey to flush all store. Default is F.\n一键刷新商店的热键。默认值为 F。"
+                );
+
+            EnableBetterReelEffect = BetterExperience.Instance.Config.Bind(
+                SectionReel,
+                nameof(EnableBetterReelEffect),
+                true,
+                "Enable better reel effect.\n启用更好的转轮效果。"
+                );
+            EnableRemoveLimitInTreasureChests = BetterExperience.Instance.Config.Bind(
+                SectionReel,
+                nameof(EnableRemoveLimitInTreasureChests),
+                false,
+                "Enable removal of the 99-item limit in treasure chests.\n启用移除宝箱99物品数量上限。"
                 );
 
             BackpackCapacity = BetterExperience.Instance.Config.Bind(
