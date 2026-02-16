@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>D:\mine\B\programme\AliceInCradle\ver029b2\BepInEx\plugins\BetterExperience\</OutputPath>
+    <OutputPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029c\BepInEx\plugins\BetterExperience\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BetterExperience.cs" />
+    <Compile Include="Patches\BetterSaveSitePatch.cs" />
     <Compile Include="Patches\BetterReelEffectPatch.cs" />
     <Compile Include="Patches\BiggerBackpackPatch.cs" />
     <Compile Include="ConfigManager.cs" />

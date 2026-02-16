@@ -14,6 +14,7 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyCount { get; private set; }
         public static ConfigEntry<bool> EnableReplaceTexture { get; private set; }
+        public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
 
         public static ConfigEntry<string> LogReadme { get; private set; }
         public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
@@ -105,6 +106,12 @@ namespace BetterExperience
                 nameof(EnableReplaceTexture),
                 true,
                 "Enable replace texture. It will use the texture from the BetterExperience\\ReplaceTexture folder to replace the original texture."
+                );
+            EnableBetterSaveSite = BetterExperience.Instance.Config.Bind(
+                SectionGeneral,
+                nameof(EnableBetterSaveSite),
+                true,
+                "Enable better save site. It will allow saving anywhere."
                 );
 
             LogReadme = BetterExperience.Instance.Config.Bind(
