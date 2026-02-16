@@ -29,7 +29,7 @@ namespace BetterExperience
 
                     if (!_isInitialized)
                     {
-                        OnSiteProtectionManager.Instance.OnSiteProtectionActivated += RecoveryPupKill;
+                        OnSiteProtectionManager.Instance.OnSiteProtectionActivated += RecoverPupKill;
                         _isInitialized = true;
                     }
 
@@ -61,7 +61,7 @@ namespace BetterExperience
                     __result = true;
             }
 
-            private static void RecoveryPupKill()
+            private static void RecoverPupKill()
             {
                 GF.setC(PUP_KILL, _pup_kill);
             }
