@@ -12,9 +12,13 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
         public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
+        public static ConfigEntry<bool> EnableNoMpDamage { get; internal set; }
         public static ConfigEntry<bool> EnableLockCurrencyCount { get; private set; }
         public static ConfigEntry<bool> EnableReplaceTexture { get; private set; }
         public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
+        public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
+        public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
+        public static ConfigEntry<bool> EnableInfiniteShield { get; private set; }
 
         public static ConfigEntry<string> LogReadme { get; private set; }
         public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
@@ -80,7 +84,7 @@ namespace BetterExperience
             EnableFlushAllStore = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableFlushAllStore),
-                true,
+                false,
                 "Enable flush all store function.\n启用一键刷新商店功能。"
                 );
             EnableRemoveLimitInTreasureChests = BetterExperience.Instance.Config.Bind(
@@ -95,6 +99,12 @@ namespace BetterExperience
                 false,
                 "Enable no HP damage.\n启用无 HP 伤害。"
                 );
+            EnableNoMpDamage = BetterExperience.Instance.Config.Bind(
+                SectionGeneral,
+                nameof(EnableNoMpDamage),
+                false,
+                "Enable no MP damage.\n启用无 MP 伤害。"
+                );
             EnableLockCurrencyCount = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableLockCurrencyCount),
@@ -105,7 +115,7 @@ namespace BetterExperience
             EnableReplaceTexture = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableReplaceTexture),
-                true,
+                false,
                 "Enable replace texture. It will use the texture from the BetterExperience\\ReplaceTexture folder to replace the original texture.\n" +
                 "启用替换贴图。将使用 BetterExperience\\ReplaceTexture 文件夹中的贴图替换原始贴图。"
                 );
@@ -114,6 +124,26 @@ namespace BetterExperience
                 nameof(EnableBetterSaveSite),
                 true,
                 "Enable better save site. It will allow saving anywhere.\n启用更好的存档点功能。允许在任意位置保存。"
+                );
+            EnableRemoveLimitInPuppetNpcDefeated = BetterExperience.Instance.Config.Bind(
+                SectionGeneral,
+                nameof(EnableRemoveLimitInPuppetNpcDefeated),
+                false,
+                "Enable the restriction that prevents the Puppet Merchant from spawning before the revenge quest is completed.\n" +
+                "启用移除木偶商人在复仇战未完成前无法生成的限制。"
+                );
+            EnableRemoveLimitInBenchMenu = BetterExperience.Instance.Config.Bind(
+                SectionGeneral,
+                nameof(EnableRemoveLimitInBenchMenu),
+                false,
+                "Enable the restriction that certain options in the chair menu are unavailable for players under specific circumstances\n" +
+                "启用移除玩家在某些情况下椅子菜单中的某些选项不可用的限制。"
+                );
+            EnableInfiniteShield = BetterExperience.Instance.Config.Bind(
+                SectionGeneral,
+                nameof(EnableInfiniteShield),
+                false,
+                "Enable infinite shield.\n启用无限护盾。"
                 );
 
             LogReadme = BetterExperience.Instance.Config.Bind(
