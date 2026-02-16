@@ -51,90 +51,97 @@ namespace BetterExperience
                 SectionGeneral,
                 nameof(EnableBetterExperience),
                 true,
-                "Enable Better Experience mod."
+                "Enable Better Experience mod.\n启用 Better Experience 模组。"
                 );
             EnableHarmonyLog = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableHarmonyLog),
                 true,
-                "Enable Harmony log. It will generate a log file in BetterExperience/logs folder."
+                "Enable Harmony log. It will generate a log file in BetterExperience\\logs folder.\n启用 Harmony 日志。将在 BetterExperience\\logs 文件夹中生成日志文件。"
                 );
             EnableMosaic = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableMosaic),
                 false,
-                "Enable mosaic effect."
+                "Enable mosaic effect.\n启用马赛克效果。"
                 );
             EnableBetterReelEffect = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableBetterReelEffect),
                 true,
-                "Enable better reel effect."
+                "Enable better reel effect.\n启用更好的转轮效果。"
                 );
             EnableBiggerBackpack = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableBiggerBackpack),
                 true,
-                "Enable bigger backpack."
+                "Enable bigger backpack.\n启用更大的背包容量。"
                 );
             EnableFlushAllStore = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableFlushAllStore),
                 true,
-                "Enable flush all store function."
+                "Enable flush all store function.\n启用一键刷新商店功能。"
                 );
             EnableRemoveLimitInTreasureChests = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableRemoveLimitInTreasureChests),
                 true,
-                "Enable remove the limit on the number of items in treasure chests."
+                "Enable remove the limit on the number of items in treasure chests.\n启用移除宝箱物品数量上限。"
                 );
             EnableNoHpDamage = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableNoHpDamage),
                 false,
-                "Enable no HP damage."
+                "Enable no HP damage.\n启用无 HP 伤害。"
                 );
             EnableLockCurrencyCount = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableLockCurrencyCount),
                 false,
-                "Enable lock currency count. It will prevent the currency count from increasing or decreasing when you get gold, crafts or juice."
+                "Enable lock currency count. It will prevent the currency count from increasing or decreasing when you get gold, crafts or juice.\n" +
+                "启用货币数量锁定。开启后在获得 gold、crafts 或精萃时，数量不会增加或减少。"
                 );
             EnableReplaceTexture = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableReplaceTexture),
                 true,
-                "Enable replace texture. It will use the texture from the BetterExperience\\ReplaceTexture folder to replace the original texture."
+                "Enable replace texture. It will use the texture from the BetterExperience\\ReplaceTexture folder to replace the original texture.\n" +
+                "启用替换贴图。将使用 BetterExperience\\ReplaceTexture 文件夹中的贴图替换原始贴图。"
                 );
             EnableBetterSaveSite = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
                 nameof(EnableBetterSaveSite),
                 true,
-                "Enable better save site. It will allow saving anywhere."
+                "Enable better save site. It will allow saving anywhere.\n启用更好的存档点功能。允许在任意位置保存。"
                 );
 
             LogReadme = BetterExperience.Instance.Config.Bind(
                 SectionLog,
                 "_README",
                 "",
-                "Harmony log will be generated in BetterExperience/logs folder.\n" +
+                "Harmony log will be generated in BetterExperience\\logs folder.\n" +
                 "The log level of Harmony log and BepInEx log can be set separately.\n" +
                 "If the log level is set to Info, it will log all messages.\n" +
                 "If the log level is set to Warning, it will only log warning and error messages.\n" +
-                "If the log level is set to Error, it will only log error messages."
+                "If the log level is set to Error, it will only log error messages.\n" +
+                "Harmony 日志将生成在 BetterExperience\\logs 文件夹中。\n" +
+                "Harmony 日志和 BepInEx 日志的等级可分别设置。\n" +
+                "若日志等级为 Info，将记录所有消息。\n" +
+                "若日志等级为 Warning，仅记录警告和错误消息。\n" +
+                "若日志等级为 Error，仅记录错误消息。"
                 );
             HarmonyLogLevel = BetterExperience.Instance.Config.Bind(
                 SectionLog,
                 nameof(HarmonyLogLevel),
                 HLog.LogLevel.Info,
-                "The log level of Harmony log. Default is Info."
+                "The log level of Harmony log. Default is Info.\nHarmony 日志等级。默认值为 Info。"
                 );
             BepInExLogLevel = BetterExperience.Instance.Config.Bind(
                 SectionLog,
                 nameof(BepInExLogLevel),
                 HLog.LogLevel.Warning,
-                "The log level of BepInEx log. Default is Warning."
+                "The log level of BepInEx log. Default is Warning.\nBepInEx 日志等级。默认值为 Warning。"
                 );
 
             HotkeyReadme = BetterExperience.Instance.Config.Bind(
@@ -143,21 +150,34 @@ namespace BetterExperience
             "",
             new ConfigDescription(
                 "Hotkey notation guide:\n" +
+                "热键写法说明：\n" +
                 "1) Single key:F / F1 / Space / Tab\n" +
+                "1) 单键：F / F1 / Space / Tab\n" +
                 "2) Combination:Ctrl+Shift+F\n" +
+                "2) 组合键：Ctrl+Shift+F\n" +
                 "3) Gamepad:GamepadStart+GamepadSouth\n" +
+                "3) 手柄：GamepadStart+GamepadSouth\n" +
                 "4) Alternatives:Ctrl+F, GamepadStart+GamepadSouth(comma-separated)\n" +
+                "4) 备选热键：Ctrl+F, GamepadStart+GamepadSouth（用逗号分隔）\n" +
                 "\n" +
                 "Modifier keys:\n" +
+                "修饰键：\n" +
+                "- Ctrl / Shift / Alt\n" +
                 "- Ctrl / Shift / Alt\n" +
                 "- Or:LeftCtrl / RightCtrl / LeftShift / RightShift / LeftAlt / RightAlt\n" +
+                "- 或：LeftCtrl / RightCtrl / LeftShift / RightShift / LeftAlt / RightAlt\n" +
                 "\n" +
                 "Gamepad button names:\n" +
+                "手柄按键名称：\n" +
+                "- GamepadSouth(A/×), GamepadEast(B/○), GamepadWest(X/□), GamepadNorth(Y/△)\n" +
                 "- GamepadSouth(A/×), GamepadEast(B/○), GamepadWest(X/□), GamepadNorth(Y/△)\n" +
                 "- GamepadStart, GamepadSelect, GamepadLeftShoulder(LB/L1), GamepadRightShoulder(RB/R1)\n" +
+                "- GamepadStart, GamepadSelect, GamepadLeftShoulder(LB/L1), GamepadRightShoulder(RB/R1)\n" +
+                "- GamepadDpadUp/Down/Left/Right, GamepadLeftStick, GamepadRightStick\n" +
                 "- GamepadDpadUp/Down/Left/Right, GamepadLeftStick, GamepadRightStick\n" +
                 "\n" +
                 "Examples:\n" +
+                "示例：\n" +
                 "- Ctrl+F\n" +
                 "- LeftCtrl+RightShift+F\n" +
                 "- GamepadStart+GamepadSouth\n" +
@@ -168,70 +188,78 @@ namespace BetterExperience
                 SectionHotkey,
                 nameof(ReloadConfigHotkey),
                 "Ctrl+R",
-                "The hotkey to reload config. Default is Ctrl+R."
+                "The hotkey to reload config. Default is Ctrl+R.\n重新加载配置的热键。默认值为 Ctrl+R。"
                 );
             FlushAllStoreHotkey = BetterExperience.Instance.Config.Bind(
                 SectionHotkey,
                 nameof(FlushAllStoreHotkey),
                 "F",
-                "The hotkey to flush all store. Default is F."
+                "The hotkey to flush all store. Default is F.\n一键刷新商店的热键。默认值为 F。"
                 );
 
             BackpackCapacity = BetterExperience.Instance.Config.Bind(
                 SectionBackpack,
                 nameof(BackpackCapacity),
                 500,
-                "The backpack capacity. Default is 500."
+                "The backpack capacity. Default is 500.\n背包容量。默认值为 500。"
                 );
 
             EnableLockCurrencyGoldCount = BetterExperience.Instance.Config.Bind(
                 SectionCurrency,
                 nameof(EnableLockCurrencyGoldCount),
                 false,
-                "Enable lock gold count. It will prevent the gold count from increasing or decreasing when you get gold."
+                "Enable lock gold count. It will prevent the gold count from increasing or decreasing when you get gold.\n" +
+                "启用金币数量锁定。开启后在获得金币时，数量不会增加或减少。"
                 );
             EnableLockCurrencyCraftsCount = BetterExperience.Instance.Config.Bind(
                 SectionCurrency,
                 nameof(EnableLockCurrencyCraftsCount),
                 false,
-                "Enable lock crafts count. It will prevent the crafts count from increasing or decreasing when you get crafts."
+                "Enable lock crafts count. It will prevent the crafts count from increasing or decreasing when you get crafts.\n" +
+                "启用 crafts 数量锁定。开启后在获得 crafts 时，数量不会增加或减少。"
                 );
             EnableLockCurrencyJuiceCount = BetterExperience.Instance.Config.Bind(
                 SectionCurrency,
                 nameof(EnableLockCurrencyJuiceCount),
                 false,
-                "Enable lock juice count. It will prevent the juice count from increasing or decreasing when you get juice."
+                "Enable lock juice count. It will prevent the juice count from increasing or decreasing when you get juice.\n" +
+                "启用精萃数量锁定。开启后在获得精萃时，数量不会增加或减少。"
                 );
             LockCurrencyGoldCount = BetterExperience.Instance.Config.Bind(
                 SectionCurrency,
                 nameof(LockCurrencyGoldCount),
                 -1L,
-                "The gold count to lock. It will be used when lock gold count is enabled. Set to -1 to maintain the original count"
+                "The gold count to lock. It will be used when lock gold count is enabled. Set to -1 to maintain the original count.\n" +
+                "要锁定的金币数量。在启用金币数量锁定时生效。设为 -1 可保持原始数量。"
                 );
             LockCurrencyCraftsCount = BetterExperience.Instance.Config.Bind(
                 SectionCurrency,
                 nameof(LockCurrencyCraftsCount),
                 -1L,
-                "The crafts count to lock. It will be used when lock crafts count is enabled. Set to -1 to maintain the original count"
+                "The crafts count to lock. It will be used when lock crafts count is enabled. Set to -1 to maintain the original count.\n" +
+                "要锁定的 crafts 数量。在启用 crafts 数量锁定时生效。设为 -1 可保持原始数量。"
                 );
             LockCurrencyJuiceCount = BetterExperience.Instance.Config.Bind(
                 SectionCurrency,
                 nameof(LockCurrencyJuiceCount),
                 -1L,
-                "The juice count to lock. It will be used when lock juice count is enabled. Set to -1 to maintain the original count"
+                "The juice count to lock. It will be used when lock juice count is enabled. Set to -1 to maintain the original count.\n" +
+                "要锁定的精萃数量。在启用精萃数量锁定时生效。设为 -1 可保持原始数量。"
                 );
 
             EnableSensitivities = BetterExperience.Instance.Config.Bind(
                 SectionTexture,
                 nameof(EnableSensitivities),
                 true,
-                "Enable sensitivities. If disabled, textures in the BetterExperience\\ReplaceTexture\\Sensitive folder will not be loaded to replace the original textures."
+                "Enable sensitivities. If disabled, textures in the BetterExperience\\ReplaceTexture\\Sensitive folder will not be loaded to replace the original textures.\n" +
+                "启用敏感内容贴图。若关闭，将不会加载 BetterExperience\\ReplaceTexture\\Sensitive 文件夹中的贴图来替换原始贴图。"
                 );
             EnableTextureImmediateReload = BetterExperience.Instance.Config.Bind(
                 SectionTexture,
                 nameof(EnableTextureImmediateReload),
                 false,
-                "Enable immediate reload. If enabled, the texture will be reloaded immediately after the texture is changed. "
+                "Enable immediate reload. If enabled, the texture will be reloaded immediately after the texture is changed.\n" +
+                "启用立即重载。开启后，贴图发生变化时会立刻重新加载。"
                 );
 
             BetterExperience.Instance.Config.SaveOnConfigSet = true;
