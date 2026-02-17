@@ -16,6 +16,7 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableInfiniteShield { get; private set; }
+        public static ConfigEntry<bool> EnableWormTrap { get; private set; }
 
         public static ConfigEntry<string> LogReadme { get; private set; }
         public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
@@ -127,6 +128,12 @@ namespace BetterExperience
                 nameof(EnableInfiniteShield),
                 false,
                 "Enable infinite shield.\n启用无限护盾。"
+                );
+            EnableWormTrap = BetterExperience.Instance.Config.Bind(
+                SectionGeneral,
+                nameof(EnableWormTrap),
+                true,
+                "Enable worm trap.\n启用虫墙。"
                 );
 
             LogReadme = BetterExperience.Instance.Config.Bind(
