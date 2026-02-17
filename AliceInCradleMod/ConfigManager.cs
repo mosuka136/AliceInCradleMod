@@ -237,7 +237,7 @@ namespace BetterExperience
                 SectionPlayerStatus,
                 nameof(EnableNoEpDamage),
                 false,
-                "Enable no EP damage.\n启用无 EP 伤害。"
+                "Enable no EP damage.\n启用无 EP 伤害。玩家“好感度”将不会增加。"
                 );
 
             BackpackCapacity = BetterExperience.Instance.Config.Bind(
