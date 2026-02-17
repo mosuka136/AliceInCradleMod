@@ -14,7 +14,6 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
-        public static ConfigEntry<bool> EnableInfiniteShield { get; private set; }
 
         public static ConfigEntry<string> LogReadme { get; private set; }
         public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
@@ -31,6 +30,8 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
         public static ConfigEntry<bool> EnableNoMpDamage { get; private set; }
         public static ConfigEntry<bool> EnableNoEpDamage { get; private set; }
+        public static ConfigEntry<bool> EnableInfiniteShield { get; private set; }
+        public static ConfigEntry<bool> EnableHolyBurstFaint { get; private set; }
 
         public static ConfigEntry<bool> EnableWormTrap { get; private set; }
         public static ConfigEntry<bool> EnableMapDamage { get; private set; }
@@ -125,12 +126,6 @@ namespace BetterExperience
                 false,
                 "Enable the restriction that certain options in the chair menu are unavailable for players under specific circumstances\n" +
                 "启用移除玩家在某些情况下椅子菜单中的某些选项不可用的限制。"
-                );
-            EnableInfiniteShield = BetterExperience.Instance.Config.Bind(
-                SectionGeneral,
-                nameof(EnableInfiniteShield),
-                false,
-                "Enable infinite shield.\n启用无限护盾。"
                 );
 
             LogReadme = BetterExperience.Instance.Config.Bind(
@@ -251,6 +246,19 @@ namespace BetterExperience
                 nameof(EnableNoEpDamage),
                 false,
                 "Enable no EP damage.\n启用无 EP 伤害。玩家“好感度”将不会增加。"
+                );
+            EnableInfiniteShield = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableInfiniteShield),
+                false,
+                "Enable infinite shield.\n启用无限护盾。"
+                );
+            EnableHolyBurstFaint = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableHolyBurstFaint),
+                true,
+                "Enable Holy Burst Faint. When disabled, players will not faint after using Holy Burst.\n" +
+                "启用圣光爆发昏厥。关闭后，玩家将不会因为使用圣光爆发而晕厥。"
                 );
 
             EnableWormTrap = BetterExperience.Instance.Config.Bind(
