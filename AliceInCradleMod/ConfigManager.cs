@@ -15,8 +15,6 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableInfiniteShield { get; private set; }
-        public static ConfigEntry<bool> EnableWormTrap { get; private set; }
-        public static ConfigEntry<bool> EnableMapDamage { get; private set; }
 
         public static ConfigEntry<string> LogReadme { get; private set; }
         public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
@@ -33,6 +31,10 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
         public static ConfigEntry<bool> EnableNoMpDamage { get; private set; }
         public static ConfigEntry<bool> EnableNoEpDamage { get; private set; }
+
+        public static ConfigEntry<bool> EnableWormTrap { get; private set; }
+        public static ConfigEntry<bool> EnableMapDamage { get; private set; }
+        public static ConfigEntry<bool> EnableDrowning { get; private set; }
 
         public static ConfigEntry<int> BackpackCapacity { get; private set; }
 
@@ -51,6 +53,7 @@ namespace BetterExperience
         private static string SectionHotkey = "Hotkey";
         private static string SectionReel = "Reel";
         private static string SectionPlayerStatus = "PlayerStatus";
+        private static string SectionMapTrap = "MapTrap";
         private static string SectionBackpack = "Backpack";
         private static string SectionCurrency = "Currency";
         private static string SectionTexture = "Texture";
@@ -128,19 +131,6 @@ namespace BetterExperience
                 nameof(EnableInfiniteShield),
                 false,
                 "Enable infinite shield.\n启用无限护盾。"
-                );
-            EnableWormTrap = BetterExperience.Instance.Config.Bind(
-                SectionGeneral,
-                nameof(EnableWormTrap),
-                true,
-                "Enable worm trap.\n启用虫墙。"
-                );
-            EnableMapDamage = BetterExperience.Instance.Config.Bind(
-                SectionGeneral,
-                nameof(EnableMapDamage),
-                true,
-                "Enable map damage, including spikes, thorns, electric shock, and acid. Disabling will prevent taking the above damage.\n" +
-                "启用地图伤害，包括地刺，荆棘，电击，酸液。禁用后将不再受到以上伤害"
                 );
 
             LogReadme = BetterExperience.Instance.Config.Bind(
@@ -261,6 +251,26 @@ namespace BetterExperience
                 nameof(EnableNoEpDamage),
                 false,
                 "Enable no EP damage.\n启用无 EP 伤害。玩家“好感度”将不会增加。"
+                );
+
+            EnableWormTrap = BetterExperience.Instance.Config.Bind(
+                SectionMapTrap,
+                nameof(EnableWormTrap),
+                true,
+                "Enable worm trap.\n启用虫墙。"
+                );
+            EnableMapDamage = BetterExperience.Instance.Config.Bind(
+                SectionMapTrap,
+                nameof(EnableMapDamage),
+                true,
+                "Enable map damage, including spikes, thorns, electric shock, and acid. Disabling will prevent taking the above damage.\n" +
+                "启用地图伤害，包括地刺，荆棘，电击，酸液。禁用后将不再受到以上伤害"
+                );
+            EnableDrowning = BetterExperience.Instance.Config.Bind(
+                SectionMapTrap,
+                nameof(EnableDrowning),
+                true,
+                "Enable drowning. Disabling will prevent drowning damage.\n启用溺水。禁用后将不再受到溺水伤害。"
                 );
 
             BackpackCapacity = BetterExperience.Instance.Config.Bind(

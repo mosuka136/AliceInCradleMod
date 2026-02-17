@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BetterExperience.cs" />
+    <Compile Include="DisableDrowning.cs" />
     <Compile Include="Patches\InvalidateWormTrapPatch.cs" />
     <Compile Include="Patches\NoEpDamagePatch.cs" />
     <Compile Include="OnSiteProtectionManager.cs" />
