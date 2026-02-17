@@ -1,5 +1,4 @@
 using BepInEx.Configuration;
-using nel;
 
 namespace BetterExperience
 {
@@ -17,6 +16,7 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableInfiniteShield { get; private set; }
         public static ConfigEntry<bool> EnableWormTrap { get; private set; }
+        public static ConfigEntry<bool> EnableMapDamage { get; private set; }
 
         public static ConfigEntry<string> LogReadme { get; private set; }
         public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
@@ -134,6 +134,13 @@ namespace BetterExperience
                 nameof(EnableWormTrap),
                 true,
                 "Enable worm trap.\n启用虫墙。"
+                );
+            EnableMapDamage = BetterExperience.Instance.Config.Bind(
+                SectionGeneral,
+                nameof(EnableMapDamage),
+                true,
+                "Enable map damage, including spikes, thorns, electric shock, and acid. Disabling will prevent taking the above damage.\n" +
+                "启用地图伤害，包括地刺，荆棘，电击，酸液。禁用后将不再受到以上伤害"
                 );
 
             LogReadme = BetterExperience.Instance.Config.Bind(
