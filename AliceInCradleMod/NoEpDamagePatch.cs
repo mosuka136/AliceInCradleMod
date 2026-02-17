@@ -1,0 +1,22 @@
+using HarmonyLib;
+using nel;
+
+namespace BetterExperience
+{
+    internal partial class Patchs
+    {
+        [HarmonyPatch]
+        private class NoEpDamagePatch
+        {
+            [HarmonyPatch(typeof(EpManager), "applyEpDamage")]
+            private static bool Prefix(ref bool __result)
+            {
+                if (!ConfigManager.EnableNoEpDamage.Value)
+                    return true;
+
+                __result = false;
+                return false;
+            }
+        }
+    }
+}

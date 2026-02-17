@@ -9,8 +9,6 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableMosaic { get; private set; }
         public static ConfigEntry<bool> EnableBiggerBackpack { get; private set; }
         public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
-        public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
-        public static ConfigEntry<bool> EnableNoMpDamage { get; internal set; }
         public static ConfigEntry<bool> EnableLockCurrencyCount { get; private set; }
         public static ConfigEntry<bool> EnableReplaceTexture { get; private set; }
         public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
@@ -29,6 +27,10 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
 
+        public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
+        public static ConfigEntry<bool> EnableNoMpDamage { get; private set; }
+        public static ConfigEntry<bool> EnableNoEpDamage { get; private set; }
+
         public static ConfigEntry<int> BackpackCapacity { get; private set; }
 
         public static ConfigEntry<bool> EnableLockCurrencyGoldCount { get; private set; }
@@ -45,6 +47,7 @@ namespace BetterExperience
         private static string SectionLog = "Log";
         private static string SectionHotkey = "Hotkey";
         private static string SectionReel = "Reel";
+        private static string SectionPlayerStatus = "PlayerStatus";
         private static string SectionBackpack = "Backpack";
         private static string SectionCurrency = "Currency";
         private static string SectionTexture = "Texture";
@@ -82,18 +85,6 @@ namespace BetterExperience
                 nameof(EnableFlushAllStore),
                 false,
                 "Enable flush all store function.\n启用一键刷新商店功能。"
-                );
-            EnableNoHpDamage = BetterExperience.Instance.Config.Bind(
-                SectionGeneral,
-                nameof(EnableNoHpDamage),
-                false,
-                "Enable no HP damage.\n启用无 HP 伤害。"
-                );
-            EnableNoMpDamage = BetterExperience.Instance.Config.Bind(
-                SectionGeneral,
-                nameof(EnableNoMpDamage),
-                false,
-                "Enable no MP damage.\n启用无 MP 伤害。"
                 );
             EnableLockCurrencyCount = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
@@ -228,6 +219,25 @@ namespace BetterExperience
                 nameof(EnableRemoveLimitInTreasureChests),
                 false,
                 "Enable removal of the 99-item limit in treasure chests.\n启用移除宝箱99物品数量上限。"
+                );
+
+            EnableNoHpDamage = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableNoHpDamage),
+                false,
+                "Enable no HP damage.\n启用无 HP 伤害。"
+                );
+            EnableNoMpDamage = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableNoMpDamage),
+                false,
+                "Enable no MP damage.\n启用无 MP 伤害。"
+                );
+            EnableNoEpDamage = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableNoEpDamage),
+                false,
+                "Enable no EP damage.\n启用无 EP 伤害。"
                 );
 
             BackpackCapacity = BetterExperience.Instance.Config.Bind(
