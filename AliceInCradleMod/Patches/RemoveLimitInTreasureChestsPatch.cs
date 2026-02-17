@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using XX;
 
-namespace BetterExperience
+namespace BetterExperience.Patches
 {
     internal partial class Patchs
     {

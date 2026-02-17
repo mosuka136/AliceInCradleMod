@@ -1,7 +1,7 @@
 using nel;
 using System;
 
-namespace BetterExperience
+namespace BetterExperience.Patches
 {
     internal partial class Patchs
     {

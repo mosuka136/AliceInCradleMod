@@ -3,7 +3,7 @@ using nel;
 using System;
 using XX;
 
-namespace BetterExperience
+namespace BetterExperience.Patches
 {
     internal partial class Patchs
     {

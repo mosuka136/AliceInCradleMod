@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BetterExperience.Patches
+namespace BetterExperience
 {
     internal class FrameUpdateBooster
     {

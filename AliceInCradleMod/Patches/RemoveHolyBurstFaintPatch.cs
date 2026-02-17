@@ -1,7 +1,7 @@
 using HarmonyLib;
 using nel;
 
-namespace BetterExperience
+namespace BetterExperience.Patches
 {
     internal partial class Patchs
     {

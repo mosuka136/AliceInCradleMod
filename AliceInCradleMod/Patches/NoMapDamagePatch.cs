@@ -4,7 +4,7 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class Patches
+    internal partial class Patchs
     {
         [HarmonyPatch]
         private class NoMapDamagePatch

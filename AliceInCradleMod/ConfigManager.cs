@@ -49,6 +49,9 @@ namespace BetterExperience
 
         public static ConfigEntry<int> BackpackCapacity { get; private set; }
 
+        public static ConfigEntry<long> SetCurrencyGoldCount { get; private set; }
+        public static ConfigEntry<long> SetCurrencyCraftsCount { get; private set; }
+        public static ConfigEntry<long> SetCurrencyJuiceCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyGoldCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyCraftsCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyJuiceCount { get; private set; }
@@ -328,6 +331,24 @@ namespace BetterExperience
                 "The backpack capacity. Default is 500.\n背包容量。默认值为 500。"
                 );
 
+            SetCurrencyGoldCount = BetterExperience.Instance.Config.Bind(
+                SectionCurrency,
+                nameof(SetCurrencyGoldCount),
+                -1L,
+                "Set gold count.\n设置金币数量。"
+                );
+            SetCurrencyCraftsCount = BetterExperience.Instance.Config.Bind(
+                SectionCurrency,
+                nameof(SetCurrencyCraftsCount),
+                -1L,
+                "Set crafts count.\n设置兑锭数量。"
+                );
+            SetCurrencyCraftsCount = BetterExperience.Instance.Config.Bind(
+                SectionCurrency,
+                nameof(SetCurrencyJuiceCount),
+                -1L,
+                "Set juice count.\n设置精萃数量。"
+                );
             EnableLockCurrencyGoldCount = BetterExperience.Instance.Config.Bind(
                 SectionCurrency,
                 nameof(EnableLockCurrencyGoldCount),

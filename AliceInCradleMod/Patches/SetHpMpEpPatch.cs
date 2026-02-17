@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace BetterExperience.Patches
 {
-    internal partial class Patches
+    internal partial class Patchs
     {
         [HarmonyPatch]
         internal class SetHpMpEpPatch
