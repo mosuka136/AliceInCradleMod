@@ -1,3 +1,4 @@
+using HarmonyLib;
 using nel;
 using System;
 
@@ -5,17 +6,56 @@ namespace BetterExperience.Patches
 {
     internal partial class Patchs
     {
-        public static class FlushStorePatch
+        private class FlushStorePatch
         {
-            public static void Flush()
+            private static HotkeyInputSystem _flushStoreHotkey;
+
+            [HarmonyPatch]
+            private class FrameUpdateBoosterPatch
             {
-                try
+                [HarmonyPostfix]
+                [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
+                private static void Postfix()
                 {
-                    StoreManager.FlushAll();
+                    FrameUpdateBooster.Instance.OnFrameUpdate += Update;
+
+                    ConfigManager.FlushAllStoreHotkey.SettingChanged += (s, e) =>
+                    {
+                        _flushStoreHotkey = null;
+                    };
                 }
-                catch (Exception ex)
+            }
+
+            public static void Update()
+            {
+                if (!ConfigManager.EnableFlushAllStore.Value)
+                    return;
+
+                if (_flushStoreHotkey == null)
                 {
-                    HLog.Error("FlushAllStore failed: " + ex.ToString());
+                    var h = ConfigManager.FlushAllStoreHotkey.Value;
+                    if (!HotkeyInputSystem.TryParse(h, out _flushStoreHotkey))
+                    {
+                        HLog.Warn("Invalid Hotkey: " + h);
+
+                        h = "F";
+                        HotkeyInputSystem.TryParse(h, out _flushStoreHotkey);
+                        HLog.Info("Flush store hotkey set: " + h);
+                    }
+                }
+
+                if (_flushStoreHotkey != null && _flushStoreHotkey.IsValid && _flushStoreHotkey.WasPressedThisFrame())
+                {
+                    try
+                    {
+                        StoreManager.FlushAll();
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error("FlushAllStore failed!", ex);
+                    }
+
+                    HLog.Warn("Flushed all store!");
                 }
             }
         }

@@ -1,5 +1,4 @@
 using BepInEx;
-using BetterExperience.Patches;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -25,7 +24,6 @@ namespace BetterExperience
     internal class BetterExperience : BaseUnityPlugin
     {
         private HotkeyInputSystem _reloadConfigHotkey;
-        private HotkeyInputSystem _flushStoreHotkey;
 
         public static BetterExperience Instance { get; private set; }
 
@@ -70,7 +68,6 @@ namespace BetterExperience
                 return;
 
             DealInputReloadConfig();
-            DealInputFlushStore();
         }
 
         private void DealInputReloadConfig()
@@ -93,32 +90,6 @@ namespace BetterExperience
                 Logger.LogInfo("Reloaded config!");
 
                 _reloadConfigHotkey = null;
-                _flushStoreHotkey = null;
-            }
-        }
-
-        private void DealInputFlushStore()
-        {
-            if (!ConfigManager.EnableFlushAllStore.Value)
-                return;
-
-            if (_flushStoreHotkey == null)
-            {
-                var h = ConfigManager.FlushAllStoreHotkey.Value;
-                if (!HotkeyInputSystem.TryParse(h, out _flushStoreHotkey))
-                {
-                    Logger.LogWarning("Invalid Hotkey: " + h);
-
-                    h = "F";
-                    HotkeyInputSystem.TryParse(h, out _flushStoreHotkey);
-                }
-                Logger.LogInfo("Flush store hotkey set: " + h);
-            }
-
-            if (_flushStoreHotkey != null && _flushStoreHotkey.IsValid && _flushStoreHotkey.WasPressedThisFrame())
-            {
-                Patchs.FlushStorePatch.Flush();
-                Logger.LogInfo("Flushed all store!");
             }
         }
 
