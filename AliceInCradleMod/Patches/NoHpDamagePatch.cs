@@ -1,34 +1,31 @@
 using HarmonyLib;
-using m2d;
-using nel;
-using System;
+using System.Collections.Generic;
+using System.Reflection;
 
-namespace BetterExperience
+namespace BetterExperience.Patches
 {
     internal partial class Patchs
     {
         [HarmonyPatch]
         private class NoHpDamagePatch
         {
-            [HarmonyPatch(typeof(M2PrADmg), "applyDamage",
-                new Type[] {
-                    typeof(NelAttackInfo),
-                    typeof(HITTYPE),
-                    typeof(bool),
-                    typeof(string),
-                    typeof(bool),
-                    typeof(bool) },
-                new ArgumentType[] {
-                    ArgumentType.Normal,
-                    ArgumentType.Ref,
-                    ArgumentType.Normal,
-                    ArgumentType.Normal,
-                    ArgumentType.Normal,
-                    ArgumentType.Normal})]
+            static IEnumerable<MethodBase> TargetMethods()
+            {
+                var m = AccessTools.Method(typeof(nel.PR), "applyHpDamage");
+                if (m == null)
+                {
+                    HLog.Error("applyHpDamage not found on PR. Skip.");
+                    yield break;
+                }
+
+                yield return m;
+            }
+
             static bool Prefix()
             {
                 if (!ConfigManager.EnableNoHpDamage.Value)
                     return true;
+
                 return false;
             }
         }

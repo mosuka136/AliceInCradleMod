@@ -98,6 +98,7 @@
     <Compile Include="Patches\InfiniteShieldPatch.cs" />
     <Compile Include="Patches\LockCurrencyCountPatch.cs" />
     <Compile Include="Patches\NoHpDamagePatch.cs" />
+    <Compile Include="Patches\UnableBeingAttackedPatch.cs" />
     <Compile Include="Patches\NoMpDamagePatch.cs" />
     <Compile Include="Patches\Patchs.cs" />
     <Compile Include="Patches\RemoveLimitInBenchMenu.cs" />

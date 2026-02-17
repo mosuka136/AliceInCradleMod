@@ -1,4 +1,5 @@
 using BepInEx.Configuration;
+using nel;
 
 namespace BetterExperience
 {
@@ -27,6 +28,7 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
 
+        public static ConfigEntry<bool> EnableBeingAttacked { get; private set; }
         public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
         public static ConfigEntry<bool> EnableNoMpDamage { get; private set; }
         public static ConfigEntry<bool> EnableNoEpDamage { get; private set; }
@@ -221,6 +223,13 @@ namespace BetterExperience
                 "Enable removal of the 99-item limit in treasure chests.\n启用移除宝箱99物品数量上限。"
                 );
 
+            EnableBeingAttacked = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableBeingAttacked),
+                true,
+                "Enable being attacked. If disabled, players will not be attacked by enemies, but traps may still be triggered.\n" +
+                "启用被攻击。若关闭，玩家将不会受到敌人的攻击，但仍可能触发陷阱。"
+                );
             EnableNoHpDamage = BetterExperience.Instance.Config.Bind(
                 SectionPlayerStatus,
                 nameof(EnableNoHpDamage),
