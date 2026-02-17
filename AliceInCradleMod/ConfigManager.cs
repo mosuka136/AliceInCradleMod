@@ -4,6 +4,11 @@ namespace BetterExperience
 {
     internal class ConfigManager
     {
+        private ConfigManager()
+        {
+            
+        }
+
         public static ConfigEntry<bool> EnableBetterExperience { get; private set; }
         public static ConfigEntry<bool> EnableHarmonyLog { get; private set; }
         public static ConfigEntry<bool> EnableMosaic { get; private set; }
@@ -32,6 +37,11 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableNoEpDamage { get; private set; }
         public static ConfigEntry<bool> EnableInfiniteShield { get; private set; }
         public static ConfigEntry<bool> EnableHolyBurstFaint { get; private set; }
+        public static ConfigEntry<int> SetPlayerHp { get; private set; }
+        public static ConfigEntry<int> SetPlayerMp { get; private set; }
+        public static ConfigEntry<int> SetPlayerEp { get; private set; }
+        public static ConfigEntry<int> SetPlayerMaxHp { get; private set; }
+        public static ConfigEntry<int> SetPlayerMaxMp { get; private set; }
 
         public static ConfigEntry<bool> EnableWormTrap { get; private set; }
         public static ConfigEntry<bool> EnableMapDamage { get; private set; }
@@ -49,15 +59,15 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableSensitivities { get; private set; }
         public static ConfigEntry<bool> EnableTextureImmediateReload { get; private set; }
 
-        private static string SectionGeneral = "General";
-        private static string SectionLog = "Log";
-        private static string SectionHotkey = "Hotkey";
-        private static string SectionReel = "Reel";
-        private static string SectionPlayerStatus = "PlayerStatus";
-        private static string SectionMapTrap = "MapTrap";
-        private static string SectionBackpack = "Backpack";
-        private static string SectionCurrency = "Currency";
-        private static string SectionTexture = "Texture";
+        private const string SectionGeneral = "General";
+        private const string SectionLog = "Log";
+        private const string SectionHotkey = "Hotkey";
+        private const string SectionReel = "Reel";
+        private const string SectionPlayerStatus = "PlayerStatus";
+        private const string SectionMapTrap = "MapTrap";
+        private const string SectionBackpack = "Backpack";
+        private const string SectionCurrency = "Currency";
+        private const string SectionTexture = "Texture";
 
         public static void Initialization()
         {
@@ -259,6 +269,36 @@ namespace BetterExperience
                 true,
                 "Enable Holy Burst Faint. When disabled, players will not faint after using Holy Burst.\n" +
                 "启用圣光爆发昏厥。关闭后，玩家将不会因为使用圣光爆发而晕厥。"
+                );
+            SetPlayerHp = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(SetPlayerHp),
+                -1,
+                "Set player HP.\n设置玩家 HP。"
+                );
+            SetPlayerMp = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(SetPlayerMp),
+                -1,
+                "Set player MP.\n设置玩家 MP。"
+                );
+            SetPlayerEp = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(SetPlayerEp),
+                -1,
+                "Set player EP.\n设置玩家 EP。"
+                );
+            SetPlayerMaxHp = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(SetPlayerMaxHp),
+                -1,
+                "Set player max HP.\n设置玩家最大 HP。"
+                );
+            SetPlayerMaxMp = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(SetPlayerMaxMp),
+                -1,
+                "Set player max MP.\n设置玩家最大 MP。"
                 );
 
             EnableWormTrap = BetterExperience.Instance.Config.Bind(

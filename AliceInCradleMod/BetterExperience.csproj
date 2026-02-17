@@ -87,6 +87,7 @@
   <ItemGroup>
     <Compile Include="BetterExperience.cs" />
     <Compile Include="DisableDrowning.cs" />
+    <Compile Include="Patches\FrameUpdateBooster.cs" />
     <Compile Include="Patches\InvalidateWormTrapPatch.cs" />
     <Compile Include="Patches\NoEpDamagePatch.cs" />
     <Compile Include="OnSiteProtectionManager.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Patches\LockCurrencyCountPatch.cs" />
     <Compile Include="Patches\NoHpDamagePatch.cs" />
     <Compile Include="Patches\NoMapDamagePatch.cs" />
+    <Compile Include="Patches\SetHpMpEpPatch.cs" />
     <Compile Include="Patches\UnableBeingAttackedPatch.cs" />
     <Compile Include="Patches\NoMpDamagePatch.cs" />
     <Compile Include="Patches\Patchs.cs" />
