@@ -86,7 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BetterExperience.cs" />
-    <Compile Include="NoEpDamagePatch.cs" />
+    <Compile Include="Patches\NoEpDamagePatch.cs" />
     <Compile Include="OnSiteProtectionManager.cs" />
     <Compile Include="Patches\BetterSaveSitePatch.cs" />
     <Compile Include="Patches\BetterReelEffectPatch.cs" />
