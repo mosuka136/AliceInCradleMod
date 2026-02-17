@@ -9,10 +9,15 @@ namespace BetterExperience.Patches
         [HarmonyPatch]
         internal class SetHpMpEpPatch
         {
+            private static bool _initialized = false;
+
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
             private static void Initialize()
             {
+                if (_initialized)
+                    return;
+
                 ConfigManager.SetPlayerHp.Value = -1;
                 ConfigManager.SetPlayerMp.Value = -1;
                 ConfigManager.SetPlayerEp.Value = -1;
@@ -41,6 +46,8 @@ namespace BetterExperience.Patches
                 {
                     SetMaxMp(ConfigManager.SetPlayerMaxMp.Value);
                 };
+
+                _initialized = true;
             }
 
             public static void SetHp(int hp)

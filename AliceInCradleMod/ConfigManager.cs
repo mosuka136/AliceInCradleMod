@@ -343,7 +343,7 @@ namespace BetterExperience
                 -1L,
                 "Set crafts count.\n设置兑锭数量。"
                 );
-            SetCurrencyCraftsCount = BetterExperience.Instance.Config.Bind(
+            SetCurrencyJuiceCount = BetterExperience.Instance.Config.Bind(
                 SectionCurrency,
                 nameof(SetCurrencyJuiceCount),
                 -1L,
