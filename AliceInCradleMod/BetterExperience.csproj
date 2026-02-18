@@ -108,7 +108,7 @@
     <Compile Include="Patches\SetMaxSatietyPatch.cs" />
     <Compile Include="Patches\UnableBeingAttackedPatch.cs" />
     <Compile Include="Patches\NoMpDamagePatch.cs" />
-    <Compile Include="Patches\Patchs.cs" />
+    <Compile Include="Patches\HPatches.cs" />
     <Compile Include="Patches\RemoveLimitInBenchMenu.cs" />
     <Compile Include="Patches\ReplaceTexture\TextureManager.cs" />
     <Compile Include="Patches\ReplaceTexture\ReplaceTexturePatch.cs" />

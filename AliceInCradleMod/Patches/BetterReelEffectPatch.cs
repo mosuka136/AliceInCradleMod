@@ -7,7 +7,7 @@ using XX;
 
 namespace BetterExperience.Patches
 {
-    internal partial class Patchs
+    internal partial class HPatches
     {
         [HarmonyPatch(typeof(ReelExecuter), "applyEffectToIK")]
         private class BetterReelEffectPatch

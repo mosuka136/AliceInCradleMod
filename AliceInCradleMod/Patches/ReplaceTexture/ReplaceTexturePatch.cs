@@ -1,11 +1,12 @@
+using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using System;
 using UnityEngine;
 using XX;
 
-namespace BetterExperience.Patches.ReplaceTexture
+namespace BetterExperience.Patches
 {
-    internal partial class Patchs
+    internal partial class HPatches
     {
         [HarmonyPatch]
         private class ReplaceTexturePatch

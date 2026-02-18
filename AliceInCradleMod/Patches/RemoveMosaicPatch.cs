@@ -3,7 +3,7 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class Patchs
+    internal partial class HPatches
     {
         [HarmonyPatch(typeof(MosaicShower), "FnDrawMosaic")]
         private class RemoveMosaicPatch
