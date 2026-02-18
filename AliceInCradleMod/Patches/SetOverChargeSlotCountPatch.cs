@@ -18,9 +18,9 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                ConfigManager.SetOverChargeCount.Value = -1;
+                ConfigManager.SetOverChargeSlotCount.Value = -1;
 
-                ConfigManager.SetOverChargeCount.SettingChanged += (s, e) =>
+                ConfigManager.SetOverChargeSlotCount.SettingChanged += (s, e) =>
                 {
                     SetOverChargeSlotCount();
                 };
@@ -51,10 +51,10 @@ namespace BetterExperience.Patches
                 if (NelItem.GetById("oc_slot") != Data)
                     return true;
 
-                if (ConfigManager.SetOverChargeCount.Value < 0)
+                if (ConfigManager.SetOverChargeSlotCount.Value < 0)
                     return true;
 
-                __result = ConfigManager.SetOverChargeCount.Value;
+                __result = ConfigManager.SetOverChargeSlotCount.Value;
                 return false;
             }
         }

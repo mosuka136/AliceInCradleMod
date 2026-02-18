@@ -104,6 +104,7 @@
     <Compile Include="Patches\NoMapDamagePatch.cs" />
     <Compile Include="Patches\RemoveMpBreakPatch.cs" />
     <Compile Include="Patches\SetCurrencyCountPatch.cs" />
+    <Compile Include="Patches\SetEnhancerSlotCountPatch.cs" />
     <Compile Include="Patches\SetHpMpEpPatch.cs" />
     <Compile Include="Patches\SetMaxSatietyPatch.cs" />
     <Compile Include="Patches\SetOverChargeSlotCountPatch.cs" />
