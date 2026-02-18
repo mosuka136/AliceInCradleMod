@@ -51,7 +51,7 @@ namespace BetterExperience
                 var fs = new FileStream(fullPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
                 _writer = new StreamWriter(fs, Encoding.UTF8) { AutoFlush = true };
 
-                _writer.WriteLine($"{new string('-', 100)}LOG-START{new string('-', 100)}");
+                _writer.WriteLine($"{new string('-', 50)}LOG-START-{DateTime.Now}{new string('-', 50)}");
             }
 
             Application.quitting += Shutdown;
@@ -180,7 +180,7 @@ namespace BetterExperience
                 {
                     try
                     {
-                        _writer.WriteLine($"{new string('-', 100)}LOG-END{new string('-', 100)}");
+                        _writer.WriteLine($"{new string('-', 50)}LOG-END-{DateTime.Now}{new string('-', 50)}");
                         _writer.WriteLine();
                         _writer.WriteLine();
 

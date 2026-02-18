@@ -155,7 +155,7 @@ namespace BetterExperience
             HarmonyLogLevel = BetterExperience.Instance.Config.Bind(
                 SectionLog,
                 nameof(HarmonyLogLevel),
-                HLog.LogLevel.Info,
+                HLog.LogLevel.Warning,
                 "The log level of Harmony log. Default is Info.\nHarmony 日志等级。默认值为 Info。"
                 );
             BepInExLogLevel = BetterExperience.Instance.Config.Bind(
