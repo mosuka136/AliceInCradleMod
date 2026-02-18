@@ -109,8 +109,12 @@ namespace BetterExperience
                 SectionGeneral,
                 nameof(EnableReplaceTexture),
                 false,
-                "Enable replace texture. It will use the texture from the BetterExperience\\ReplaceTexture folder to replace the original texture.\n" +
-                "启用替换贴图。将使用 BetterExperience\\ReplaceTexture 文件夹中的贴图替换原始贴图。"
+                "Enable replace texture. " +
+                "It will use the texture from the BetterExperience\\ReplaceTexture folder to replace the original texture.\n" +
+                "Please ensure that the file to be replaced has the same name as the original file.\n" +
+                "Supported file formats are PNG files, with extensions .png or .btep.\n" +
+                "启用替换贴图。将使用 BetterExperience\\ReplaceTexture 文件夹中的贴图替换原始贴图。\n" +
+                "请确保需要替换的文件和被替换的文件名相同。支持的文件格式为png文件，后缀可为.png或.btep。"
                 );
             EnableBetterSaveSite = BetterExperience.Instance.Config.Bind(
                 SectionGeneral,
