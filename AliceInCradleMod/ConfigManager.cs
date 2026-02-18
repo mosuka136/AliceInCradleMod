@@ -19,7 +19,7 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
 
-        public static ConfigEntry<string> LogReadme { get; private set; }
+        private static ConfigEntry<string> LogReadme { get; set; }
         public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
         public static ConfigEntry<HLog.LogLevel> BepInExLogLevel { get; private set; }
 
@@ -76,39 +76,41 @@ namespace BetterExperience
 
         public static void Initialization()
         {
-            BetterExperience.Instance.Config.SaveOnConfigSet = false;
+            var Config = BetterExperience.Instance.Config;
 
-            EnableBetterExperience = BetterExperience.Instance.Config.Bind(
+            Config.SaveOnConfigSet = false;
+
+            EnableBetterExperience = Config.Bind(
                 SectionGeneral,
                 nameof(EnableBetterExperience),
                 true,
                 "Enable Better Experience mod.\n启用 Better Experience 模组。"
                 );
-            EnableHarmonyLog = BetterExperience.Instance.Config.Bind(
+            EnableHarmonyLog = Config.Bind(
                 SectionGeneral,
                 nameof(EnableHarmonyLog),
                 true,
                 "Enable Harmony log. It will generate a log file in BetterExperience\\logs folder.\n启用 Harmony 日志。将在 BetterExperience\\logs 文件夹中生成日志文件。"
                 );
-            EnableMosaic = BetterExperience.Instance.Config.Bind(
+            EnableMosaic = Config.Bind(
                 SectionGeneral,
                 nameof(EnableMosaic),
                 false,
                 "Enable mosaic effect.\n启用马赛克效果。"
                 );
-            EnableBiggerBackpack = BetterExperience.Instance.Config.Bind(
+            EnableBiggerBackpack = Config.Bind(
                 SectionGeneral,
                 nameof(EnableBiggerBackpack),
                 true,
                 "Enable bigger backpack.\n启用更大的背包容量。"
                 );
-            EnableFlushAllStore = BetterExperience.Instance.Config.Bind(
+            EnableFlushAllStore = Config.Bind(
                 SectionGeneral,
                 nameof(EnableFlushAllStore),
                 false,
                 "Enable flush all store function.\n启用一键刷新商店功能。"
                 );
-            EnableReplaceTexture = BetterExperience.Instance.Config.Bind(
+            EnableReplaceTexture = Config.Bind(
                 SectionGeneral,
                 nameof(EnableReplaceTexture),
                 false,
@@ -119,20 +121,20 @@ namespace BetterExperience
                 "启用替换贴图。将使用 BetterExperience\\ReplaceTexture 文件夹中的贴图替换原始贴图。\n" +
                 "请确保需要替换的文件和被替换的文件名相同。支持的文件格式为png文件，后缀可为.png或.btep。"
                 );
-            EnableBetterSaveSite = BetterExperience.Instance.Config.Bind(
+            EnableBetterSaveSite = Config.Bind(
                 SectionGeneral,
                 nameof(EnableBetterSaveSite),
                 false,
                 "Enable better save site. It will allow saving anywhere.\n启用更好的存档点功能。允许在任意位置保存。"
                 );
-            EnableRemoveLimitInPuppetNpcDefeated = BetterExperience.Instance.Config.Bind(
+            EnableRemoveLimitInPuppetNpcDefeated = Config.Bind(
                 SectionGeneral,
                 nameof(EnableRemoveLimitInPuppetNpcDefeated),
                 false,
                 "Enable the restriction that prevents the Puppet Merchant from spawning before the revenge quest is completed.\n" +
                 "启用移除木偶商人在复仇战未完成前无法生成的限制。"
                 );
-            EnableRemoveLimitInBenchMenu = BetterExperience.Instance.Config.Bind(
+            EnableRemoveLimitInBenchMenu = Config.Bind(
                 SectionGeneral,
                 nameof(EnableRemoveLimitInBenchMenu),
                 false,
@@ -140,7 +142,7 @@ namespace BetterExperience
                 "启用移除玩家在某些情况下椅子菜单中的某些选项不可用的限制。"
                 );
 
-            LogReadme = BetterExperience.Instance.Config.Bind(
+            LogReadme = Config.Bind(
                 SectionLog,
                 "_README",
                 "",
@@ -155,20 +157,20 @@ namespace BetterExperience
                 "若日志等级为 Warning，仅记录警告和错误消息。\n" +
                 "若日志等级为 Error，仅记录错误消息。"
                 );
-            HarmonyLogLevel = BetterExperience.Instance.Config.Bind(
+            HarmonyLogLevel = Config.Bind(
                 SectionLog,
                 nameof(HarmonyLogLevel),
                 HLog.LogLevel.Warning,
                 "The log level of Harmony log. Default is Info.\nHarmony 日志等级。默认值为 Info。"
                 );
-            BepInExLogLevel = BetterExperience.Instance.Config.Bind(
+            BepInExLogLevel = Config.Bind(
                 SectionLog,
                 nameof(BepInExLogLevel),
                 HLog.LogLevel.Warning,
                 "The log level of BepInEx log. Default is Warning.\nBepInEx 日志等级。默认值为 Warning。"
                 );
 
-            HotkeyReadme = BetterExperience.Instance.Config.Bind(
+            HotkeyReadme = Config.Bind(
             SectionHotkey,
             "_README",
             "",
@@ -208,201 +210,201 @@ namespace BetterExperience
                 "- Ctrl+Shift+F, GamepadStart+GamepadSouth\n" +
                 "\n"
             ));
-            ReloadConfigHotkey = BetterExperience.Instance.Config.Bind(
+            ReloadConfigHotkey = Config.Bind(
                 SectionHotkey,
                 nameof(ReloadConfigHotkey),
                 "Ctrl+R",
                 "The hotkey to reload config. Default is Ctrl+R.\n重新加载配置的热键。默认值为 Ctrl+R。"
                 );
-            FlushAllStoreHotkey = BetterExperience.Instance.Config.Bind(
+            FlushAllStoreHotkey = Config.Bind(
                 SectionHotkey,
                 nameof(FlushAllStoreHotkey),
                 "F",
                 "The hotkey to flush all store. Default is F.\n一键刷新商店的热键。默认值为 F。"
                 );
 
-            EnableBetterReelEffect = BetterExperience.Instance.Config.Bind(
+            EnableBetterReelEffect = Config.Bind(
                 SectionReel,
                 nameof(EnableBetterReelEffect),
                 true,
                 "Enable better reel effect.\n启用更好的转轮效果。"
                 );
-            EnableRemoveLimitInTreasureChests = BetterExperience.Instance.Config.Bind(
+            EnableRemoveLimitInTreasureChests = Config.Bind(
                 SectionReel,
                 nameof(EnableRemoveLimitInTreasureChests),
                 false,
                 "Enable removal of the 99-item limit in treasure chests.\n启用移除宝箱99物品数量上限。"
                 );
 
-            EnableBeingAttacked = BetterExperience.Instance.Config.Bind(
+            EnableBeingAttacked = Config.Bind(
                 SectionPlayerStatus,
                 nameof(EnableBeingAttacked),
                 true,
                 "Enable being attacked. If disabled, players will not be attacked by enemies, but traps may still be triggered.\n" +
                 "启用被攻击。若关闭，玩家将不会受到敌人的攻击，但仍可能触发陷阱。"
                 );
-            EnableNoHpDamage = BetterExperience.Instance.Config.Bind(
+            EnableNoHpDamage = Config.Bind(
                 SectionPlayerStatus,
                 nameof(EnableNoHpDamage),
                 false,
                 "Enable no HP damage.\n启用无 HP 伤害。"
                 );
-            EnableNoMpDamage = BetterExperience.Instance.Config.Bind(
+            EnableNoMpDamage = Config.Bind(
                 SectionPlayerStatus,
                 nameof(EnableNoMpDamage),
                 false,
                 "Enable no MP damage.\n启用无 MP 伤害。"
                 );
-            EnableNoEpDamage = BetterExperience.Instance.Config.Bind(
+            EnableNoEpDamage = Config.Bind(
                 SectionPlayerStatus,
                 nameof(EnableNoEpDamage),
                 false,
                 "Enable no EP damage.\n启用无 EP 伤害。玩家“好感度”将不会增加。"
                 );
-            EnableInfiniteShield = BetterExperience.Instance.Config.Bind(
+            EnableInfiniteShield = Config.Bind(
                 SectionPlayerStatus,
                 nameof(EnableInfiniteShield),
                 false,
                 "Enable infinite shield.\n启用无限护盾。"
                 );
-            EnableHolyBurstFaint = BetterExperience.Instance.Config.Bind(
+            EnableHolyBurstFaint = Config.Bind(
                 SectionPlayerStatus,
                 nameof(EnableHolyBurstFaint),
                 true,
                 "Enable Holy Burst Faint. When disabled, players will not faint after using Holy Burst.\n" +
                 "启用圣光爆发昏厥。关闭后，玩家将不会因为使用圣光爆发而晕厥。"
                 );
-            EnableMpBreak = BetterExperience.Instance.Config.Bind(
+            EnableMpBreak = Config.Bind(
                 SectionPlayerStatus,
                 nameof(EnableMpBreak),
                 true,
                 "Enable MP break. When disabled, the player's MP slot will not break.\n" +
                 "启用 MP 破裂。关闭后，玩家 MP 槽将不会破裂。"
                 );
-            SetPlayerHp = BetterExperience.Instance.Config.Bind(
+            SetPlayerHp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerHp),
                 -1,
                 "Set player HP.\n设置玩家 HP。"
                 );
-            SetPlayerMp = BetterExperience.Instance.Config.Bind(
+            SetPlayerMp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerMp),
                 -1,
                 "Set player MP.\n设置玩家 MP。"
                 );
-            SetPlayerEp = BetterExperience.Instance.Config.Bind(
+            SetPlayerEp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerEp),
                 -1,
                 "Set player EP.\n设置玩家 EP。"
                 );
-            SetPlayerMaxHp = BetterExperience.Instance.Config.Bind(
+            SetPlayerMaxHp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerMaxHp),
                 -1,
                 "Set player max HP.\n设置玩家最大 HP。"
                 );
-            SetPlayerMaxMp = BetterExperience.Instance.Config.Bind(
+            SetPlayerMaxMp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerMaxMp),
                 -1,
                 "Set player max MP.\n设置玩家最大 MP。"
                 );
-            SetPlayerMaxSatiety = BetterExperience.Instance.Config.Bind(
+            SetPlayerMaxSatiety = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerMaxSatiety),
                 -1,
                 "Set player max satiety.\n设置玩家最大饱食度。"
                 );
-            SetOverChargeCount = BetterExperience.Instance.Config.Bind(
+            SetOverChargeCount = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetOverChargeCount),
                 -1,
                 "Set over charge slot count.\n设置过充插槽数量。"
                 );
 
-            EnableWormTrap = BetterExperience.Instance.Config.Bind(
+            EnableWormTrap = Config.Bind(
                 SectionMapTrap,
                 nameof(EnableWormTrap),
                 true,
                 "Enable worm trap.\n启用虫墙。"
                 );
-            EnableMapDamage = BetterExperience.Instance.Config.Bind(
+            EnableMapDamage = Config.Bind(
                 SectionMapTrap,
                 nameof(EnableMapDamage),
                 true,
                 "Enable map damage, including spikes, thorns, electric shock, and acid. Disabling will prevent taking the above damage.\n" +
                 "启用地图伤害，包括地刺，荆棘，电击，酸液。禁用后将不再受到以上伤害"
                 );
-            EnableDrowning = BetterExperience.Instance.Config.Bind(
+            EnableDrowning = Config.Bind(
                 SectionMapTrap,
                 nameof(EnableDrowning),
                 true,
                 "Enable drowning. Disabling will prevent drowning damage.\n启用溺水。禁用后将不再受到溺水伤害。"
                 );
 
-            BackpackCapacity = BetterExperience.Instance.Config.Bind(
+            BackpackCapacity = Config.Bind(
                 SectionBackpack,
                 nameof(BackpackCapacity),
                 500,
                 "The backpack capacity. Default is 500.\n背包容量。默认值为 500。"
                 );
 
-            SetCurrencyGoldCount = BetterExperience.Instance.Config.Bind(
+            SetCurrencyGoldCount = Config.Bind(
                 SectionCurrency,
                 nameof(SetCurrencyGoldCount),
                 -1L,
                 "Set gold count.\n设置金币数量。"
                 );
-            SetCurrencyCraftsCount = BetterExperience.Instance.Config.Bind(
+            SetCurrencyCraftsCount = Config.Bind(
                 SectionCurrency,
                 nameof(SetCurrencyCraftsCount),
                 -1L,
                 "Set crafts count.\n设置兑锭数量。"
                 );
-            SetCurrencyJuiceCount = BetterExperience.Instance.Config.Bind(
+            SetCurrencyJuiceCount = Config.Bind(
                 SectionCurrency,
                 nameof(SetCurrencyJuiceCount),
                 -1L,
                 "Set juice count.\n设置精萃数量。"
                 );
-            EnableLockCurrencyGoldCount = BetterExperience.Instance.Config.Bind(
+            EnableLockCurrencyGoldCount = Config.Bind(
                 SectionCurrency,
                 nameof(EnableLockCurrencyGoldCount),
                 false,
                 "Enable lock gold count. When enabled, the number of gold will not increase or decrease.\n" +
                 "启用金币数量锁定。开启后金币数量不会增加或减少。"
                 );
-            EnableLockCurrencyCraftsCount = BetterExperience.Instance.Config.Bind(
+            EnableLockCurrencyCraftsCount = Config.Bind(
                 SectionCurrency,
                 nameof(EnableLockCurrencyCraftsCount),
                 false,
                 "Enable lock crafts count. When enabled, the number of crafts will not increase or decrease.\n" +
                 "启用兑锭数量锁定。开启后兑锭数量不会增加或减少。"
                 );
-            EnableLockCurrencyJuiceCount = BetterExperience.Instance.Config.Bind(
+            EnableLockCurrencyJuiceCount = Config.Bind(
                 SectionCurrency,
                 nameof(EnableLockCurrencyJuiceCount),
                 false,
                 "Enable lock juice count. When enabled, the number of juice will not increase or decrease.\n" +
                 "启用精萃数量锁定。开启后精萃数量不会增加或减少。"
                 );
-            LockCurrencyGoldCount = BetterExperience.Instance.Config.Bind(
+            LockCurrencyGoldCount = Config.Bind(
                 SectionCurrency,
                 nameof(LockCurrencyGoldCount),
                 -1L,
                 "The gold count to lock. It will be used when lock gold count is enabled. Set to -1 to maintain the original count.\n" +
                 "要锁定的金币数量。在启用金币数量锁定时生效。设为 -1 可保持原始数量。"
                 );
-            LockCurrencyCraftsCount = BetterExperience.Instance.Config.Bind(
+            LockCurrencyCraftsCount = Config.Bind(
                 SectionCurrency,
                 nameof(LockCurrencyCraftsCount),
                 -1L,
                 "The crafts count to lock. It will be used when lock crafts count is enabled. Set to -1 to maintain the original count.\n" +
                 "要锁定的兑锭数量。在启用兑锭数量锁定时生效。设为 -1 可保持原始数量。"
                 );
-            LockCurrencyJuiceCount = BetterExperience.Instance.Config.Bind(
+            LockCurrencyJuiceCount = Config.Bind(
                 SectionCurrency,
                 nameof(LockCurrencyJuiceCount),
                 -1L,
@@ -410,14 +412,14 @@ namespace BetterExperience
                 "要锁定的精萃数量。在启用精萃数量锁定时生效。设为 -1 可保持原始数量。"
                 );
 
-            EnableSensitivities = BetterExperience.Instance.Config.Bind(
+            EnableSensitivities = Config.Bind(
                 SectionTexture,
                 nameof(EnableSensitivities),
                 true,
                 "Enable sensitivities. If disabled, textures in the BetterExperience\\ReplaceTexture\\Sensitive folder will not be loaded to replace the original textures.\n" +
                 "启用敏感内容贴图。若关闭，将不会加载 BetterExperience\\ReplaceTexture\\Sensitive 文件夹中的贴图来替换原始贴图。"
                 );
-            EnableTextureImmediateReload = BetterExperience.Instance.Config.Bind(
+            EnableTextureImmediateReload = Config.Bind(
                 SectionTexture,
                 nameof(EnableTextureImmediateReload),
                 false,
@@ -425,8 +427,8 @@ namespace BetterExperience
                 "启用立即重载。开启后，贴图发生变化时会立刻重新加载。"
                 );
 
-            BetterExperience.Instance.Config.SaveOnConfigSet = true;
-            BetterExperience.Instance.Config.Save();
+            Config.SaveOnConfigSet = true;
+            Config.Save();
         }
 
         public static void ReloadConfig()
