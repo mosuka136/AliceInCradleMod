@@ -102,6 +102,7 @@
     <Compile Include="Patches\LockCurrencyCountPatch.cs" />
     <Compile Include="Patches\NoHpDamagePatch.cs" />
     <Compile Include="Patches\NoMapDamagePatch.cs" />
+    <Compile Include="Patches\RemoveMpBreakPatch.cs" />
     <Compile Include="Patches\SetCurrencyCountPatch.cs" />
     <Compile Include="Patches\SetHpMpEpPatch.cs" />
     <Compile Include="Patches\UnableBeingAttackedPatch.cs" />

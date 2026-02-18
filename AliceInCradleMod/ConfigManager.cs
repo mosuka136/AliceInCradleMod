@@ -36,6 +36,7 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableNoEpDamage { get; private set; }
         public static ConfigEntry<bool> EnableInfiniteShield { get; private set; }
         public static ConfigEntry<bool> EnableHolyBurstFaint { get; private set; }
+        public static ConfigEntry<bool> EnableMpBreak { get; private set; }
         public static ConfigEntry<int> SetPlayerHp { get; private set; }
         public static ConfigEntry<int> SetPlayerMp { get; private set; }
         public static ConfigEntry<int> SetPlayerEp { get; private set; }
@@ -268,6 +269,13 @@ namespace BetterExperience
                 true,
                 "Enable Holy Burst Faint. When disabled, players will not faint after using Holy Burst.\n" +
                 "启用圣光爆发昏厥。关闭后，玩家将不会因为使用圣光爆发而晕厥。"
+                );
+            EnableMpBreak = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableMpBreak),
+                true,
+                "Enable MP break. When disabled, the player's MP slot will not break.\n" +
+                "启用 MP 破裂。关闭后，玩家 MP 槽将不会破裂。"
                 );
             SetPlayerHp = BetterExperience.Instance.Config.Bind(
                 SectionPlayerStatus,
