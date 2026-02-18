@@ -105,6 +105,7 @@
     <Compile Include="Patches\RemoveMpBreakPatch.cs" />
     <Compile Include="Patches\SetCurrencyCountPatch.cs" />
     <Compile Include="Patches\SetHpMpEpPatch.cs" />
+    <Compile Include="Patches\SetMaxSatietyPatch.cs" />
     <Compile Include="Patches\UnableBeingAttackedPatch.cs" />
     <Compile Include="Patches\NoMpDamagePatch.cs" />
     <Compile Include="Patches\Patchs.cs" />
