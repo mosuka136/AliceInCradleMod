@@ -9,13 +9,47 @@ namespace BetterExperience.Patches
         [HarmonyPatch]
         private class LockCurrencyCountPatch
         {
+            private static bool _initialized = false;
+
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
+            private static void Initialize()
+            {
+                if (_initialized)
+                    return;
+
+                ConfigManager.LockCurrencyGoldCount.SettingChanged += (s, e) =>
+                {
+                    if (!ConfigManager.EnableLockCurrencyGoldCount.Value)
+                        return;
+
+                    if (UInt32.TryParse(ConfigManager.LockCurrencyGoldCount.Value.ToString(), out var count))
+                        SetCurrencyCountPatch.SetCurrencyGoldCount(count);
+                };
+                ConfigManager.LockCurrencyCraftsCount.SettingChanged += (s, e) =>
+                {
+                    if (!ConfigManager.EnableLockCurrencyCraftsCount.Value)
+                        return;
+
+                    if (UInt32.TryParse(ConfigManager.LockCurrencyCraftsCount.Value.ToString(), out var count))
+                        SetCurrencyCountPatch.SetCurrencyCraftsCount(count);
+                };
+                ConfigManager.LockCurrencyJuiceCount.SettingChanged += (s, e) =>
+                {
+                    if (!ConfigManager.EnableLockCurrencyJuiceCount.Value)
+                        return;
+
+                    if (UInt32.TryParse(ConfigManager.LockCurrencyJuiceCount.Value.ToString(), out var count))
+                        SetCurrencyCountPatch.SetCurrencyJuiceCount(count);
+                };
+
+                _initialized = true;
+            }
+
             [HarmonyPrefix]
             [HarmonyPatch(typeof(CoinEntry), "Add")]
             static bool AddPrefix(CoinEntry __instance)
             {
-                if (!ConfigManager.EnableLockCurrencyCount.Value)
-                    return true;
-
                 return DealWithCurrencyCount(__instance);
             }
 
@@ -23,38 +57,32 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(CoinEntry), "Reduce")]
             static bool ReducePrefix(CoinEntry __instance)
             {
-                if (!ConfigManager.EnableLockCurrencyCount.Value)
-                    return true;
-
                 return DealWithCurrencyCount(__instance);
             }
 
-            private static bool DealWithCurrencyCount(CoinEntry centry)
+            private static bool DealWithCurrencyCount(CoinEntry cEntry)
             {
-                var ctype = centry.ctype;
+                var ctype = cEntry.ctype;
                 if (ctype == CoinStorage.CTYPE.GOLD)
                 {
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyGoldCount.Value,
                         ConfigManager.LockCurrencyGoldCount.Value,
-                        ctype,
-                        centry);
+                        cEntry);
                 }
                 else if (ctype == CoinStorage.CTYPE.CRAFTS)
                 {
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyCraftsCount.Value,
                         ConfigManager.LockCurrencyCraftsCount.Value,
-                        ctype,
-                        centry);
+                        cEntry);
                 }
                 else if (ctype == CoinStorage.CTYPE.JUICE)
                 {
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyJuiceCount.Value,
                         ConfigManager.LockCurrencyJuiceCount.Value,
-                        ctype,
-                        centry);
+                        cEntry);
                 }
                 else if (ctype == CoinStorage.CTYPE._TEMPORARY)
                 {
@@ -63,8 +91,7 @@ namespace BetterExperience.Patches
                 return true;
             }
 
-            private static bool DealWithCurrencyCount(
-                bool isEnabled, long lockCount, CoinStorage.CTYPE type, CoinEntry centry)
+            private static bool DealWithCurrencyCount(bool isEnabled, long lockCount, CoinEntry cEntry)
             {
                 if (!isEnabled)
                     return true;
@@ -74,15 +101,15 @@ namespace BetterExperience.Patches
 
                 if (!UInt32.TryParse(lockCount.ToString(), out var lockCountUInt))
                 {
-                    HLog.Error($"Failed to parse lock count for {type} currency. Value: {lockCount}");
+                    HLog.Error($"Failed to parse lock count for {cEntry.ctype} currency. Value: {lockCount}");
                     return true;
                 }
 
-                uint count = centry.Get();
+                uint count = cEntry.Get();
                 if (count == lockCountUInt)
                     return false;
 
-                centry.Set(lockCountUInt, true);
+                cEntry.Set(lockCountUInt, true);
 
                 return false;
             }
