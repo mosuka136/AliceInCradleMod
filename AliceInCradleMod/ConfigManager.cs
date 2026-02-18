@@ -43,6 +43,7 @@ namespace BetterExperience
         public static ConfigEntry<int> SetPlayerMaxHp { get; private set; }
         public static ConfigEntry<int> SetPlayerMaxMp { get; private set; }
         public static ConfigEntry<int> SetPlayerMaxSatiety { get; private set; }
+        public static ConfigEntry<int> SetOverChargeCount { get; private set; }
 
         public static ConfigEntry<bool> EnableWormTrap { get; private set; }
         public static ConfigEntry<bool> EnableMapDamage { get; private set; }
@@ -313,6 +314,12 @@ namespace BetterExperience
                 nameof(SetPlayerMaxSatiety),
                 -1,
                 "Set player max satiety.\n设置玩家最大饱食度。"
+                );
+            SetOverChargeCount = BetterExperience.Instance.Config.Bind(
+                SectionPlayerStatus,
+                nameof(SetOverChargeCount),
+                -1,
+                "Set over charge slot count.\n设置过充插槽数量。"
                 );
 
             EnableWormTrap = BetterExperience.Instance.Config.Bind(
