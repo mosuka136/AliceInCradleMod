@@ -55,6 +55,7 @@ namespace BetterExperience
         public static ConfigEntry<int> SetPlayerMaxSatiety { get; private set; }
         public static ConfigEntry<int> SetOverChargeSlotCount { get; private set; }
         public static ConfigEntry<int> SetEnhancerSlotCount { get; private set; }
+        public static ConfigEntry<float> SetPlayerWalkSpeed { get; private set; }
 
         public static ConfigEntry<bool> EnableWormTrap { get; private set; }
         public static ConfigEntry<bool> EnableMapDamage { get; private set; }
@@ -424,6 +425,13 @@ namespace BetterExperience
                 -1,
                 "Set enhancer slot count. It will override the original enhancer slot count. Set to -1 to keep the enhancer slot count at its current value.\n" +
                 "设置强化插槽数量。将覆盖原始的强化插槽数量。设为 -1 可保持为当前值。"
+                );
+            SetPlayerWalkSpeed = Config.Bind(
+                SectionPlayerStatus,
+                nameof(SetPlayerWalkSpeed),
+                -1f,
+                "Set player walk speed. The set value is a multiplier, where values between 0 and 1 decrease player speed, and values greater than 1 increase speed.\n" +
+                "设置玩家行走速度。设置的值为倍率，即 0 - 1 内玩家速度减小，大于 1 速度增大。"
                 );
 
             EnableWormTrap = Config.Bind(
