@@ -18,30 +18,105 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                ConfigManager.SetCurrencyGoldCount.Value = -1;
-                ConfigManager.SetCurrencyCraftsCount.Value = -1;
-                ConfigManager.SetCurrencyJuiceCount.Value = -1;
+                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                {
+                    if (ConfigManager.EnablePreloadCurrencyGoldCount.Value
+                        && UInt32.TryParse(ConfigManager.SetCurrencyGoldCount.Value.ToString(), out var countGold))
+                        SetCurrencyGoldCount(countGold);
+
+                    if (ConfigManager.EnablePreloadCurrencyCraftsCount.Value
+                        && UInt32.TryParse(ConfigManager.SetCurrencyCraftsCount.Value.ToString(), out var countCrafts))
+                        SetCurrencyCraftsCount(countCrafts);
+
+                    if (ConfigManager.EnablePreloadCurrencyJuiceCount.Value
+                        && UInt32.TryParse(ConfigManager.SetCurrencyJuiceCount.Value.ToString(), out var countJuice))
+                        SetCurrencyJuiceCount(countJuice);
+                };
 
                 ConfigManager.SetCurrencyGoldCount.SettingChanged += (s, e) =>
                 {
-                    uint count;
-                    if (UInt32.TryParse(ConfigManager.SetCurrencyGoldCount.Value.ToString(), out count))
+                    if (UInt32.TryParse(ConfigManager.SetCurrencyGoldCount.Value.ToString(), out var count))
                         SetCurrencyGoldCount(count);
                 };
                 ConfigManager.SetCurrencyCraftsCount.SettingChanged += (s, e) =>
                 {
-                    uint count;
-                    if (UInt32.TryParse(ConfigManager.SetCurrencyCraftsCount.Value.ToString(), out count))
+                    if (UInt32.TryParse(ConfigManager.SetCurrencyCraftsCount.Value.ToString(), out var count))
                         SetCurrencyCraftsCount(count);
                 };
                 ConfigManager.SetCurrencyJuiceCount.SettingChanged += (s, e) =>
                 {
-                    uint count;
-                    if (UInt32.TryParse(ConfigManager.SetCurrencyJuiceCount.Value.ToString(), out count))
+                    if (UInt32.TryParse(ConfigManager.SetCurrencyJuiceCount.Value.ToString(), out var count))
                         SetCurrencyJuiceCount(count);
                 };
 
                 _initialized = true;
+            }
+
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(CoinEntry), "Add")]
+            static bool AddPrefix(CoinEntry __instance)
+            {
+                return DealWithCurrencyCount(__instance);
+            }
+
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(CoinEntry), "Reduce")]
+            static bool ReducePrefix(CoinEntry __instance)
+            {
+                return DealWithCurrencyCount(__instance);
+            }
+
+            private static bool DealWithCurrencyCount(CoinEntry cEntry)
+            {
+                var ctype = cEntry.ctype;
+                if (ctype == CoinStorage.CTYPE.GOLD)
+                {
+                    return DealWithCurrencyCount(
+                        ConfigManager.EnableLockCurrencyGoldCount.Value,
+                        ConfigManager.SetCurrencyGoldCount.Value,
+                        cEntry);
+                }
+                else if (ctype == CoinStorage.CTYPE.CRAFTS)
+                {
+                    return DealWithCurrencyCount(
+                        ConfigManager.EnableLockCurrencyCraftsCount.Value,
+                        ConfigManager.SetCurrencyCraftsCount.Value,
+                        cEntry);
+                }
+                else if (ctype == CoinStorage.CTYPE.JUICE)
+                {
+                    return DealWithCurrencyCount(
+                        ConfigManager.EnableLockCurrencyJuiceCount.Value,
+                        ConfigManager.SetCurrencyJuiceCount.Value,
+                        cEntry);
+                }
+                else if (ctype == CoinStorage.CTYPE._TEMPORARY)
+                {
+                }
+
+                return true;
+            }
+
+            private static bool DealWithCurrencyCount(bool isEnabled, long count, CoinEntry cEntry)
+            {
+                if (!isEnabled)
+                    return true;
+
+                if (count < 0)
+                    return false;
+
+                if (!UInt32.TryParse(count.ToString(), out var countUInt))
+                {
+                    HLog.Error($"Failed to parse lock count for {cEntry.ctype} currency. Value: {count}");
+                    return true;
+                }
+
+                if (cEntry.Get() == countUInt)
+                    return false;
+
+                cEntry.Set(countUInt, true);
+
+                return false;
             }
 
             public static void SetCurrencyGoldCount(uint count)

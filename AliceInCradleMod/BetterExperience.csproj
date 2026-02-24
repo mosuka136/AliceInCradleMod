@@ -100,7 +100,6 @@
     <Compile Include="HLog.cs" />
     <Compile Include="HotkeyInputSystem.cs" />
     <Compile Include="Patches\InfiniteShieldPatch.cs" />
-    <Compile Include="Patches\LockCurrencyCountPatch.cs" />
     <Compile Include="Patches\NoHpDamagePatch.cs" />
     <Compile Include="Patches\NoMapDamagePatch.cs" />
     <Compile Include="Patches\RemoveMpBreakPatch.cs" />

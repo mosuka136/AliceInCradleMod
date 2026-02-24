@@ -51,17 +51,15 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableMapDamage { get; private set; }
         public static ConfigEntry<bool> EnableDrowning { get; private set; }
 
-        public static ConfigEntry<int> BackpackCapacity { get; private set; }
-
-        public static ConfigEntry<long> SetCurrencyGoldCount { get; private set; }
-        public static ConfigEntry<long> SetCurrencyCraftsCount { get; private set; }
-        public static ConfigEntry<long> SetCurrencyJuiceCount { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadCurrencyGoldCount { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadCurrencyCraftsCount { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadCurrencyJuiceCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyGoldCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyCraftsCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyJuiceCount { get; private set; }
-        public static ConfigEntry<long> LockCurrencyGoldCount { get; private set; }
-        public static ConfigEntry<long> LockCurrencyCraftsCount { get; private set; }
-        public static ConfigEntry<long> LockCurrencyJuiceCount { get; private set; }
+        public static ConfigEntry<long> SetCurrencyGoldCount { get; private set; }
+        public static ConfigEntry<long> SetCurrencyCraftsCount { get; private set; }
+        public static ConfigEntry<long> SetCurrencyJuiceCount { get; private set; }
 
         public static ConfigEntry<bool> EnableSensitivities { get; private set; }
         public static ConfigEntry<bool> EnableTextureImmediateReload { get; private set; }
@@ -360,23 +358,29 @@ namespace BetterExperience
                 "Enable drowning. Disabling will prevent drowning damage.\n启用溺水。禁用后将不再受到溺水伤害。"
                 );
 
-            SetCurrencyGoldCount = Config.Bind(
+            EnablePreloadCurrencyGoldCount = Config.Bind(
                 SectionCurrency,
-                nameof(SetCurrencyGoldCount),
-                -1L,
-                "Set gold count.\n设置金币数量。"
+                nameof(EnablePreloadCurrencyGoldCount),
+                false,
+                "Enable preload gold count. When enabled, the gold count will be automatically set once after loading a save, " +
+                "using the configured value to override the original gold count.\n" +
+                "启用预加载金币数量。开启后，金币数量将在存档读取后自动设置一次，使用设置值覆盖原始的金币数量。"
                 );
-            SetCurrencyCraftsCount = Config.Bind(
+            EnablePreloadCurrencyCraftsCount = Config.Bind(
                 SectionCurrency,
-                nameof(SetCurrencyCraftsCount),
-                -1L,
-                "Set crafts count.\n设置兑锭数量。"
+                nameof(EnablePreloadCurrencyCraftsCount),
+                false,
+                "Enable preload crafts count. When enabled, the crafts count will be automatically set once after loading a save, " +
+                "using the configured value to override the original crafts count.\n" +
+                "启用预加载兑锭数量。开启后，兑锭数量将在存档读取后自动设置一次，使用设置值覆盖原始的兑锭数量。"
                 );
-            SetCurrencyJuiceCount = Config.Bind(
+            EnablePreloadCurrencyJuiceCount = Config.Bind(
                 SectionCurrency,
-                nameof(SetCurrencyJuiceCount),
-                -1L,
-                "Set juice count.\n设置精萃数量。"
+                nameof(EnablePreloadCurrencyJuiceCount),
+                false,
+                "Enable preload juice count. When enabled, the juice count will be automatically set once after loading a save, " +
+                "using the configured value to override the original juice count.\n" +
+                "启用预加载精萃数量。开启后，精萃数量将在存档读取后自动设置一次，使用设置值覆盖原始的精萃数量。"
                 );
             EnableLockCurrencyGoldCount = Config.Bind(
                 SectionCurrency,
@@ -399,26 +403,23 @@ namespace BetterExperience
                 "Enable lock juice count. When enabled, the number of juice will not increase or decrease.\n" +
                 "启用精萃数量锁定。开启后精萃数量不会增加或减少。"
                 );
-            LockCurrencyGoldCount = Config.Bind(
+            SetCurrencyGoldCount = Config.Bind(
                 SectionCurrency,
-                nameof(LockCurrencyGoldCount),
+                nameof(SetCurrencyGoldCount),
                 -1L,
-                "The gold count to lock. It will be used when lock gold count is enabled. Set to -1 to maintain the current count.\n" +
-                "要锁定的金币数量。在启用金币数量锁定时生效。设为 -1 可保持为当前数量。"
+                "Set gold count. Set to -1 to keep the current count.\n设置金币数量。设为 -1 可保持为当前数量。"
                 );
-            LockCurrencyCraftsCount = Config.Bind(
+            SetCurrencyCraftsCount = Config.Bind(
                 SectionCurrency,
-                nameof(LockCurrencyCraftsCount),
+                nameof(SetCurrencyCraftsCount),
                 -1L,
-                "The crafts count to lock. It will be used when lock crafts count is enabled. Set to -1 to maintain the current count.\n" +
-                "要锁定的兑锭数量。在启用兑锭数量锁定时生效。设为 -1 可保持为当前数量。"
+                "Set crafts count. Set to -1 to keep the current count.\n设置兑锭数量。设为 -1 可保持为当前数量。"
                 );
-            LockCurrencyJuiceCount = Config.Bind(
+            SetCurrencyJuiceCount = Config.Bind(
                 SectionCurrency,
-                nameof(LockCurrencyJuiceCount),
+                nameof(SetCurrencyJuiceCount),
                 -1L,
-                "The juice count to lock. It will be used when lock juice count is enabled. Set to -1 to maintain the current count.\n" +
-                "要锁定的精萃数量。在启用精萃数量锁定时生效。设为 -1 可保持为当前数量。"
+                "Set juice count. Set to -1 to keep the current count.\n设置精萃数量。设为 -1 可保持为当前数量。"
                 );
 
             EnableSensitivities = Config.Bind(
