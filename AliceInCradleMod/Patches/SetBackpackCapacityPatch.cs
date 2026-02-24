@@ -25,6 +25,10 @@ namespace BetterExperience.Patches
                 };
 
                 OnSiteProtectionManager.Instance.OnSiteProtectionActivated += RecoverBackpackCapacity;
+                OnSiteProtectionManager.Instance.OnSiteProtectionCompleted += () =>
+                {
+                    SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value);
+                };
 
                 ConfigManager.SetBackpackCapacity.SettingChanged += (s, e) =>
                 {
