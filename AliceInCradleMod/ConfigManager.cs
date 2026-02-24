@@ -28,6 +28,7 @@ namespace BetterExperience
 
         public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
+        public static ConfigEntry<float> SetReelSpeed { get; private set; }
 
         public static ConfigEntry<bool> EnableBeingAttacked { get; private set; }
         public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
@@ -235,6 +236,13 @@ namespace BetterExperience
                 nameof(EnableRemoveLimitInTreasureChests),
                 false,
                 "Enable removal of the 99-item limit in treasure chests.\n启用移除宝箱99物品数量上限。"
+                );
+            SetReelSpeed = Config.Bind(
+                SectionReel,
+                nameof(SetReelSpeed),
+                -1f,
+                "Set reel speed. Set a value between 0 and 1 to adjust the wheel speed. The larger the value, the slower the speed.\n" +
+                "设置转轮速度。设为 0 和 1 之间的值可调节转轮速度。数值越大速度越慢。"
                 );
 
             EnableBeingAttacked = Config.Bind(
