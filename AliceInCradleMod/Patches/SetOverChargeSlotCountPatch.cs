@@ -10,6 +10,7 @@ namespace BetterExperience.Patches
         private class SetOverChargeSlotCountPatch
         {
             private static bool _initialized = false;
+            private static bool _isChanging = false;
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
@@ -18,7 +19,11 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                ConfigManager.SetOverChargeSlotCount.Value = -1;
+                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                {
+                    if (ConfigManager.EnablePreloadOverChargeSlotCount.Value)
+                        SetOverChargeSlotCount();
+                };
 
                 ConfigManager.SetOverChargeSlotCount.SettingChanged += (s, e) =>
                 {
@@ -41,7 +46,9 @@ namespace BetterExperience.Patches
                 if (oc == null)
                     return;
 
-                oc.fineSlots();
+                _isChanging = true;
+                oc.fineSlots(); // fineSlots方法会调用ItemStorage.getCount方法
+                _isChanging = false;
             }
 
             [HarmonyPrefix]
@@ -51,7 +58,7 @@ namespace BetterExperience.Patches
                 if (NelItem.GetById("oc_slot") != Data)
                     return true;
 
-                if (ConfigManager.SetOverChargeSlotCount.Value < 0)
+                if (!_isChanging || ConfigManager.SetOverChargeSlotCount.Value < 0)
                     return true;
 
                 __result = ConfigManager.SetOverChargeSlotCount.Value;

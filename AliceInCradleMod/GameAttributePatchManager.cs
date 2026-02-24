@@ -1,5 +1,5 @@
+using evt;
 using HarmonyLib;
-using nel;
 using System;
 
 namespace BetterExperience
@@ -24,9 +24,12 @@ namespace BetterExperience
         private class GameSaveLoadCompletedPatch
         {
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(COOK), nameof(COOK.initGameScene))]
-            private static void LoadCompletedPostfix()
+            [HarmonyPatch(typeof(EV), nameof(EV.stack))]
+            private static void LoadCompletedPostfix(string _name)
             {
+                if (_name != "__INITNEWGAME")
+                    return;
+
                 Instance.OnGameSaveLoadCompleted?.Invoke();
             }
         }

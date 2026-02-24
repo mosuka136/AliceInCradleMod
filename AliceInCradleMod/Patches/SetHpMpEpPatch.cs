@@ -18,12 +18,23 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                ConfigManager.SetPlayerHp.Value = -1;
-                ConfigManager.SetPlayerMp.Value = -1;
-                ConfigManager.SetPlayerEp.Value = -1;
+                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                {
+                    if (ConfigManager.EnablePreloadPlayerHp.Value)
+                        SetHp(ConfigManager.SetPlayerHp.Value);
 
-                ConfigManager.SetPlayerMaxHp.Value = -1;
-                ConfigManager.SetPlayerMaxMp.Value = -1;
+                    if (ConfigManager.EnablePreloadPlayerMp.Value)
+                        SetMp(ConfigManager.SetPlayerMp.Value);
+
+                    if (ConfigManager.EnablePreloadPlayerEp.Value)
+                        SetEp(ConfigManager.SetPlayerEp.Value);
+
+                    if (ConfigManager.EnablePreloadPlayerMaxHp.Value)
+                        SetMaxHp(ConfigManager.SetPlayerMaxHp.Value);
+
+                    if (ConfigManager.EnablePreloadPlayerMaxMp.Value)
+                        SetMaxMp(ConfigManager.SetPlayerMaxMp.Value);
+                };
 
                 ConfigManager.SetPlayerHp.SettingChanged += (s, e) =>
                 {
@@ -102,7 +113,7 @@ namespace BetterExperience.Patches
                     return;
 
                 prTraverse.Field("ep").SetValue(ep);
-                pr.EpCon.fineCounter();
+                pr.EpCon.fineCounter(); // 刷新EP显示
             }
 
             public static void SetMaxHp(int maxHp)

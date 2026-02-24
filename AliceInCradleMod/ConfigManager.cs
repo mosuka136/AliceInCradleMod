@@ -37,6 +37,14 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableHolyBurstFaint { get; private set; }
         public static ConfigEntry<bool> EnableMpBreak { get; private set; }
         public static ConfigEntry<bool> EnablePreloadBackpackCapacity { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadPlayerHp { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadPlayerMp { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadPlayerEp { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadPlayerMaxHp { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadPlayerMaxMp { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadPlayerMaxSatiety { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadOverChargeSlotCount { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadEnhancerSlotCount { get; private set; }
         public static ConfigEntry<int> SetBackpackCapacity { get; private set; }
         public static ConfigEntry<int> SetPlayerHp { get; private set; }
         public static ConfigEntry<int> SetPlayerMp { get; private set; }
@@ -282,60 +290,132 @@ namespace BetterExperience
                 "using the configured value to override the original backpack capacity.\n" +
                 "启用预加载背包容量。开启后，背包容量将在存档读取后自动设置一次，使用设置值覆盖原始的背包容量。"
                 );
+            EnablePreloadPlayerHp = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnablePreloadPlayerHp),
+                false,
+                "Enable preload player HP. When enabled, the player HP will be automatically set once after loading a save, " +
+                "using the configured value to override the original player HP.\n" +
+                "启用预加载玩家 HP。开启后，玩家 HP 将在存档读取后自动设置一次，使用设置值覆盖原始的玩家 HP。"
+                );
+            EnablePreloadPlayerMp = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnablePreloadPlayerMp),
+                false,
+                "Enable preload player MP. When enabled, the player MP will be automatically set once after loading a save, " +
+                "using the configured value to override the original player MP.\n" +
+                "启用预加载玩家 MP。开启后，玩家 MP 将在存档读取后自动设置一次，使用设置值覆盖原始的玩家 MP。"
+                );
+            EnablePreloadPlayerEp = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnablePreloadPlayerEp),
+                false,
+                "Enable preload player EP. When enabled, the player EP will be automatically set once after loading a save, " +
+                "using the configured value to override the original player EP.\n" +
+                "启用预加载玩家 EP。开启后，玩家 EP 将在存档读取后自动设置一次，使用设置值覆盖原始的玩家 EP。"
+                );
+            EnablePreloadPlayerMaxHp = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnablePreloadPlayerMaxHp),
+                false,
+                "Enable preload player max HP. When enabled, the player max HP will be automatically set once after loading a save, " +
+                "using the configured value to override the original player max HP.\n" +
+                "启用预加载玩家最大 HP。开启后，玩家最大 HP 将在存档读取后自动设置一次，使用设置值覆盖原始的玩家最大 HP。"
+                );
+            EnablePreloadPlayerMaxMp = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnablePreloadPlayerMaxMp),
+                false,
+                "Enable preload player max MP. When enabled, the player max MP will be automatically set once after loading a save, " +
+                "using the configured value to override the original player max MP.\n" +
+                "启用预加载玩家最大 MP。开启后，玩家最大 MP 将在存档读取后自动设置一次，使用设置值覆盖原始的玩家最大 MP。"
+                );
+            EnablePreloadPlayerMaxSatiety = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnablePreloadPlayerMaxSatiety),
+                false,
+                "Enable preload player max satiety. When enabled, the player max satiety will be automatically set once after loading a save, " +
+                "using the configured value to override the original player max satiety.\n" +
+                "启用预加载玩家最大饱食度。开启后，玩家最大饱食度将在存档读取后自动设置一次，使用设置值覆盖原始的玩家最大饱食度。"
+                );
+            EnablePreloadOverChargeSlotCount = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnablePreloadOverChargeSlotCount),
+                false,
+                "Enable preload over charge slot count. When enabled, the over charge slot count will be automatically set once after loading a save, " +
+                "using the configured value to override the original over charge slot count.\n" +
+                "启用预加载过充插槽数量。开启后，过充插槽数量将在存档读取后自动设置一次，使用设置值覆盖原始的过充插槽数量。"
+                );
+            EnablePreloadEnhancerSlotCount = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnablePreloadEnhancerSlotCount),
+                false,
+                "Enable preload enhancer slot count. When enabled, the enhancer slot count will be automatically set once after loading a save, " +
+                "using the configured value to override the original enhancer slot count.\n" +
+                "启用预加载强化插槽数量。开启后，强化插槽数量将在存档读取后自动设置一次，使用设置值覆盖原始的强化插槽数量。"
+                );
             SetBackpackCapacity = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetBackpackCapacity),
                 -1,
                 "Set backpack capacity. It will override the original backpack capacity. Set to -1 to keep the capacity at its current value.\n" +
-                "设置背包容量。将覆盖原始的背包容量。设为 -1 容量维持为当前值。"
+                "设置背包容量。将覆盖原始的背包容量。设为 -1 可保持为当前值。"
                 );
             SetPlayerHp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerHp),
                 -1,
-                "Set player HP.\n设置玩家 HP。"
+                "Set player HP. It will override the original player HP. Set to -1 to keep the HP at its current value.\n" +
+                "设置玩家 HP。将覆盖原始的玩家 HP。设为 -1 可保持为当前值。"
                 );
             SetPlayerMp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerMp),
                 -1,
-                "Set player MP.\n设置玩家 MP。"
+                "Set player MP. It will override the original player MP. Set to -1 to keep the MP at its current value.\n" +
+                "设置玩家 MP。将覆盖原始的玩家 MP。设为 -1 可保持为当前值。"
                 );
             SetPlayerEp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerEp),
                 -1,
-                "Set player EP.\n设置玩家 EP。"
+                "Set player EP. It will override the original player EP. Set to -1 to keep the EP at its current value.\n" +
+                "设置玩家 EP。将覆盖原始的玩家 EP。设为 -1 可保持为当前值。"
                 );
             SetPlayerMaxHp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerMaxHp),
                 -1,
-                "Set player max HP.\n设置玩家最大 HP。"
+                "Set player max HP. It will override the original player max HP. Set to -1 to keep the max HP at its current value.\n" +
+                "设置玩家最大 HP。将覆盖原始的玩家最大 HP。设为 -1 可保持为当前值。"
                 );
             SetPlayerMaxMp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerMaxMp),
                 -1,
-                "Set player max MP.\n设置玩家最大 MP。"
+                "Set player max MP. It will override the original player max MP. Set to -1 to keep the max MP at its current value.\n" +
+                "设置玩家最大 MP。将覆盖原始的玩家最大 MP。设为 -1 可保持为当前值。"
                 );
             SetPlayerMaxSatiety = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerMaxSatiety),
                 -1,
-                "Set player max satiety.\n设置玩家最大饱食度。"
+                "Set player max satiety. It will override the original player max satiety. Set to -1 to keep the max satiety at its current value.\n" +
+                "设置玩家最大饱食度。将覆盖原始的玩家最大饱食度。设为 -1 可保持为当前值。"
                 );
             SetOverChargeSlotCount = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetOverChargeSlotCount),
                 -1,
-                "Set over charge slot count.\n设置过充插槽数量。"
+                "Set over charge slot count. It will override the original over charge slot count. Set to -1 to keep the over charge slot count at its current value.\n" +
+                "设置过充插槽数量。将覆盖原始的过充插槽数量。设为 -1 可保持为当前值。"
                 );
             SetEnhancerSlotCount = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetEnhancerSlotCount),
                 -1,
-                "Set enhancer slot count.\n设置强化插槽数量。"
+                "Set enhancer slot count. It will override the original enhancer slot count. Set to -1 to keep the enhancer slot count at its current value.\n" +
+                "设置强化插槽数量。将覆盖原始的强化插槽数量。设为 -1 可保持为当前值。"
                 );
 
             EnableWormTrap = Config.Bind(

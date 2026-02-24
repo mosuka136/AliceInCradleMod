@@ -10,6 +10,7 @@ namespace BetterExperience.Patches
         private class SetEnhancerSlotCountPatch
         {
             private static bool _initialized = false;
+            private static bool _isChanging = false;
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
@@ -18,7 +19,11 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                ConfigManager.SetEnhancerSlotCount.Value = -1;
+                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                {
+                    if (ConfigManager.EnablePreloadEnhancerSlotCount.Value)
+                        SetEnhancerSlotCount();
+                };
 
                 ConfigManager.SetEnhancerSlotCount.SettingChanged += (s, e) =>
                 {
@@ -49,7 +54,10 @@ namespace BetterExperience.Patches
                 if (se == null)
                     return;
 
+                _isChanging = true;
+                // ENHA.fineEnhancerStorage方法会调用ItemStorage.getCount方法
                 ENHA.fineEnhancerStorage(sp, se);
+                _isChanging = false;
             }
 
             [HarmonyPrefix]
@@ -59,7 +67,7 @@ namespace BetterExperience.Patches
                 if (NelItem.GetById("enhancer_slot") != Data)
                     return true;
 
-                if (ConfigManager.SetEnhancerSlotCount.Value <= 0)
+                if (!_isChanging || ConfigManager.SetEnhancerSlotCount.Value < 0)
                     return true;
 
                 __result = ConfigManager.SetEnhancerSlotCount.Value;

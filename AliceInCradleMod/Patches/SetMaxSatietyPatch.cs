@@ -9,6 +9,7 @@ namespace BetterExperience.Patches
         private class SetMaxSatietyPatch
         {
             private static bool _initialized = false;
+            private static int _maxSatiety = -1;
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
@@ -17,7 +18,16 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                ConfigManager.SetPlayerMaxSatiety.Value = -1;
+                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                {
+                    if (ConfigManager.EnablePreloadPlayerMaxSatiety.Value)
+                        SetMaxSatiety(ConfigManager.SetPlayerMaxSatiety.Value);
+                    else
+                    {
+                        if (_maxSatiety > 0)
+                            SetMaxSatiety(_maxSatiety);
+                    }
+                };
 
                 ConfigManager.SetPlayerMaxSatiety.SettingChanged += (s, e) =>
                 {
@@ -32,12 +42,15 @@ namespace BetterExperience.Patches
                 if (maxSatiety <= 0)
                     return;
 
-                var pr = UnityEngine.Object.FindObjectOfType<PR>();
+                var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
                 if (pr == null)
                     return;
 
                 if (pr.MyStomach == null)
                     return;
+
+                if (_maxSatiety < 0)
+                    _maxSatiety = pr.MyStomach.cost_max;
 
                 pr.MyStomach.cost_max = maxSatiety;
             }
