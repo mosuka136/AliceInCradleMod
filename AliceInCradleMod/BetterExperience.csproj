@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029c\BepInEx\plugins\BetterExperience\</OutputPath>
+    <OutputPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029d\BepInEx\plugins\BetterExperience\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BetterExperience.cs" />
+    <Compile Include="GameAttributePatchManager.cs" />
     <Compile Include="Patches\DisableDrowning.cs" />
     <Compile Include="FrameUpdateBooster.cs" />
     <Compile Include="Patches\InvalidateWormTrapPatch.cs" />
@@ -93,7 +94,7 @@
     <Compile Include="OnSiteProtectionManager.cs" />
     <Compile Include="Patches\BetterSaveSitePatch.cs" />
     <Compile Include="Patches\BetterReelEffectPatch.cs" />
-    <Compile Include="Patches\BiggerBackpackPatch.cs" />
+    <Compile Include="Patches\SetBackpackCapacityPatch.cs" />
     <Compile Include="ConfigManager.cs" />
     <Compile Include="Patches\FlushStorePatch.cs" />
     <Compile Include="HLog.cs" />

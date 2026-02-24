@@ -20,14 +20,23 @@ namespace BetterExperience
 
         public event Action OnSiteProtectionActivated;
 
+        public event Action OnSiteProtectionCompleted;
+
         [HarmonyPatch]
         private class RecoveryGameSaveData
         {
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(COOK), "createBinary")]
+            [HarmonyPatch(typeof(COOK), nameof(COOK.createBinary))]
             private static void SaveGamePrefix()
             {
-                OnSiteProtectionManager.Instance.OnSiteProtectionActivated?.Invoke();
+                Instance.OnSiteProtectionActivated?.Invoke();
+            }
+
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(SVD), nameof(SVD.saveBinary))]
+            private static void SaveGamePostfix()
+            {
+                Instance.OnSiteProtectionCompleted?.Invoke();
             }
         }
     }

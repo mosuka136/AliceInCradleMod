@@ -12,7 +12,6 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableBetterExperience { get; private set; }
         public static ConfigEntry<bool> EnableHarmonyLog { get; private set; }
         public static ConfigEntry<bool> EnableMosaic { get; private set; }
-        public static ConfigEntry<bool> EnableBiggerBackpack { get; private set; }
         public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
         public static ConfigEntry<bool> EnableReplaceTexture { get; private set; }
         public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
@@ -37,6 +36,8 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableInfiniteShield { get; private set; }
         public static ConfigEntry<bool> EnableHolyBurstFaint { get; private set; }
         public static ConfigEntry<bool> EnableMpBreak { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadBackpackCapacity { get; private set; }
+        public static ConfigEntry<int> SetBackpackCapacity { get; private set; }
         public static ConfigEntry<int> SetPlayerHp { get; private set; }
         public static ConfigEntry<int> SetPlayerMp { get; private set; }
         public static ConfigEntry<int> SetPlayerEp { get; private set; }
@@ -71,7 +72,6 @@ namespace BetterExperience
         private const string SectionReel = "Reel";
         private const string SectionPlayerStatus = "PlayerStatus";
         private const string SectionMapTrap = "MapTrap";
-        private const string SectionBackpack = "Backpack";
         private const string SectionCurrency = "Currency";
         private const string SectionTexture = "Texture";
 
@@ -98,12 +98,6 @@ namespace BetterExperience
                 nameof(EnableMosaic),
                 false,
                 "Enable mosaic effect.\n启用马赛克效果。"
-                );
-            EnableBiggerBackpack = Config.Bind(
-                SectionGeneral,
-                nameof(EnableBiggerBackpack),
-                true,
-                "Enable bigger backpack.\n启用更大的背包容量。"
                 );
             EnableFlushAllStore = Config.Bind(
                 SectionGeneral,
@@ -282,6 +276,21 @@ namespace BetterExperience
                 "Enable MP break. When disabled, the player's MP slot will not break.\n" +
                 "启用 MP 破裂。关闭后，玩家 MP 槽将不会破裂。"
                 );
+            EnablePreloadBackpackCapacity = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnablePreloadBackpackCapacity),
+                false,
+                "Enable preload backpack capacity. When enabled, the backpack capacity will be automatically set once after loading a save, " +
+                "using the configured value to override the original backpack capacity.\n" +
+                "启用预加载背包容量。开启后，背包容量将在存档读取后自动设置一次，使用设置值覆盖原始的背包容量。"
+                );
+            SetBackpackCapacity = Config.Bind(
+                SectionPlayerStatus,
+                nameof(SetBackpackCapacity),
+                -1,
+                "Set backpack capacity. It will override the original backpack capacity. Set to -1 to keep the capacity at its current value.\n" +
+                "设置背包容量。将覆盖原始的背包容量。设为 -1 容量维持为当前值。"
+                );
             SetPlayerHp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(SetPlayerHp),
@@ -349,13 +358,6 @@ namespace BetterExperience
                 nameof(EnableDrowning),
                 true,
                 "Enable drowning. Disabling will prevent drowning damage.\n启用溺水。禁用后将不再受到溺水伤害。"
-                );
-
-            BackpackCapacity = Config.Bind(
-                SectionBackpack,
-                nameof(BackpackCapacity),
-                500,
-                "The backpack capacity. Default is 500.\n背包容量。默认值为 500。"
                 );
 
             SetCurrencyGoldCount = Config.Bind(
