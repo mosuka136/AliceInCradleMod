@@ -403,22 +403,22 @@ namespace BetterExperience
                 SectionCurrency,
                 nameof(LockCurrencyGoldCount),
                 -1L,
-                "The gold count to lock. It will be used when lock gold count is enabled. Set to -1 to maintain the original count.\n" +
-                "要锁定的金币数量。在启用金币数量锁定时生效。设为 -1 可保持原始数量。"
+                "The gold count to lock. It will be used when lock gold count is enabled. Set to -1 to maintain the current count.\n" +
+                "要锁定的金币数量。在启用金币数量锁定时生效。设为 -1 可保持为当前数量。"
                 );
             LockCurrencyCraftsCount = Config.Bind(
                 SectionCurrency,
                 nameof(LockCurrencyCraftsCount),
                 -1L,
-                "The crafts count to lock. It will be used when lock crafts count is enabled. Set to -1 to maintain the original count.\n" +
-                "要锁定的兑锭数量。在启用兑锭数量锁定时生效。设为 -1 可保持原始数量。"
+                "The crafts count to lock. It will be used when lock crafts count is enabled. Set to -1 to maintain the current count.\n" +
+                "要锁定的兑锭数量。在启用兑锭数量锁定时生效。设为 -1 可保持为当前数量。"
                 );
             LockCurrencyJuiceCount = Config.Bind(
                 SectionCurrency,
                 nameof(LockCurrencyJuiceCount),
                 -1L,
-                "The juice count to lock. It will be used when lock juice count is enabled. Set to -1 to maintain the original count.\n" +
-                "要锁定的精萃数量。在启用精萃数量锁定时生效。设为 -1 可保持原始数量。"
+                "The juice count to lock. It will be used when lock juice count is enabled. Set to -1 to maintain the current count.\n" +
+                "要锁定的精萃数量。在启用精萃数量锁定时生效。设为 -1 可保持为当前数量。"
                 );
 
             EnableSensitivities = Config.Bind(
