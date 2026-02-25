@@ -1,3 +1,4 @@
+using BetterExperience.BepConfigManager;
 using HarmonyLib;
 using nel;
 using nel.gm;

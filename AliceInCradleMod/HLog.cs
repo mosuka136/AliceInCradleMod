@@ -1,5 +1,6 @@
 using BepInEx.Logging;
 using BetterExperience;
+using BetterExperience.BepConfigManager;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;

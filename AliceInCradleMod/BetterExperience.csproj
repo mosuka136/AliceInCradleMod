@@ -86,6 +86,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BetterExperience.cs" />
+    <Compile Include="BepConfigManager\ConfigManagerCane.cs" />
+    <Compile Include="BepConfigManager\ConfigManagerCurrency.cs" />
+    <Compile Include="BepConfigManager\ConfigManagerHotkey.cs" />
+    <Compile Include="BepConfigManager\ConfigManagerLog.cs" />
+    <Compile Include="BepConfigManager\ConfigManagerMapTrap.cs" />
+    <Compile Include="BepConfigManager\ConfigManagerPlayerStatus.cs" />
+    <Compile Include="BepConfigManager\ConfigManagerReel.cs" />
+    <Compile Include="BepConfigManager\ConfigManagerTexture.cs" />
     <Compile Include="GameAttributePatchManager.cs" />
     <Compile Include="Patches\DisableDrowning.cs" />
     <Compile Include="FrameUpdateBooster.cs" />
@@ -96,7 +104,7 @@
     <Compile Include="Patches\BetterSaveSitePatch.cs" />
     <Compile Include="Patches\BetterReelEffectPatch.cs" />
     <Compile Include="Patches\SetBackpackCapacityPatch.cs" />
-    <Compile Include="ConfigManager.cs" />
+    <Compile Include="BepConfigManager\ConfigManager.cs" />
     <Compile Include="Patches\FlushStorePatch.cs" />
     <Compile Include="HLog.cs" />
     <Compile Include="HotkeyInputSystem.cs" />

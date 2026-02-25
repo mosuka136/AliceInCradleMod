@@ -1,4 +1,5 @@
 using BepInEx;
+using BetterExperience.BepConfigManager;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace BetterExperience
 
             gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-            ConfigManager.Initialization();
+            ConfigManager.Initialize();
 
             if (ConfigManager.EnableBetterExperience.Value)
                 Logger.LogWarning($"{nameof(BetterExperience)} Enabled!");

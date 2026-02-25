@@ -1,3 +1,4 @@
+using BetterExperience.BepConfigManager;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using System;

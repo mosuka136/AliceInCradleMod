@@ -1,4 +1,5 @@
 using BepInEx;
+using BetterExperience.BepConfigManager;
 using System;
 using System.Collections.Generic;
 using System.IO;
