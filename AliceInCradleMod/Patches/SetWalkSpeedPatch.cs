@@ -3,7 +3,7 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class Patches
+    internal partial class HPatches
     {
         [HarmonyPatch]
         private class SetWalkSpeedPatch
