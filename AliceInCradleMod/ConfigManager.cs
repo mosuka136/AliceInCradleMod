@@ -37,6 +37,33 @@ namespace BetterExperience
         public static ConfigEntry<bool> EnableInfiniteShield { get; private set; }
         public static ConfigEntry<bool> EnableHolyBurstFaint { get; private set; }
         public static ConfigEntry<bool> EnableMpBreak { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalities { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityMpReduce { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityBurstTired { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityClothesBroken { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityOverRunTired { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityShieldBreak { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalitySleep { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityBurned { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityFrozen { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityParalysis { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityConfuse { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityJamming { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityParasitised { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityShamed { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityShamedSplit { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityShamedWet { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityShamedEp { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalitySexercise { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityFrustrated { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityOrgasmAfter { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityEgged { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityLayingEgg { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityDoNotLayEgg { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityNearPee { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityDrunk { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityWebTrapped { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityStone { get; private set; }
         public static ConfigEntry<bool> EnablePreloadBackpackCapacity { get; private set; }
         public static ConfigEntry<bool> EnablePreloadPlayerHp { get; private set; }
         public static ConfigEntry<bool> EnablePreloadPlayerMp { get; private set; }
@@ -327,6 +354,169 @@ namespace BetterExperience
                 true,
                 "Enable MP break. When disabled, the player's MP slot will not break.\n" +
                 "启用 MP 破裂。关闭后，玩家 MP 槽将不会破裂。"
+                );
+            EnableImmuneAbnormalities = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalities),
+                false,
+                "Enable immune abnormalities. When enabled, players will be immune to all abnormalities. " +
+                "启用免疫异常状态。开启后，玩家将免疫所有异常状态。"
+                );
+            EnableImmuneAbnormalityMpReduce = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityMpReduce),
+                false,
+                "Immune abnormality: MP Reduce.\n免疫异常状态：枯竭。"
+                );
+            EnableImmuneAbnormalityBurstTired = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityBurstTired),
+                false,
+                "Immune abnormality: Burst Tired.\n免疫异常状态：晕厥。"
+                );
+            EnableImmuneAbnormalityClothesBroken = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityClothesBroken),
+                false,
+                "Immune abnormality: Clothes Broken.\n免疫异常状态：服装损坏。"
+                );
+            EnableImmuneAbnormalityOverRunTired = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityOverRunTired),
+                false,
+                "Immune abnormality: Tired.\n免疫异常状态：疲惫。"
+                );
+            EnableImmuneAbnormalityShieldBreak = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityShieldBreak),
+                false,
+                "Immune abnormality: Shield Break.\n免疫异常状态：破盾。"
+                );
+            EnableImmuneAbnormalitySleep = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalitySleep),
+                false,
+                "Immune abnormality: Sleep.\n免疫异常状态：睡眠。"
+                );
+            EnableImmuneAbnormalityBurned = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityBurned),
+                false,
+                "Immune abnormality: Burned.\n免疫异常状态：燃烧。"
+                );
+            EnableImmuneAbnormalityFrozen = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityFrozen),
+                false,
+                "Immune abnormality: Frozen.\n免疫异常状态：冻结。"
+                );
+            EnableImmuneAbnormalityParalysis = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityParalysis),
+                false,
+                "Immune abnormality: Paralysis.\n免疫异常状态：麻痹。"
+                );
+            EnableImmuneAbnormalityConfuse = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityConfuse),
+                false,
+                "Immune abnormality: Confuse.\n免疫异常状态：混乱。"
+                );
+            EnableImmuneAbnormalityJamming = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityJamming),
+                false,
+                "Immune abnormality: Jamming.\n免疫异常状态：杂念。"
+                );
+            EnableImmuneAbnormalityParasitised = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityParasitised),
+                false,
+                "Immune abnormality: Parasitised.\n免疫异常状态：植物寄生。"
+                );
+            EnableImmuneAbnormalityShamed = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityShamed),
+                false,
+                "Immune abnormality: Shamed.\n免疫异常状态：羞耻。"
+                );
+            EnableImmuneAbnormalityShamedSplit = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityShamedSplit),
+                false,
+                "Immune abnormality: Shamed Split.\n免疫异常状态：羞耻（魔力流失）。"
+                );
+            EnableImmuneAbnormalityShamedWet = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityShamedWet),
+                false,
+                "Immune abnormality: Shamed Wet.\n免疫异常状态：羞耻（濡湿）。"
+                );
+            EnableImmuneAbnormalityShamedEp = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityShamedEp),
+                false,
+                "Immune abnormality: Shamed EP.\n免疫异常状态：羞耻（兴奋）。"
+                );
+            EnableImmuneAbnormalitySexercise = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalitySexercise),
+                false,
+                "Immune abnormality: Sexercise.\n免疫异常状态：催淫。"
+                );
+            EnableImmuneAbnormalityFrustrated = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityFrustrated),
+                false,
+                "Immune abnormality: Frustrated.\n免疫异常状态：欲火中烧。"
+                );
+            EnableImmuneAbnormalityOrgasmAfter = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityOrgasmAfter),
+                false,
+                "Immune abnormality: Orgasm After.\n免疫异常状态：恍惚。"
+                );
+            EnableImmuneAbnormalityEgged = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityEgged),
+                false,
+                "Immune abnormality: Egged.\n免疫异常状态：怀卵。"
+                );
+            EnableImmuneAbnormalityLayingEgg = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityLayingEgg),
+                false,
+                "Immune abnormality: Laying Egg.\n免疫异常状态：产卵。"
+                );
+            EnableImmuneAbnormalityDoNotLayEgg = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityDoNotLayEgg),
+                false,
+                "Immune abnormality: Do Not Lay Egg.\n免疫异常状态：无法产卵。"
+                );
+            EnableImmuneAbnormalityNearPee = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityNearPee),
+                false,
+                "Immune abnormality: Near Pee.\n免疫异常状态：尿意。"
+                );
+            EnableImmuneAbnormalityDrunk = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityDrunk),
+                false,
+                "Immune abnormality: Drunk.\n免疫异常状态：晕乎乎。"
+                );
+            EnableImmuneAbnormalityWebTrapped = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityWebTrapped),
+                false,
+                "Immune abnormality: Web Trapped.\n免疫异常状态：黏糊糊。"
+                );
+            EnableImmuneAbnormalityStone = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityStone),
+                false,
+                "Immune abnormality: Stone.\n免疫异常状态：石化。"
                 );
             EnablePreloadBackpackCapacity = Config.Bind(
                 SectionPlayerStatus,

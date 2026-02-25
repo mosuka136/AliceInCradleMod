@@ -89,6 +89,7 @@
     <Compile Include="GameAttributePatchManager.cs" />
     <Compile Include="Patches\DisableDrowning.cs" />
     <Compile Include="FrameUpdateBooster.cs" />
+    <Compile Include="Patches\ImmuneAbnormalitiesPatch.cs" />
     <Compile Include="Patches\InvalidateWormTrapPatch.cs" />
     <Compile Include="Patches\NoEpDamagePatch.cs" />
     <Compile Include="OnSiteProtectionManager.cs" />
