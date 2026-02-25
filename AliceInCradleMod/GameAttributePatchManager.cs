@@ -4,7 +4,7 @@ using System;
 
 namespace BetterExperience
 {
-    internal class GameAttributePatchManager
+    internal sealed class GameAttributePatchManager
     {
         private GameAttributePatchManager()
         {

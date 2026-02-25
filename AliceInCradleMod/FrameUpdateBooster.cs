@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace BetterExperience
 {
-    internal class FrameUpdateBooster
+    internal sealed class FrameUpdateBooster
     {
         private FrameUpdateBooster()
         {

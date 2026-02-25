@@ -4,7 +4,7 @@ using System;
 
 namespace BetterExperience
 {
-    internal class OnSiteProtectionManager
+    internal sealed class OnSiteProtectionManager
     {
         public static OnSiteProtectionManager Instance { get; private set; }
 

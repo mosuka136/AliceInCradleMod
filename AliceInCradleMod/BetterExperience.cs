@@ -21,7 +21,7 @@ namespace BetterExperience
     }
 
     [BepInPlugin(PatchInfo.BepInPluginId, nameof(BetterExperience), PatchInfo.BepInPluginVersion)]
-    internal class BetterExperience : BaseUnityPlugin
+    internal sealed class BetterExperience : BaseUnityPlugin
     {
         private HotkeyInputSystem _reloadConfigHotkey;
 

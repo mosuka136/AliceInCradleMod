@@ -2,7 +2,7 @@ using BepInEx.Configuration;
 
 namespace BetterExperience
 {
-    internal class ConfigManager
+    internal sealed class ConfigManager
     {
         private ConfigManager()
         {
