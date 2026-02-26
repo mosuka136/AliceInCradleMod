@@ -15,6 +15,7 @@ namespace BetterExperience.BepConfigManager
         public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableBetterFishing { get; private set; }
+        public static ConfigEntry<bool> EnableAccessWarehouseAnywhere { get; private set; }
         public static ConfigEntry<float> SetLootDropRatio { get; private set; }
 
         private const string SectionGeneral = "General";
@@ -63,6 +64,13 @@ namespace BetterExperience.BepConfigManager
                 false,
                 "Enable better fishing. It will allow players to catch fish more easily.\n" +
                 "启用更好的钓鱼。它将允许玩家更容易地钓到鱼。"
+                );
+            EnableAccessWarehouseAnywhere = Config.Bind(
+                SectionGeneral,
+                nameof(EnableAccessWarehouseAnywhere),
+                false,
+                "Enable access warehouse anywhere. It will allow players to access warehouse inventory anywhere. This will replace the original Chest Reels.\n" +
+                "启用随时访问仓库。它将允许玩家在任何地方访问仓库库存。这将会取代原来的宝箱效果转轮。"
                 );
             SetLootDropRatio = Config.Bind(
                 SectionGeneral,

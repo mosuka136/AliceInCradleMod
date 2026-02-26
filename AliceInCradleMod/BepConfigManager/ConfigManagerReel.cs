@@ -17,7 +17,7 @@ namespace BetterExperience.BepConfigManager
             EnableBetterReelEffect = Config.Bind(
                 SectionReel,
                 nameof(EnableBetterReelEffect),
-                true,
+                false,
                 "Enable better reel effect.\n启用更好的转轮效果。"
                 );
             EnableRemoveLimitInTreasureChests = Config.Bind(

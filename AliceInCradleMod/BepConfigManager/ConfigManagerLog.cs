@@ -41,7 +41,7 @@ namespace BetterExperience.BepConfigManager
                 SectionLog,
                 nameof(HarmonyLogLevel),
                 HLog.LogLevel.Warning,
-                "The log level of Harmony log. Default is Info.\nHarmony 日志等级。默认值为 Info。"
+                "The log level of Harmony log. Default is Warning.\nHarmony 日志等级。默认值为 Warning。"
                 );
             BepInExLogLevel = Config.Bind(
                 SectionLog,

@@ -106,6 +106,7 @@
     <Compile Include="Patches\BetterReelEffectPatch.cs" />
     <Compile Include="Patches\RemoveFallingToGroundPatch.cs" />
     <Compile Include="Patches\RemovePressDamagePatch.cs" />
+    <Compile Include="Patches\RemoveWarehouseRegionRestrictionsPatch.cs" />
     <Compile Include="Patches\SetBackpackCapacityPatch.cs" />
     <Compile Include="BepConfigManager\ConfigManager.cs" />
     <Compile Include="Patches\FlushStorePatch.cs" />
