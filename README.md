@@ -1,5 +1,7 @@
 # BetterExperience/更好的体验
 
+[![GitHub all releases](https://img.shields.io/github/downloads/user/repo/total)](https://github.com/user/repo/releases) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/user/repo)](https://github.com/user/repo/releases) ![platform](https://img.shields.io/badge/platform-Windows-lightgrey)
+
 ## 总体介绍
 
 `BetterExperience/更好的体验` 是一个基于 `BepInEx` 的 `Alice In Cradle` Mod（模组）。
