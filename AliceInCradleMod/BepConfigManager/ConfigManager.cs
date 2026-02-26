@@ -31,7 +31,8 @@ namespace BetterExperience.BepConfigManager
                 SectionGeneral,
                 nameof(EnableBetterExperience),
                 true,
-                "Enable Better Experience mod.\n启用 Better Experience 模组。"
+                "Enable Better Experience mod, must be set before launching the game.\n" +
+                "启用更好的体验模组,必须在游戏启动前设置。"
                 );
             EnableFlushAllStore = Config.Bind(
                 SectionGeneral,
