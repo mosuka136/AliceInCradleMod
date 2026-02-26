@@ -10,12 +10,16 @@ namespace BetterExperience.Patches
         [HarmonyPatch]
         private class SetBottleHolderCountPatch
         {
+            private static bool _initialised = false;
             private static int _originalBottleHolderCount = -1;
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
             private static void Initialize()
             {
+                if (_initialised)
+                    return;
+
                 GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
                 {
                     if (ConfigManager.EnablePreloadBottleHolderCount.Value)
@@ -33,6 +37,8 @@ namespace BetterExperience.Patches
                 {
                     SetBottleHolderCount(ConfigManager.SetBottleHolderCount.Value);
                 };
+
+                _initialised = true;
             }
 
             public static void SetBottleHolderCount(int count)

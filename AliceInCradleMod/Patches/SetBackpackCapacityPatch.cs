@@ -11,6 +11,7 @@ namespace BetterExperience.Patches
         private class SetBackpackCapacityPatch
         {
             private static bool _initialised = false;
+            private static int _currentCapacity = -1;
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
@@ -28,7 +29,7 @@ namespace BetterExperience.Patches
                 OnSiteProtectionManager.Instance.OnSiteProtectionActivated += RecoverBackpackCapacity;
                 OnSiteProtectionManager.Instance.OnSiteProtectionCompleted += () =>
                 {
-                    SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value);
+                    SetBackpackCapacity(_currentCapacity);
                 };
 
                 ConfigManager.SetBackpackCapacity.SettingChanged += (s, e) =>
@@ -48,7 +49,7 @@ namespace BetterExperience.Patches
                 if (imng == null)
                     return;
 
-                var inventory = Traverse.Create(imng).Field("StInventory").GetValue<ItemStorage>();
+                var inventory = imng.getInventory();
                 if (inventory == null)
                     return;
 
@@ -77,7 +78,7 @@ namespace BetterExperience.Patches
                 if (imng == null)
                     return;
 
-                var inventory = Traverse.Create(imng).Field("StInventory").GetValue<ItemStorage>();
+                var inventory = imng.getInventory();
                 if (inventory == null)
                     return;
 
@@ -87,6 +88,8 @@ namespace BetterExperience.Patches
 
                 var count = imng.getInventoryPrecious().getCount(item);
                 count = Math.Max(count, 0);
+
+                _currentCapacity = inventory.row_max;
                 inventory.row_max = count + 12;
             }
         }
