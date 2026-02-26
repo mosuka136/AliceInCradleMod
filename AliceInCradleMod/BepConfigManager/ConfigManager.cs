@@ -14,6 +14,7 @@ namespace BetterExperience.BepConfigManager
         public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
+        public static ConfigEntry<bool> EnableBetterFishing { get; private set; }
         public static ConfigEntry<float> SetLootDropRatio { get; private set; }
 
         private const string SectionGeneral = "General";
@@ -55,6 +56,13 @@ namespace BetterExperience.BepConfigManager
                 false,
                 "Enable the restriction that certain options in the chair menu are unavailable for players under specific circumstances\n" +
                 "启用移除玩家在某些情况下椅子菜单中的某些选项不可用的限制。"
+                );
+            EnableBetterFishing = Config.Bind(
+                SectionGeneral,
+                nameof(EnableBetterFishing),
+                false,
+                "Enable better fishing. It will allow players to catch fish more easily.\n" +
+                "启用更好的钓鱼。它将允许玩家更容易地钓到鱼。"
                 );
             SetLootDropRatio = Config.Bind(
                 SectionGeneral,

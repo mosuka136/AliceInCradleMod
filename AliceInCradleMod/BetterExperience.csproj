@@ -95,6 +95,7 @@
     <Compile Include="BepConfigManager\ConfigManagerReel.cs" />
     <Compile Include="BepConfigManager\ConfigManagerTexture.cs" />
     <Compile Include="GameAttributePatchManager.cs" />
+    <Compile Include="Patches\BetterFishingPatch.cs" />
     <Compile Include="Patches\DisableDrowning.cs" />
     <Compile Include="FrameUpdateBooster.cs" />
     <Compile Include="Patches\ImmuneAbnormalitiesPatch.cs" />
