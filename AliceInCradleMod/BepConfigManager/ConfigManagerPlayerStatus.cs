@@ -11,6 +11,7 @@ namespace BetterExperience.BepConfigManager
         public static ConfigEntry<bool> EnableInfiniteShield { get; private set; }
         public static ConfigEntry<bool> EnableHolyBurstFaint { get; private set; }
         public static ConfigEntry<bool> EnableMpBreak { get; private set; }
+        public static ConfigEntry<bool> EnablePressDamage { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalities { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityMpReduce { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityBurstTired { get; private set; }
@@ -108,6 +109,13 @@ namespace BetterExperience.BepConfigManager
                 true,
                 "Enable MP break. When disabled, the player's MP slot will not break.\n" +
                 "启用 MP 破裂。关闭后，玩家 MP 槽将不会破裂。"
+                );
+            EnablePressDamage = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnablePressDamage),
+                true,
+                "Enable falling to ground. When disabled, players will not fall to the ground.\n" +
+                "启用挤压伤害。关闭后，玩家将不会受到挤压伤害。"
                 );
             EnableImmuneAbnormalities = Config.Bind(
                 SectionPlayerStatus,

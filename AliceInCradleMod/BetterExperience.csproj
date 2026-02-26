@@ -103,6 +103,7 @@
     <Compile Include="OnSiteProtectionManager.cs" />
     <Compile Include="Patches\BetterSaveSitePatch.cs" />
     <Compile Include="Patches\BetterReelEffectPatch.cs" />
+    <Compile Include="Patches\RemovePressDamagePatch.cs" />
     <Compile Include="Patches\SetBackpackCapacityPatch.cs" />
     <Compile Include="BepConfigManager\ConfigManager.cs" />
     <Compile Include="Patches\FlushStorePatch.cs" />
