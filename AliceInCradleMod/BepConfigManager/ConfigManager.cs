@@ -14,6 +14,7 @@ namespace BetterExperience.BepConfigManager
         public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
+        public static ConfigEntry<float> SetLootDropRatio { get; private set; }
 
         private const string SectionGeneral = "General";
 
@@ -54,6 +55,13 @@ namespace BetterExperience.BepConfigManager
                 false,
                 "Enable the restriction that certain options in the chair menu are unavailable for players under specific circumstances\n" +
                 "启用移除玩家在某些情况下椅子菜单中的某些选项不可用的限制。"
+                );
+            SetLootDropRatio = Config.Bind(
+                SectionGeneral,
+                nameof(SetLootDropRatio),
+                -1f,
+                "Set loot drop ratio. Default value is -1, which means no change. Set it to 0 to disable loot drop. Set it to n(n >= 1) to multiply loot drop by n.\n" +
+                "设置战利品掉落倍率。默认值为 -1，表示不改变。设置为 0 禁用掉落，设置为 n(n >= 1) 为 n 倍掉落。"
                 );
 
             InitializePlayerStatus();
