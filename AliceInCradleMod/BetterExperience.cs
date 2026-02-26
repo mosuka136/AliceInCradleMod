@@ -138,7 +138,6 @@ namespace BetterExperience
             }
         }
 
-
         private void LogPatchesInfo(Harmony harmony)
         {
             string id = harmony.Id;
