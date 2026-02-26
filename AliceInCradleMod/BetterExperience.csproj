@@ -126,6 +126,7 @@
     <Compile Include="Patches\SetOverChargeSlotCountPatch.cs" />
     <Compile Include="Patches\SetReelSpeedPatch.cs" />
     <Compile Include="Patches\SetWalkSpeedPatch.cs" />
+    <Compile Include="Patches\SwitchDebugPatch.cs" />
     <Compile Include="Patches\UnableBeingAttackedPatch.cs" />
     <Compile Include="Patches\NoMpDamagePatch.cs" />
     <Compile Include="Patches\HPatches.cs" />

@@ -16,6 +16,7 @@ namespace BetterExperience.BepConfigManager
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableBetterFishing { get; private set; }
         public static ConfigEntry<bool> EnableAccessWarehouseAnywhere { get; private set; }
+        public static ConfigEntry<bool> EnableDebugMode { get; private set; }
         public static ConfigEntry<float> SetLootDropRatio { get; private set; }
 
         private const string SectionGeneral = "General";
@@ -71,6 +72,12 @@ namespace BetterExperience.BepConfigManager
                 false,
                 "Enable access warehouse anywhere. It will allow players to access warehouse inventory anywhere. This will replace the original Chest Reels.\n" +
                 "启用随时访问仓库。它将允许玩家在任何地方访问仓库库存。这将会取代原来的宝箱效果转轮。"
+                );
+            EnableDebugMode = Config.Bind(
+                SectionGeneral,
+                nameof(EnableDebugMode),
+                false,
+                "Enable debug mode, must be set before launching the game. \n启用调试模式,必须在游戏启动前设置。"
                 );
             SetLootDropRatio = Config.Bind(
                 SectionGeneral,
