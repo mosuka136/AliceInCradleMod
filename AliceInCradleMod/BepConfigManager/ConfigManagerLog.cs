@@ -5,6 +5,7 @@ namespace BetterExperience.BepConfigManager
     internal sealed partial class ConfigManager
     {
         private static ConfigEntry<string> LogReadme { get; set; }
+        public static ConfigEntry<bool> EnableHarmonyLog { get; private set; }
         public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
         public static ConfigEntry<HLog.LogLevel> BepInExLogLevel { get; private set; }
 
@@ -28,6 +29,13 @@ namespace BetterExperience.BepConfigManager
                 "若日志等级为 Info，将记录所有消息。\n" +
                 "若日志等级为 Warning，仅记录警告和错误消息。\n" +
                 "若日志等级为 Error，仅记录错误消息。"
+                );
+            EnableHarmonyLog = Config.Bind(
+                SectionLog,
+                nameof(EnableHarmonyLog),
+                true,
+                "Enable Harmony log. It will generate a log file in BetterExperience\\logs folder.\n" +
+                "启用 Harmony 日志。将在 BetterExperience\\logs 文件夹中生成日志文件。"
                 );
             HarmonyLogLevel = Config.Bind(
                 SectionLog,
