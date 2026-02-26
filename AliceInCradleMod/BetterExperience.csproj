@@ -118,6 +118,7 @@
     <Compile Include="Patches\RemoveMpBreakPatch.cs" />
     <Compile Include="Patches\SetCaneAttributePatch.cs" />
     <Compile Include="Patches\SetCurrencyCountPatch.cs" />
+    <Compile Include="Patches\SetBottleHolderCountPatch.cs" />
     <Compile Include="Patches\SetLootDropRatioPatch.cs" />
     <Compile Include="Patches\SetEnhancerSlotCountPatch.cs" />
     <Compile Include="Patches\SetHpMpEpPatch.cs" />

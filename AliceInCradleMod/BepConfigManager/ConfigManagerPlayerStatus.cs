@@ -41,6 +41,7 @@ namespace BetterExperience.BepConfigManager
         public static ConfigEntry<bool> EnableImmuneAbnormalityWebTrapped { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityStone { get; private set; }
         public static ConfigEntry<bool> EnablePreloadBackpackCapacity { get; private set; }
+        public static ConfigEntry<bool> EnablePreloadBottleHolderCount { get; private set; }
         public static ConfigEntry<bool> EnablePreloadPlayerHp { get; private set; }
         public static ConfigEntry<bool> EnablePreloadPlayerMp { get; private set; }
         public static ConfigEntry<bool> EnablePreloadPlayerEp { get; private set; }
@@ -50,6 +51,7 @@ namespace BetterExperience.BepConfigManager
         public static ConfigEntry<bool> EnablePreloadOverChargeSlotCount { get; private set; }
         public static ConfigEntry<bool> EnablePreloadEnhancerSlotCount { get; private set; }
         public static ConfigEntry<int> SetBackpackCapacity { get; private set; }
+        public static ConfigEntry<int> SetBottleHolderCount { get; private set; }
         public static ConfigEntry<int> SetPlayerHp { get; private set; }
         public static ConfigEntry<int> SetPlayerMp { get; private set; }
         public static ConfigEntry<int> SetPlayerEp { get; private set; }
@@ -296,6 +298,14 @@ namespace BetterExperience.BepConfigManager
                 "using the configured value to override the original backpack capacity.\n" +
                 "启用预加载背包容量。开启后，背包容量将在存档读取后自动设置一次，使用设置值覆盖原始的背包容量。"
                 );
+            EnablePreloadBottleHolderCount = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnablePreloadBottleHolderCount),
+                false,
+                "Enable preload bottle holder count. When enabled, the bottle holder count will be automatically set once after loading a save, " +
+                "using the configured value to override the original bottle holder count.\n" +
+                "启用预加载空瓶收纳槽位数量。开启后，空瓶收纳槽位数量将在存档读取后自动设置一次，使用设置值覆盖原始的空瓶收纳槽位数量。"
+                );
             EnablePreloadPlayerHp = Config.Bind(
                 SectionPlayerStatus,
                 nameof(EnablePreloadPlayerHp),
@@ -366,6 +376,13 @@ namespace BetterExperience.BepConfigManager
                 -1,
                 "Set backpack capacity. It will override the original backpack capacity. Set to -1 to keep the capacity at its current value.\n" +
                 "设置背包容量。将覆盖原始的背包容量。设为 -1 可保持为当前值。"
+                );
+            SetBottleHolderCount = Config.Bind(
+                SectionPlayerStatus,
+                nameof(SetBottleHolderCount),
+                -1,
+                "Set bottle holder count. It will override the original bottle holder count. Set to -1 to keep the bottle holder count at its current value.\n" +
+                "设置空瓶收纳槽位数量。将覆盖原始的空瓶收纳槽位数量。设为 -1 可保持为当前值。"
                 );
             SetPlayerHp = Config.Bind(
                 SectionPlayerStatus,
