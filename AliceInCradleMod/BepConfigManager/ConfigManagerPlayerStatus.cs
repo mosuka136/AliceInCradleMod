@@ -12,6 +12,7 @@ namespace BetterExperience.BepConfigManager
         public static ConfigEntry<bool> EnableHolyBurstFaint { get; private set; }
         public static ConfigEntry<bool> EnableMpBreak { get; private set; }
         public static ConfigEntry<bool> EnablePressDamage { get; private set; }
+        public static ConfigEntry<bool> EnableFallingToGround { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalities { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityMpReduce { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityBurstTired { get; private set; }
@@ -116,6 +117,13 @@ namespace BetterExperience.BepConfigManager
                 true,
                 "Enable falling to ground. When disabled, players will not fall to the ground.\n" +
                 "启用挤压伤害。关闭后，玩家将不会受到挤压伤害。"
+                );
+            EnableFallingToGround = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableFallingToGround),
+                true,
+                "Enable falling to ground. When disabled, players will not fall to the ground.\n" +
+                "启用摔倒。关闭后，玩家将不会摔倒。"
                 );
             EnableImmuneAbnormalities = Config.Bind(
                 SectionPlayerStatus,
