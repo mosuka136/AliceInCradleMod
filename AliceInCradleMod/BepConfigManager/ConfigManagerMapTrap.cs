@@ -7,6 +7,7 @@ namespace BetterExperience.BepConfigManager
         public static ConfigEntry<bool> EnableWormTrap { get; private set; }
         public static ConfigEntry<bool> EnableMapDamage { get; private set; }
         public static ConfigEntry<bool> EnableDrowning { get; private set; }
+        public static ConfigEntry<bool> EnableDarkArea { get; private set; }
 
         private const string SectionMapTrap = "MapTrap";
 
@@ -32,6 +33,12 @@ namespace BetterExperience.BepConfigManager
                 nameof(EnableDrowning),
                 true,
                 "Enable drowning. Disabling will prevent drowning damage.\n启用溺水。禁用后将不再受到溺水伤害。"
+                );
+            EnableDarkArea = Config.Bind(
+                SectionMapTrap,
+                nameof(EnableDarkArea),
+                true,
+                "Enable dark area. After disabling, specific areas will no longer require the Magic Bug Lantern to illuminate.\n启用黑暗区域。禁用后特定区域将不再需要魔荧虫提灯照亮。"
                 );
         }
     }

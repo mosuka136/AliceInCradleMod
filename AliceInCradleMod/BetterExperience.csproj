@@ -104,6 +104,7 @@
     <Compile Include="OnSiteProtectionManager.cs" />
     <Compile Include="Patches\BetterSaveSitePatch.cs" />
     <Compile Include="Patches\BetterReelEffectPatch.cs" />
+    <Compile Include="Patches\RemoveDarkAreaPatch.cs" />
     <Compile Include="Patches\RemoveFallingToGroundPatch.cs" />
     <Compile Include="Patches\RemovePressDamagePatch.cs" />
     <Compile Include="Patches\RemoveWarehouseRegionRestrictionsPatch.cs" />
