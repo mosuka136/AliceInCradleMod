@@ -17,6 +17,7 @@ namespace BetterExperience.BepConfigManager
         public static ConfigEntry<bool> EnableBetterFishing { get; private set; }
         public static ConfigEntry<bool> EnableAccessWarehouseAnywhere { get; private set; }
         public static ConfigEntry<bool> EnableDebugMode { get; private set; }
+        public static ConfigEntry<bool> EnableFastTravelAnywhere { get; private set; }
         public static ConfigEntry<float> SetLootDropRatio { get; private set; }
 
         private const string SectionGeneral = "General";
@@ -79,6 +80,13 @@ namespace BetterExperience.BepConfigManager
                 nameof(EnableDebugMode),
                 false,
                 "Enable debug mode, must be set before launching the game. \n启用调试模式,必须在游戏启动前设置。"
+                );
+            EnableFastTravelAnywhere = Config.Bind(
+                SectionGeneral,
+                nameof(EnableFastTravelAnywhere),
+                false,
+                "Enable fast travel anywhere. It will allow players to fast travel anywhere on the map. At least one normal transmission must be performed before use.\n" +
+                "启用随时快速传送。它将允许玩家在地图上的任何地方快速传送。使用前至少要进行一次正常传送。"
                 );
             SetLootDropRatio = Config.Bind(
                 SectionGeneral,
