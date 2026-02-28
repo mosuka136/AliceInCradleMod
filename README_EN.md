@@ -20,6 +20,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 - Survival/combat protection: no HP/MP/EP damage, no map damage, abnormal status immunity, infinite shield, cannot be attacked, etc.
 - Trap/environment: disable drowning, no crush damage, no falling to ground, no MP break, invalidate worm trap, etc.
 - Limit removals: puppet merchant spawn limits, bench menu limits, treasure chest limits, warehouse region limits, etc.
+- Map and weather: fast travel anywhere, dark area removal in specific zones, forced weather (wind/thunder/mist/drought/dense mist/plague), fog visual blocking toggle
 - Visual features: remove mosaic, texture replacement
 - Debug: debug switch
 
@@ -49,7 +50,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 
 ## Supported Versions
 
-- `Alice In Cradle` `ver029d`
+- `Alice In Cradle` `ver029f`
 - `BepInEx` `v5.4.23.5`
 - `ConfigurationManager` `v18.4.1`
 

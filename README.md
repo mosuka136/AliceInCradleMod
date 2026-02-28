@@ -19,6 +19,7 @@ English version: [README_EN.md](README_EN.md)
 - 生存/战斗保护：无 HP/MP/EP 伤害、无地图伤害、免疫异常状态、无限护盾、不被攻击等
 - 陷阱与环境：禁用溺水、无挤压伤害、无跌倒、无蓝条破碎、无效化虫墙等
 - 限制解除：木偶商人生成限制、椅子菜单限制、宝箱限制、仓库区域限制等
+- 地图与天气：随时快速传送、移除特定区域黑暗效果、天气强制设置（旋风/雷暴/雾/干旱/浓雾/瘟疫）、雾视觉遮挡开关
 - 视觉相关：去除马赛克、贴图替换
 - 调试相关：debug开关
 
@@ -48,7 +49,7 @@ English version: [README_EN.md](README_EN.md)
 
 ## 支持的版本
 
-- `Alice In Cradle` `ver029d`
+- `Alice In Cradle` `ver029f`
 - `BepInEx` `v5.4.23.5`
 - `ConfigurationManager` `v18.4.1`
 
