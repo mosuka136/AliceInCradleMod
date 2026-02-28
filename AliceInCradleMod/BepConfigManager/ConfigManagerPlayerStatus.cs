@@ -40,6 +40,7 @@ namespace BetterExperience.BepConfigManager
         public static ConfigEntry<bool> EnableImmuneAbnormalityDrunk { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityWebTrapped { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityStone { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityAtkDown { get; private set; }
         public static ConfigEntry<bool> EnablePreloadBackpackCapacity { get; private set; }
         public static ConfigEntry<bool> EnablePreloadBottleHolderCount { get; private set; }
         public static ConfigEntry<bool> EnablePreloadPlayerHp { get; private set; }
@@ -289,6 +290,12 @@ namespace BetterExperience.BepConfigManager
                 nameof(EnableImmuneAbnormalityStone),
                 false,
                 "Immune abnormality: Stone.\n免疫异常状态：石化。"
+                );
+            EnableImmuneAbnormalityAtkDown = Config.Bind(
+                SectionPlayerStatus,
+                nameof(EnableImmuneAbnormalityAtkDown),
+                false,
+                "Immune abnormality: Atk Down.\n免疫异常状态：攻击力下降。"
                 );
             EnablePreloadBackpackCapacity = Config.Bind(
                 SectionPlayerStatus,

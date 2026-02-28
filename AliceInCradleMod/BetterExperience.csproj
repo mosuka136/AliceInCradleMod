@@ -25,65 +25,11 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029d\BepInEx\plugins\BetterExperience\</OutputPath>
+    <OutputPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\BepInEx\plugins\BetterExperience\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>D:\mine\B\programme\AliceInCradle\ver029a\BepInEx\core\0Harmony.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>D:\mine\B\programme\AliceInCradle\ver029a\AliceInCradle_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>D:\mine\B\programme\AliceInCradle\ver029a\BepInEx\core\BepInEx.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="pixelliner">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029b\AliceInCradle_Data\Managed\pixelliner.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Unity.InputSystem">
-      <HintPath>D:\mine\B\programme\AliceInCradle\ver029b\AliceInCradle_Data\Managed\Unity.InputSystem.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>D:\mine\B\programme\AliceInCradle\ver029a\AliceInCradle_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029b\AliceInCradle_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>D:\mine\B\programme\AliceInCradle\ver029a\AliceInCradle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029b\AliceInCradle_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>D:\mine\B\programme\AliceInCradle\ver029b\AliceInCradle_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="unsafeAssem">
-      <HintPath>D:\mine\B\programme\AliceInCradle\ver029b\AliceInCradle_Data\Managed\unsafeAssem.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="BepConfigManager\ConfigManagerWeather.cs" />
     <Compile Include="BetterExperience.cs" />
@@ -143,6 +89,48 @@
     <Compile Include="Patches\RemoveMosaicPatch.cs" />
     <Compile Include="Patches\RemoveLimitInPuppetNpcDefeatedPatch.cs" />
     <Compile Include="Patches\RemoveHolyBurstFaintPatch.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\BepInEx\core\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\Unity.InputSystem.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="unsafeAssem">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\unsafeAssem.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

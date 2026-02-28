@@ -71,6 +71,8 @@ namespace BetterExperience.Patches
                         return !ConfigManager.EnableImmuneAbnormalityWebTrapped.Value;
                     case SER.STONE:
                         return !ConfigManager.EnableImmuneAbnormalityStone.Value;
+                    case SER.ATK_DOWN:
+                        return !ConfigManager.EnableImmuneAbnormalityAtkDown.Value;
                     default:
                         return true;
                 }
