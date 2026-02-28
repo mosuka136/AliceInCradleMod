@@ -38,7 +38,8 @@ namespace BetterExperience.BepConfigManager
                 SectionMapTrap,
                 nameof(EnableDarkArea),
                 true,
-                "Enable dark area. After disabling, specific areas will no longer require the Magic Bug Lantern to illuminate.\n启用黑暗区域。禁用后特定区域将不再需要魔荧虫提灯照亮。"
+                "Enable dark area. After disabling, specific areas will no longer require the Magic Bug Lantern to illuminate.\n" +
+                "启用黑暗区域。禁用后特定区域将不再需要魔荧虫提灯照亮。"
                 );
         }
     }

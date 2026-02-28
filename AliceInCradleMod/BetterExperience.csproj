@@ -107,6 +107,7 @@
     <Compile Include="Patches\RemoveDarkAreaPatch.cs" />
     <Compile Include="Patches\RemoveFallingToGroundPatch.cs" />
     <Compile Include="Patches\RemoveFastTravelLimitPatch.cs" />
+    <Compile Include="Patches\RemoveFogPatch.cs" />
     <Compile Include="Patches\RemovePressDamagePatch.cs" />
     <Compile Include="Patches\RemoveWarehouseRegionRestrictionsPatch.cs" />
     <Compile Include="Patches\SetBackpackCapacityPatch.cs" />
