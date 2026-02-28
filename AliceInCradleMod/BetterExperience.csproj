@@ -85,6 +85,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BepConfigManager\ConfigManagerWeather.cs" />
     <Compile Include="BetterExperience.cs" />
     <Compile Include="BepConfigManager\ConfigManagerCane.cs" />
     <Compile Include="BepConfigManager\ConfigManagerCurrency.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Patches\SetOverChargeSlotCountPatch.cs" />
     <Compile Include="Patches\SetReelSpeedPatch.cs" />
     <Compile Include="Patches\SetWalkSpeedPatch.cs" />
+    <Compile Include="Patches\SetWeatherPatch.cs" />
     <Compile Include="Patches\SwitchDebugPatch.cs" />
     <Compile Include="Patches\UnableBeingAttackedPatch.cs" />
     <Compile Include="Patches\NoMpDamagePatch.cs" />
