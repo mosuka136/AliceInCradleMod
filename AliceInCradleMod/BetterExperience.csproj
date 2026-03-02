@@ -78,6 +78,7 @@
     <Compile Include="Patches\SetWalkSpeedPatch.cs" />
     <Compile Include="Patches\SetWeatherPatch.cs" />
     <Compile Include="Patches\SwitchDebugPatch.cs" />
+    <Compile Include="Patches\ReplaceTexture\ReplaceCharacterTexturePatch.cs" />
     <Compile Include="Patches\UnableBeingAttackedPatch.cs" />
     <Compile Include="Patches\NoMpDamagePatch.cs" />
     <Compile Include="Patches\HPatches.cs" />
@@ -101,6 +102,14 @@
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="better">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\better.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="pixelliner">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\pixelliner.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.InputSystem">

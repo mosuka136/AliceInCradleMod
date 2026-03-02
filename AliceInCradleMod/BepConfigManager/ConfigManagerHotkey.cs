@@ -7,6 +7,7 @@ namespace BetterExperience.BepConfigManager
         private static ConfigEntry<string> HotkeyReadme { get; set; }
         public static ConfigEntry<string> ReloadConfigHotkey { get; private set; }
         public static ConfigEntry<string> FlushAllStoreHotkey { get; private set; }
+        public static ConfigEntry<string> FlushTextureHotkey { get; private set; }
 
         private const string SectionHotkey = "Hotkey";
 
@@ -65,6 +66,12 @@ namespace BetterExperience.BepConfigManager
                 nameof(FlushAllStoreHotkey),
                 "F",
                 "The hotkey to flush all store. Default is F.\n一键刷新商店的热键。默认值为 F。"
+                );
+            FlushTextureHotkey = Config.Bind(
+                SectionHotkey,
+                nameof(FlushTextureHotkey),
+                "Ctrl+T",
+                "The hotkey to flush texture. Default is Ctrl+T.\n一键刷新贴图的热键。默认值为 Ctrl+T。"
                 );
         }
     }

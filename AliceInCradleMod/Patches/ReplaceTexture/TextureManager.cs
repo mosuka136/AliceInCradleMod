@@ -29,7 +29,7 @@ namespace BetterExperience.Patches.ReplaceTexture
         public static readonly string SenstiveImagePath = Path.Combine(Paths.PluginPath, RelativeSenstiveImagePath);
         public static readonly string[] SupportedExtensions = { ".png", ".btep" };
 
-        private Dictionary<string, Texture2D> _imageInfos = new Dictionary<string, Texture2D>();
+        private readonly Dictionary<string, Texture2D> _imageInfos = new Dictionary<string, Texture2D>();
 
         public void Initialize()
         {
@@ -42,9 +42,6 @@ namespace BetterExperience.Patches.ReplaceTexture
                     Directory.CreateDirectory(ImagePath);
                 if (!Directory.Exists(SenstiveImagePath))
                     Directory.CreateDirectory(SenstiveImagePath);
-
-                if (ConfigManager.EnableTextureImmediateReload.Value)
-                    return;
 
                 var imageFiles = Directory.GetFiles(ImagePath, "*.*", SearchOption.AllDirectories)
                     .Where(f => SupportedExtensions.Any(s => f.EndsWith(s)));
@@ -76,6 +73,12 @@ namespace BetterExperience.Patches.ReplaceTexture
             {
                 HLog.Error("Failed to initialize ImageManager.", ex);
             }
+        }
+
+        public void Reload()
+        {
+            _imageInfos.Clear();
+            Initialize();
         }
 
         public Texture2D CreateTexture(string imageName)
@@ -151,32 +154,6 @@ namespace BetterExperience.Patches.ReplaceTexture
         {
             if (string.IsNullOrEmpty(textureName))
                 return null;
-
-            if (ConfigManager.EnableTextureImmediateReload.Value)
-            {
-                try
-                {
-                    if (textureName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-                        return null;
-
-                    var imageFiles = Directory.GetFiles(ImagePath, $"{textureName}*", SearchOption.AllDirectories).Where(f => SupportedExtensions.Any(s => f.EndsWith(s)));
-
-                    if (!ConfigManager.EnableSensitivities.Value)
-                    {
-                        imageFiles = imageFiles.Where(f => !f.StartsWith(SenstiveImagePath, StringComparison.OrdinalIgnoreCase));
-                    }
-
-                    if (imageFiles.Count() == 0)
-                        return null;
-
-                    return CreateTexture(imageFiles.First());
-                }
-                catch (Exception ex)
-                {
-                    HLog.Error($"Failed to load texture '{textureName}' for immediate reload.", ex);
-                    return null;
-                }
-            }
 
             if (!_imageInfos.TryGetValue(textureName, out var texture))
                 return null;

@@ -9,7 +9,7 @@ namespace BetterExperience.Patches
 {
     internal partial class HPatches
     {
-        [HarmonyPatch]
+        // 暂时废弃 [HarmonyPatch]
         private class ReplaceTexturePatch
         {
             [HarmonyPostfix]
