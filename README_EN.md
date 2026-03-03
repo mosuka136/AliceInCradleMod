@@ -9,7 +9,7 @@
 
 `BetterExperience` is a mod for `Alice In Cradle` based on `BepInEx`.
 
-This mod uses `Harmony` patches to modify game logic at runtime, providing configurable QoL improvements, stat tweaks, limit removals, convenience features, and partial texture replacement support. Most features can be enabled or disabled through the `BepInEx` config file.
+This mod uses `Harmony` patches to modify game logic at runtime, providing configurable QoL improvements, stat tweaks, limit removals, convenience features, and partial texture replacement support (currently only player portrait replacement is supported). Most features can be enabled or disabled through the `BepInEx` config file.
 
 ## Implemented Features
 
@@ -21,7 +21,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 - Trap/environment: disable drowning, no crush damage, no falling to ground, no MP break, invalidate worm trap, etc.
 - Limit removals: puppet merchant spawn limits, bench menu limits, treasure chest limits, warehouse region limits, etc.
 - Map and weather: fast travel anywhere, dark area removal in specific zones, forced weather (wind/thunder/mist/drought/dense mist/plague), fog visual blocking toggle
-- Visual features: remove mosaic, texture replacement
+- Visual features: remove mosaic, texture replacement (currently only player portrait replacement is supported)
 - Debug: debug switch
 
 ## Usage
