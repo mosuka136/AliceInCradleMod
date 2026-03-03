@@ -1,6 +1,6 @@
 # BetterExperience/更好的体验
 
-[![GitHub all releases](https://img.shields.io/github/downloads/user/repo/total)](https://github.com/user/repo/releases) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/user/repo)](https://github.com/user/repo/releases) ![platform](https://img.shields.io/badge/platform-Windows-lightgrey)
+[![GitHub all releases](https://img.shields.io/github/downloads/mosuka136/AliceInCradleMod/total)](https://github.com/mosuka136/AliceInCradleMod/releases) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/mosuka136/AliceInCradleMod)](https://github.com/mosuka136/AliceInCradleMod/releases) ![platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 
 English version: [README_EN.md](README_EN.md)
 
@@ -40,7 +40,7 @@ English version: [README_EN.md](README_EN.md)
 
 ### 3. 安装 BetterExperience
 
-1. 构建或下载 `BetterExperience.dll`（[下载链接]()）
+1. 构建或下载 `BetterExperience.dll`（[下载链接](https://github.com/mosuka136/AliceInCradleMod/releases)）
 2. 将 `BetterExperience.dll` 放入游戏目录下的 `BepInEx/plugins/BetterExperience/`（或 `BepInEx/plugins/`）目录
 3. 启动游戏一次，生成 Mod 配置文件
 4. 编辑配置文件 `BepInEx/config/com.buele.betterexperience.cfg`
