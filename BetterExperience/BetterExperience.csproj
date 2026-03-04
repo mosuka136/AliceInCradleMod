@@ -17,10 +17,11 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>D:\mine\B\programme\AliceInCradle\ver029b2\BepInEx\plugins\</OutputPath>
+    <OutputPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\BepInEx\plugins\BetterExperience\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseWinFormsOutOfProcDesigner>False</UseWinFormsOutOfProcDesigner>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseWinFormsOutOfProcDesigner>False</UseWinFormsOutOfProcDesigner>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BepConfigManager\ConfigManagerWeather.cs" />
@@ -37,7 +39,7 @@
     <Compile Include="BepConfigManager\ConfigManagerCurrency.cs" />
     <Compile Include="BepConfigManager\ConfigManagerHotkey.cs" />
     <Compile Include="BepConfigManager\ConfigManagerLog.cs" />
-    <Compile Include="BepConfigManager\ConfigManagerMapTrap.cs" />
+    <Compile Include="BepConfigManager\ConfigManagerMap.cs" />
     <Compile Include="BepConfigManager\ConfigManagerPlayerStatus.cs" />
     <Compile Include="BepConfigManager\ConfigManagerReel.cs" />
     <Compile Include="BepConfigManager\ConfigManagerTexture.cs" />

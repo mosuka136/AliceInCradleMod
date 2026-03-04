@@ -11,13 +11,9 @@ namespace BetterExperience.BepConfigManager
 
         public static ConfigEntry<bool> EnableBetterExperience { get; private set; }
         public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
-        public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
-        public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableBetterFishing { get; private set; }
-        public static ConfigEntry<bool> EnableAccessWarehouseAnywhere { get; private set; }
         public static ConfigEntry<bool> EnableDebugMode { get; private set; }
-        public static ConfigEntry<bool> EnableFastTravelAnywhere { get; private set; }
         public static ConfigEntry<float> SetLootDropRatio { get; private set; }
 
         private const string SectionGeneral = "General";
@@ -41,19 +37,6 @@ namespace BetterExperience.BepConfigManager
                 false,
                 "Enable flush all store function.\n启用一键刷新商店功能。"
                 );
-            EnableBetterSaveSite = Config.Bind(
-                SectionGeneral,
-                nameof(EnableBetterSaveSite),
-                false,
-                "Enable better save site. It will allow saving anywhere.\n启用更好的存档点功能。允许在任意位置保存。"
-                );
-            EnableRemoveLimitInPuppetNpcDefeated = Config.Bind(
-                SectionGeneral,
-                nameof(EnableRemoveLimitInPuppetNpcDefeated),
-                false,
-                "Enable the restriction that prevents the Puppet Merchant from spawning before the revenge quest is completed.\n" +
-                "启用移除木偶商人在复仇战未完成前无法生成的限制。"
-                );
             EnableRemoveLimitInBenchMenu = Config.Bind(
                 SectionGeneral,
                 nameof(EnableRemoveLimitInBenchMenu),
@@ -68,25 +51,11 @@ namespace BetterExperience.BepConfigManager
                 "Enable better fishing. It will allow players to catch fish more easily.\n" +
                 "启用更好的钓鱼。它将允许玩家更容易地钓到鱼。"
                 );
-            EnableAccessWarehouseAnywhere = Config.Bind(
-                SectionGeneral,
-                nameof(EnableAccessWarehouseAnywhere),
-                false,
-                "Enable access warehouse anywhere. It will allow players to access warehouse inventory anywhere. This will replace the original Chest Reels.\n" +
-                "启用随时访问仓库。它将允许玩家在任何地方访问仓库库存。这将会取代原来的宝箱效果转轮。"
-                );
             EnableDebugMode = Config.Bind(
                 SectionGeneral,
                 nameof(EnableDebugMode),
                 false,
                 "Enable debug mode, must be set before launching the game. \n启用调试模式,必须在游戏启动前设置。"
-                );
-            EnableFastTravelAnywhere = Config.Bind(
-                SectionGeneral,
-                nameof(EnableFastTravelAnywhere),
-                false,
-                "Enable fast travel anywhere. It will allow players to fast travel anywhere on the map. At least one normal transmission must be performed before use.\n" +
-                "启用随时快速传送。它将允许玩家在地图上的任何地方快速传送。使用前至少要进行一次正常传送。"
                 );
             SetLootDropRatio = Config.Bind(
                 SectionGeneral,
