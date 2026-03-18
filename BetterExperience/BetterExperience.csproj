@@ -43,6 +43,8 @@
     <Compile Include="BepConfigManager\ConfigManagerPlayerStatus.cs" />
     <Compile Include="BepConfigManager\ConfigManagerReel.cs" />
     <Compile Include="BepConfigManager\ConfigManagerTexture.cs" />
+    <Compile Include="ConfigFileSpace\ConfigFileModel.cs" />
+    <Compile Include="ConfigFileSpace\ConfigFileResult.cs" />
     <Compile Include="GameAttributePatchManager.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
     <Compile Include="Patches\DisableDrowning.cs" />
@@ -115,6 +117,7 @@
       <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\pixelliner.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System" />
     <Reference Include="Unity.InputSystem">
       <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\Unity.InputSystem.dll</HintPath>
       <Private>False</Private>
@@ -144,5 +147,6 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
