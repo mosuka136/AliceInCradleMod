@@ -356,7 +356,7 @@ namespace BetterExperience.ConfigFileSpace
             return ConfigFileResult<string[]>.Ok(elements.ToArray());
         }
 
-        private static ConfigFileResult<object> CreateCollectionResult(Type type, Type elementType, List<object> elements)
+        public static ConfigFileResult<object> CreateCollectionResult(Type type, Type elementType, List<object> elements)
         {
             if (type == null)
                 return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, "Type cannot be null"));
@@ -398,7 +398,7 @@ namespace BetterExperience.ConfigFileSpace
             return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.UnsupportedType, $"Unsupported collection type: {type.FullName}"));
         }
 
-        private static ConfigFileResult<object[]> ValidateCollectionElements(Type elementType, List<object> elements)
+        public static ConfigFileResult<object[]> ValidateCollectionElements(Type elementType, List<object> elements)
         {
             var validatedElements = new object[elements.Count];
             for (int i = 0; i < elements.Count; i++)
@@ -413,7 +413,7 @@ namespace BetterExperience.ConfigFileSpace
             return ConfigFileResult<object[]>.Ok(validatedElements);
         }
 
-        private static ConfigFileResult<object> ValidateCollectionElement(Type elementType, object element, int index)
+        public static ConfigFileResult<object> ValidateCollectionElement(Type elementType, object element, int index)
         {
             if (element == null)
             {
@@ -434,7 +434,7 @@ namespace BetterExperience.ConfigFileSpace
             return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Element at index {index} is not assignable to {elementType.FullName}. Actual type: {element.GetType().FullName}"));
         }
 
-        private static ConfigFileResult<Array> CreateTypedArray(Type elementType, object[] elements)
+        public static ConfigFileResult<Array> CreateTypedArray(Type elementType, object[] elements)
         {
             try
             {
@@ -450,7 +450,7 @@ namespace BetterExperience.ConfigFileSpace
             }
         }
 
-        private static ConfigFileResult<IList> CreateTypedList(Type elementType, object[] elements)
+        public static ConfigFileResult<IList> CreateTypedList(Type elementType, object[] elements)
         {
             var listType = typeof(List<>).MakeGenericType(elementType);
 
@@ -472,7 +472,7 @@ namespace BetterExperience.ConfigFileSpace
             }
         }
 
-        private static bool TryCreateCollectionFromConstructor(Type type, IList list, Array array, out ConfigFileResult<object> result)
+        public static bool TryCreateCollectionFromConstructor(Type type, IList list, Array array, out ConfigFileResult<object> result)
         {
             var constructors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
                 .Where(c => c.GetParameters().Length == 1)
@@ -512,7 +512,7 @@ namespace BetterExperience.ConfigFileSpace
             return false;
         }
 
-        private static bool TryCreateCollectionFromAddMethod(Type type, Type elementType, object[] elements, out ConfigFileResult<object> result)
+        public static bool TryCreateCollectionFromAddMethod(Type type, Type elementType, object[] elements, out ConfigFileResult<object> result)
         {
             var constructor = type.GetConstructor(Type.EmptyTypes);
             if (constructor == null)
@@ -562,7 +562,7 @@ namespace BetterExperience.ConfigFileSpace
             return true;
         }
 
-        private static MethodInfo FindAddMethod(Type type, Type elementType)
+        public static MethodInfo FindAddMethod(Type type, Type elementType)
         {
             var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
                 .Where(m => m.Name == "Add")
@@ -587,7 +587,7 @@ namespace BetterExperience.ConfigFileSpace
             return null;
         }
 
-        private static ConfigFileResult<string> UnescapeString(string value)
+        public static ConfigFileResult<string> UnescapeString(string value)
         {
             var builder = new StringBuilder(value.Length);
             for (int i = 0; i < value.Length; i++)

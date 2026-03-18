@@ -92,5 +92,8 @@ namespace BetterExperience.ConfigFileSpace
     {
         UnsupportedType,
         InvalidValue,
+        InvalidKeyName,
+        InvalidKeyValuePair,
+        EntryNotFound,
     }
 }
