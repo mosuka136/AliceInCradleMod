@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace BetterExperience.ConfigFileSpace
@@ -67,7 +68,7 @@ namespace BetterExperience.ConfigFileSpace
                     var result = Encode(item, collectionType);
                     if (!result.Success)
                         return ConfigFileResult<string>.Fail(result.Errors);
-                    elements.Add(result.ToString());
+                    elements.Add(result.Value);
                 }
 
                 return ConfigFileResult<string>.Ok($"[{string.Join(",", elements)}]");
@@ -178,7 +179,7 @@ namespace BetterExperience.ConfigFileSpace
             {
                 var collectionType = GetCollectionElementType(type);
                 if (collectionType == null)
-                    return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.UnsupportedType, "Decoding not implemented"));
+                    return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.UnsupportedType, "Unsupported collection type"));
 
                 var splitResult = SplitCollectionString(value);
                 if (!splitResult.Success)
@@ -193,7 +194,7 @@ namespace BetterExperience.ConfigFileSpace
                     elements.Add(result.Value);
                 }
 
-                return ConfigFileResult<object>.Ok(elements);
+                return CreateCollectionResult(type, collectionType, elements);
             }
 
             return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.UnsupportedType, "Decoding not implemented"));
@@ -203,6 +204,9 @@ namespace BetterExperience.ConfigFileSpace
         {
             if (collectionType.IsArray)
                 return collectionType.GetElementType();
+
+            if (collectionType.IsGenericType && collectionType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                return collectionType.GetGenericArguments()[0];
 
             var enumerableType = collectionType.GetInterfaces()
                 .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
@@ -238,7 +242,13 @@ namespace BetterExperience.ConfigFileSpace
             }
 
             if (escape)
-                value = value.Replace("\\\"", "\"").Replace("\\\\", "\\").Replace("\\n", "\n").Replace("\\r", "\r").Replace("\\t", "\t");
+            {
+                var unescapeResult = UnescapeString(value);
+                if (!unescapeResult.Success)
+                    return unescapeResult;
+
+                value = unescapeResult.Value;
+            }
 
             return ConfigFileResult<string>.Ok(value);
         }
@@ -344,6 +354,278 @@ namespace BetterExperience.ConfigFileSpace
             elements.Add(lastElement);
 
             return ConfigFileResult<string[]>.Ok(elements.ToArray());
+        }
+
+        private static ConfigFileResult<object> CreateCollectionResult(Type type, Type elementType, List<object> elements)
+        {
+            if (type == null)
+                return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, "Type cannot be null"));
+
+            if (elementType == null)
+                return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, "Element type cannot be null"));
+
+            if (elements == null)
+                return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, "Elements cannot be null"));
+
+            var validatedElementsResult = ValidateCollectionElements(elementType, elements);
+            if (!validatedElementsResult.Success)
+                return ConfigFileResult<object>.Fail(validatedElementsResult.Errors);
+
+            var arrayResult = CreateTypedArray(elementType, validatedElementsResult.Value);
+            if (!arrayResult.Success)
+                return ConfigFileResult<object>.Fail(arrayResult.Errors);
+
+            if (type.IsArray)
+                return ConfigFileResult<object>.Ok(arrayResult.Value);
+
+            var listResult = CreateTypedList(elementType, validatedElementsResult.Value);
+            if (!listResult.Success)
+                return ConfigFileResult<object>.Fail(listResult.Errors);
+
+            var list = listResult.Value;
+            var listType = list.GetType();
+            if (type.IsAssignableFrom(listType))
+                return ConfigFileResult<object>.Ok(list);
+
+            ConfigFileResult<object> constructorResult;
+            if (TryCreateCollectionFromConstructor(type, list, arrayResult.Value, out constructorResult))
+                return constructorResult;
+
+            ConfigFileResult<object> addMethodResult;
+            if (TryCreateCollectionFromAddMethod(type, elementType, validatedElementsResult.Value, out addMethodResult))
+                return addMethodResult;
+
+            return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.UnsupportedType, $"Unsupported collection type: {type.FullName}"));
+        }
+
+        private static ConfigFileResult<object[]> ValidateCollectionElements(Type elementType, List<object> elements)
+        {
+            var validatedElements = new object[elements.Count];
+            for (int i = 0; i < elements.Count; i++)
+            {
+                var validationResult = ValidateCollectionElement(elementType, elements[i], i);
+                if (!validationResult.Success)
+                    return ConfigFileResult<object[]>.Fail(validationResult.Errors);
+
+                validatedElements[i] = validationResult.Value;
+            }
+
+            return ConfigFileResult<object[]>.Ok(validatedElements);
+        }
+
+        private static ConfigFileResult<object> ValidateCollectionElement(Type elementType, object element, int index)
+        {
+            if (element == null)
+            {
+                var nullableUnderlyingType = Nullable.GetUnderlyingType(elementType);
+                if (!elementType.IsValueType || nullableUnderlyingType != null)
+                    return ConfigFileResult<object>.Ok(null);
+
+                return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Element at index {index} cannot be null for value type {elementType.FullName}"));
+            }
+
+            if (elementType.IsInstanceOfType(element))
+                return ConfigFileResult<object>.Ok(element);
+
+            var underlyingType = Nullable.GetUnderlyingType(elementType);
+            if (underlyingType != null && underlyingType.IsInstanceOfType(element))
+                return ConfigFileResult<object>.Ok(element);
+
+            return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Element at index {index} is not assignable to {elementType.FullName}. Actual type: {element.GetType().FullName}"));
+        }
+
+        private static ConfigFileResult<Array> CreateTypedArray(Type elementType, object[] elements)
+        {
+            try
+            {
+                var array = Array.CreateInstance(elementType, elements.Length);
+                for (int i = 0; i < elements.Length; i++)
+                    array.SetValue(elements[i], i);
+
+                return ConfigFileResult<Array>.Ok(array);
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is InvalidCastException)
+            {
+                return ConfigFileResult<Array>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Failed to create array for element type {elementType.FullName}. Error: {ex.Message}"));
+            }
+        }
+
+        private static ConfigFileResult<IList> CreateTypedList(Type elementType, object[] elements)
+        {
+            var listType = typeof(List<>).MakeGenericType(elementType);
+
+            try
+            {
+                var list = (IList)Activator.CreateInstance(listType);
+                for (int i = 0; i < elements.Length; i++)
+                    list.Add(elements[i]);
+
+                return ConfigFileResult<IList>.Ok(list);
+            }
+            catch (Exception ex) when (ex is MissingMethodException)
+            {
+                return ConfigFileResult<IList>.Fail(new ConfigFileError(ConfigFileErrorCode.UnsupportedType, $"Failed to create helper list for element type {elementType.FullName}. Error: {ex.Message}"));
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is InvalidCastException || ex is NotSupportedException)
+            {
+                return ConfigFileResult<IList>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Failed to populate helper list for element type {elementType.FullName}. Error: {ex.Message}"));
+            }
+        }
+
+        private static bool TryCreateCollectionFromConstructor(Type type, IList list, Array array, out ConfigFileResult<object> result)
+        {
+            var constructors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
+                .Where(c => c.GetParameters().Length == 1)
+                .ToArray();
+
+            var listType = list.GetType();
+            var arrayType = array.GetType();
+
+            for (int i = 0; i < constructors.Length; i++)
+            {
+                var constructor = constructors[i];
+                var parameterType = constructor.GetParameters()[0].ParameterType;
+                object argument = null;
+                if (parameterType.IsAssignableFrom(listType))
+                    argument = list;
+                else if (parameterType.IsAssignableFrom(arrayType))
+                    argument = array;
+                else
+                    continue;
+
+                try
+                {
+                    result = ConfigFileResult<object>.Ok(constructor.Invoke(new[] { argument }));
+                    return true;
+                }
+                catch (Exception ex) when (ex is TargetInvocationException || ex is ArgumentException || ex is MemberAccessException)
+                {
+                    var message = ex is TargetInvocationException invocationException && invocationException.InnerException != null
+                        ? invocationException.InnerException.Message
+                        : ex.Message;
+                    result = ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Failed to construct collection type {type.FullName}. Error: {message}"));
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
+        }
+
+        private static bool TryCreateCollectionFromAddMethod(Type type, Type elementType, object[] elements, out ConfigFileResult<object> result)
+        {
+            var constructor = type.GetConstructor(Type.EmptyTypes);
+            if (constructor == null)
+            {
+                result = null;
+                return false;
+            }
+
+            var addMethod = FindAddMethod(type, elementType);
+            if (addMethod == null)
+            {
+                result = null;
+                return false;
+            }
+
+            object instance;
+            try
+            {
+                instance = constructor.Invoke(new object[0]);
+            }
+            catch (Exception ex) when (ex is TargetInvocationException || ex is MemberAccessException)
+            {
+                var message = ex is TargetInvocationException invocationException && invocationException.InnerException != null
+                    ? invocationException.InnerException.Message
+                    : ex.Message;
+                result = ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Failed to create collection type {type.FullName}. Error: {message}"));
+                return true;
+            }
+
+            for (int i = 0; i < elements.Length; i++)
+            {
+                try
+                {
+                    addMethod.Invoke(instance, new[] { elements[i] });
+                }
+                catch (Exception ex) when (ex is TargetInvocationException || ex is ArgumentException || ex is TargetParameterCountException || ex is MethodAccessException)
+                {
+                    var message = ex is TargetInvocationException invocationException && invocationException.InnerException != null
+                        ? invocationException.InnerException.Message
+                        : ex.Message;
+                    result = ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Failed to add element at index {i} to collection type {type.FullName}. Error: {message}"));
+                    return true;
+                }
+            }
+
+            result = ConfigFileResult<object>.Ok(instance);
+            return true;
+        }
+
+        private static MethodInfo FindAddMethod(Type type, Type elementType)
+        {
+            var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Where(m => m.Name == "Add")
+                .ToArray();
+
+            for (int i = 0; i < methods.Length; i++)
+            {
+                var method = methods[i];
+                var parameters = method.GetParameters();
+                if (parameters.Length != 1)
+                    continue;
+
+                var parameterType = parameters[0].ParameterType;
+                if (parameterType == elementType || parameterType.IsAssignableFrom(elementType))
+                    return method;
+
+                var underlyingType = Nullable.GetUnderlyingType(elementType);
+                if (underlyingType != null && parameterType.IsAssignableFrom(underlyingType))
+                    return method;
+            }
+
+            return null;
+        }
+
+        private static ConfigFileResult<string> UnescapeString(string value)
+        {
+            var builder = new StringBuilder(value.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                var current = value[i];
+                if (current != '\\')
+                {
+                    builder.Append(current);
+                    continue;
+                }
+
+                if (i + 1 >= value.Length)
+                    return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, "Invalid escape sequence at end of string"));
+
+                i++;
+                switch (value[i])
+                {
+                    case '\\':
+                        builder.Append('\\');
+                        break;
+                    case '"':
+                        builder.Append('"');
+                        break;
+                    case 'n':
+                        builder.Append('\n');
+                        break;
+                    case 'r':
+                        builder.Append('\r');
+                        break;
+                    case 't':
+                        builder.Append('\t');
+                        break;
+                    default:
+                        return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Invalid escape sequence: \\{value[i]}"));
+                }
+            }
+
+            return ConfigFileResult<string>.Ok(builder.ToString());
         }
     }
 }

@@ -40,6 +40,11 @@ namespace BetterExperience.ConfigFileSpace
             };
         }
 
+        public override string ToString()
+        {
+            return Value?.ToString() ?? string.Empty;
+        }
+
         public static implicit operator ConfigFileResult<T>(T value)
         {
             return Ok(value);

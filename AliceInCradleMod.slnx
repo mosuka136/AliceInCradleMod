@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="BetterExperience.Test/BetterExperience.Test.csproj" Id="82c9c92b-4e77-4f1c-bdca-a086cc94dce9" />
   <Project Path="BetterExperience/BetterExperience.csproj" Id="a5e639d8-9b0a-4888-9c3b-0959129704c9" />
 </Solution>
