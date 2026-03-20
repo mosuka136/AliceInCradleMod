@@ -237,7 +237,7 @@ namespace BetterExperience.ConfigFileSpace
                 }
             }
 
-            return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.EntryNotFound, "No valid entry found"));
+            return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.EntryNotFound, "No entry found in content"));
         }
     }
 }

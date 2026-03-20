@@ -46,6 +46,7 @@
     <Compile Include="ConfigFileSpace\ConfigFileEntryModel.cs" />
     <Compile Include="ConfigFileSpace\ConfigFileModel.cs" />
     <Compile Include="ConfigFileSpace\ConfigFileResult.cs" />
+    <Compile Include="ConfigFileSpace\ConfigFileTableModel.cs" />
     <Compile Include="GameAttributePatchManager.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
     <Compile Include="Patches\DisableDrowning.cs" />

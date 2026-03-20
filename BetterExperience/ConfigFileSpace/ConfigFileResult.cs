@@ -10,6 +10,38 @@ namespace BetterExperience.ConfigFileSpace
         public bool Success { get; private set; }
         public IReadOnlyList<ConfigFileError> Errors { get; private set; }
 
+        public ConfigFileResult()
+        {
+            
+        }
+
+        public ConfigFileResult(T value, bool success, IReadOnlyList<ConfigFileError> errors)
+        {
+            Value = value;
+            Success = success;
+            Errors = errors ?? Array.Empty<ConfigFileError>();
+        }
+
+        public void SetValue(T value)
+        {
+            Value = value;
+            Success = true;
+        }
+
+        public void AddError(IReadOnlyList<ConfigFileError> errors)
+        {
+            var errorlist = new List<ConfigFileError>(Errors ?? Array.Empty<ConfigFileError>());
+            errorlist.AddRange(errors);
+            Errors = errorlist;
+        }
+
+        public void AddError(params ConfigFileError[] errors)
+        {
+            var errorlist = new List<ConfigFileError>(Errors ?? Array.Empty<ConfigFileError>());
+            errorlist.AddRange(errors);
+            Errors = errorlist;
+        }
+
         public static ConfigFileResult<T> Ok(T value)
         {
             return new ConfigFileResult<T>
@@ -92,8 +124,12 @@ namespace BetterExperience.ConfigFileSpace
     {
         UnsupportedType,
         InvalidValue,
-        InvalidKeyName,
         InvalidKeyValuePair,
+        InvalidKeyName,
+        InvalidTableName,
         EntryNotFound,
+        TableNotFound,
+        InvalidTableHeader,
+        EndOfContent,
     }
 }
