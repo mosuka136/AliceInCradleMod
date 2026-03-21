@@ -75,6 +75,10 @@ namespace BetterExperience.ConfigFileSpace
             }
             entry.ValueType = valueTypeResult.Value;
 
+            var acceptableValuesResult = ConfigFileEntryModel.EncodeAcceptableValues<T>();
+            if (acceptableValuesResult.Success)
+                entry.AcceptableValues = acceptableValuesResult.Value;
+
             var defaultValueResult = ConfigFileEntryModel.EncodeValue(defaultValue);
             if (!defaultValueResult.Success)
             {
@@ -141,6 +145,8 @@ namespace BetterExperience.ConfigFileSpace
                     if (!ConfigEntry<object>.Equal(elementA, elementB))
                         return false;
                 }
+
+                return true;
             }
 
             if (typeof(IEnumerable).IsAssignableFrom(type))

@@ -1,9 +1,11 @@
-using BepInEx.Configuration;
+using BetterExperience.ConfigFileSpace;
 
 namespace BetterExperience.BepConfigManager
 {
     internal sealed partial class ConfigManager
     {
+        public static ConfigFileManager Config { get; private set; }
+
         private ConfigManager()
         {
             
@@ -18,11 +20,13 @@ namespace BetterExperience.BepConfigManager
 
         private const string SectionGeneral = "General";
 
-        public static void Initialize()
+        public static void Initialize(string configFilePath)
         {
-            var Config = BetterExperience.Instance.Config;
+            Config = new ConfigFileManager(configFilePath);
 
             Config.SaveOnConfigSet = false;
+
+            Config.CreateTable(SectionGeneral);
 
             EnableBetterExperience = Config.Bind(
                 SectionGeneral,
@@ -81,7 +85,7 @@ namespace BetterExperience.BepConfigManager
 
         public static void ReloadConfig()
         {
-            BetterExperience.Instance.Config.Reload();
+            Config.Reload();
         }
     }
 }

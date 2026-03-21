@@ -44,7 +44,8 @@ namespace BetterExperience.Test.ConfigFileSpace
             var lines = result.Value.Replace("\r\n", "\n").Split('\n');
             Assert.Equal("## Main settings", lines[0]);
             Assert.Equal("[General]", lines[1]);
-            Assert.Equal("port=8080", lines[2]);
+            Assert.Equal("", lines[2]);
+            Assert.Equal("port = 8080", lines[3]);
         }
 
         [Fact]

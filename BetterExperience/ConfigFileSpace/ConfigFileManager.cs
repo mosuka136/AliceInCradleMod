@@ -89,17 +89,28 @@ namespace BetterExperience.ConfigFileSpace
 
         public void Reload()
         {
+            var oldSaveOnConfigSet = SaveOnConfigSet;
+            SaveOnConfigSet = false;
+
             Read();
             foreach (var entry in ConfigEntries)
             {
                 var entryResult = Tables.GetEntry(entry.TableName, entry.Key);
                 if (entryResult.Success)
+                {
+                    entry.Entry.CopyTo(entryResult.Value, false);
                     entry.RebindEntry(entryResult.Value);
+                }
             }
+
+            SaveOnConfigSet = oldSaveOnConfigSet;
+            Save();
         }
 
         public ConfigEntry<T> Bind<T>(string tableName, string key, T defaultValue, string description)
         {
+            HLog.Info($"Rebinding config entry");
+
             ConfigEntry<T> result = null;
             var entryResult = Tables.GetEntry(tableName, key);
             if (entryResult.Success)
@@ -144,6 +155,29 @@ namespace BetterExperience.ConfigFileSpace
             result.SettingChanged += OnConfigEntryChanged;
             ConfigEntries.Add(result);
             return result;
+        }
+
+        public void CreateTable(string tableName, string description = "")
+        {
+            var tableResult = Tables.GetTable(tableName);
+            if (tableResult.Success)
+                return;
+
+            var newTableResult = ConfigFileTableModel.CreateTable(tableName, description);
+            if (!newTableResult.Success)
+            {
+                foreach (var error in newTableResult.Errors)
+                    HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
+                throw new Exception($"Failed to create config table: {tableName}.");
+            }
+
+            var addTableResult = Tables.AddTable(newTableResult.Value);
+            if (!addTableResult.Success)
+            {
+                foreach (var error in addTableResult.Errors)
+                    HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
+                throw new Exception($"Failed to create config table: {tableName}.");
+            }
         }
 
         public void Save()

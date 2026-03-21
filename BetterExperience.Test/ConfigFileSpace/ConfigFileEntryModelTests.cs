@@ -204,7 +204,7 @@ namespace BetterExperience.Test.ConfigFileSpace
             var result = entry.EncodeKeyValuePair();
 
             Assert.True(result.Success);
-            Assert.Equal("myKey=hello", result.Value);
+            Assert.Equal("myKey = hello", result.Value);
         }
 
         [Fact]
@@ -252,7 +252,7 @@ namespace BetterExperience.Test.ConfigFileSpace
             var result = entry.EncodeEntry();
 
             Assert.True(result.Success);
-            Assert.Equal("port=8080", result.Value);
+            Assert.Equal("port = 8080", result.Value);
         }
 
         [Fact]
@@ -274,7 +274,7 @@ namespace BetterExperience.Test.ConfigFileSpace
             Assert.Equal("## Port number", lines[0]);
             Assert.Equal("# Value Type: Int32", lines[1]);
             Assert.Equal("# Default Value: 80", lines[2]);
-            Assert.Equal("port=8080", lines[3]);
+            Assert.Equal("port = 8080", lines[3]);
         }
 
         [Fact]

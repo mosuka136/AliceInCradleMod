@@ -141,5 +141,6 @@ namespace BetterExperience.ConfigFileSpace
         TableNotFound,
         InvalidTableHeader,
         EndOfContent,
+        InvalidType,
     }
 }

@@ -1,4 +1,4 @@
-using BepInEx.Configuration;
+using BetterExperience.ConfigFileSpace;
 
 namespace BetterExperience.BepConfigManager
 {
@@ -16,7 +16,7 @@ namespace BetterExperience.BepConfigManager
 
         public static void InitializeWeather()
         {
-            var Config = BetterExperience.Instance.Config;
+            Config.CreateTable(SectionWeather);
 
             EnableVisualImpactOfFog = Config.Bind(
                 SectionWeather,

@@ -1,10 +1,9 @@
-using BepInEx.Configuration;
+using BetterExperience.ConfigFileSpace;
 
 namespace BetterExperience.BepConfigManager
 {
     internal sealed partial class ConfigManager
     {
-        private static ConfigEntry<string> CaneReadme { get; set; }
         public static ConfigEntry<bool> EnablePreloadCaneSwingSpeed { get; private set; }
         public static ConfigEntry<bool> EnablePreloadCaneCastSpeed { get; private set; }
         public static ConfigEntry<bool> EnablePreloadCaneBalance { get; private set; }
@@ -44,12 +43,7 @@ namespace BetterExperience.BepConfigManager
 
         public static void InitializeCane()
         {
-            var Config = BetterExperience.Instance.Config;
-
-            CaneReadme = Config.Bind(
-                SectionCane,
-                "_README",
-                "",
+            Config.CreateTable(SectionCane,
                 "Cane config notes / 法杖属性配置说明：\n" +
                 "1) All SetCane* values use -1 to keep current value.\n" +
                 "1) 所有 SetCane* 项设为 -1 表示保持当前值。\n" +

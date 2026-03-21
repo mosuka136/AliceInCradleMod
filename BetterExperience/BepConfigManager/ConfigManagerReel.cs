@@ -1,4 +1,4 @@
-using BepInEx.Configuration;
+using BetterExperience.ConfigFileSpace;
 
 namespace BetterExperience.BepConfigManager
 {
@@ -12,7 +12,7 @@ namespace BetterExperience.BepConfigManager
 
         public static void InitializeReel()
         {
-            var Config = BetterExperience.Instance.Config;
+            Config.CreateTable(SectionReel);
 
             EnableBetterReelEffect = Config.Bind(
                 SectionReel,

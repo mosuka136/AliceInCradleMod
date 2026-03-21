@@ -34,7 +34,7 @@ namespace BetterExperience
 
             gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-            ConfigManager.Initialize();
+            ConfigManager.Initialize(Path.Combine(Paths.PluginPath, nameof(BetterExperience), $"{nameof(BetterExperience)}.cfg"));
 
             if (ConfigManager.EnableBetterExperience.Value)
                 Logger.LogWarning($"{nameof(BetterExperience)} Enabled!");

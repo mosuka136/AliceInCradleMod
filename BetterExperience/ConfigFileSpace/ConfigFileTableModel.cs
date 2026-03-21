@@ -26,14 +26,6 @@ namespace BetterExperience.ConfigFileSpace
             return table;
         }
 
-        public ConfigFileResult<Table> CreateTable(string tableName, string description)
-        {
-            var table = Table.Create(tableName, description);
-            if (!table.Success)
-                return ConfigFileResult<Table>.Fail(table.Errors);
-            return AddTable(table.Value);
-        }
-
         public ConfigFileResult<Table> GetTable(string tableName)
         {
             if (Tables.Contains(tableName))
@@ -62,10 +54,19 @@ namespace BetterExperience.ConfigFileSpace
                     sb.AppendLine(tableResult.Value);
                 else
                     result.AddError(tableResult.Errors);
+                sb.AppendLine();
             }
 
             result.SetValue(sb.ToString().Trim());
             return result;
+        }
+
+        public static ConfigFileResult<Table> CreateTable(string tableName, string description)
+        {
+            var table = Table.Create(tableName, description);
+            if (!table.Success)
+                return ConfigFileResult<Table>.Fail(table.Errors);
+            return table.Value;
         }
 
         public static ConfigFileResult<ConfigFileTableModel> DecodeTables(string[] content, ref int index)
@@ -168,6 +169,7 @@ namespace BetterExperience.ConfigFileSpace
                     sb.AppendLine(descriptionResult.Value);
 
                 sb.AppendLine(tableHeaderResult.Value);
+                sb.AppendLine();
 
                 foreach (var entry in Entries.Values)
                 {
@@ -176,6 +178,7 @@ namespace BetterExperience.ConfigFileSpace
                         sb.AppendLine(entryResult.Value);
                     else
                         result.AddError(entryResult.Errors);
+                    sb.AppendLine();
                 }
 
                 result.SetValue(sb.ToString().Trim());

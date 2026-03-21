@@ -38,7 +38,7 @@ namespace BetterExperience
             _logLevel = logLevel;
             _bepInExLogLevel = bepInExLogLevel;
 
-            if (!ConfigManager.EnableHarmonyLog.Value)
+            if (ConfigManager.EnableHarmonyLog == null || !ConfigManager.EnableHarmonyLog.Value)
                 return;
 
             if (!Directory.Exists(loggerPath))
@@ -72,7 +72,7 @@ namespace BetterExperience
             [CallerLineNumber] int line = 0) => Write(LogLevel.Error, msg, ex, member, file, line);
         public static void WriteLine()
         {
-            if (!ConfigManager.EnableHarmonyLog.Value)
+            if (ConfigManager.EnableHarmonyLog == null || !ConfigManager.EnableHarmonyLog.Value)
                 return;
 
             if (_writer == null)
@@ -92,7 +92,7 @@ namespace BetterExperience
             string file,
             int line)
         {
-            if (!ConfigManager.EnableHarmonyLog.Value)
+            if (ConfigManager.EnableHarmonyLog == null || !ConfigManager.EnableHarmonyLog.Value)
                 return;
 
             if (_writer == null)

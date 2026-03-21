@@ -26,6 +26,7 @@ namespace BetterExperience.ConfigFileSpace
         public string Value { get; set; }
         public string DefaultValue { get; set; }
         public string ValueType { get; set; }
+        public string AcceptableValues { get; set; }
 
         public ConfigFileResult<string> EncodeDescription()
         {
@@ -45,6 +46,13 @@ namespace BetterExperience.ConfigFileSpace
             return $"# Value Type: {ValueType}";
         }
 
+        public ConfigFileResult<string> EncodeAcceptableValues()
+        {
+            if (string.IsNullOrEmpty(AcceptableValues))
+                return string.Empty;
+            return $"# Acceptable Values: {AcceptableValues}";
+        }
+
         public ConfigFileResult<string> EncodeDefaultValue()
         {
             if (string.IsNullOrEmpty(DefaultValue))
@@ -58,7 +66,7 @@ namespace BetterExperience.ConfigFileSpace
                 return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidKeyName, $"Invalid key name: {Key}"));
             if (string.IsNullOrWhiteSpace(Value))
                 return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Value cannot be empty for key: {Key}"));
-            return $"{Key}={Value}";
+            return $"{Key} = {Value}";
         }
 
         public ConfigFileResult<string> EncodeEntry()
@@ -70,6 +78,10 @@ namespace BetterExperience.ConfigFileSpace
             var valueTypeResult = EncodeValueType();
             if (!valueTypeResult.Success)
                 return ConfigFileResult<string>.Fail(valueTypeResult.Errors);
+
+            var acceptableValuesResult = EncodeAcceptableValues();
+            if (!acceptableValuesResult.Success)
+                return ConfigFileResult<string>.Fail(acceptableValuesResult.Errors);
 
             var defaultValueResult = EncodeDefaultValue();
             if (!defaultValueResult.Success)
@@ -84,11 +96,28 @@ namespace BetterExperience.ConfigFileSpace
                 sb.AppendLine(descriptionResult.Value);
             if (valueTypeResult.Value != string.Empty)
                 sb.AppendLine(valueTypeResult.Value);
+            if (acceptableValuesResult.Value != string.Empty)
+                sb.AppendLine(acceptableValuesResult.Value);
             if (defaultValueResult.Value != string.Empty)
                 sb.AppendLine(defaultValueResult.Value);
             sb.AppendLine(keyValuePairResult.Value);
 
             return sb.ToString().Trim();
+        }
+
+        public bool CopyTo(ConfigFileEntryModel target, bool overrideValue)
+        {
+            if (target == null)
+                return false;
+
+            target.Description = Description;
+            target.Key = Key;
+            target.DefaultValue = DefaultValue;
+            target.ValueType = ValueType;
+            target.AcceptableValues = AcceptableValues;
+            if (overrideValue)
+                target.Value = Value;
+            return true;
         }
 
         public static bool IsValidKeyName(string key)
@@ -156,6 +185,24 @@ namespace BetterExperience.ConfigFileSpace
                 return $"{EncodeValueType(GetCollectionElementType(type))}[]";
 
             return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.UnsupportedType, $"Unsupported type: {type.FullName}"));
+        }
+
+        public static ConfigFileResult<string> EncodeAcceptableValues<T>()
+        {
+            return EncodeAcceptableValues(typeof(T));
+        }
+
+        public static ConfigFileResult<string> EncodeAcceptableValues(Type type)
+        {
+            if (typeof(IEnumerable).IsAssignableFrom(type))
+                return EncodeAcceptableValues(GetCollectionElementType(type));
+
+            if (!type.IsEnum)
+                return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidType, $"Type is not an enum: {type.FullName}"));
+
+            var enumNames = Enum.GetNames(type);
+            var acceptableValues = string.Join(", ", enumNames);
+            return acceptableValues;
         }
 
         public static ConfigFileResult<ConfigFileEntryModel> CreatEntry<T>(string key, T value, T defaultValue, string description)

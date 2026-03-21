@@ -1,10 +1,9 @@
-using BepInEx.Configuration;
+using BetterExperience.ConfigFileSpace;
 
 namespace BetterExperience.BepConfigManager
 {
     internal sealed partial class ConfigManager
     {
-        private static ConfigEntry<string> LogReadme { get; set; }
         public static ConfigEntry<bool> EnableHarmonyLog { get; private set; }
         public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
         public static ConfigEntry<HLog.LogLevel> BepInExLogLevel { get; private set; }
@@ -13,12 +12,7 @@ namespace BetterExperience.BepConfigManager
 
         public static void InitializeLog()
         {
-            var Config = BetterExperience.Instance.Config;
-
-            LogReadme = Config.Bind(
-                SectionLog,
-                "_README",
-                "",
+            Config.CreateTable(SectionLog,
                 "Harmony log will be generated in BetterExperience\\logs folder.\n" +
                 "The log level of Harmony log and BepInEx log can be set separately.\n" +
                 "If the log level is set to Info, it will log all messages.\n" +

@@ -1,4 +1,4 @@
-using BepInEx.Configuration;
+using BetterExperience.ConfigFileSpace;
 
 namespace BetterExperience.BepConfigManager
 {
@@ -18,7 +18,7 @@ namespace BetterExperience.BepConfigManager
 
         public static void InitializeMapTrap()
         {
-            var Config = BetterExperience.Instance.Config;
+            Config.CreateTable(SectionMap);
 
             EnableBetterSaveSite = Config.Bind(
                 SectionMap,
