@@ -19,6 +19,8 @@ namespace BetterExperience.ConfigFileSpace
             {
                 if (IsValidKeyName(value))
                     _key = value;
+                else
+                    throw new ArgumentException($"Invalid key name: {value}. Key names must be non-empty and can only contain letters, digits, and underscores.");
             }
         }
         public string Value { get; set; }

@@ -118,6 +118,16 @@ namespace BetterExperience.ConfigFileSpace
             Message = message;
             Caller = caller;
         }
+
+        public override string ToString()
+        {
+            return $"[{Code}] {Message} (Caller: {Caller})";
+        }
+
+        public string GetFullMessage()
+        {
+            return $"[{Code}] {Message} (Caller: {Caller})";
+        }
     }
 
     public enum ConfigFileErrorCode

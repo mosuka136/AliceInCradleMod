@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
@@ -32,6 +32,23 @@ namespace BetterExperience.ConfigFileSpace
             if (!table.Success)
                 return ConfigFileResult<Table>.Fail(table.Errors);
             return AddTable(table.Value);
+        }
+
+        public ConfigFileResult<Table> GetTable(string tableName)
+        {
+            if (Tables.Contains(tableName))
+                return (Table)Tables[tableName];
+            return ConfigFileResult<Table>.Fail(new ConfigFileError(ConfigFileErrorCode.TableNotFound, $"Table not found: {tableName}"));
+        }
+
+        public ConfigFileResult<ConfigFileEntryModel> GetEntry(string tableName, string key)
+        {
+            if (Tables.Contains(tableName))
+            {
+                var table = (Table)Tables[tableName];
+                return table.GetEntry(key);
+            }
+            return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.TableNotFound, $"Table not found: {tableName}"));
         }
 
         public ConfigFileResult<string> EncodeTables()
@@ -81,20 +98,20 @@ namespace BetterExperience.ConfigFileSpace
         {
             public string Description { get; set; }
             public string TableName { get; set; }
-            public List<ConfigFileEntryModel> Entries { get; set; } = new List<ConfigFileEntryModel>();
+            public OrderedDictionary Entries { get; set; } = new OrderedDictionary();
 
             public Table(string tableName, string description)
             {
                 if (IsValidTableName(tableName))
                     TableName = tableName;
                 else
-                    TableName = string.Empty;
+                    throw new ArgumentException($"Invalid table name: {tableName}", nameof(tableName));
                 Description = description;
             }
 
-            public Table(string tableName, string description, List<ConfigFileEntryModel> entries) : this(tableName, description)
+            public Table(string tableName, string description, OrderedDictionary entries) : this(tableName, description)
             {
-                Entries = entries ?? new List<ConfigFileEntryModel>();
+                Entries = entries ?? new OrderedDictionary();
             }
 
             public ConfigFileResult<Table> AddEntry(ConfigFileEntryModel entry)
@@ -102,11 +119,18 @@ namespace BetterExperience.ConfigFileSpace
                 if (entry == null)
                     return ConfigFileResult<Table>.Fail(new ConfigFileError(ConfigFileErrorCode.EntryNotFound, "Entry cannot be null"));
 
-                if (Entries.Any(e => e.Key == entry.Key))
+                if (Entries.Contains(entry.Key))
                     return ConfigFileResult<Table>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidKeyName, $"Duplicate key: {entry.Key}"));
 
-                Entries.Add(entry);
+                Entries.Add(entry.Key, entry);
                 return this;
+            }
+
+            public ConfigFileResult<ConfigFileEntryModel> GetEntry(string key)
+            {
+                if (Entries.Contains(key))
+                    return (ConfigFileEntryModel)Entries[key];
+                return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.EntryNotFound, $"Entry not found: {key}"));
             }
 
             public ConfigFileResult<string> EncodeDescription()
@@ -145,9 +169,9 @@ namespace BetterExperience.ConfigFileSpace
 
                 sb.AppendLine(tableHeaderResult.Value);
 
-                foreach (var entry in Entries)
+                foreach (var entry in Entries.Values)
                 {
-                    var entryResult = entry.EncodeEntry();
+                    var entryResult = ((ConfigFileEntryModel)entry).EncodeEntry();
                     if (entryResult.Success)
                         sb.AppendLine(entryResult.Value);
                     else

@@ -25,6 +25,8 @@
     <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileResult.cs" Link="ConfigFileSpace\ConfigFileResult.cs" />
     <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileEntryModel.cs" Link="ConfigFileSpace\ConfigFileEntryModel.cs" />
     <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileTableModel.cs" Link="ConfigFileSpace\ConfigFileTableModel.cs" />
+    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigEntry.cs" Link="ConfigFileSpace\ConfigEntry.cs" />
+    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileManager.cs" Link="ConfigFileSpace\ConfigFileManager.cs" />
   </ItemGroup>
 
 </Project>

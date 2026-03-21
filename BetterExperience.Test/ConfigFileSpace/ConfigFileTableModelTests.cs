@@ -72,7 +72,8 @@ namespace BetterExperience.Test.ConfigFileSpace
             Assert.True(result.Success);
             Assert.Equal("General", result.Value.TableName);
             Assert.Single(result.Value.Entries);
-            Assert.Equal("port", result.Value.Entries[0].Key);
+            var entry = (ConfigFileEntryModel)result.Value.Entries[0];
+            Assert.Equal("port", entry.Key);
             Assert.Equal(2, index);
         }
 
@@ -90,8 +91,8 @@ namespace BetterExperience.Test.ConfigFileSpace
 
             var general = (ConfigFileTableModel.Table)result.Value.Tables["General"];
             var advanced = (ConfigFileTableModel.Table)result.Value.Tables["Advanced"];
-            Assert.Equal("8080", general.Entries.Single().Value);
-            Assert.Equal("1", advanced.Entries.Single().Value);
+            Assert.Equal("8080", ((ConfigFileEntryModel)general.Entries[0]).Value);
+            Assert.Equal("1", ((ConfigFileEntryModel)advanced.Entries[0]).Value);
         }
     }
 }
