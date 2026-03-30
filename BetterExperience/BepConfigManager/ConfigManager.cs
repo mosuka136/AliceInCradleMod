@@ -1,10 +1,13 @@
 using BetterExperience.ConfigFileSpace;
+using System.Collections.Specialized;
 
 namespace BetterExperience.BepConfigManager
 {
     internal sealed partial class ConfigManager
     {
         public static ConfigFileManager Config { get; private set; }
+
+        public static OrderedDictionary Tables => Config.Tables;
 
         private ConfigManager()
         {

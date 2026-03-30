@@ -112,8 +112,10 @@ namespace BetterExperience.Test.ConfigFileSpace
             var entry = manager.Bind("General", "Port", 8080, "port");
 
             Assert.NotNull(entry);
-            Assert.Single(manager.ConfigEntries);
-            Assert.Same(entry, manager.ConfigEntries[0]);
+            Assert.Single(manager.Tables);
+            var table = Assert.IsType<ConfigTable>(manager.Tables[0]);
+            Assert.Single(table.Table);
+            Assert.Same(entry, table.Table[0]);
         }
 
         [Fact]
@@ -158,7 +160,9 @@ namespace BetterExperience.Test.ConfigFileSpace
             manager.Save();
 
             bool eventRaised = false;
-            ((ConfigEntry<int>)manager.ConfigEntries[0]).SettingChanged += (_, _) => eventRaised = true;
+            var table = Assert.IsType<ConfigTable>(manager.Tables[0]);
+            var entry = Assert.IsType<ConfigEntry<int>>(Assert.Single(table.Table));
+            entry.SettingChanged += (_, _) => eventRaised = true;
 
             manager.Reload();
 

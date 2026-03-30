@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BetterExperience.ConfigFileSpace
 {
-    public class ConfigFileTableModel
+    public class ConfigFileTablesModel
     {
         public OrderedDictionary Tables { get; private set; } = new OrderedDictionary();
 
@@ -69,10 +69,10 @@ namespace BetterExperience.ConfigFileSpace
             return table.Value;
         }
 
-        public static ConfigFileResult<ConfigFileTableModel> DecodeTables(string[] content, ref int index)
+        public static ConfigFileResult<ConfigFileTablesModel> DecodeTables(string[] content, ref int index)
         {
-            var model = new ConfigFileTableModel();
-            var result = new ConfigFileResult<ConfigFileTableModel>(model, true, null);
+            var model = new ConfigFileTablesModel();
+            var result = new ConfigFileResult<ConfigFileTablesModel>(model, true, null);
 
             while (index < content.Length)
             {

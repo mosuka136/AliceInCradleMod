@@ -449,7 +449,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void CreateEntryWhenParametersAreValidShouldReturnPopulatedEntry()
         {
-            var result = ConfigFileEntryModel.CreatEntry("port", 8080, 80, "Port number");
+            var result = ConfigFileEntryModel.CreateEntry("port", 8080, 80, "Port number");
 
             Assert.True(result.Success);
             Assert.Equal("port", result.Value.Key);
@@ -462,7 +462,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void CreateEntryWhenKeyIsInvalidShouldFailWithInvalidKeyName()
         {
-            var result = ConfigFileEntryModel.CreatEntry("invalid-key", 1, 0, "");
+            var result = ConfigFileEntryModel.CreateEntry("invalid-key", 1, 0, "");
 
             Assert.False(result.Success);
             Assert.Equal(ConfigFileErrorCode.InvalidKeyName, result.Errors[0].Code);
@@ -471,7 +471,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void CreateEntryWhenTypeIsUnsupportedShouldFailWithUnsupportedType()
         {
-            var result = ConfigFileEntryModel.CreatEntry("key", new UnsupportedValue(), new UnsupportedValue(), "");
+            var result = ConfigFileEntryModel.CreateEntry("key", new UnsupportedValue(), new UnsupportedValue(), "");
 
             Assert.False(result.Success);
             Assert.Equal(ConfigFileErrorCode.UnsupportedType, result.Errors[0].Code);

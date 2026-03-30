@@ -10,6 +10,9 @@ namespace BetterExperience.ConfigFileSpace
         string TableName { get; }
         string Key { get; }
         ConfigFileEntryModel Entry { get; }
+        Type ValueType { get; }
+        object BoxedValue { get; set; }
+        object BoxedDefaultValue { get; }
 
         void RebindEntry(ConfigFileEntryModel entry);
     }
@@ -46,6 +49,16 @@ namespace BetterExperience.ConfigFileSpace
         public string Key => Entry.Key;
         public T DefaultValue { get; private set; }
         public ConfigFileEntryModel Entry { get; private set; }
+
+        public Type ValueType => typeof(T);
+
+        public object BoxedValue
+        {
+            get => Value;
+            set => Value = (T)value;
+        }
+
+        public object BoxedDefaultValue => DefaultValue;
 
         public event EventHandler<T> SettingChanged;
 
@@ -91,7 +104,7 @@ namespace BetterExperience.ConfigFileSpace
             if (!ConfigFileEntryModel.IsValidKeyName(entry.Key))
                 throw new InvalidOperationException($"Invalid key name: {entry.Key}");
 
-            if (!ConfigFileTableModel.Table.IsValidTableName(tableName))
+            if (!ConfigFileTablesModel.Table.IsValidTableName(tableName))
                 throw new InvalidOperationException($"Invalid table name: {tableName}");
 
             TableName = tableName;
@@ -157,22 +170,30 @@ namespace BetterExperience.ConfigFileSpace
                 if (enumA == null || enumB == null)
                     return false;
 
-                while (true)
+                try
                 {
-                    var hasNextA = enumA.MoveNext();
-                    var hasNextB = enumB.MoveNext();
+                    while (true)
+                    {
+                        var hasNextA = enumA.MoveNext();
+                        var hasNextB = enumB.MoveNext();
 
-                    if (hasNextA != hasNextB)
-                        return false;
+                        if (hasNextA != hasNextB)
+                            return false;
 
-                    if (!hasNextA)
-                        break;
+                        if (!hasNextA)
+                            break;
 
-                    if (!ConfigEntry<object>.Equal(enumA.Current, enumB.Current))
-                        return false;
+                        if (!ConfigEntry<object>.Equal(enumA.Current, enumB.Current))
+                            return false;
+                    }
+
+                    return true;
                 }
-
-                return true;
+                finally
+                {
+                    (enumA as IDisposable)?.Dispose();
+                    (enumB as IDisposable)?.Dispose();
+                }
             }
 
             return false;

@@ -4,6 +4,7 @@ namespace BetterExperience.BepConfigManager
 {
     internal sealed partial class ConfigManager
     {
+        public static ConfigEntry<string> ConfigUIHotkey { get; private set; }
         public static ConfigEntry<string> ReloadConfigHotkey { get; private set; }
         public static ConfigEntry<string> FlushAllStoreHotkey { get; private set; }
         public static ConfigEntry<string> FlushTextureHotkey { get; private set; }
@@ -46,6 +47,13 @@ namespace BetterExperience.BepConfigManager
                 "- LeftCtrl+RightShift+F\n" +
                 "- GamepadStart+GamepadSouth\n" +
                 "- Ctrl+Shift+F, GamepadStart+GamepadSouth"
+                );
+
+            ConfigUIHotkey = Config.Bind(
+                SectionHotkey,
+                nameof(ConfigUIHotkey),
+                "F1",
+                "The hotkey to open config UI. Default is F1.\n打开配置界面的热键。默认是 F1。"
                 );
             ReloadConfigHotkey = Config.Bind(
                 SectionHotkey,

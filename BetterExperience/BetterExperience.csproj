@@ -48,7 +48,9 @@
     <Compile Include="ConfigFileSpace\ConfigFileManager.cs" />
     <Compile Include="ConfigFileSpace\ConfigFileModel.cs" />
     <Compile Include="ConfigFileSpace\ConfigFileResult.cs" />
-    <Compile Include="ConfigFileSpace\ConfigFileTableModel.cs" />
+    <Compile Include="ConfigFileSpace\ConfigFileTablesModel.cs" />
+    <Compile Include="ConfigFileSpace\ConfigTable.cs" />
+    <Compile Include="ConfigGUI\MainGUI.cs" />
     <Compile Include="GameAttributePatchManager.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
     <Compile Include="Patches\DisableDrowning.cs" />
@@ -142,8 +144,16 @@
       <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="unsafeAssem">

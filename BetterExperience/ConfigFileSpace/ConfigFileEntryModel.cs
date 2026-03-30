@@ -205,7 +205,7 @@ namespace BetterExperience.ConfigFileSpace
             return acceptableValues;
         }
 
-        public static ConfigFileResult<ConfigFileEntryModel> CreatEntry<T>(string key, T value, T defaultValue, string description)
+        public static ConfigFileResult<ConfigFileEntryModel> CreateEntry<T>(string key, T value, T defaultValue, string description)
         {
             if (!IsValidKeyName(key))
                 return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidKeyName, $"Invalid key name: {key}"));

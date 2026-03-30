@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -8,6 +8,10 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ConfigFileSpace\ConfigTable.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
@@ -24,9 +28,10 @@
     <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileModel.cs" Link="ConfigFileSpace\ConfigFileModel.cs" />
     <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileResult.cs" Link="ConfigFileSpace\ConfigFileResult.cs" />
     <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileEntryModel.cs" Link="ConfigFileSpace\ConfigFileEntryModel.cs" />
-    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileTableModel.cs" Link="ConfigFileSpace\ConfigFileTableModel.cs" />
+    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileTablesModel.cs" Link="ConfigFileSpace\ConfigFileTablesModel.cs" />
     <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigEntry.cs" Link="ConfigFileSpace\ConfigEntry.cs" />
     <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileManager.cs" Link="ConfigFileSpace\ConfigFileManager.cs" />
+    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigTable.cs" Link="ConfigFileSpace\ConfigTable.cs" />
   </ItemGroup>
 
 </Project>
