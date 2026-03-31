@@ -25,7 +25,6 @@ namespace BetterExperience
 
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void Initialize(
             string loggerPath,
             string loggerName,
