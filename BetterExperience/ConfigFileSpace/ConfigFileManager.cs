@@ -127,12 +127,12 @@ namespace BetterExperience.ConfigFileSpace
                 {
                     foreach (var error in tableResult.Errors)
                         HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                    throw new Exception($"Config table not found: {tableKey}.");
+                    throw new ArgumentException($"Config table not found: {tableKey}.", nameof(tableKey));
                 }
                 var newEntry = new ConfigFileEntryModel();
 
                 if (!ConfigFileEntryModel.IsValidKeyName(key))
-                    throw new Exception($"Invalid key name for config entry: {tableKey}.{key}.");
+                    throw new ArgumentException($"Invalid key name for config entry: {tableKey}.{key}.", nameof(key));
                 newEntry.Key = key;
 
                 var valueResult = ConfigFileEntryModel.EncodeValue(defaultValue);
@@ -140,7 +140,7 @@ namespace BetterExperience.ConfigFileSpace
                 {
                     foreach (var error in valueResult.Errors)
                         HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                    throw new Exception($"Failed to encode default value for config entry: {tableKey}.{key}. Errors: {string.Join(", ", valueResult.Errors)}");
+                    throw new InvalidOperationException($"Failed to encode default value for config entry: {tableKey}.{key}. Errors: {string.Join(", ", valueResult.Errors)}");
                 }
                 newEntry.Value = valueResult.Value;
 
@@ -149,7 +149,7 @@ namespace BetterExperience.ConfigFileSpace
                 {
                     foreach (var error in addEntryResult.Errors)
                         HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                    throw new Exception($"Failed to add config entry to table: {tableKey}.{key}.");
+                    throw new InvalidOperationException($"Failed to add config entry to table: {tableKey}.{key}.");
                 }
 
                 result = new ConfigEntry<T>(tableKey, newEntry, defaultValue, entryName, description);
@@ -158,9 +158,9 @@ namespace BetterExperience.ConfigFileSpace
             result.OnValueChanged += OnConfigEntryChanged;
 
             if (!Tables.Contains(tableKey))
-                throw new Exception($"Config table '{tableKey}' is missing from the manager.");
+                throw new InvalidOperationException($"Config table '{tableKey}' is missing from the manager.");
             if (!(Tables[tableKey] is ConfigTable table))
-                throw new Exception($"Config table is not a list: {tableKey}.");
+                throw new InvalidOperationException($"Config table is not a list: {tableKey}.");
 
             table.Table.Add(result);
             return result;
@@ -181,7 +181,7 @@ namespace BetterExperience.ConfigFileSpace
             {
                 foreach (var error in newTableResult.Errors)
                     HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                throw new Exception($"Failed to create config table: {tableKey}.");
+                throw new InvalidOperationException($"Failed to create config table: {tableKey}.");
             }
 
             var addTableResult = FileTables.AddTable(newTableResult.Value);
@@ -189,11 +189,11 @@ namespace BetterExperience.ConfigFileSpace
             {
                 foreach (var error in addTableResult.Errors)
                     HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                throw new Exception($"Failed to create config table: {tableKey}.");
+                throw new InvalidOperationException($"Failed to add config table: {tableKey}.");
             }
 
             if (Tables.Contains(tableKey))
-                throw new Exception($"Config table already exists in manager: {tableKey}.");
+                throw new InvalidOperationException($"Config table already exists in manager: {tableKey}.");
 
             Tables.Add(tableKey, new ConfigTable(tableKey, tableName, description));
         }
