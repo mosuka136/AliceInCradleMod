@@ -240,16 +240,16 @@ namespace BetterExperience.ConfigFileSpace
 
             public static ConfigFileResult<Table> DecodeTableHeader(string[] content, ref int index)
             {
-                foreach (var item in content.Skip(index))
+                for (; index < content.Length; index++)
                 {
-                    index++;
-                    var line = item.Trim();
+                    var line = content[index].Trim();
 
                     if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
                         continue;
 
                     if (line.StartsWith("[") && line.EndsWith("]"))
                     {
+                        index++;
                         var tableName = line.Substring(1, line.Length - 2);
                         var tableResult = Create(tableName, new Translator());
                         if (!tableResult.Success)
@@ -257,6 +257,7 @@ namespace BetterExperience.ConfigFileSpace
                         return tableResult;
                     }
 
+                    index++;
                     return ConfigFileResult<Table>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidTableHeader, $"Invalid table header: {line}"));
                 }
 

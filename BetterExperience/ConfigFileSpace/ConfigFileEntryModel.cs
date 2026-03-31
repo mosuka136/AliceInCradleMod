@@ -289,9 +289,9 @@ namespace BetterExperience.ConfigFileSpace
 
         public static ConfigFileResult<ConfigFileEntryModel> DecodeEntry(string[] content, ref int index)
         {
-            foreach (var line in content.Skip(index))
+            for (; index < content.Length; index++)
             {
-                index++;
+                var line = content[index];
 
                 if (IsComment(line) || string.IsNullOrWhiteSpace(line))
                     continue;
@@ -299,6 +299,7 @@ namespace BetterExperience.ConfigFileSpace
                 if (IsKeyValuePair(line))
                 {
                     var keyValuePairResult = DecodeKeyValuePair(line);
+                    index++;
                     if (!keyValuePairResult.Success)
                         return ConfigFileResult<ConfigFileEntryModel>.Fail(keyValuePairResult.Errors);
 
@@ -312,6 +313,7 @@ namespace BetterExperience.ConfigFileSpace
                 }
                 else
                 {
+                    index++;
                     return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidKeyValuePair, $"Invalid key-value pair: {line}"));
                 }
             }
