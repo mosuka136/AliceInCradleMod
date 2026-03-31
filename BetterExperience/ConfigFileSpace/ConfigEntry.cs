@@ -1,7 +1,6 @@
 using BetterExperience.TranslatorSpace;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace BetterExperience.ConfigFileSpace
 {
@@ -133,6 +132,11 @@ namespace BetterExperience.ConfigFileSpace
 
         public static bool Equal(T a, T b)
         {
+            return EqualBoxed(a, b);
+        }
+
+        private static bool EqualBoxed(object a, object b)
+        {
             if (a == null && b == null)
                 return true;
 
@@ -141,8 +145,11 @@ namespace BetterExperience.ConfigFileSpace
 
             var type = a.GetType();
 
+            if (type != b.GetType())
+                return false;
+
             if (type.IsPrimitive || type == typeof(string) || type.IsEnum)
-                return EqualityComparer<T>.Default.Equals(a, b);
+                return object.Equals(a, b);
 
             if (type.IsArray)
             {
@@ -157,9 +164,7 @@ namespace BetterExperience.ConfigFileSpace
 
                 for (int i = 0; i < arrayA.Length; i++)
                 {
-                    var elementA = arrayA.GetValue(i);
-                    var elementB = arrayB.GetValue(i);
-                    if (!ConfigEntry<object>.Equal(elementA, elementB))
+                    if (!EqualBoxed(arrayA.GetValue(i), arrayB.GetValue(i)))
                         return false;
                 }
 
@@ -187,7 +192,7 @@ namespace BetterExperience.ConfigFileSpace
                         if (!hasNextA)
                             break;
 
-                        if (!ConfigEntry<object>.Equal(enumA.Current, enumB.Current))
+                        if (!EqualBoxed(enumA.Current, enumB.Current))
                             return false;
                     }
 
