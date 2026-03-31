@@ -1,5 +1,4 @@
 using BepInEx.Logging;
-using BetterExperience;
 using BetterExperience.BepConfigManager;
 using System;
 using System.IO;
@@ -10,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 namespace BetterExperience
 {
-    internal sealed class HLog
+    public class HLog
     {
         private static StreamWriter _writer;
         private static object _lock = new object();

@@ -56,7 +56,7 @@ namespace BetterExperience.ConfigFileSpace
 
         public bool Write()
         {
-            var oldFilePath = Path.Combine(Path.GetDirectoryName(FilePath), $"{Path.GetFileNameWithoutExtension(FilePath)}_old{Path.GetExtension(FilePath)}");
+            var tmpFilePath = FilePath + ".tmp";
             try
             {
                 var encodeResult = FileTables.EncodeTables();
@@ -71,14 +71,12 @@ namespace BetterExperience.ConfigFileSpace
                 if (!string.IsNullOrWhiteSpace(directoryPath) && !Directory.Exists(directoryPath))
                     Directory.CreateDirectory(directoryPath);
 
-                if (!File.Exists(FilePath))
-                    File.WriteAllText(FilePath, encodeResult.Value);
-                else
-                {
-                    File.Move(FilePath, oldFilePath);
-                    File.WriteAllText(FilePath, encodeResult.Value);
-                    File.Delete(oldFilePath);
-                }
+                File.WriteAllText(tmpFilePath, encodeResult.Value);
+
+                if (File.Exists(FilePath))
+                    File.Delete(FilePath);
+
+                File.Move(tmpFilePath, FilePath);
 
                 return true;
             }
