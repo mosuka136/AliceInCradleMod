@@ -3,8 +3,25 @@ using BetterExperience.TranslatorSpace;
 
 namespace BetterExperience.Test.ConfigFileSpace
 {
-    public class ConfigEntryAndManagerTests
+    public class ConfigEntryAndManagerTests : IDisposable
     {
+        private readonly List<string> _tempFiles = new List<string>();
+
+        private string CreateTempConfigPath()
+        {
+            var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cfg");
+            _tempFiles.Add(path);
+            return path;
+        }
+
+        public void Dispose()
+        {
+            foreach (var path in _tempFiles)
+            {
+                try { if (File.Exists(path)) File.Delete(path); }
+                catch { }
+            }
+        }
         [Fact]
         public void ConfigEntryValueSetterWhenValueChangesShouldEncodeAndStoreNewValue()
         {
@@ -100,7 +117,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void ConfigFileManagerBindShouldAddEntryToConfigEntriesCollection()
         {
-            var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cfg");
+            var path = CreateTempConfigPath();
             var manager = new ConfigFileManager(path)
             {
                 SaveOnConfigSet = false
@@ -122,7 +139,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void ConfigFileManagerReloadWhenNoBoundEntriesShouldNotThrow()
         {
-            var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cfg");
+            var path = CreateTempConfigPath();
             var manager = new ConfigFileManager(path);
 
             var exception = Record.Exception(() => manager.Reload());
@@ -133,7 +150,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void ConfigFileManagerReloadWhenValueChangedShouldRaiseSettingChanged()
         {
-            var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cfg");
+            var path = CreateTempConfigPath();
             var manager = new ConfigFileManager(path) { SaveOnConfigSet = false };
             manager.CreateTable("General", new Translator());
             var entry = manager.Bind("General", "Port", 8080, new Translator(english: "port"), new Translator());
@@ -154,7 +171,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void ConfigFileManagerReloadWhenValueUnchangedShouldNotRaiseSettingChanged()
         {
-            var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cfg");
+            var path = CreateTempConfigPath();
             var manager = new ConfigFileManager(path) { SaveOnConfigSet = false };
             manager.CreateTable("General", new Translator());
             manager.Bind("General", "Port", 8080, new Translator(english: "port"), new Translator());
