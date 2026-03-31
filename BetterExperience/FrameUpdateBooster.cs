@@ -16,7 +16,7 @@ namespace BetterExperience
 
         public event Action OnFrameUpdate;
 
-        private bool _initialized = false;
+        private volatile bool _initialized = false;
 
         public void Awake()
         {

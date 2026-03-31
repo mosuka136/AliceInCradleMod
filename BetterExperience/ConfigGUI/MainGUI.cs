@@ -18,7 +18,7 @@ namespace BetterExperience.ConfigGUI
 
         public static MainGUI Instance { get; } = new MainGUI();
 
-        private static bool _initialized = false;
+        private static volatile bool _initialized = false;
 
         private void Awake()
         {
