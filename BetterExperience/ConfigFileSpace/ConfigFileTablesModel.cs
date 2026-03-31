@@ -217,7 +217,7 @@ namespace BetterExperience.ConfigFileSpace
                 var table = new Table(headerResult.Value.TableKey, headerResult.Value.Description);
                 var result = new ConfigFileResult<Table>(table, true, null);
 
-                for (var i = index; index < content.Length && !DecodeTableHeader(content, ref i); i = index)
+                for (var i = index; index < content.Length && !DecodeTableHeader(content, ref i).Success; i = index)
                 {
                     var entryResult = ConfigFileEntryModel.DecodeEntry(content, ref index);
                     if (entryResult.Success)

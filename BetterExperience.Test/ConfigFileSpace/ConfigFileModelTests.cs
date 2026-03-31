@@ -436,7 +436,6 @@ namespace BetterExperience.Test.ConfigFileSpace
             var result = ConfigFileResult<int>.Ok(42);
 
             Assert.True(result.Success);
-            Assert.True(result);
             Assert.Equal(42, result.Value);
             Assert.Empty(result.Errors);
         }

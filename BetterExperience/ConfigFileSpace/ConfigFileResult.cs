@@ -30,16 +30,16 @@ namespace BetterExperience.ConfigFileSpace
 
         public void AddError(IReadOnlyList<ConfigFileError> errors)
         {
-            var errorlist = new List<ConfigFileError>(Errors ?? Array.Empty<ConfigFileError>());
-            errorlist.AddRange(errors);
-            Errors = errorlist;
+            var errorList = new List<ConfigFileError>(Errors ?? Array.Empty<ConfigFileError>());
+            errorList.AddRange(errors);
+            Errors = errorList;
         }
 
         public void AddError(params ConfigFileError[] errors)
         {
-            var errorlist = new List<ConfigFileError>(Errors ?? Array.Empty<ConfigFileError>());
-            errorlist.AddRange(errors);
-            Errors = errorlist;
+            var errorList = new List<ConfigFileError>(Errors ?? Array.Empty<ConfigFileError>());
+            errorList.AddRange(errors);
+            Errors = errorList;
         }
 
         public static ConfigFileResult<T> Ok(T value)
@@ -88,11 +88,6 @@ namespace BetterExperience.ConfigFileSpace
                 throw new InvalidOperationException("Cannot convert a failed ConfigFileResult to its value.");
 
             return result.Value;
-        }
-
-        public static implicit operator bool(ConfigFileResult<T> result)
-        {
-            return result.Success;
         }
 
         public static implicit operator ConfigFileResult<object>(ConfigFileResult<T> result)
