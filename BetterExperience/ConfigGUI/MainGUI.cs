@@ -172,7 +172,7 @@ namespace BetterExperience.ConfigGUI
                 if (string.IsNullOrEmpty(GUI.tooltip))
                     return;
 
-                if (_tooltipStyle == null)
+                if (_tooltipStyle == null || _tooltipStyle.normal.background == null)
                 {
                     _tooltipStyle = new GUIStyle(GUI.skin.box)
                     {
@@ -181,6 +181,7 @@ namespace BetterExperience.ConfigGUI
                         padding = new RectOffset(6, 6, 4, 4)
                     };
                     var bgTex = new Texture2D(1, 1);
+                    bgTex.hideFlags = HideFlags.HideAndDontSave;
                     bgTex.SetPixel(0, 0, new Color(0.15f, 0.15f, 0.15f, 0.95f));
                     bgTex.Apply();
                     _tooltipStyle.normal.background = bgTex;
