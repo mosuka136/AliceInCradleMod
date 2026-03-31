@@ -4,14 +4,14 @@ using XX;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class SwitchDebugPatch
+        public class SwitchDebugPatch
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(X), nameof(X.init1))]
-            private static void Prefix()
+            public static void Prefix()
             {
                 if (ConfigManager.EnableDebugMode.Value)
                 {

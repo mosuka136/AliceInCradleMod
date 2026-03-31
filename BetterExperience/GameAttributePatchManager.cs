@@ -4,7 +4,7 @@ using System;
 
 namespace BetterExperience
 {
-    internal sealed class GameAttributePatchManager
+    public class GameAttributePatchManager
     {
         private GameAttributePatchManager()
         {
@@ -21,11 +21,11 @@ namespace BetterExperience
         public event Action OnGameSaveLoadCompleted;
 
         [HarmonyPatch]
-        private class GameSaveLoadCompletedPatch
+        public class GameSaveLoadCompletedPatch
         {
             [HarmonyPostfix]
             [HarmonyPatch(typeof(EV), nameof(EV.stack))]
-            private static void LoadCompletedPostfix(string _name)
+            public static void LoadCompletedPostfix(string _name)
             {
                 if (_name != "__INITNEWGAME")
                     return;

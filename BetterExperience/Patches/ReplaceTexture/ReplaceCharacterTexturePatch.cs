@@ -7,17 +7,17 @@ using XX;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class ReplaceCharacterTexturePatch
+        public class ReplaceCharacterTexturePatch
         {
             private static HotkeyInputSystem _flushTextureHotkey = null;
             private static readonly List<BetobetoManager.SvTexture> _texture = new List<BetobetoManager.SvTexture>();
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
-            private static void Initialize()
+            public static void Initialize()
             {
                 FrameUpdateBooster.Instance.OnFrameUpdate += Update;
 
@@ -27,7 +27,7 @@ namespace BetterExperience.Patches
                 };
             }
 
-            private static void Update()
+            public static void Update()
             {
                 if (!ConfigManager.EnableReplaceTexture.Value)
                     return;
@@ -59,7 +59,7 @@ namespace BetterExperience.Patches
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(BetobetoManager.SvTexture), nameof(BetobetoManager.SvTexture.cleanExecute))]
-            private static void CleanExecutePostfix(BetobetoManager.SvTexture __instance)
+            public static void CleanExecutePostfix(BetobetoManager.SvTexture __instance)
             {
                 if (!ConfigManager.EnableReplaceTexture.Value)
                     return;

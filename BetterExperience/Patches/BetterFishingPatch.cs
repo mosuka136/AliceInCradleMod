@@ -4,17 +4,17 @@ using nel.mgm.fis;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class BetterFishingPatch
+        public class BetterFishingPatch
         {
             private const float IncreaseRatio = 1.6f;
             private const float DecreaseRatio = 0.8f;
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(FisCatchFishMarker), nameof(FisCatchFishMarker.activate))]
-            private static void BetterFishingPrefix(ref FishData.MKInfo _Mki)
+            public static void BetterFishingPrefix(ref FishData.MKInfo _Mki)
             {
                 if (!ConfigManager.EnableBetterFishing.Value)
                     return;

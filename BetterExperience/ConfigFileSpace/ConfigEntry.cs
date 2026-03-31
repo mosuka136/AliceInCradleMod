@@ -135,7 +135,7 @@ namespace BetterExperience.ConfigFileSpace
             return EqualBoxed(a, b);
         }
 
-        private static bool EqualBoxed(object a, object b)
+        public static bool EqualBoxed(object a, object b)
         {
             if (a == null && b == null)
                 return true;

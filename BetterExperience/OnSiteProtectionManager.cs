@@ -4,7 +4,7 @@ using System;
 
 namespace BetterExperience
 {
-    internal sealed class OnSiteProtectionManager
+    public class OnSiteProtectionManager
     {
         public static OnSiteProtectionManager Instance { get; private set; }
 
@@ -23,18 +23,18 @@ namespace BetterExperience
         public event Action OnSiteProtectionCompleted;
 
         [HarmonyPatch]
-        private class RecoveryGameSaveData
+        public class RecoveryGameSaveData
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(COOK), nameof(COOK.createBinary))]
-            private static void SaveGamePrefix()
+            public static void SaveGamePrefix()
             {
                 Instance.OnSiteProtectionActivated?.Invoke();
             }
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(SVD), nameof(SVD.saveBinary))]
-            private static void SaveGamePostfix()
+            public static void SaveGamePostfix()
             {
                 Instance.OnSiteProtectionCompleted?.Invoke();
             }

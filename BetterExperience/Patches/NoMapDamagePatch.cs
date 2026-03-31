@@ -5,14 +5,14 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class NoMapDamagePatch
+        public class NoMapDamagePatch
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(PR), "applyDamageFromMap")]
-            private static bool Prefix(ref AttackInfo __result)
+            public static bool Prefix(ref AttackInfo __result)
             {
                 if (ConfigManager.EnableMapDamage.Value)
                     return true;

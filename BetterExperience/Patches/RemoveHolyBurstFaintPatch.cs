@@ -4,10 +4,10 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class RemoveHolyBurstFaintPatch
+        public class RemoveHolyBurstFaintPatch
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(MDAT), "calcBurstFaintedRatio")]

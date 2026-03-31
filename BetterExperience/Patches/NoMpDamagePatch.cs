@@ -6,10 +6,10 @@ using System;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class NoMpDamagePatch
+        public class NoMpDamagePatch
         {
             [HarmonyPatch(
                 typeof(PR),
@@ -31,7 +31,7 @@ namespace BetterExperience.Patches
                     ArgumentType.Normal,
                     ArgumentType.Normal }
                 )]
-            private static bool Prefix()
+            public static bool Prefix()
             {
                 if (!ConfigManager.EnableNoMpDamage.Value)
                     return true;

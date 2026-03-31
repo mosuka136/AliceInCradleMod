@@ -5,14 +5,14 @@ using System;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class RemovePressDamagePatch
+        public class RemovePressDamagePatch
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(PR), nameof(PR.applyPressDamage), new Type[] { typeof(NelAttackInfo), typeof(bool), typeof(int) })]
-            private static bool Prefix()
+            public static bool Prefix()
             {
                 if (ConfigManager.EnablePressDamage.Value)
                     return true;

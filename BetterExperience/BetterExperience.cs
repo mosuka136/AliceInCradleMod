@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace BetterExperience
 {
-    internal sealed class PatchInfo
+    public class PatchInfo
     {
         public const string BepInPluginId = "com.buele.betterexperience";
         public const string BepInPluginVersion = "1.0.0";
@@ -22,7 +22,7 @@ namespace BetterExperience
     }
 
     [BepInPlugin(PatchInfo.BepInPluginId, nameof(BetterExperience), PatchInfo.BepInPluginVersion)]
-    internal sealed class BetterExperience : BaseUnityPlugin
+    public class BetterExperience : BaseUnityPlugin
     {
         private HotkeyInputSystem _reloadConfigHotkey;
 
@@ -126,7 +126,7 @@ namespace BetterExperience
             }
         }
 
-        private IEnumerable<Type> GetTypesSafe(Assembly asm)
+        public IEnumerable<Type> GetTypesSafe(Assembly asm)
         {
             try
             {
@@ -138,7 +138,7 @@ namespace BetterExperience
             }
         }
 
-        private void LogPatchesInfo(Harmony harmony)
+        public void LogPatchesInfo(Harmony harmony)
         {
             string id = harmony.Id;
 

@@ -4,13 +4,13 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class InfiniteShieldPatch
+        public class InfiniteShieldPatch
         {
             [HarmonyPatch(typeof(M2Shield), "canGuard")]
-            private static bool Prefix(M2Shield __instance, ref bool __result)
+            public static bool Prefix(M2Shield __instance, ref bool __result)
             {
                 if (!ConfigManager.EnableInfiniteShield.Value)
                     return true;

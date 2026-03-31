@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace BetterExperience.Patches.ReplaceTexture
 {
-    internal class TextureManager
+    public class TextureManager
     {
         private TextureManager()
         {

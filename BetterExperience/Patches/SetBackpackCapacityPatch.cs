@@ -5,19 +5,19 @@ using System;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class SetBackpackCapacityPatch
+        public class SetBackpackCapacityPatch
         {
-            private static bool _initialised = false;
+            private static bool _initialized = false;
             private static int _currentCapacity = -1;
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
-            private static void Initialize()
+            public static void Initialize()
             {
-                if (_initialised)
+                if (_initialized)
                     return;
 
                 GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
@@ -37,7 +37,7 @@ namespace BetterExperience.Patches
                     SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value);
                 };
 
-                _initialised = true;
+                _initialized = true;
             }
 
             public static void SetBackpackCapacity(int count)
@@ -56,7 +56,7 @@ namespace BetterExperience.Patches
                 inventory.row_max = count;
             }
 
-            private static NelItemManager GetIMNG()
+            public static NelItemManager GetIMNG()
             {
                 var sg = UnityEngine.Object.FindAnyObjectByType<SceneGame>();
                 if (sg == null)
@@ -72,7 +72,7 @@ namespace BetterExperience.Patches
                 return m2d.IMNG;
             }
 
-            private static void RecoverBackpackCapacity()
+            public static void RecoverBackpackCapacity()
             {
                 var imng = GetIMNG();
                 if (imng == null)

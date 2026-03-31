@@ -3,7 +3,7 @@ using BetterExperience.TranslatorSpace;
 
 namespace BetterExperience.BepConfigManager
 {
-    internal sealed partial class ConfigManager
+    public partial class ConfigManager
     {
         public static ConfigEntry<bool> EnableHarmonyLog { get; private set; }
         public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }

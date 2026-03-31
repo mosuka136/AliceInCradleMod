@@ -5,14 +5,14 @@ using System;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class SetLootDropRatioPatch
+        public class SetLootDropRatioPatch
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(NelEnemy), "checkDropChance")]
-            private static bool Prefix(NelEnemy __instance)
+            public static bool Prefix(NelEnemy __instance)
             {
                 if (ConfigManager.SetLootDropRatio.Value < 0f)
                     return true;

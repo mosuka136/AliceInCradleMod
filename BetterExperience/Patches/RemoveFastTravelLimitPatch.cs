@@ -8,15 +8,15 @@ using UnityEngine;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class RemoveFastTravelLimitPatch
+        public class RemoveFastTravelLimitPatch
         {
             private static NelChipBench _cachedBenchChip;
 
             [HarmonyPatch]
-            private class RemoveFastTravelMapLimitPatch
+            public class RemoveFastTravelMapLimitPatch
             {
                 private static IEnumerable<MethodBase> TargetMethods()
                 {
@@ -38,7 +38,7 @@ namespace BetterExperience.Patches
                 }
 
                 [HarmonyPostfix]
-                private static void Postfix(object __instance, ref bool __result)
+                public static void Postfix(object __instance, ref bool __result)
                 {
                     if (!ConfigManager.EnableFastTravelAnywhere.Value)
                         return;
@@ -48,9 +48,9 @@ namespace BetterExperience.Patches
             }
 
             [HarmonyPatch]
-            private class RemoveFastTravelBenchLimitPatch
+            public class RemoveFastTravelBenchLimitPatch
             {
-                private static IEnumerable<MethodBase> TargetMethods()
+                public static IEnumerable<MethodBase> TargetMethods()
                 {
                     var type = AccessTools.TypeByName("nel.gm.UiGMCMap");
                     if (type == null)
@@ -70,7 +70,7 @@ namespace BetterExperience.Patches
                 }
 
                 [HarmonyPrefix]
-                private static void Prefix(object __instance, ref bool __result)
+                public static void Prefix(object __instance, ref bool __result)
                 {
                     if (!ConfigManager.EnableFastTravelAnywhere.Value)
                         return;
@@ -84,11 +84,11 @@ namespace BetterExperience.Patches
             }
 
             [HarmonyPatch]
-            private class GetBenchChipPatch
+            public class GetBenchChipPatch
             {
                 [HarmonyPostfix]
                 [HarmonyPatch(typeof(PR), nameof(PR.getNearBench))]
-                private static void Postfix(ref NelChipBench __result)
+                public static void Postfix(ref NelChipBench __result)
                 {
                     if (!ConfigManager.EnableFastTravelAnywhere.Value)
                         return;

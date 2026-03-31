@@ -5,14 +5,14 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class ImmuneAbnormalitiesPatch
+        public class ImmuneAbnormalitiesPatch
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(M2Ser), nameof(M2Ser.Add))]
-            private static bool Prefix(SER ser)
+            public static bool Prefix(SER ser)
             {
                 if (ConfigManager.EnableImmuneAbnormalities.Value)
                     return false;

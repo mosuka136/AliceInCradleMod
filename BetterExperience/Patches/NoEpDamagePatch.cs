@@ -4,13 +4,13 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class NoEpDamagePatch
+        public class NoEpDamagePatch
         {
             [HarmonyPatch(typeof(EpManager), "applyEpDamage")]
-            private static bool Prefix(ref bool __result)
+            public static bool Prefix(ref bool __result)
             {
                 if (!ConfigManager.EnableNoEpDamage.Value)
                     return true;

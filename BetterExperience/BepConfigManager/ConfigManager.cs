@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 
 namespace BetterExperience.BepConfigManager
 {
-    internal sealed partial class ConfigManager
+    public partial class ConfigManager
     {
         public static ConfigFileManager Config { get; private set; }
 

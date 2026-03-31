@@ -5,14 +5,14 @@ using System;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class RemoveMpBreakPatch
+        public class RemoveMpBreakPatch
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(MpGaugeBreaker), "gageDamage")]
-            private static bool Prefix(MpGaugeBreaker __instance)
+            public static bool Prefix(MpGaugeBreaker __instance)
             {
                 if (ConfigManager.EnableMpBreak.Value)
                     return true;

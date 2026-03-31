@@ -5,17 +5,17 @@ using System;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class RemoveFogPatch
+        public class RemoveFogPatch
         {
             [HarmonyPostfix]
             [HarmonyPatch(
                 typeof(WeatherItem), 
                 MethodType.Constructor, 
                 new Type[] { typeof(WeatherItem.WEATHER), typeof(int), typeof(WeatherItem.WeatherDescription)})]
-            private static void WeatherItemPostfix(WeatherItem __instance)
+            public static void WeatherItemPostfix(WeatherItem __instance)
             {
                 if (ConfigManager.EnableVisualImpactOfFog.Value)
                     return;

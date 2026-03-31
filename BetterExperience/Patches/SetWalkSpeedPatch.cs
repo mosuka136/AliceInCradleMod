@@ -4,14 +4,14 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class SetWalkSpeedPatch
+        public class SetWalkSpeedPatch
         {
             [HarmonyPostfix]
             [HarmonyPatch(typeof(PR), "calcWalkSpeed")]
-            private static void Postfix(int move_aim_ex, ref float __result)
+            public static void Postfix(int move_aim_ex, ref float __result)
             {
                 if (ConfigManager.SetPlayerWalkSpeed.Value <= 0f)
                     return;

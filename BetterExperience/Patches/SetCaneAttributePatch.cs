@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class SetCaneAttributePatch
+        public class SetCaneAttributePatch
         {
             private const string EqCane = "EqCane";
 
@@ -16,7 +16,7 @@ namespace BetterExperience.Patches
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
-            private static void Initialize()
+            public static void Initialize()
             {
                 if (_initialized)
                     return;
@@ -408,7 +408,7 @@ namespace BetterExperience.Patches
                 skill.Field(EqCane).SetValue(cane);
             }
 
-            private static Traverse GetM2PrSkill()
+            public static Traverse GetM2PrSkill()
             {
                 var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
                 if (pr == null)

@@ -5,10 +5,10 @@ using System.Reflection;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class NoHpDamagePatch
+        public class NoHpDamagePatch
         {
             static IEnumerable<MethodBase> TargetMethods()
             {

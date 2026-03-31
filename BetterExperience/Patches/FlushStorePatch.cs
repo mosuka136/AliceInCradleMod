@@ -5,18 +5,18 @@ using System;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
-        private class FlushStorePatch
+        public class FlushStorePatch
         {
             private static HotkeyInputSystem _flushStoreHotkey;
 
             [HarmonyPatch]
-            private class FrameUpdateBoosterPatch
+            public class FrameUpdateBoosterPatch
             {
                 [HarmonyPostfix]
                 [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
-                private static void Postfix()
+                public static void Postfix()
                 {
                     FrameUpdateBooster.Instance.OnFrameUpdate += Update;
 

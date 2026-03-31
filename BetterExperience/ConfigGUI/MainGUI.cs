@@ -41,9 +41,9 @@ namespace BetterExperience.ConfigGUI
         }
 
         [HarmonyPatch(typeof(SceneManager), "Internal_SceneLoaded")]
-        private class LoadScenePatch
+        public class LoadScenePatch
         {
-            private static void Postfix()
+            public static void Postfix()
             {
                 if (MainGUI._initialized)
                     return;
@@ -198,7 +198,7 @@ namespace BetterExperience.ConfigGUI
                 GUI.Label(new Rect(x, y, maxTooltipWidth, tooltipHeight), tooltipContent, _tooltipStyle);
             }
 
-            private static float CalculateLabelWidth(OrderedDictionary tables)
+            public static float CalculateLabelWidth(OrderedDictionary tables)
             {
                 if (tables == null || tables.Count == 0)
                     return 0f;

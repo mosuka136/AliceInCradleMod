@@ -1,6 +1,6 @@
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
     }
 }

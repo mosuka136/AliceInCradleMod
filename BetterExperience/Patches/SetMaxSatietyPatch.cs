@@ -4,17 +4,17 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class SetMaxSatietyPatch
+        public class SetMaxSatietyPatch
         {
             private static bool _initialized = false;
             private static int _maxSatiety = -1;
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
-            private static void Initialize()
+            public static void Initialize()
             {
                 if (_initialized)
                     return;

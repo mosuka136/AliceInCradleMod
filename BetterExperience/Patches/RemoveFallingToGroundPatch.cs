@@ -4,14 +4,14 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class RemoveFallingToGroundPatch
+        public class RemoveFallingToGroundPatch
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(PR), "checkEnemySink")]
-            private static bool Prefix()
+            public static bool Prefix()
             {
                 if(ConfigManager.EnableFallingToGround.Value)
                     return true;

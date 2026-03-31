@@ -5,16 +5,16 @@ using UnityEngine;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        internal class SetHpMpEpPatch
+        public class SetHpMpEpPatch
         {
             private static bool _initialized = false;
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
-            private static void Initialize()
+            public static void Initialize()
             {
                 if (_initialized)
                     return;

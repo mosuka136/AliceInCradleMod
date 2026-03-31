@@ -82,7 +82,7 @@ namespace BetterExperience
             }
         }
 
-        private static void Write(
+        public static void Write(
             LogLevel logLevel,
             string msg,
             Exception ex,
@@ -154,7 +154,7 @@ namespace BetterExperience
             }
         }
 
-        private static string SafeSceneName()
+        public static string SafeSceneName()
         {
             try
             {
@@ -171,7 +171,7 @@ namespace BetterExperience
             catch { return "?"; }
         }
 
-        private static void Shutdown()
+        public static void Shutdown()
         {
             if (_writer != null)
             {

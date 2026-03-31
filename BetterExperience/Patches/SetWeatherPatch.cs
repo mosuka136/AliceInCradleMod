@@ -6,17 +6,17 @@ using XX;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class SetWeatherPatch
+        public class SetWeatherPatch
         {
             private static bool _initialized = false;
             private static bool _isApplying = false;
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
-            private static void Initialize()
+            public static void Initialize()
             {
                 if (_initialized)
                     return;
@@ -60,7 +60,7 @@ namespace BetterExperience.Patches
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(NightController), nameof(NightController.weatherShuffle))]
-            private static void WeatherShufflePostfix()
+            public static void WeatherShufflePostfix()
             {
                 Flush();
             }
@@ -119,7 +119,7 @@ namespace BetterExperience.Patches
                 Flush();
             }
 
-            private static NightController GetNightController()
+            public static NightController GetNightController()
             {
                 var sg = UnityEngine.Object.FindAnyObjectByType<SceneGame>();
                 if (sg == null)
@@ -132,7 +132,7 @@ namespace BetterExperience.Patches
                 return m2d.NightCon;
             }
 
-            private static void Flush()
+            public static void Flush()
             {
                 var nc = GetNightController();
                 if (nc == null)

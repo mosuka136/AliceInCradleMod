@@ -7,10 +7,10 @@ using XX;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch(typeof(ReelExecuter), "applyEffectToIK")]
-        private class RemoveLimitInTreasureChestsPatch
+        public class RemoveLimitInTreasureChestsPatch
         {
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {

@@ -5,14 +5,14 @@ using System;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class BetterSaveSitePatch
+        public class BetterSaveSitePatch
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(NelM2DBase), "canSaveInCurMap")]
-            private static bool CanSaveInCurMapPrefix(NelM2DBase __instance, ref bool __result)
+            public static bool CanSaveInCurMapPrefix(NelM2DBase __instance, ref bool __result)
             {
                 if (!ConfigManager.EnableBetterSaveSite.Value)
                     return true;
@@ -29,7 +29,7 @@ namespace BetterExperience.Patches
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(PR), "canSave", new Type[] { typeof(bool) })]
-            private static bool CanSavePrefix(ref bool __result)
+            public static bool CanSavePrefix(ref bool __result)
             {
                 if (!ConfigManager.EnableBetterSaveSite.Value)
                     return true;

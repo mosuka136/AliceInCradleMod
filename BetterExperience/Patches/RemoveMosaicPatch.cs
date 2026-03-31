@@ -4,10 +4,10 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch(typeof(MosaicShower), "FnDrawMosaic")]
-        private class RemoveMosaicPatch
+        public class RemoveMosaicPatch
         {
             static void Postfix(ref bool __result)
             {

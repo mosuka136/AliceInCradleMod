@@ -4,14 +4,14 @@ using nel;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class RemoveDarkAreaPatch
+        public class RemoveDarkAreaPatch
         {
             [HarmonyPostfix]
             [HarmonyPatch(typeof(PR), nameof(PR.fineLightSize))]
-            private static void Postfix(PR __instance)
+            public static void Postfix(PR __instance)
             {
                 if (ConfigManager.EnableDarkArea.Value)
                     return;

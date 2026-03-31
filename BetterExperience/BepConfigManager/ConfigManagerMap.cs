@@ -3,7 +3,7 @@ using BetterExperience.TranslatorSpace;
 
 namespace BetterExperience.BepConfigManager
 {
-    internal sealed partial class ConfigManager
+    public partial class ConfigManager
     {
         public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }

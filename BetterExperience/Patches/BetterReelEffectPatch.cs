@@ -8,10 +8,10 @@ using XX;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch(typeof(ReelExecuter), "applyEffectToIK")]
-        private class BetterReelEffectPatch
+        public class BetterReelEffectPatch
         {
             private readonly static string[] _grade = new string[]
                 {
@@ -43,7 +43,7 @@ namespace BetterExperience.Patches
                     ReelExecuter.EFFECT.ADD_MONEY10.ToString(),
                 };
 
-            static void Prefix(ReelExecuter __instance, ReelExecuter Reel)
+            public static void Prefix(ReelExecuter __instance, ReelExecuter Reel)
             {
                 if (!ConfigManager.EnableBetterReelEffect.Value)
                     return;
@@ -119,7 +119,7 @@ namespace BetterExperience.Patches
             /// 按 customOrder 指定的顺序排序。
             /// 不在 customOrder 中的字符串放到最后，保持原顺序。
             /// </summary>
-            private static string[] SortByCustomOrder(
+            public static string[] SortByCustomOrder(
                 string[] input,
                 string[] customOrder,
                 StringComparer comparer = null)

@@ -3,7 +3,7 @@ using BetterExperience.TranslatorSpace;
 
 namespace BetterExperience.BepConfigManager
 {
-    internal sealed partial class ConfigManager
+    public partial class ConfigManager
     {
         public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }

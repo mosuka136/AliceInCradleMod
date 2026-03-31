@@ -5,16 +5,16 @@ using System;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        internal class SetCurrencyCountPatch
+        public class SetCurrencyCountPatch
         {
             private static bool _initialized = false;
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
-            private static void Initialize()
+            public static void Initialize()
             {
                 if (_initialized)
                     return;
@@ -67,7 +67,7 @@ namespace BetterExperience.Patches
                 return DealWithCurrencyCount(__instance);
             }
 
-            private static bool DealWithCurrencyCount(CoinEntry cEntry)
+            public static bool DealWithCurrencyCount(CoinEntry cEntry)
             {
                 var ctype = cEntry.ctype;
                 if (ctype == CoinStorage.CTYPE.GOLD)
@@ -98,7 +98,7 @@ namespace BetterExperience.Patches
                 return true;
             }
 
-            private static bool DealWithCurrencyCount(bool isEnabled, long count, CoinEntry cEntry)
+            public static bool DealWithCurrencyCount(bool isEnabled, long count, CoinEntry cEntry)
             {
                 if (!isEnabled)
                     return true;

@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace BetterExperience
 {
-    internal sealed class FrameUpdateBooster
+    public class FrameUpdateBooster
     {
         private FrameUpdateBooster()
         {
@@ -34,9 +34,9 @@ namespace BetterExperience
         }
 
         [HarmonyPatch(typeof(SceneManager), "Internal_SceneLoaded")]
-        private class LoadScenePatch
+        public class LoadScenePatch
         {
-            private static void Postfix()
+            public static void Postfix()
             {
                 if (Instance._initialized)
                     return;
@@ -45,7 +45,7 @@ namespace BetterExperience
             }
         }
 
-        private class Updater : MonoBehaviour
+        public class Updater : MonoBehaviour
         {
             private void Update()
             {

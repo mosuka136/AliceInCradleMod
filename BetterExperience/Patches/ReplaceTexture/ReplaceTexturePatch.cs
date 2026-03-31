@@ -7,10 +7,10 @@ using XX;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         // 暂时废弃 [HarmonyPatch]
-        private class ReplaceTexturePatch
+        public class ReplaceTexturePatch
         {
             [HarmonyPostfix]
             [HarmonyPatch(typeof(AssetBundle), "LoadAsset", new Type[] { typeof(string), typeof(Type) })]
@@ -58,7 +58,7 @@ namespace BetterExperience.Patches
                 TextureManager.Instance.TryReplace(__result.name, __result.GetType(), ref __result);
             }
 
-            private static void TryReplace(MTIOneImage __instance)
+            public static void TryReplace(MTIOneImage __instance)
             {
                 if (__instance == null)
                     return;

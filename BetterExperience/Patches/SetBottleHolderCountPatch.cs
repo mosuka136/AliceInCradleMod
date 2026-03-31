@@ -5,19 +5,19 @@ using UnityEngine;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class SetBottleHolderCountPatch
+        public class SetBottleHolderCountPatch
         {
-            private static bool _initialised = false;
+            private static bool _initialized = false;
             private static int _originalBottleHolderCount = -1;
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
-            private static void Initialize()
+            public static void Initialize()
             {
-                if (_initialised)
+                if (_initialized)
                     return;
 
                 GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
@@ -38,7 +38,7 @@ namespace BetterExperience.Patches
                     SetBottleHolderCount(ConfigManager.SetBottleHolderCount.Value);
                 };
 
-                _initialised = true;
+                _initialized = true;
             }
 
             public static void SetBottleHolderCount(int count)
@@ -54,7 +54,7 @@ namespace BetterExperience.Patches
                 inventory.fineRows(true);
             }
 
-            private static void RecoverBottleHolderCount()
+            public static void RecoverBottleHolderCount()
             {
                 var imng = GetIMNG();
                 if (imng == null)
@@ -75,7 +75,7 @@ namespace BetterExperience.Patches
                 inventory.hide_bottle_max = count;
             }
 
-            private static NelItemManager GetIMNG()
+            public static NelItemManager GetIMNG()
             {
                 var sg = UnityEngine.Object.FindAnyObjectByType<SceneGame>();
                 if (sg == null)

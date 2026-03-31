@@ -6,10 +6,10 @@ using System;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class UnableBeingAttackedPatch
+        public class UnableBeingAttackedPatch
         {
             [HarmonyPatch(typeof(M2PrADmg), "applyDamage",
                 new Type[] {

@@ -8,10 +8,10 @@ using System.Reflection;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
          [HarmonyPatch]
-         private class RemoveLimitInBenchMenu
+         public class RemoveLimitInBenchMenu
          {
             static IEnumerable<MethodBase> TargetMethods()
             {

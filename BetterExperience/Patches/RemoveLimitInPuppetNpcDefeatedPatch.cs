@@ -6,10 +6,10 @@ using XX;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class RemoveLimitInPuppetNpcDefeatedPatch
+        public class RemoveLimitInPuppetNpcDefeatedPatch
         {
             private const string PUP_KILL = "PUP_KILL";
             private static uint _pup_kill;
@@ -18,7 +18,7 @@ namespace BetterExperience.Patches
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(SCN), "isPuppetWNpcDefeated")]
-            private static bool IsPuppetWNpcDefeatedPrefix(ref bool __result)
+            public static bool IsPuppetWNpcDefeatedPrefix(ref bool __result)
             {
                 if (!ConfigManager.EnableRemoveLimitInPuppetNpcDefeated.Value)
                     return true;
@@ -45,7 +45,7 @@ namespace BetterExperience.Patches
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(GF), "setC", new Type[] { typeof(string), typeof(uint) })]
-            private static void SetCPrefix(string key)
+            public static void SetCPrefix(string key)
             {
                 if (_isInitialized && key == PUP_KILL && !_isChanging)
                     _pup_kill = GF.getC(PUP_KILL);
@@ -53,7 +53,7 @@ namespace BetterExperience.Patches
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(SCN), "isWNpcEnable")]
-            private static void IsWNpcEnablePostfix(WanderingManager.TYPE type, ref bool __result)
+            public static void IsWNpcEnablePostfix(WanderingManager.TYPE type, ref bool __result)
             {
                 if (!ConfigManager.EnableRemoveLimitInPuppetNpcDefeated.Value)
                     return;
@@ -62,7 +62,7 @@ namespace BetterExperience.Patches
                     __result = true;
             }
 
-            private static void RecoverPupKill()
+            public static void RecoverPupKill()
             {
                 GF.setC(PUP_KILL, _pup_kill);
             }

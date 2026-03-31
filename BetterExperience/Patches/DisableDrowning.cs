@@ -5,14 +5,14 @@ using System;
 
 namespace BetterExperience.Patches
 {
-    internal partial class HPatches
+    public partial class HPatches
     {
         [HarmonyPatch]
-        private class DisableDrowning
+        public class DisableDrowning
         {
             [HarmonyPostfix]
             [HarmonyPatch(typeof(M2PrMistApplier), "applyGasDamage")]
-            private static void Postfix(M2PrMistApplier __instance)
+            public static void Postfix(M2PrMistApplier __instance)
             {
                 if (ConfigManager.EnableDrowning.Value)
                     return;

@@ -5,7 +5,7 @@ using UnityEngine.InputSystem.LowLevel;
 
 namespace BetterExperience
 {
-    internal sealed class HotkeyInputSystem
+    public class HotkeyInputSystem
     {
         private List<Chord> _chords = new List<Chord>();
         public bool IsValid { get { return _chords.Count > 0; } }
@@ -162,7 +162,7 @@ namespace BetterExperience
                 return false;
             }
 
-            private static bool TryParseModifier(string token, out Trigger t)
+            public static bool TryParseModifier(string token, out Trigger t)
             {
                 t = default;
 
@@ -209,7 +209,7 @@ namespace BetterExperience
                 return false;
             }
 
-            private static bool MakeSingleKey(Key key, out Trigger t)
+            public static bool MakeSingleKey(Key key, out Trigger t)
             {
                 t = new Trigger
                 {
@@ -220,7 +220,7 @@ namespace BetterExperience
                 return true;
             }
 
-            private static bool TryParseGamepad(string token, out GamepadButton btn)
+            public static bool TryParseGamepad(string token, out GamepadButton btn)
             {
                 btn = default;
 
@@ -257,7 +257,7 @@ namespace BetterExperience
                 return false;
             }
 
-            private static bool EqualsI(string a, string b)
+            public static bool EqualsI(string a, string b)
             {
                 return string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
             }
