@@ -101,6 +101,8 @@
     <Compile Include="Patches\RemoveMosaicPatch.cs" />
     <Compile Include="Patches\RemoveLimitInPuppetNpcDefeatedPatch.cs" />
     <Compile Include="Patches\RemoveHolyBurstFaintPatch.cs" />
+    <Compile Include="TranslatorSpace\LanguageType.cs" />
+    <Compile Include="TranslatorSpace\Translator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

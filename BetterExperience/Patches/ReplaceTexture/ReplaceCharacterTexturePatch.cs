@@ -21,7 +21,7 @@ namespace BetterExperience.Patches
             {
                 FrameUpdateBooster.Instance.OnFrameUpdate += Update;
 
-                ConfigManager.FlushTextureHotkey.SettingChanged += (s, e) =>
+                ConfigManager.FlushTextureHotkey.OnValueChanged += (s, e) =>
                 {
                     _flushTextureHotkey = null;
                 };

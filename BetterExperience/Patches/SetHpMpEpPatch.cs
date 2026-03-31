@@ -37,24 +37,24 @@ namespace BetterExperience.Patches
                         SetMaxMp(ConfigManager.SetPlayerMaxMp.Value);
                 };
 
-                ConfigManager.SetPlayerHp.SettingChanged += (s, e) =>
+                ConfigManager.SetPlayerHp.OnValueChanged += (s, e) =>
                 {
                     SetHp(ConfigManager.SetPlayerHp.Value);
                 };
-                ConfigManager.SetPlayerMp.SettingChanged += (s, e) =>
+                ConfigManager.SetPlayerMp.OnValueChanged += (s, e) =>
                 {
                     SetMp(ConfigManager.SetPlayerMp.Value);
                 };
-                ConfigManager.SetPlayerEp.SettingChanged += (s, e) =>
+                ConfigManager.SetPlayerEp.OnValueChanged += (s, e) =>
                 {
                     SetEp(ConfigManager.SetPlayerEp.Value);
                 };
 
-                ConfigManager.SetPlayerMaxHp.SettingChanged += (s, e) =>
+                ConfigManager.SetPlayerMaxHp.OnValueChanged += (s, e) =>
                 {
                     SetMaxHp(ConfigManager.SetPlayerMaxHp.Value);
                 };
-                ConfigManager.SetPlayerMaxMp.SettingChanged += (s, e) =>
+                ConfigManager.SetPlayerMaxMp.OnValueChanged += (s, e) =>
                 {
                     SetMaxMp(ConfigManager.SetPlayerMaxMp.Value);
                 };

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BetterExperience.ConfigFileSpace;
+using BetterExperience.TranslatorSpace;
 
 namespace BetterExperience.Test.ConfigFileSpace
 {
@@ -88,7 +89,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void EncodeDescriptionWhenEmptyShouldReturnEmptyString()
         {
-            var entry = new ConfigFileEntryModel { Description = "" };
+            var entry = new ConfigFileEntryModel { Description = new Translator() };
 
             var result = entry.EncodeDescription();
 
@@ -99,7 +100,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void EncodeDescriptionWhenSingleLineShouldReturnPrefixedLine()
         {
-            var entry = new ConfigFileEntryModel { Description = "hello" };
+            var entry = new ConfigFileEntryModel { Description = new Translator(english: "hello") };
 
             var result = entry.EncodeDescription();
 
@@ -110,7 +111,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void EncodeDescriptionWhenMultiLineNewlineShouldReturnMultiplePrefixedLines()
         {
-            var entry = new ConfigFileEntryModel { Description = "line1\nline2" };
+            var entry = new ConfigFileEntryModel { Description = new Translator(english: "line1\nline2") };
 
             var result = entry.EncodeDescription();
 
@@ -121,7 +122,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void EncodeDescriptionWhenCrLfShouldNormalizeToNewline()
         {
-            var entry = new ConfigFileEntryModel { Description = "line1\r\nline2" };
+            var entry = new ConfigFileEntryModel { Description = new Translator(english: "line1\r\nline2") };
 
             var result = entry.EncodeDescription();
 
@@ -132,7 +133,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void EncodeDescriptionWhenCrOnlyShouldNormalizeToNewline()
         {
-            var entry = new ConfigFileEntryModel { Description = "line1\rline2" };
+            var entry = new ConfigFileEntryModel { Description = new Translator(english: "line1\rline2") };
 
             var result = entry.EncodeDescription();
 
@@ -260,7 +261,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         {
             var entry = new ConfigFileEntryModel
             {
-                Description = "Port number",
+                Description = new Translator(english: "Port number"),
                 Key = "port",
                 Value = "8080",
                 DefaultValue = "80",
@@ -449,20 +450,20 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void CreateEntryWhenParametersAreValidShouldReturnPopulatedEntry()
         {
-            var result = ConfigFileEntryModel.CreateEntry("port", 8080, 80, "Port number");
+            var result = ConfigFileEntryModel.CreateEntry("port", 8080, 80, new Translator(english: "Port number"), new Translator(english: "Port number"));
 
             Assert.True(result.Success);
             Assert.Equal("port", result.Value.Key);
             Assert.Equal("8080", result.Value.Value);
             Assert.Equal("80", result.Value.DefaultValue);
-            Assert.Equal("Port number", result.Value.Description);
+            Assert.Equal("Port number", (string)result.Value.Description);
             Assert.Equal("Int32", result.Value.ValueType);
         }
 
         [Fact]
         public void CreateEntryWhenKeyIsInvalidShouldFailWithInvalidKeyName()
         {
-            var result = ConfigFileEntryModel.CreateEntry("invalid-key", 1, 0, "");
+            var result = ConfigFileEntryModel.CreateEntry("invalid-key", 1, 0, new Translator(), new Translator());
 
             Assert.False(result.Success);
             Assert.Equal(ConfigFileErrorCode.InvalidKeyName, result.Errors[0].Code);
@@ -471,7 +472,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void CreateEntryWhenTypeIsUnsupportedShouldFailWithUnsupportedType()
         {
-            var result = ConfigFileEntryModel.CreateEntry("key", new UnsupportedValue(), new UnsupportedValue(), "");
+            var result = ConfigFileEntryModel.CreateEntry("key", new UnsupportedValue(), new UnsupportedValue(), new Translator(), new Translator());
 
             Assert.False(result.Success);
             Assert.Equal(ConfigFileErrorCode.UnsupportedType, result.Errors[0].Code);

@@ -1,3 +1,4 @@
+using BetterExperience.TranslatorSpace;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -111,29 +112,29 @@ namespace BetterExperience.ConfigFileSpace
             Save();
         }
 
-        public ConfigEntry<T> Bind<T>(string tableName, string key, T defaultValue, string description)
+        public ConfigEntry<T> Bind<T>(string tableKey, string key, T defaultValue, Translator entryName, Translator description)
         {
             HLog.Info($"Rebinding config entry");
 
             ConfigEntry<T> result = null;
-            var entryResult = FileTables.GetEntry(tableName, key);
+            var entryResult = FileTables.GetEntry(tableKey, key);
             if (entryResult.Success)
             {
-                result = new ConfigEntry<T>(tableName, entryResult.Value, defaultValue, description);
+                result = new ConfigEntry<T>(tableKey, entryResult.Value, defaultValue, entryName, description);
             }
             else
             {
-                var tableResult = FileTables.GetTable(tableName);
+                var tableResult = FileTables.GetTable(tableKey);
                 if (!tableResult.Success)
                 {
                     foreach (var error in tableResult.Errors)
                         HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                    throw new Exception($"Config table not found: {tableName}.");
+                    throw new Exception($"Config table not found: {tableKey}.");
                 }
                 var newEntry = new ConfigFileEntryModel();
 
                 if (!ConfigFileEntryModel.IsValidKeyName(key))
-                    throw new Exception($"Invalid key name for config entry: {tableName}.{key}.");
+                    throw new Exception($"Invalid key name for config entry: {tableKey}.{key}.");
                 newEntry.Key = key;
 
                 var valueResult = ConfigFileEntryModel.EncodeValue(defaultValue);
@@ -141,7 +142,7 @@ namespace BetterExperience.ConfigFileSpace
                 {
                     foreach (var error in valueResult.Errors)
                         HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                    throw new Exception($"Failed to encode default value for config entry: {tableName}.{key}. Errors: {string.Join(", ", valueResult.Errors)}");
+                    throw new Exception($"Failed to encode default value for config entry: {tableKey}.{key}. Errors: {string.Join(", ", valueResult.Errors)}");
                 }
                 newEntry.Value = valueResult.Value;
 
@@ -150,39 +151,39 @@ namespace BetterExperience.ConfigFileSpace
                 {
                     foreach (var error in addEntryResult.Errors)
                         HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                    throw new Exception($"Failed to add config entry to table: {tableName}.{key}.");
+                    throw new Exception($"Failed to add config entry to table: {tableKey}.{key}.");
                 }
 
-                result = new ConfigEntry<T>(tableName, newEntry, defaultValue, description);
+                result = new ConfigEntry<T>(tableKey, newEntry, defaultValue, entryName, description);
             }
 
-            result.SettingChanged += OnConfigEntryChanged;
+            result.OnValueChanged += OnConfigEntryChanged;
 
-            if (!Tables.Contains(tableName))
-                throw new Exception($"Config table '{tableName}' is missing from the manager.");
-            if (!(Tables[tableName] is ConfigTable table))
-                throw new Exception($"Config table is not a list: {tableName}.");
+            if (!Tables.Contains(tableKey))
+                throw new Exception($"Config table '{tableKey}' is missing from the manager.");
+            if (!(Tables[tableKey] is ConfigTable table))
+                throw new Exception($"Config table is not a list: {tableKey}.");
 
             table.Table.Add(result);
             return result;
         }
 
-        public void CreateTable(string tableName, string description = "")
+        public void CreateTable(string tableKey, Translator tableName, Translator description = null)
         {
-            var tableResult = FileTables.GetTable(tableName);
+            var tableResult = FileTables.GetTable(tableKey);
             if (tableResult.Success)
             {
-                if (!Tables.Contains(tableName))
-                    Tables.Add(tableName, new ConfigTable(tableName, description));
+                if (!Tables.Contains(tableKey))
+                    Tables.Add(tableKey, new ConfigTable(tableKey, tableName, description));
                 return;
             }
 
-            var newTableResult = ConfigFileTablesModel.CreateTable(tableName, description);
+            var newTableResult = ConfigFileTablesModel.CreateTable(tableKey, description);
             if (!newTableResult.Success)
             {
                 foreach (var error in newTableResult.Errors)
                     HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                throw new Exception($"Failed to create config table: {tableName}.");
+                throw new Exception($"Failed to create config table: {tableKey}.");
             }
 
             var addTableResult = FileTables.AddTable(newTableResult.Value);
@@ -190,13 +191,13 @@ namespace BetterExperience.ConfigFileSpace
             {
                 foreach (var error in addTableResult.Errors)
                     HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                throw new Exception($"Failed to create config table: {tableName}.");
+                throw new Exception($"Failed to create config table: {tableKey}.");
             }
 
-            if (Tables.Contains(tableName))
-                throw new Exception($"Config table already exists in manager: {tableName}.");
+            if (Tables.Contains(tableKey))
+                throw new Exception($"Config table already exists in manager: {tableKey}.");
 
-            Tables.Add(tableName, new ConfigTable(tableName, description));
+            Tables.Add(tableKey, new ConfigTable(tableKey, tableName, description));
         }
 
         public void Save()

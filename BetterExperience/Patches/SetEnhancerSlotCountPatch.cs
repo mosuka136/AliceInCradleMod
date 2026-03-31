@@ -26,7 +26,7 @@ namespace BetterExperience.Patches
                         SetEnhancerSlotCount();
                 };
 
-                ConfigManager.SetEnhancerSlotCount.SettingChanged += (s, e) =>
+                ConfigManager.SetEnhancerSlotCount.OnValueChanged += (s, e) =>
                 {
                     SetEnhancerSlotCount();
                 };

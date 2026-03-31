@@ -26,7 +26,7 @@ namespace BetterExperience.Patches
                         SetOverChargeSlotCount();
                 };
 
-                ConfigManager.SetOverChargeSlotCount.SettingChanged += (s, e) =>
+                ConfigManager.SetOverChargeSlotCount.OnValueChanged += (s, e) =>
                 {
                     SetOverChargeSlotCount();
                 };

@@ -1,4 +1,5 @@
 using BetterExperience.ConfigFileSpace;
+using BetterExperience.TranslatorSpace;
 
 namespace BetterExperience.Test.ConfigFileSpace
 {
@@ -12,7 +13,7 @@ namespace BetterExperience.Test.ConfigFileSpace
                 Key = "Port",
                 Value = "1"
             };
-            var entry = new ConfigEntry<int>("General", model, 0, "port");
+            var entry = new ConfigEntry<int>("General", model, 0, new Translator(english: "port"), new Translator());
 
             entry.Value = 2;
 
@@ -28,10 +29,10 @@ namespace BetterExperience.Test.ConfigFileSpace
                 Key = "Port",
                 Value = "1"
             };
-            var entry = new ConfigEntry<int>("General", model, 0, "port");
+            var entry = new ConfigEntry<int>("General", model, 0, new Translator(english: "port"), new Translator());
             int receivedValue = 0;
             object receivedSender = null;
-            entry.SettingChanged += (sender, value) =>
+            entry.OnValueChanged += (sender, value) =>
             {
                 receivedSender = sender;
                 receivedValue = value;
@@ -51,9 +52,9 @@ namespace BetterExperience.Test.ConfigFileSpace
                 Key = "Port",
                 Value = "5"
             };
-            var entry = new ConfigEntry<int>("General", model, 0, "port");
+            var entry = new ConfigEntry<int>("General", model, 0, new Translator(english: "port"), new Translator());
             bool eventRaised = false;
-            entry.SettingChanged += (_, _) => eventRaised = true;
+            entry.OnValueChanged += (_, _) => eventRaised = true;
 
             entry.Value = 5;
 
@@ -68,9 +69,9 @@ namespace BetterExperience.Test.ConfigFileSpace
                 Key = "Name",
                 Value = "\"old\""
             };
-            var entry = new ConfigEntry<string>("General", model, "default", "name");
+            var entry = new ConfigEntry<string>("General", model, "default", new Translator(english: "name"), new Translator());
             string receivedValue = null;
-            entry.SettingChanged += (_, value) => receivedValue = value;
+            entry.OnValueChanged += (_, value) => receivedValue = value;
 
             entry.Value = "new";
 
@@ -85,9 +86,9 @@ namespace BetterExperience.Test.ConfigFileSpace
                 Key = "Counter",
                 Value = "0"
             };
-            var entry = new ConfigEntry<int>("General", model, 0, "counter");
+            var entry = new ConfigEntry<int>("General", model, 0, new Translator(english: "counter"), new Translator());
             var receivedValues = new List<int>();
-            entry.SettingChanged += (_, value) => receivedValues.Add(value);
+            entry.OnValueChanged += (_, value) => receivedValues.Add(value);
 
             entry.Value = 1;
             entry.Value = 2;
@@ -105,11 +106,11 @@ namespace BetterExperience.Test.ConfigFileSpace
                 SaveOnConfigSet = false
             };
 
-            var createTableException = Record.Exception(() => manager.CreateTable("General", string.Empty));
+            var createTableException = Record.Exception(() => manager.CreateTable("General", new Translator()));
 
             Assert.Null(createTableException);
 
-            var entry = manager.Bind("General", "Port", 8080, "port");
+            var entry = manager.Bind("General", "Port", 8080, new Translator(english: "port"), new Translator());
 
             Assert.NotNull(entry);
             Assert.Single(manager.Tables);
@@ -134,15 +135,15 @@ namespace BetterExperience.Test.ConfigFileSpace
         {
             var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cfg");
             var manager = new ConfigFileManager(path) { SaveOnConfigSet = false };
-            manager.CreateTable("General");
-            var entry = manager.Bind("General", "Port", 8080, "port");
+            manager.CreateTable("General", new Translator());
+            var entry = manager.Bind("General", "Port", 8080, new Translator(english: "port"), new Translator());
             manager.Save();
 
             var fileContent = File.ReadAllText(path);
             File.WriteAllText(path, fileContent.Replace("Port = 8080", "Port = 9090"));
 
             int receivedValue = 0;
-            entry.SettingChanged += (_, value) => receivedValue = value;
+            entry.OnValueChanged += (_, value) => receivedValue = value;
 
             manager.Reload();
 
@@ -155,14 +156,14 @@ namespace BetterExperience.Test.ConfigFileSpace
         {
             var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cfg");
             var manager = new ConfigFileManager(path) { SaveOnConfigSet = false };
-            manager.CreateTable("General");
-            manager.Bind("General", "Port", 8080, "port");
+            manager.CreateTable("General", new Translator());
+            manager.Bind("General", "Port", 8080, new Translator(english: "port"), new Translator());
             manager.Save();
 
             bool eventRaised = false;
             var table = Assert.IsType<ConfigTable>(manager.Tables[0]);
             var entry = Assert.IsType<ConfigEntry<int>>(Assert.Single(table.Table));
-            entry.SettingChanged += (_, _) => eventRaised = true;
+            entry.OnValueChanged += (_, _) => eventRaised = true;
 
             manager.Reload();
 

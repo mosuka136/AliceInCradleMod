@@ -1,3 +1,4 @@
+using BetterExperience.TranslatorSpace;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +7,8 @@ namespace BetterExperience.ConfigFileSpace
 {
     public interface IConfigEntry
     {
-        string Description { get; }
+        Translator Name { get; }
+        Translator Description { get; }
         string TableName { get; }
         string Key { get; }
         ConfigFileEntryModel Entry { get; }
@@ -40,11 +42,12 @@ namespace BetterExperience.ConfigFileSpace
                 _value = value;
 
                 Entry.Value = valueResult.Value;
-                SettingChanged?.Invoke(this, _value);
+                OnValueChanged?.Invoke(this, _value);
             }
         }
 
-        public string Description => Entry.Description;
+        public Translator Name => Entry.Name;
+        public Translator Description => Entry.Description;
         public string TableName { get; private set; }
         public string Key => Entry.Key;
         public T DefaultValue { get; private set; }
@@ -60,23 +63,24 @@ namespace BetterExperience.ConfigFileSpace
 
         public object BoxedDefaultValue => DefaultValue;
 
-        public event EventHandler<T> SettingChanged;
+        public event EventHandler<T> OnValueChanged;
 
         public ConfigEntry()
         {
 
         }
 
-        public ConfigEntry(string tableName, ConfigFileEntryModel entry, T defaultValue) :
-            this(tableName, entry, defaultValue, entry.Description)
+        public ConfigEntry(string tableKey, ConfigFileEntryModel entry, T defaultValue) :
+            this(tableKey, entry, defaultValue, entry.Name, entry.Description)
         {
         }
 
-        public ConfigEntry(string tableName, ConfigFileEntryModel entry, T defaultValue, string description)
+        public ConfigEntry(string tableKey, ConfigFileEntryModel entry, T defaultValue, Translator name, Translator description)
         {
             if (entry == null)
                 throw new ArgumentNullException(nameof(entry));
 
+            entry.Name = name;
             entry.Description = description;
 
             var valueTypeResult = ConfigFileEntryModel.EncodeValueType<T>();
@@ -104,10 +108,10 @@ namespace BetterExperience.ConfigFileSpace
             if (!ConfigFileEntryModel.IsValidKeyName(entry.Key))
                 throw new InvalidOperationException($"Invalid key name: {entry.Key}");
 
-            if (!ConfigFileTablesModel.Table.IsValidTableName(tableName))
-                throw new InvalidOperationException($"Invalid table name: {tableName}");
+            if (!ConfigFileTablesModel.Table.IsValidTableName(tableKey))
+                throw new InvalidOperationException($"Invalid table name: {tableKey}");
 
-            TableName = tableName;
+            TableName = tableKey;
             DefaultValue = defaultValue;
             RebindEntry(entry);
         }

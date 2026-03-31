@@ -33,7 +33,7 @@ namespace BetterExperience.Patches
                     SetBottleHolderCount(_originalBottleHolderCount);
                 };
 
-                ConfigManager.SetBottleHolderCount.SettingChanged += (s, e) =>
+                ConfigManager.SetBottleHolderCount.OnValueChanged += (s, e) =>
                 {
                     SetBottleHolderCount(ConfigManager.SetBottleHolderCount.Value);
                 };

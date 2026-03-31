@@ -75,87 +75,87 @@ namespace BetterExperience.Patches
                         SetMagicPrepareSpeed(ConfigManager.SetCaneMagicPrepareSpeed.Value);
                 };
 
-                ConfigManager.SetCaneSwingSpeed.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneSwingSpeed.OnValueChanged += (s, e) =>
                 {
                     SetSwingSpeed(ConfigManager.SetCaneSwingSpeed.Value);
                 };
 
-                ConfigManager.SetCaneCastSpeed.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneCastSpeed.OnValueChanged += (s, e) =>
                 {
                     SetCastSpeed(ConfigManager.SetCaneCastSpeed.Value);
                 };
 
-                ConfigManager.SetCaneBalance.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneBalance.OnValueChanged += (s, e) =>
                 {
                     SetBalance(ConfigManager.SetCaneBalance.Value);
                 };
 
-                ConfigManager.SetCaneEfficiency.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneEfficiency.OnValueChanged += (s, e) =>
                 {
                     SetEfficiency(ConfigManager.SetCaneEfficiency.Value);
                 };
 
-                ConfigManager.SetCaneRetention.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneRetention.OnValueChanged += (s, e) =>
                 {
                     SetRetention(ConfigManager.SetCaneRetention.Value);
                 };
 
-                ConfigManager.SetCaneLockOn.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneLockOn.OnValueChanged += (s, e) =>
                 {
                     SetLockOn(ConfigManager.SetCaneLockOn.Value);
                 };
 
-                ConfigManager.SetCaneLongRange.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneLongRange.OnValueChanged += (s, e) =>
                 {
                     SetLongRange(ConfigManager.SetCaneLongRange.Value);
                 };
 
-                ConfigManager.SetCaneShortRange.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneShortRange.OnValueChanged += (s, e) =>
                 {
                     SetShortRange(ConfigManager.SetCaneShortRange.Value);
                 };
 
-                ConfigManager.SetCaneReach.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneReach.OnValueChanged += (s, e) =>
                 {
                     SetReach(ConfigManager.SetCaneReach.Value);
                 };
 
-                ConfigManager.SetCaneNearPower.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneNearPower.OnValueChanged += (s, e) =>
                 {
                     SetNearPower(ConfigManager.SetCaneNearPower.Value);
                 };
 
-                ConfigManager.SetCaneNearShotgunPower.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneNearShotgunPower.OnValueChanged += (s, e) =>
                 {
                     SetNearShotgunPower(ConfigManager.SetCaneNearShotgunPower.Value);
                 };
 
-                ConfigManager.SetCaneStability.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneStability.OnValueChanged += (s, e) =>
                 {
                     SetStability(ConfigManager.SetCaneStability.Value);
                 };
 
-                ConfigManager.SetCaneManaSplashRatio.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneManaSplashRatio.OnValueChanged += (s, e) =>
                 {
                     SetManaSplashRatio(ConfigManager.SetCaneManaSplashRatio.Value);
                 };
 
-                ConfigManager.SetCaneCastspeedOverhold.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneCastspeedOverhold.OnValueChanged += (s, e) =>
                 {
                     SetCastspeedOverhold(ConfigManager.SetCaneCastspeedOverhold.Value);
                 };
 
-                ConfigManager.SetCaneDrainAfterLock.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneDrainAfterLock.OnValueChanged += (s, e) =>
                 {
                     SetDrainAfterLock(ConfigManager.SetCaneDrainAfterLock.Value);
                 };
 
-                ConfigManager.SetCaneCastspeed.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneCastspeed.OnValueChanged += (s, e) =>
                 {
                     SetCastspeed(ConfigManager.SetCaneCastspeed.Value);
                 };
 
-                ConfigManager.SetCaneMagicPrepareSpeed.SettingChanged += (s, e) =>
+                ConfigManager.SetCaneMagicPrepareSpeed.OnValueChanged += (s, e) =>
                 {
                     SetMagicPrepareSpeed(ConfigManager.SetCaneMagicPrepareSpeed.Value);
                 };

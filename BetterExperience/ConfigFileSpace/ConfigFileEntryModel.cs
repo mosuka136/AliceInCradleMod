@@ -1,5 +1,7 @@
+using BetterExperience.TranslatorSpace;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using static BetterExperience.ConfigFileSpace.ConfigFileModel;
@@ -10,7 +12,8 @@ namespace BetterExperience.ConfigFileSpace
     {
         private string _key;
 
-        public string Description { get; set; }
+        public Translator Name { get; set; }
+        public Translator Description { get; set; }
         public string Key
         {
             get => _key;
@@ -28,14 +31,33 @@ namespace BetterExperience.ConfigFileSpace
         public string ValueType { get; set; }
         public string AcceptableValues { get; set; }
 
+        public ConfigFileResult<string> EncodeName()
+        {
+            if (Name == null)
+                return string.Empty;
+            var list = new List<string>();
+            foreach (var name in Name)
+            {
+                if (string.IsNullOrEmpty(name))
+                    continue;
+                list.Add(name);
+            }
+            return $"# Name: {string.Join(", ", list)}";
+        }
+
         public ConfigFileResult<string> EncodeDescription()
         {
-            if (string.IsNullOrEmpty(Description))
+            if (Description == null)
                 return string.Empty;
-            var lines = Description.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
             var sb = new StringBuilder();
-            foreach (var line in lines)
-                sb.AppendLine($"## {line}");
+            foreach (var description in Description)
+            {
+                if (string.IsNullOrEmpty(description))
+                    continue;
+                var lines = description.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
+                foreach (var line in lines)
+                    sb.AppendLine($"## {line}");
+            }
             return sb.ToString().TrimEnd();
         }
 
@@ -71,6 +93,10 @@ namespace BetterExperience.ConfigFileSpace
 
         public ConfigFileResult<string> EncodeEntry()
         {
+            var nameResult = EncodeName();
+            if (!nameResult.Success)
+                return ConfigFileResult<string>.Fail(nameResult.Errors);
+
             var descriptionResult = EncodeDescription();
             if (!descriptionResult.Success)
                 return ConfigFileResult<string>.Fail(descriptionResult.Errors);
@@ -92,6 +118,8 @@ namespace BetterExperience.ConfigFileSpace
                 return ConfigFileResult<string>.Fail(keyValuePairResult.Errors);
 
             var sb = new StringBuilder();
+            if (nameResult.Value != string.Empty)
+                sb.AppendLine(nameResult.Value);
             if (descriptionResult.Value != string.Empty)
                 sb.AppendLine(descriptionResult.Value);
             if (valueTypeResult.Value != string.Empty)
@@ -110,6 +138,7 @@ namespace BetterExperience.ConfigFileSpace
             if (target == null)
                 return false;
 
+            target.Name = Name;
             target.Description = Description;
             target.Key = Key;
             target.DefaultValue = DefaultValue;
@@ -205,7 +234,7 @@ namespace BetterExperience.ConfigFileSpace
             return acceptableValues;
         }
 
-        public static ConfigFileResult<ConfigFileEntryModel> CreateEntry<T>(string key, T value, T defaultValue, string description)
+        public static ConfigFileResult<ConfigFileEntryModel> CreateEntry<T>(string key, T value, T defaultValue, Translator name, Translator description)
         {
             if (!IsValidKeyName(key))
                 return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidKeyName, $"Invalid key name: {key}"));
@@ -224,6 +253,7 @@ namespace BetterExperience.ConfigFileSpace
 
             var entry = new ConfigFileEntryModel
             {
+                Name = name,
                 Description = description,
                 Key = key,
                 Value = encodedValueResult.Value,

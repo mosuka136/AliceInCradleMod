@@ -34,17 +34,17 @@ namespace BetterExperience.Patches
                         SetCurrencyJuiceCount(countJuice);
                 };
 
-                ConfigManager.SetCurrencyGoldCount.SettingChanged += (s, e) =>
+                ConfigManager.SetCurrencyGoldCount.OnValueChanged += (s, e) =>
                 {
                     if (UInt32.TryParse(ConfigManager.SetCurrencyGoldCount.Value.ToString(), out var count))
                         SetCurrencyGoldCount(count);
                 };
-                ConfigManager.SetCurrencyCraftsCount.SettingChanged += (s, e) =>
+                ConfigManager.SetCurrencyCraftsCount.OnValueChanged += (s, e) =>
                 {
                     if (UInt32.TryParse(ConfigManager.SetCurrencyCraftsCount.Value.ToString(), out var count))
                         SetCurrencyCraftsCount(count);
                 };
-                ConfigManager.SetCurrencyJuiceCount.SettingChanged += (s, e) =>
+                ConfigManager.SetCurrencyJuiceCount.OnValueChanged += (s, e) =>
                 {
                     if (UInt32.TryParse(ConfigManager.SetCurrencyJuiceCount.Value.ToString(), out var count))
                         SetCurrencyJuiceCount(count);

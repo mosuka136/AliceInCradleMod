@@ -1,8 +1,8 @@
 using BetterExperience.BepConfigManager;
 using BetterExperience.ConfigFileSpace;
+using BetterExperience.TranslatorSpace;
 using HarmonyLib;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
@@ -30,6 +30,13 @@ namespace BetterExperience.ConfigGUI
             UnityEngine.Object.DontDestroyOnLoad(go);
             go.AddComponent<ConfigGUI>();
 
+            Translator.DefaultLanguage = ConfigManager.SetLanguage.Value;
+            ConfigManager.SetLanguage.OnValueChanged += (s, e) =>
+            {
+                Translator.DefaultLanguage = e;
+                ConfigGUI._cachedEntryLabelWidth = -1f;
+            };
+
             _initialized = true;
         }
 
@@ -48,10 +55,10 @@ namespace BetterExperience.ConfigGUI
         public class ConfigGUI : MonoBehaviour
         {
             private const int WindowID = 123456;
+            internal static float _cachedEntryLabelWidth = -1f;
             private bool _showGUI = false;
             private HotkeyInputSystem _hotkey;
             private Rect _windowRect;
-            private float _cachedEntryLabelWidth = -1f;
             private string _openedEnumEntryName;
             private GUIStyle _tableStyle;
             private GUIStyle _tooltipStyle;
@@ -68,7 +75,9 @@ namespace BetterExperience.ConfigGUI
                 [typeof(float)] = s => (float.TryParse(s, out var v), v),
                 [typeof(double)] = s => (double.TryParse(s, out var v), v),
             };
-
+            private readonly Translator _onStr = new Translator("开启", "On");
+            private readonly Translator _offStr = new Translator("关闭", "Off");
+            private readonly Translator _resetStr = new Translator("重置", "Reset");
 
             private void OnGUI()
             {
@@ -136,7 +145,7 @@ namespace BetterExperience.ConfigGUI
                     foreach (var entry in table.Table)
                     {
                         GUILayout.BeginHorizontal();
-                        GUILayout.Label(new GUIContent(entry.Key, entry.Description), GUILayout.Width(_cachedEntryLabelWidth));
+                        GUILayout.Label(new GUIContent(entry.Name, entry.Description), GUILayout.Width(_cachedEntryLabelWidth));
                         DrawEntryControl(entry);
                         DrawEntryResetButton(entry);
                         GUILayout.EndHorizontal();
@@ -198,7 +207,7 @@ namespace BetterExperience.ConfigGUI
                 {
                     foreach (var entry in table.Table)
                     {
-                        var content = new GUIContent(entry.Key);
+                        var content = new GUIContent(entry.Name);
                         var width = GUI.skin.label.CalcSize(content).x;
                         if (width > maxWidth)
                             maxWidth = width;
@@ -216,7 +225,7 @@ namespace BetterExperience.ConfigGUI
                 if (type == typeof(bool))
                 {
                     var currentValue = (bool)entry.BoxedValue;
-                    entry.BoxedValue = GUILayout.Toggle(currentValue, currentValue ? "On" : "Off", GUILayout.ExpandWidth(true));
+                    entry.BoxedValue = GUILayout.Toggle(currentValue, currentValue ? _onStr : _offStr, GUILayout.ExpandWidth(true));
                 }
                 else if (type == typeof(string))
                 {
@@ -276,12 +285,30 @@ namespace BetterExperience.ConfigGUI
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(_cachedEntryLabelWidth);
                     GUILayout.BeginVertical("box");
-                    foreach (var value in Enum.GetValues(entry.ValueType))
+
+                    if (entry.ValueType == typeof(LanguageType))
                     {
-                        if (GUILayout.Button(value.ToString()))
+                        foreach (var value in Enum.GetValues(entry.ValueType))
                         {
-                            entry.BoxedValue = value;
-                            _openedEnumEntryName = null;
+                            var lang = (LanguageType)value;
+                            if (lang == LanguageType.None || lang == LanguageType.Default)
+                                continue;
+                            if (GUILayout.Button(lang.GetDescription()))
+                            {
+                                entry.BoxedValue = value;
+                                _openedEnumEntryName = null;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var value in Enum.GetValues(entry.ValueType))
+                        {
+                            if (GUILayout.Button(value.ToString()))
+                            {
+                                entry.BoxedValue = value;
+                                _openedEnumEntryName = null;
+                            }
                         }
                     }
                     GUILayout.EndVertical();
@@ -289,12 +316,12 @@ namespace BetterExperience.ConfigGUI
                 }
             }
 
-            private static void DrawEntryResetButton(IConfigEntry entry)
+            private void DrawEntryResetButton(IConfigEntry entry)
             {
                 if (entry == null)
                     return;
 
-                if (GUILayout.Button("Reset", GUILayout.ExpandWidth(false)))
+                if (GUILayout.Button(_resetStr, GUILayout.ExpandWidth(false)))
                     entry.BoxedValue = entry.BoxedDefaultValue;
             }
         }

@@ -30,7 +30,7 @@ namespace BetterExperience.Patches
                     }
                 };
 
-                ConfigManager.SetPlayerMaxSatiety.SettingChanged += (s, e) =>
+                ConfigManager.SetPlayerMaxSatiety.OnValueChanged += (s, e) =>
                 {
                    SetMaxSatiety(ConfigManager.SetPlayerMaxSatiety.Value);
                 };

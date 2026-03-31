@@ -24,7 +24,7 @@ namespace BetterExperience.Patches
                         SetDangerLevel(ConfigManager.SetDangerLevel.Value);
                 };
 
-                ConfigManager.SetDangerLevel.SettingChanged += (s, e) =>
+                ConfigManager.SetDangerLevel.OnValueChanged += (s, e) =>
                 {
                     SetDangerLevel(ConfigManager.SetDangerLevel.Value);
                 };

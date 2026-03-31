@@ -1,4 +1,5 @@
 using BetterExperience.ConfigFileSpace;
+using BetterExperience.TranslatorSpace;
 
 namespace BetterExperience.Test.ConfigFileSpace
 {
@@ -21,8 +22,8 @@ namespace BetterExperience.Test.ConfigFileSpace
         public void AddTableWhenDuplicateNameShouldFail()
         {
             var model = new ConfigFileTablesModel();
-            var table1 = ConfigFileTablesModel.Table.Create("General", "First").Value;
-            var table2 = ConfigFileTablesModel.Table.Create("General", "Second").Value;
+            var table1 = ConfigFileTablesModel.Table.Create("General", new Translator(english: "First")).Value;
+            var table2 = ConfigFileTablesModel.Table.Create("General", new Translator(english: "Second")).Value;
 
             var firstResult = model.AddTable(table1);
             var secondResult = model.AddTable(table2);
@@ -35,7 +36,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void EncodeTableWhenDescriptionAndEntriesExistShouldIncludeHeaderAndBody()
         {
-            var table = new ConfigFileTablesModel.Table("General", "Main settings");
+            var table = new ConfigFileTablesModel.Table("General", new Translator(english: "Main settings"));
             table.AddEntry(new ConfigFileEntryModel { Key = "port", Value = "8080" });
 
             var result = table.EncodeTable();
@@ -57,7 +58,7 @@ namespace BetterExperience.Test.ConfigFileSpace
             var result = ConfigFileTablesModel.Table.DecodeTableHeader(content, ref index);
 
             Assert.True(result.Success);
-            Assert.Equal("General", result.Value.TableName);
+            Assert.Equal("General", result.Value.TableKey);
             Assert.Equal(string.Empty, result.Value.Description);
             Assert.Equal(3, index);
         }
@@ -71,7 +72,7 @@ namespace BetterExperience.Test.ConfigFileSpace
             var result = ConfigFileTablesModel.Table.DecodeTable(content, ref index);
 
             Assert.True(result.Success);
-            Assert.Equal("General", result.Value.TableName);
+            Assert.Equal("General", result.Value.TableKey);
             Assert.Single(result.Value.Entries);
             var entry = (ConfigFileEntryModel)result.Value.Entries[0];
             Assert.Equal("port", entry.Key);

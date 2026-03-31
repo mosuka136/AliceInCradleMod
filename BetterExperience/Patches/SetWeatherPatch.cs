@@ -24,32 +24,32 @@ namespace BetterExperience.Patches
                 GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += Flush;
 
 
-                ConfigManager.SetWeatherWind.SettingChanged += (s, e) =>
+                ConfigManager.SetWeatherWind.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
                         SetWeather(WeatherItem.WEATHER.WIND, ConfigManager.SetWeatherWind.Value);
                 };
-                ConfigManager.SetWeatherThunder.SettingChanged += (s, e) =>
+                ConfigManager.SetWeatherThunder.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
                         SetWeather(WeatherItem.WEATHER.THUNDER, ConfigManager.SetWeatherThunder.Value);
                 };
-                ConfigManager.SetWeatherMist.SettingChanged += (s, e) =>
+                ConfigManager.SetWeatherMist.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
                         SetWeather(WeatherItem.WEATHER.MIST, ConfigManager.SetWeatherMist.Value);
                 };
-                ConfigManager.SetWeatherDrought.SettingChanged += (s, e) =>
+                ConfigManager.SetWeatherDrought.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
                         SetWeather(WeatherItem.WEATHER.DROUGHT, ConfigManager.SetWeatherDrought.Value);
                 };
-                ConfigManager.SetWeatherDenseMist.SettingChanged += (s, e) =>
+                ConfigManager.SetWeatherDenseMist.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
                         SetWeather(WeatherItem.WEATHER.MIST_DENSE, ConfigManager.SetWeatherDenseMist.Value);
                 };
-                ConfigManager.SetWeatherPlague.SettingChanged += (s, e) =>
+                ConfigManager.SetWeatherPlague.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
                         SetWeather(WeatherItem.WEATHER.PLAGUE, ConfigManager.SetWeatherPlague.Value);

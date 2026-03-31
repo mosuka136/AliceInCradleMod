@@ -32,7 +32,7 @@ namespace BetterExperience.Patches
                     SetBackpackCapacity(_currentCapacity);
                 };
 
-                ConfigManager.SetBackpackCapacity.SettingChanged += (s, e) =>
+                ConfigManager.SetBackpackCapacity.OnValueChanged += (s, e) =>
                 {
                     SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value);
                 };

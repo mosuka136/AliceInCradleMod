@@ -20,7 +20,7 @@ namespace BetterExperience.Patches
                 {
                     FrameUpdateBooster.Instance.OnFrameUpdate += Update;
 
-                    ConfigManager.FlushAllStoreHotkey.SettingChanged += (s, e) =>
+                    ConfigManager.FlushAllStoreHotkey.OnValueChanged += (s, e) =>
                     {
                         _flushStoreHotkey = null;
                     };
