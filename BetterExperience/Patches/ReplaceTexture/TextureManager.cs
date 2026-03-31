@@ -24,9 +24,9 @@ namespace BetterExperience.Patches.ReplaceTexture
         static public TextureManager Instance { get; private set; }
 
         public static readonly string RelativeImagePath = Path.Combine(nameof(BetterExperience), "ReplaceTexture");
-        public static readonly string RelativeSenstiveImagePath = Path.Combine(RelativeImagePath, "Sensitive");
+        public static readonly string RelativeSensitiveImagePath = Path.Combine(RelativeImagePath, "Sensitive");
         public static readonly string ImagePath = Path.Combine(Paths.PluginPath, RelativeImagePath);
-        public static readonly string SenstiveImagePath = Path.Combine(Paths.PluginPath, RelativeSenstiveImagePath);
+        public static readonly string SensitiveImagePath = Path.Combine(Paths.PluginPath, RelativeSensitiveImagePath);
         public static readonly string[] SupportedExtensions = { ".png", ".btep" };
 
         private readonly Dictionary<string, Texture2D> _imageInfos = new Dictionary<string, Texture2D>();
@@ -40,15 +40,15 @@ namespace BetterExperience.Patches.ReplaceTexture
             {
                 if (!Directory.Exists(ImagePath))
                     Directory.CreateDirectory(ImagePath);
-                if (!Directory.Exists(SenstiveImagePath))
-                    Directory.CreateDirectory(SenstiveImagePath);
+                if (!Directory.Exists(SensitiveImagePath))
+                    Directory.CreateDirectory(SensitiveImagePath);
 
                 var imageFiles = Directory.GetFiles(ImagePath, "*.*", SearchOption.AllDirectories)
                     .Where(f => SupportedExtensions.Any(s => f.EndsWith(s)));
 
                 if (!ConfigManager.EnableSensitivities.Value)
                 {
-                    imageFiles = imageFiles.Where(f => !f.StartsWith(SenstiveImagePath, StringComparison.OrdinalIgnoreCase));
+                    imageFiles = imageFiles.Where(f => !f.StartsWith(SensitiveImagePath, StringComparison.OrdinalIgnoreCase));
                 }
 
                 foreach (var file in imageFiles)
@@ -77,8 +77,18 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         public void Reload()
         {
-            _imageInfos.Clear();
+            DestroyAllTextures();
             Initialize();
+        }
+
+        private void DestroyAllTextures()
+        {
+            foreach (var texture in _imageInfos.Values)
+            {
+                if (texture != null)
+                    UnityEngine.Object.Destroy(texture);
+            }
+            _imageInfos.Clear();
         }
 
         public Texture2D CreateTexture(string imageName)
