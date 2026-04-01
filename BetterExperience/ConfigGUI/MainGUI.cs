@@ -1,5 +1,6 @@
 using BetterExperience.BepConfigManager;
 using BetterExperience.ConfigFileSpace;
+using BetterExperience.HEnumHelper;
 using BetterExperience.TranslatorSpace;
 using HarmonyLib;
 using System;
@@ -55,13 +56,18 @@ namespace BetterExperience.ConfigGUI
         public class ConfigGUI : MonoBehaviour
         {
             private const int WindowID = 123456;
+
             internal static float _cachedEntryLabelWidth = -1f;
+
             private bool _showGUI = false;
-            private HotkeyInputSystem _hotkey;
             private Rect _windowRect;
+
+            private HotkeyInputSystem _hotkey;
             private string _openedEnumEntryName;
+
             private GUIStyle _tableStyle;
             private GUIStyle _tooltipStyle;
+
             private static readonly Dictionary<Type, Func<string, (bool, object)>> _parsers = new Dictionary<Type, Func<string, (bool, object)>>()
             {
                 [typeof(sbyte)] = s => (sbyte.TryParse(s, out var v), v),
@@ -75,11 +81,13 @@ namespace BetterExperience.ConfigGUI
                 [typeof(float)] = s => (float.TryParse(s, out var v), v),
                 [typeof(double)] = s => (double.TryParse(s, out var v), v),
             };
+
             private readonly Translator _onStr = new Translator("开启", "On");
             private readonly Translator _offStr = new Translator("关闭", "Off");
             private readonly Translator _resetStr = new Translator("重置", "Reset");
             private readonly Translator _changedStr = new Translator("已修改: ", "Changed: ");
             private readonly Translator _resetDoneStr = new Translator("已重置: ", "Reset: ");
+
             private string _toastMessage;
             private float _toastEndTime;
             private GUIStyle _toastStyle;
@@ -287,7 +295,7 @@ namespace BetterExperience.ConfigGUI
                 var entryName = $"{entry.TableName}.{entry.Key}";
                 bool isOpened = _openedEnumEntryName == entryName;
 
-                if (GUILayout.Button(entry.BoxedValue.ToString(), GUILayout.ExpandWidth(true)))
+                if (GUILayout.Button(EnumHelper.GetDescription(entry.ValueType, (Enum)entry.BoxedValue), GUILayout.ExpandWidth(true)))
                 {
                     _openedEnumEntryName = isOpened ? null : entryName;
                 }
@@ -307,31 +315,15 @@ namespace BetterExperience.ConfigGUI
                     GUILayout.Space(_cachedEntryLabelWidth);
                     GUILayout.BeginVertical("box");
 
-                    if (entry.ValueType == typeof(LanguageType))
+                    foreach (var value in Enum.GetValues(entry.ValueType))
                     {
-                        foreach (var value in Enum.GetValues(entry.ValueType))
+                        if (!EnumHelper.IsDisplay(entry.ValueType, (Enum)value))
+                            continue;
+                        if (GUILayout.Button(EnumHelper.GetDescription(entry.ValueType, (Enum)value)))
                         {
-                            var lang = (LanguageType)value;
-                            if (lang == LanguageType.None || lang == LanguageType.Default)
-                                continue;
-                            if (GUILayout.Button(lang.GetDescription()))
-                            {
-                                entry.BoxedValue = value;
-                                _openedEnumEntryName = null;
-                                ShowToast((string)_changedStr + entry.Name);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (var value in Enum.GetValues(entry.ValueType))
-                        {
-                            if (GUILayout.Button(value.ToString()))
-                            {
-                                entry.BoxedValue = value;
-                                _openedEnumEntryName = null;
-                                ShowToast((string)_changedStr + entry.Name);
-                            }
+                            entry.BoxedValue = value;
+                            _openedEnumEntryName = null;
+                            ShowToast((string)_changedStr + entry.Name);
                         }
                     }
                     GUILayout.EndVertical();

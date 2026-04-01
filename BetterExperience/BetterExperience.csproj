@@ -51,6 +51,8 @@
     <Compile Include="ConfigFileSpace\ConfigFileTablesModel.cs" />
     <Compile Include="ConfigFileSpace\ConfigTable.cs" />
     <Compile Include="ConfigGUI\MainGUI.cs" />
+    <Compile Include="HEnumHelper\DisplayEnumAttribute.cs" />
+    <Compile Include="HEnumHelper\EnumHelper.cs" />
     <Compile Include="GameAttributePatchManager.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
     <Compile Include="Patches\DisableDrowning.cs" />
@@ -126,6 +128,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="Unity.InputSystem">
       <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\AliceInCradle_Data\Managed\Unity.InputSystem.dll</HintPath>
       <Private>False</Private>
