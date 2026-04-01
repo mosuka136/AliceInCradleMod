@@ -61,6 +61,7 @@ namespace BetterExperience.ConfigGUI
 
             private bool _showGUI = false;
             private Rect _windowRect;
+            private bool _hasDraggedWindowSinceOpen;
 
             private HotkeyInputSystem _hotkey;
             private string _openedEnumEntryName;
@@ -82,6 +83,7 @@ namespace BetterExperience.ConfigGUI
                 [typeof(double)] = s => (double.TryParse(s, out var v), v),
             };
 
+            private readonly Translator _titleStr = new Translator("更好的体验模组配置", "BetterExperience Mod Configurations");
             private readonly Translator _onStr = new Translator("开启", "On");
             private readonly Translator _offStr = new Translator("关闭", "Off");
             private readonly Translator _resetStr = new Translator("重置", "Reset");
@@ -99,7 +101,13 @@ namespace BetterExperience.ConfigGUI
                 if (!_showGUI)
                     return;
 
-                _windowRect = GUI.Window(WindowID, _windowRect, DrawConfigWindow, "Better Experience Mod Configurations");
+                var previousPosition = _windowRect.position;
+                _windowRect = GUI.Window(WindowID, _windowRect, DrawConfigWindow, _titleStr);
+
+                if (!_hasDraggedWindowSinceOpen && _windowRect.position != previousPosition)
+                    _hasDraggedWindowSinceOpen = true;
+
+                TryAutoHideOnFocusLost();
             }
 
             private void Update()
@@ -121,12 +129,31 @@ namespace BetterExperience.ConfigGUI
                     _showGUI = !_showGUI;
                     if (_showGUI)
                     {
+                        _hasDraggedWindowSinceOpen = false;
+                        _openedEnumEntryName = null;
                         _cachedEntryLabelWidth = -1f;
                         float w = Screen.width * 0.3f;
                         float h = Screen.height * 0.8f;
                         _windowRect = new Rect((Screen.width - w) / 2f, (Screen.height - h) / 2f, w, h);
                     }
                 }
+            }
+
+            private void TryAutoHideOnFocusLost()
+            {
+                if (_hasDraggedWindowSinceOpen)
+                    return;
+
+                var currentEvent = Event.current;
+                if (currentEvent == null || currentEvent.type != EventType.MouseDown)
+                    return;
+
+                if (_windowRect.Contains(currentEvent.mousePosition))
+                    return;
+
+                _showGUI = false;
+                _openedEnumEntryName = null;
+                GUI.FocusControl(null);
             }
 
             private Vector2 _scrollPosition;
