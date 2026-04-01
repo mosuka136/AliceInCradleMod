@@ -78,6 +78,13 @@ namespace BetterExperience.ConfigGUI
             private readonly Translator _onStr = new Translator("开启", "On");
             private readonly Translator _offStr = new Translator("关闭", "Off");
             private readonly Translator _resetStr = new Translator("重置", "Reset");
+            private readonly Translator _changedStr = new Translator("已修改: ", "Changed: ");
+            private readonly Translator _resetDoneStr = new Translator("已重置: ", "Reset: ");
+            private string _toastMessage;
+            private float _toastEndTime;
+            private GUIStyle _toastStyle;
+            private const float ToastDuration = 2f;
+            private const float ToastFadeDuration = 0.5f;
 
             private void OnGUI()
             {
@@ -162,6 +169,8 @@ namespace BetterExperience.ConfigGUI
                 GUILayout.EndScrollView();
                 GUILayout.EndArea();
 
+                DrawToast();
+
                 GUI.DragWindow();
 
                 DrawTooltip();
@@ -226,14 +235,22 @@ namespace BetterExperience.ConfigGUI
                 if (type == typeof(bool))
                 {
                     var currentValue = (bool)entry.BoxedValue;
-                    entry.BoxedValue = GUILayout.Toggle(currentValue, currentValue ? _onStr : _offStr, GUILayout.ExpandWidth(true));
+                    var newBool = GUILayout.Toggle(currentValue, currentValue ? _onStr : _offStr, GUILayout.ExpandWidth(true));
+                    if (newBool != currentValue)
+                    {
+                        entry.BoxedValue = newBool;
+                        ShowToast((string)_changedStr + entry.Name);
+                    }
                 }
                 else if (type == typeof(string))
                 {
                     var strValue = entry.BoxedValue as string ?? "";
                     var newStrValue = GUILayout.TextField(strValue, GUILayout.ExpandWidth(true));
                     if (newStrValue != strValue)
+                    {
                         entry.BoxedValue = newStrValue;
+                        ShowToast((string)_changedStr + entry.Name);
+                    }
                 }
                 else if (type.IsEnum)
                 {
@@ -247,7 +264,10 @@ namespace BetterExperience.ConfigGUI
                     {
                         var (success, parsedValue) = parser(newStrValue);
                         if (success)
+                        {
                             entry.BoxedValue = parsedValue;
+                            ShowToast((string)_changedStr + entry.Name);
+                        }
                     }
                 }
                 else
@@ -298,6 +318,7 @@ namespace BetterExperience.ConfigGUI
                             {
                                 entry.BoxedValue = value;
                                 _openedEnumEntryName = null;
+                                ShowToast((string)_changedStr + entry.Name);
                             }
                         }
                     }
@@ -309,6 +330,7 @@ namespace BetterExperience.ConfigGUI
                             {
                                 entry.BoxedValue = value;
                                 _openedEnumEntryName = null;
+                                ShowToast((string)_changedStr + entry.Name);
                             }
                         }
                     }
@@ -323,7 +345,58 @@ namespace BetterExperience.ConfigGUI
                     return;
 
                 if (GUILayout.Button(_resetStr, GUILayout.ExpandWidth(false)))
+                {
                     entry.BoxedValue = entry.BoxedDefaultValue;
+                    ShowToast((string)_resetDoneStr + entry.Name);
+                }
+            }
+
+            private void ShowToast(string message)
+            {
+                _toastMessage = message;
+                _toastEndTime = Time.realtimeSinceStartup + ToastDuration;
+            }
+
+            private void DrawToast()
+            {
+                if (string.IsNullOrEmpty(_toastMessage))
+                    return;
+
+                float remaining = _toastEndTime - Time.realtimeSinceStartup;
+                if (remaining <= 0f)
+                {
+                    _toastMessage = null;
+                    return;
+                }
+
+                if (_toastStyle == null || _toastStyle.normal.background == null)
+                {
+                    _toastStyle = new GUIStyle(GUI.skin.box)
+                    {
+                        alignment = TextAnchor.MiddleCenter,
+                        padding = new RectOffset(10, 10, 6, 6)
+                    };
+                    var bgTex = new Texture2D(1, 1);
+                    bgTex.hideFlags = HideFlags.HideAndDontSave;
+                    bgTex.SetPixel(0, 0, new Color(0f, 0.3f, 0.25f, 1f));
+                    bgTex.Apply();
+                    _toastStyle.normal.background = bgTex;
+                    _toastStyle.normal.textColor = Color.white;
+                }
+
+                float alpha = remaining < ToastFadeDuration ? remaining / ToastFadeDuration : 1f;
+                var prevColor = GUI.color;
+                GUI.color = new Color(1f, 1f, 1f, alpha);
+
+                var content = new GUIContent(_toastMessage);
+                var size = _toastStyle.CalcSize(content);
+                float toastWidth = Mathf.Min(size.x + 20f, _windowRect.width - 20f);
+                float toastHeight = size.y + 4f;
+                float x = (_windowRect.width - toastWidth) / 2f;
+                float y = _windowRect.height - toastHeight - 30f;
+
+                GUI.Label(new Rect(x, y, toastWidth, toastHeight), content, _toastStyle);
+                GUI.color = prevColor;
             }
         }
     }
