@@ -10,10 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ConfigFileSpace\ConfigTable.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="xunit" Version="2.5.3" />
@@ -25,15 +21,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileModel.cs" Link="ConfigFileSpace\ConfigFileModel.cs" />
-    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileResult.cs" Link="ConfigFileSpace\ConfigFileResult.cs" />
-    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileEntryModel.cs" Link="ConfigFileSpace\ConfigFileEntryModel.cs" />
-    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileTablesModel.cs" Link="ConfigFileSpace\ConfigFileTablesModel.cs" />
-    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigEntry.cs" Link="ConfigFileSpace\ConfigEntry.cs" />
-    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigFileManager.cs" Link="ConfigFileSpace\ConfigFileManager.cs" />
-    <Compile Include="..\BetterExperience\ConfigFileSpace\ConfigTable.cs" Link="ConfigFileSpace\ConfigTable.cs" />
-    <Compile Include="..\BetterExperience\TranslatorSpace\Translator.cs" Link="TranslatorSpace\Translator.cs" />
-    <Compile Include="..\BetterExperience\TranslatorSpace\LanguageType.cs" Link="TranslatorSpace\LanguageType.cs" />
+    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileModel.cs" Link="HConfigFileSpace\ConfigFileModel.cs" />
+    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileResult.cs" Link="HConfigFileSpace\ConfigFileResult.cs" />
+    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileEntryModel.cs" Link="HConfigFileSpace\ConfigFileEntryModel.cs" />
+    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileTablesModel.cs" Link="HConfigFileSpace\ConfigFileTablesModel.cs" />
+    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigEntry.cs" Link="HConfigFileSpace\ConfigEntry.cs" />
+    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileManager.cs" Link="HConfigFileSpace\ConfigFileManager.cs" />
+    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigTable.cs" Link="HConfigFileSpace\ConfigTable.cs" />
+    <Compile Include="..\BetterExperience\HTranslatorSpace\Translator.cs" Link="HTranslatorSpace\Translator.cs" />
+    <Compile Include="..\BetterExperience\HTranslatorSpace\LanguageType.cs" Link="HTranslatorSpace\LanguageType.cs" />
     <Compile Include="..\BetterExperience\HEnumHelper\DisplayEnumAttribute.cs" Link="HEnumHelper\DisplayEnumAttribute.cs" />
     <Compile Include="..\BetterExperience\HEnumHelper\EnumHelper.cs" Link="HEnumHelper\EnumHelper.cs" />
   </ItemGroup>

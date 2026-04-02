@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using BetterExperience.ConfigFileSpace;
-using BetterExperience.TranslatorSpace;
+using BetterExperience.HConfigFileSpace;
+using BetterExperience.HTranslatorSpace;
 
 namespace BetterExperience.Test.ConfigFileSpace
 {
