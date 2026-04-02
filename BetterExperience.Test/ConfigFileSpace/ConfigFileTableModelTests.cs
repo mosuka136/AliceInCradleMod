@@ -1,5 +1,5 @@
-using BetterExperience.HConfigFileSpace;
-using BetterExperience.HTranslatorSpace;
+using BetterExperience.ConfigFileSpace;
+using BetterExperience.TranslatorSpace;
 
 namespace BetterExperience.Test.ConfigFileSpace
 {
