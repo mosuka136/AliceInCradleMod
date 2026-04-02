@@ -1,4 +1,4 @@
-using BetterExperience.BepConfigManager;
+using BetterExperience.BConfigManager;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using nel;

@@ -1,7 +1,7 @@
-using BetterExperience.BepConfigManager;
-using BetterExperience.ConfigFileSpace;
+using BetterExperience.BConfigManager;
+using BetterExperience.HConfigFileSpace;
 using BetterExperience.HEnumHelper;
-using BetterExperience.TranslatorSpace;
+using BetterExperience.HTranslatorSpace;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -9,15 +9,15 @@ using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BetterExperience.ConfigGUI
+namespace BetterExperience
 {
-    public class MainGUI
+    public class HConfigGUI
     {
-        private MainGUI()
+        private HConfigGUI()
         {
         }
 
-        public static MainGUI Instance { get; } = new MainGUI();
+        public static HConfigGUI Instance { get; } = new HConfigGUI();
 
         private static volatile bool _initialized = false;
 
@@ -26,16 +26,16 @@ namespace BetterExperience.ConfigGUI
             if (_initialized)
                 return;
 
-            var go = new GameObject($"{nameof(BetterExperience)}_{nameof(MainGUI)}");
+            var go = new GameObject($"{nameof(BetterExperience)}_{(nameof(HConfigGUI))}");
             go.hideFlags = HideFlags.HideAndDontSave;
             UnityEngine.Object.DontDestroyOnLoad(go);
-            go.AddComponent<ConfigGUI>();
+            go.AddComponent<MainGUI>();
 
             Translator.DefaultLanguage = ConfigManager.SetLanguage.Value;
             ConfigManager.SetLanguage.OnValueChanged += (s, e) =>
             {
                 Translator.DefaultLanguage = e;
-                ConfigGUI._cachedEntryLabelWidth = -1f;
+                MainGUI._cachedEntryLabelWidth = -1f;
             };
 
             _initialized = true;
@@ -46,14 +46,14 @@ namespace BetterExperience.ConfigGUI
         {
             public static void Postfix()
             {
-                if (MainGUI._initialized)
+                if (_initialized)
                     return;
 
                 Instance.Awake();
             }
         }
 
-        public class ConfigGUI : MonoBehaviour
+        public class MainGUI : MonoBehaviour
         {
             private const int WindowID = 123456;
 

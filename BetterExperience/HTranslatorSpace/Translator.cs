@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace BetterExperience.TranslatorSpace
+namespace BetterExperience.HTranslatorSpace
 {
     public class Translator : IEnumerable<string>
     {

@@ -1,7 +1,7 @@
 using BetterExperience.HEnumHelper;
 using System.ComponentModel;
 
-namespace BetterExperience.TranslatorSpace
+namespace BetterExperience.HTranslatorSpace
 {
     public enum LanguageType
     {

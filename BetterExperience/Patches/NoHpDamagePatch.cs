@@ -1,4 +1,4 @@
-using BetterExperience.BepConfigManager;
+using BetterExperience.BConfigManager;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection;

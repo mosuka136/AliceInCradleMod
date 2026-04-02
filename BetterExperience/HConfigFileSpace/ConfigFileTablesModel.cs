@@ -1,10 +1,10 @@
-using BetterExperience.TranslatorSpace;
+using BetterExperience.HTranslatorSpace;
 using System;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 
-namespace BetterExperience.ConfigFileSpace
+namespace BetterExperience.HConfigFileSpace
 {
     public class ConfigFileTablesModel
     {

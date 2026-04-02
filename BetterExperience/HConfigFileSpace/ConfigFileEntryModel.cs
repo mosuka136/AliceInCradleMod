@@ -1,12 +1,12 @@
-using BetterExperience.TranslatorSpace;
+using BetterExperience.HTranslatorSpace;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static BetterExperience.ConfigFileSpace.ConfigFileModel;
+using static BetterExperience.HConfigFileSpace.ConfigFileModel;
 
-namespace BetterExperience.ConfigFileSpace
+namespace BetterExperience.HConfigFileSpace
 {
     public class ConfigFileEntryModel
     {

@@ -1,11 +1,11 @@
-using BetterExperience.TranslatorSpace;
+using BetterExperience.HTranslatorSpace;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 
-namespace BetterExperience.ConfigFileSpace
+namespace BetterExperience.HConfigFileSpace
 {
     public class ConfigFileManager
     {

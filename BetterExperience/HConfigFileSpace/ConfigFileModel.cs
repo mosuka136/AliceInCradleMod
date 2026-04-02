@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace BetterExperience.ConfigFileSpace
+namespace BetterExperience.HConfigFileSpace
 {
     public class ConfigFileModel
     {

@@ -1,5 +1,5 @@
 using BepInEx;
-using BetterExperience.BepConfigManager;
+using BetterExperience.BConfigManager;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;

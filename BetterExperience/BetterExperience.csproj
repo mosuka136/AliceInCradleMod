@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\BepInEx\plugins\BetterExperience\</OutputPath>
+    <OutputPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029i\BepInEx\plugins\BetterExperience\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -33,24 +33,24 @@
     <UseWinFormsOutOfProcDesigner>False</UseWinFormsOutOfProcDesigner>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BepConfigManager\ConfigManagerWeather.cs" />
+    <Compile Include="BConfigManager\ConfigManagerWeather.cs" />
     <Compile Include="BetterExperience.cs" />
-    <Compile Include="BepConfigManager\ConfigManagerCane.cs" />
-    <Compile Include="BepConfigManager\ConfigManagerCurrency.cs" />
-    <Compile Include="BepConfigManager\ConfigManagerHotkey.cs" />
-    <Compile Include="BepConfigManager\ConfigManagerLog.cs" />
-    <Compile Include="BepConfigManager\ConfigManagerMap.cs" />
-    <Compile Include="BepConfigManager\ConfigManagerPlayerStatus.cs" />
-    <Compile Include="BepConfigManager\ConfigManagerReel.cs" />
-    <Compile Include="BepConfigManager\ConfigManagerTexture.cs" />
-    <Compile Include="ConfigFileSpace\ConfigEntry.cs" />
-    <Compile Include="ConfigFileSpace\ConfigFileEntryModel.cs" />
-    <Compile Include="ConfigFileSpace\ConfigFileManager.cs" />
-    <Compile Include="ConfigFileSpace\ConfigFileModel.cs" />
-    <Compile Include="ConfigFileSpace\ConfigFileResult.cs" />
-    <Compile Include="ConfigFileSpace\ConfigFileTablesModel.cs" />
-    <Compile Include="ConfigFileSpace\ConfigTable.cs" />
-    <Compile Include="ConfigGUI\MainGUI.cs" />
+    <Compile Include="BConfigManager\ConfigManagerCane.cs" />
+    <Compile Include="BConfigManager\ConfigManagerCurrency.cs" />
+    <Compile Include="BConfigManager\ConfigManagerHotkey.cs" />
+    <Compile Include="BConfigManager\ConfigManagerLog.cs" />
+    <Compile Include="BConfigManager\ConfigManagerMap.cs" />
+    <Compile Include="BConfigManager\ConfigManagerPlayerStatus.cs" />
+    <Compile Include="BConfigManager\ConfigManagerReel.cs" />
+    <Compile Include="BConfigManager\ConfigManagerTexture.cs" />
+    <Compile Include="HConfigFileSpace\ConfigEntry.cs" />
+    <Compile Include="HConfigFileSpace\ConfigFileEntryModel.cs" />
+    <Compile Include="HConfigFileSpace\ConfigFileManager.cs" />
+    <Compile Include="HConfigFileSpace\ConfigFileModel.cs" />
+    <Compile Include="HConfigFileSpace\ConfigFileResult.cs" />
+    <Compile Include="HConfigFileSpace\ConfigFileTablesModel.cs" />
+    <Compile Include="HConfigFileSpace\ConfigTable.cs" />
+    <Compile Include="HConfigGUI.cs" />
     <Compile Include="HEnumHelper\DisplayEnumAttribute.cs" />
     <Compile Include="HEnumHelper\EnumHelper.cs" />
     <Compile Include="GameAttributePatchManager.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="Patches\RemovePressDamagePatch.cs" />
     <Compile Include="Patches\RemoveWarehouseRegionRestrictionsPatch.cs" />
     <Compile Include="Patches\SetBackpackCapacityPatch.cs" />
-    <Compile Include="BepConfigManager\ConfigManager.cs" />
+    <Compile Include="BConfigManager\ConfigManager.cs" />
     <Compile Include="Patches\FlushStorePatch.cs" />
     <Compile Include="HLog.cs" />
     <Compile Include="HotkeyInputSystem.cs" />
@@ -103,8 +103,8 @@
     <Compile Include="Patches\RemoveMosaicPatch.cs" />
     <Compile Include="Patches\RemoveLimitInPuppetNpcDefeatedPatch.cs" />
     <Compile Include="Patches\RemoveHolyBurstFaintPatch.cs" />
-    <Compile Include="TranslatorSpace\LanguageType.cs" />
-    <Compile Include="TranslatorSpace\Translator.cs" />
+    <Compile Include="HTranslatorSpace\LanguageType.cs" />
+    <Compile Include="HTranslatorSpace\Translator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

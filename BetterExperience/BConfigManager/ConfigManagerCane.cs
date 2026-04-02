@@ -1,7 +1,7 @@
-using BetterExperience.ConfigFileSpace;
-using BetterExperience.TranslatorSpace;
+using BetterExperience.HConfigFileSpace;
+using BetterExperience.HTranslatorSpace;
 
-namespace BetterExperience.BepConfigManager
+namespace BetterExperience.BConfigManager
 {
     public partial class ConfigManager
     {

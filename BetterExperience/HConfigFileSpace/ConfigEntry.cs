@@ -1,8 +1,8 @@
-using BetterExperience.TranslatorSpace;
+using BetterExperience.HTranslatorSpace;
 using System;
 using System.Collections;
 
-namespace BetterExperience.ConfigFileSpace
+namespace BetterExperience.HConfigFileSpace
 {
     public interface IConfigEntry
     {
