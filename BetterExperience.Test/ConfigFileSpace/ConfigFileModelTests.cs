@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using BetterExperience.ConfigFileSpace;
+using BetterExperience.HConfigFileSpace;
 
 namespace BetterExperience.Test.ConfigFileSpace
 {
