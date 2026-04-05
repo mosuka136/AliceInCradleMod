@@ -1,3 +1,4 @@
+using BetterExperience.HClassAttribute;
 using BetterExperience.HConfigFileSpace;
 using BetterExperience.HTranslatorSpace;
 
@@ -22,22 +23,39 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnablePreloadCaneDrainAfterLock { get; private set; }
         public static ConfigEntry<bool> EnablePreloadCaneCastspeed { get; private set; }
         public static ConfigEntry<bool> EnablePreloadCaneMagicPrepareSpeed { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneSwingSpeed { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneCastSpeed { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneBalance { get; private set; }
+        [ConfigSlider(-1f, 169f, 0.1f)]
         public static ConfigEntry<float> SetCaneEfficiency { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneRetention { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneLockOn { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneLongRange { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneShortRange { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneReach { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneNearPower { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneNearShotgunPower { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneStability { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneManaSplashRatio { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneCastspeedOverhold { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneDrainAfterLock { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneCastspeed { get; private set; }
+        [ConfigSlider(-1f, 255f, 0.1f)]
         public static ConfigEntry<float> SetCaneMagicPrepareSpeed { get; private set; }
 
         private const string SectionCane = "Cane";

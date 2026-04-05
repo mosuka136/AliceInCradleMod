@@ -1,3 +1,4 @@
+using BetterExperience.HClassAttribute;
 using BetterExperience.HConfigFileSpace;
 using BetterExperience.HTranslatorSpace;
 using System.Collections.Specialized;
@@ -21,6 +22,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableBetterFishing { get; private set; }
         public static ConfigEntry<bool> EnableDebugMode { get; private set; }
+        [ConfigSlider(-1f, 20f, 0.1f)]
         public static ConfigEntry<float> SetLootDropRatio { get; private set; }
 
         private const string SectionGeneral = "General";

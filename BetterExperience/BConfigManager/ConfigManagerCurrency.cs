@@ -1,3 +1,4 @@
+using BetterExperience.HClassAttribute;
 using BetterExperience.HConfigFileSpace;
 using BetterExperience.HTranslatorSpace;
 
@@ -11,8 +12,11 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableLockCurrencyGoldCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyCraftsCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyJuiceCount { get; private set; }
+        [ConfigSlider(-1f, 1000000f, 1f)]
         public static ConfigEntry<long> SetCurrencyGoldCount { get; private set; }
+        [ConfigSlider(-1f, 1000000f, 1f)]
         public static ConfigEntry<long> SetCurrencyCraftsCount { get; private set; }
+        [ConfigSlider(-1f, 1000000f, 1f)]
         public static ConfigEntry<long> SetCurrencyJuiceCount { get; private set; }
 
         private const string SectionCurrency = "Currency";

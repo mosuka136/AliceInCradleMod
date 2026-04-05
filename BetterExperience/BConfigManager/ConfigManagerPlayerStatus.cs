@@ -1,3 +1,4 @@
+using BetterExperience.HClassAttribute;
 using BetterExperience.HConfigFileSpace;
 using BetterExperience.HTranslatorSpace;
 
@@ -53,16 +54,27 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnablePreloadPlayerMaxSatiety { get; private set; }
         public static ConfigEntry<bool> EnablePreloadOverChargeSlotCount { get; private set; }
         public static ConfigEntry<bool> EnablePreloadEnhancerSlotCount { get; private set; }
+        [ConfigSlider(-1f, 500f, 1f)]
         public static ConfigEntry<int> SetBackpackCapacity { get; private set; }
+        [ConfigSlider(-1f, 100f, 1f)]
         public static ConfigEntry<int> SetBottleHolderCount { get; private set; }
+        [ConfigSlider(-1f, 1000f, 1f)]
         public static ConfigEntry<int> SetPlayerHp { get; private set; }
+        [ConfigSlider(-1f, 1000f, 1f)]
         public static ConfigEntry<int> SetPlayerMp { get; private set; }
+        [ConfigSlider(-1f, 1000f, 1f)]
         public static ConfigEntry<int> SetPlayerEp { get; private set; }
+        [ConfigSlider(-1f, 1000f, 1f)]
         public static ConfigEntry<int> SetPlayerMaxHp { get; private set; }
+        [ConfigSlider(-1f, 1000f, 1f)]
         public static ConfigEntry<int> SetPlayerMaxMp { get; private set; }
+        [ConfigSlider(-1f, 100f, 1f)]
         public static ConfigEntry<int> SetPlayerMaxSatiety { get; private set; }
+        [ConfigSlider(-1f, 10f, 1f)]
         public static ConfigEntry<int> SetOverChargeSlotCount { get; private set; }
+        [ConfigSlider(-1f, 20f, 1f)]
         public static ConfigEntry<int> SetEnhancerSlotCount { get; private set; }
+        [ConfigSlider(-1f, 10f, 0.1f)]
         public static ConfigEntry<float> SetPlayerWalkSpeed { get; private set; }
 
         private const string SectionPlayer = "Player";

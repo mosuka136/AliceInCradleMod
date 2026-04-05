@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HClassAttribute;
 using BetterExperience.HConfigFileSpace;
 using BetterExperience.HEnumHelper;
 using BetterExperience.HTranslatorSpace;
@@ -68,6 +69,10 @@ namespace BetterExperience
 
             private GUIStyle _tableStyle;
             private GUIStyle _tooltipStyle;
+            private GUIStyle _slideStyle;
+            private GUIStyle _sliderThumbStyle;
+            private Dictionary<IConfigEntry, (float _sliderEndTime, string newValue)> _sliderCachedEntries = new Dictionary<IConfigEntry, (float _sliderEndTime, string newValue)>();
+            private const float _sliderSaveDuration = 0.3f;
 
             private static readonly Dictionary<Type, Func<string, (bool, object)>> _parsers = new Dictionary<Type, Func<string, (bool, object)>>()
             {
@@ -294,7 +299,24 @@ namespace BetterExperience
                 else if (_parsers.TryGetValue(type, out var parser))
                 {
                     var strValue = entry.BoxedValue.ToString();
-                    var newStrValue = GUILayout.TextField(strValue, GUILayout.ExpandWidth(true));
+
+                    string newStrValue;
+                    var sliderInfo = ClassHelper.GetSliderInfo<ConfigManager>(entry.Key);
+                    if (sliderInfo != null)
+                    {
+                        DrawSlider(entry, sliderInfo.Value.Min, sliderInfo.Value.Max, sliderInfo.Value.Step);
+
+                        if (_sliderCachedEntries.TryGetValue(entry, out var cache) && Time.realtimeSinceStartup >= cache._sliderEndTime)
+                        {
+                            _sliderCachedEntries.Remove(entry);
+                            newStrValue = cache.newValue;
+                        }
+                        else
+                            newStrValue = strValue;
+                    }
+                    else
+                        newStrValue = GUILayout.TextField(strValue, GUILayout.ExpandWidth(true));
+
                     if (newStrValue != strValue)
                     {
                         var (success, parsedValue) = parser(newStrValue);
@@ -356,6 +378,56 @@ namespace BetterExperience
                     GUILayout.EndVertical();
                     GUILayout.EndHorizontal();
                 }
+            }
+
+            private void DrawSlider(IConfigEntry entry, float min, float max, float step = -1f)
+            {
+                if (entry == null)
+                    return;
+
+                if (!_parsers.TryGetValue(entry.ValueType, out var parser))
+                    return;
+
+                if (_slideStyle == null)
+                {
+                    var baseSliderStyle = GUI.skin.horizontalSlider;
+                    _slideStyle = new GUIStyle(baseSliderStyle)
+                    {
+                        margin = new RectOffset(baseSliderStyle.margin.left, baseSliderStyle.margin.right, 6, 6),
+                        fixedHeight = 18f
+                    };
+                }
+
+                if (_sliderThumbStyle == null)
+                {
+                    _sliderThumbStyle = new GUIStyle(GUI.skin.horizontalSliderThumb)
+                    {
+                        margin = new RectOffset(0, 0, 2, 0),
+                        fixedWidth = 17f,
+                        fixedHeight = 13f
+                    };
+                }
+
+                float currentValue;
+                if (_sliderCachedEntries.TryGetValue(entry, out var cache))
+                    currentValue = (float)Convert.ToDouble(cache.newValue);
+                else
+                    currentValue = (float)Convert.ToDouble(entry.BoxedValue);
+
+                var newValue = GUILayout.HorizontalSlider(
+                    currentValue,
+                    min,
+                    max,
+                    _slideStyle,
+                    _sliderThumbStyle,
+                    GUILayout.ExpandWidth(true));
+
+                if (step > 0f)
+                    newValue = Mathf.Round(newValue / step) * step;
+
+                var newValueStr = GUILayout.TextField(newValue.ToString(), GUILayout.ExpandWidth(false), GUILayout.MinWidth(50));
+                if (Mathf.Abs(newValue - currentValue) >= (step > 0f ? step : 0.0001f))
+                    _sliderCachedEntries[entry] = (Time.realtimeSinceStartup + _sliderSaveDuration, newValueStr);
             }
 
             private void DrawEntryResetButton(IConfigEntry entry)

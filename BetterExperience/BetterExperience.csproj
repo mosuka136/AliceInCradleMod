@@ -43,6 +43,8 @@
     <Compile Include="BConfigManager\ConfigManagerPlayerStatus.cs" />
     <Compile Include="BConfigManager\ConfigManagerReel.cs" />
     <Compile Include="BConfigManager\ConfigManagerTexture.cs" />
+    <Compile Include="HClassAttribute\ClassHelper.cs" />
+    <Compile Include="HClassAttribute\ConfigSliderAttribute.cs" />
     <Compile Include="HConfigFileSpace\ConfigEntry.cs" />
     <Compile Include="HConfigFileSpace\ConfigFileEntryModel.cs" />
     <Compile Include="HConfigFileSpace\ConfigFileManager.cs" />
@@ -155,5 +157,6 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
