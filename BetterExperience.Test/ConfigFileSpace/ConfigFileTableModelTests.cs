@@ -13,7 +13,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [InlineData("table.name", false)]
         public void IsValidTableNameShouldReturnExpectedResult(string tableName, bool expected)
         {
-            var result = ConfigFileTablesModel.Table.IsValidTableName(tableName);
+            var result = ConfigFileTableModel.IsValidTableName(tableName);
 
             Assert.Equal(expected, result);
         }
@@ -21,9 +21,9 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void AddTableWhenDuplicateNameShouldFail()
         {
-            var model = new ConfigFileTablesModel();
-            var table1 = ConfigFileTablesModel.Table.Create("General", new Translator(english: "First")).Value;
-            var table2 = ConfigFileTablesModel.Table.Create("General", new Translator(english: "Second")).Value;
+            var model = new ConfigFileSheetModel();
+            var table1 = ConfigFileTableModel.Create("General", new Translator(english: "First")).Value;
+            var table2 = ConfigFileTableModel.Create("General", new Translator(english: "Second")).Value;
 
             var firstResult = model.AddTable(table1);
             var secondResult = model.AddTable(table2);
@@ -36,7 +36,7 @@ namespace BetterExperience.Test.ConfigFileSpace
         [Fact]
         public void EncodeTableWhenDescriptionAndEntriesExistShouldIncludeHeaderAndBody()
         {
-            var table = new ConfigFileTablesModel.Table("General", new Translator(english: "Main settings"));
+            var table = new ConfigFileTableModel("General", new Translator(english: "Main settings"));
             table.AddEntry(new ConfigFileEntryModel { Key = "port", Value = "8080" });
 
             var result = table.EncodeTable();
@@ -55,7 +55,7 @@ namespace BetterExperience.Test.ConfigFileSpace
             var content = new[] { "## line 1", "## line 2", "[General]" };
             int index = 0;
 
-            var result = ConfigFileTablesModel.Table.DecodeTableHeader(content, ref index);
+            var result = ConfigFileTableModel.DecodeTableHeader(content, ref index);
 
             Assert.True(result.Success);
             Assert.Equal("General", result.Value.TableKey);
@@ -69,12 +69,12 @@ namespace BetterExperience.Test.ConfigFileSpace
             var content = new[] { "[General]", "port=8080", "[Advanced]", "mode=1" };
             int index = 0;
 
-            var result = ConfigFileTablesModel.Table.DecodeTable(content, ref index);
+            var result = ConfigFileTableModel.DecodeTable(content, ref index);
 
             Assert.True(result.Success);
             Assert.Equal("General", result.Value.TableKey);
-            Assert.Single(result.Value.Entries);
-            var entry = (ConfigFileEntryModel)result.Value.Entries[0];
+            Assert.Single(result.Value.Table);
+            var entry = (ConfigFileEntryModel)result.Value.Table[0];
             Assert.Equal("port", entry.Key);
             Assert.Equal(2, index);
         }
@@ -85,16 +85,16 @@ namespace BetterExperience.Test.ConfigFileSpace
             var content = new[] { "[General]", "port=8080", "[Advanced]", "mode=1" };
             int index = 0;
 
-            var result = ConfigFileTablesModel.DecodeTables(content, ref index);
+            var result = ConfigFileSheetModel.DecodeSheet(content, ref index);
 
             Assert.True(result.Success);
-            Assert.Equal(2, result.Value.Tables.Count);
+            Assert.Equal(2, result.Value.Sheet.Count);
             Assert.Equal(4, index);
 
-            var general = (ConfigFileTablesModel.Table)result.Value.Tables["General"];
-            var advanced = (ConfigFileTablesModel.Table)result.Value.Tables["Advanced"];
-            Assert.Equal("8080", ((ConfigFileEntryModel)general.Entries[0]).Value);
-            Assert.Equal("1", ((ConfigFileEntryModel)advanced.Entries[0]).Value);
+            var general = (ConfigFileTableModel)result.Value.Sheet["General"];
+            var advanced = (ConfigFileTableModel)result.Value.Sheet["Advanced"];
+            Assert.Equal("8080", ((ConfigFileEntryModel)general.Table[0]).Value);
+            Assert.Equal("1", ((ConfigFileEntryModel)advanced.Table[0]).Value);
         }
     }
 }

@@ -15,6 +15,8 @@ namespace BetterExperience.HConfigFileSpace
         object BoxedValue { get; set; }
         object BoxedDefaultValue { get; }
 
+        event EventHandler OnValueChangedBase;
+
         void RebindEntry(ConfigFileEntryModel entry);
     }
 
@@ -63,6 +65,11 @@ namespace BetterExperience.HConfigFileSpace
         public object BoxedDefaultValue => DefaultValue;
 
         public event EventHandler<T> OnValueChanged;
+        public event EventHandler OnValueChangedBase
+        {
+            add => OnValueChanged += (s, e) => value?.Invoke(s, new EntryValueChangedEventArgs<T>(e));
+            remove => OnValueChanged -= (s, e) => value?.Invoke(s, new EntryValueChangedEventArgs<T>(e));
+        }
 
         public ConfigEntry()
         {
@@ -107,7 +114,7 @@ namespace BetterExperience.HConfigFileSpace
             if (!ConfigFileEntryModel.IsValidKeyName(entry.Key))
                 throw new InvalidOperationException($"Invalid key name: {entry.Key}");
 
-            if (!ConfigFileTablesModel.Table.IsValidTableName(tableKey))
+            if (!ConfigFileTableModel.IsValidTableName(tableKey))
                 throw new InvalidOperationException($"Invalid table name: {tableKey}");
 
             TableName = tableKey;
@@ -207,5 +214,17 @@ namespace BetterExperience.HConfigFileSpace
 
             return false;
         }
+    }
+
+    public class EntryValueChangedEventArgs<T> : EventArgs
+    {
+        public T Value { get; }
+
+        public EntryValueChangedEventArgs(T value)
+        {
+            Value = value;
+        }
+
+        public static implicit operator T(EntryValueChangedEventArgs<T> args) => args.Value;
     }
 }

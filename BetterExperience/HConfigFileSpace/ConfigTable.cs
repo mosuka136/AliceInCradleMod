@@ -1,10 +1,11 @@
 using BetterExperience.HTranslatorSpace;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace BetterExperience.HConfigFileSpace
 {
-    public class ConfigTable
+    public class ConfigTable : IEnumerable<IConfigEntry>
     {
         public string Key { get; set; }
         public Translator Name { get; set; }
@@ -13,12 +14,29 @@ namespace BetterExperience.HConfigFileSpace
 
         public ConfigTable(string key, Translator name, Translator description)
         {
-            if (!ConfigFileTablesModel.Table.IsValidTableName(key))
+            if (!ConfigFileTableModel.IsValidTableName(key))
                 throw new ArgumentException($"Invalid config table name: {key}.", nameof(key));
             Key = key;
             Name = name ?? new Translator(string.Empty);
             Description = description ?? new Translator(string.Empty);
             Table = new List<IConfigEntry>();
+        }
+
+        public void Add(IConfigEntry entry)
+        {
+            if (entry == null)
+                return;
+            Table.Add(entry);
+        }
+
+        public IEnumerator<IConfigEntry> GetEnumerator()
+        {
+            return Table.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Table.GetEnumerator();
         }
     }
 }

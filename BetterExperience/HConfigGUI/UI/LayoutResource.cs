@@ -1,0 +1,37 @@
+using UnityEngine;
+
+namespace BetterExperience.HConfigGUI.UI
+{
+    public static class LayoutResource
+    {
+        private static float _labelWidth = -1f;
+
+        public static float GetLabelWidth(UiSheetModel sheet)
+        {
+            if (_labelWidth > 0f)
+                return _labelWidth;
+
+            if (sheet == null || sheet.Sheet.Count == 0)
+                return 0f;
+
+            float maxWidth = 0f;
+            foreach (var table in sheet.Sheet)
+            {
+                foreach (var entry in table.Table)
+                {
+                    var width = GUI.skin.label.CalcSize(new GUIContent(entry.Name)).x;
+                    if (width > maxWidth)
+                        maxWidth = width;
+                }
+            }
+
+            _labelWidth = maxWidth + 10f;
+            return _labelWidth;
+        }
+
+        public static void InvalidateLayout()
+        {
+            _labelWidth = -1f;
+        }
+    }
+}

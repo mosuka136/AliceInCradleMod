@@ -11,9 +11,9 @@ namespace BetterExperience.HConfigFileSpace
     {
         public bool SaveOnConfigSet { get; set; } = true;
 
-        public ConfigFileTablesModel FileTables { get; private set; }
+        public ConfigFileSheetModel FileSheet { get; private set; }
 
-        public OrderedDictionary Tables { get; private set; }
+        public ConfigSheet Sheet { get; private set; }
 
         public string FilePath { get; set; }
 
@@ -22,7 +22,7 @@ namespace BetterExperience.HConfigFileSpace
         public ConfigFileManager(string filePath)
         {
             FilePath = filePath;
-            Tables = new OrderedDictionary();
+            Sheet = new ConfigSheet();
             Read();
         }
 
@@ -32,19 +32,19 @@ namespace BetterExperience.HConfigFileSpace
             {
                 if (!File.Exists(FilePath))
                 {
-                    FileTables = new ConfigFileTablesModel();
+                    FileSheet = new ConfigFileSheetModel();
                     return true;
                 }
 
                 var content = File.ReadAllText(FilePath).Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
                 int index = 0;
-                var decodeResult = ConfigFileTablesModel.DecodeTables(content, ref index);
+                var decodeResult = ConfigFileSheetModel.DecodeSheet(content, ref index);
                 if (!decodeResult.Success)
                 {
                     foreach (var error in decodeResult.Errors)
                         HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, index);
                 }
-                FileTables = decodeResult.Value;
+                FileSheet = decodeResult.Value;
                 return true;
             }
             catch (Exception ex)
@@ -59,7 +59,7 @@ namespace BetterExperience.HConfigFileSpace
             var tmpFilePath = FilePath + ".tmp";
             try
             {
-                var encodeResult = FileTables.EncodeTables();
+                var encodeResult = FileSheet.EncodeSheet();
                 if (!encodeResult.Success)
                 {
                     foreach (var error in encodeResult.Errors)
@@ -93,11 +93,11 @@ namespace BetterExperience.HConfigFileSpace
             SaveOnConfigSet = false;
 
             Read();
-            foreach (ConfigTable table in Tables.Values)
+            foreach (var table in Sheet.Values)
             {
-                foreach (var entry in table.Table)
+                foreach (var entry in table)
                 {
-                    var entryResult = FileTables.GetEntry(entry.TableName, entry.Key);
+                    var entryResult = FileSheet.GetEntry(entry.TableName, entry.Key);
                     if (entryResult.Success)
                     {
                         entry.Entry.CopyTo(entryResult.Value, false);
@@ -115,14 +115,14 @@ namespace BetterExperience.HConfigFileSpace
             HLog.Info($"Rebinding config entry");
 
             ConfigEntry<T> result = null;
-            var entryResult = FileTables.GetEntry(tableKey, key);
+            var entryResult = FileSheet.GetEntry(tableKey, key);
             if (entryResult.Success)
             {
                 result = new ConfigEntry<T>(tableKey, entryResult.Value, defaultValue, entryName, description);
             }
             else
             {
-                var tableResult = FileTables.GetTable(tableKey);
+                var tableResult = FileSheet.GetTable(tableKey);
                 if (!tableResult.Success)
                 {
                     foreach (var error in tableResult.Errors)
@@ -157,26 +157,24 @@ namespace BetterExperience.HConfigFileSpace
 
             result.OnValueChanged += OnConfigEntryChanged;
 
-            if (!Tables.Contains(tableKey))
+            if (!Sheet.Contains(tableKey))
                 throw new InvalidOperationException($"Config table '{tableKey}' is missing from the manager.");
-            if (!(Tables[tableKey] is ConfigTable table))
-                throw new InvalidOperationException($"Config table is not a list: {tableKey}.");
 
-            table.Table.Add(result);
+            Sheet[tableKey].Add(result);
             return result;
         }
 
         public void CreateTable(string tableKey, Translator tableName, Translator description = null)
         {
-            var tableResult = FileTables.GetTable(tableKey);
+            var tableResult = FileSheet.GetTable(tableKey);
             if (tableResult.Success)
             {
-                if (!Tables.Contains(tableKey))
-                    Tables.Add(tableKey, new ConfigTable(tableKey, tableName, description));
+                if (!Sheet.Contains(tableKey))
+                    Sheet.Add(tableKey, new ConfigTable(tableKey, tableName, description));
                 return;
             }
 
-            var newTableResult = ConfigFileTablesModel.CreateTable(tableKey, description);
+            var newTableResult = ConfigFileSheetModel.CreateTable(tableKey, description);
             if (!newTableResult.Success)
             {
                 foreach (var error in newTableResult.Errors)
@@ -184,7 +182,7 @@ namespace BetterExperience.HConfigFileSpace
                 throw new InvalidOperationException($"Failed to create config table: {tableKey}.");
             }
 
-            var addTableResult = FileTables.AddTable(newTableResult.Value);
+            var addTableResult = FileSheet.AddTable(newTableResult.Value);
             if (!addTableResult.Success)
             {
                 foreach (var error in addTableResult.Errors)
@@ -192,10 +190,10 @@ namespace BetterExperience.HConfigFileSpace
                 throw new InvalidOperationException($"Failed to add config table: {tableKey}.");
             }
 
-            if (Tables.Contains(tableKey))
+            if (Sheet.Contains(tableKey))
                 throw new InvalidOperationException($"Config table already exists in manager: {tableKey}.");
 
-            Tables.Add(tableKey, new ConfigTable(tableKey, tableName, description));
+            Sheet.Add(tableKey, new ConfigTable(tableKey, tableName, description));
         }
 
         public void Save()

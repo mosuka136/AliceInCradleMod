@@ -24,10 +24,12 @@
     <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileModel.cs" Link="HConfigFileSpace\ConfigFileModel.cs" />
     <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileResult.cs" Link="HConfigFileSpace\ConfigFileResult.cs" />
     <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileEntryModel.cs" Link="HConfigFileSpace\ConfigFileEntryModel.cs" />
-    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileTablesModel.cs" Link="HConfigFileSpace\ConfigFileTablesModel.cs" />
+    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileTableModel.cs" Link="HConfigFileSpace\ConfigFileTableModel.cs" />
+    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileSheetModel.cs" Link="HConfigFileSpace\ConfigFileSheetModel.cs" />
     <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigEntry.cs" Link="HConfigFileSpace\ConfigEntry.cs" />
     <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileManager.cs" Link="HConfigFileSpace\ConfigFileManager.cs" />
     <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigTable.cs" Link="HConfigFileSpace\ConfigTable.cs" />
+    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigSheet.cs" Link="HConfigFileSpace\ConfigSheet.cs" />
     <Compile Include="..\BetterExperience\HTranslatorSpace\Translator.cs" Link="HTranslatorSpace\Translator.cs" />
     <Compile Include="..\BetterExperience\HTranslatorSpace\LanguageType.cs" Link="HTranslatorSpace\LanguageType.cs" />
     <Compile Include="..\BetterExperience\HEnumHelper\DisplayEnumAttribute.cs" Link="HEnumHelper\DisplayEnumAttribute.cs" />

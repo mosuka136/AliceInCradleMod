@@ -8,7 +8,7 @@ namespace BetterExperience.BConfigManager
     {
         public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
-        [ConfigSlider(-1f, 1f, 0.01f)]
+        [ConfigSlider(-0.2f, 1f, 0.01f)]
         public static ConfigEntry<float> SetReelSpeed { get; private set; }
 
         private const string SectionReel = "Reel";

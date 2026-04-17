@@ -9,7 +9,7 @@ namespace BetterExperience.BConfigManager
     {
         public static ConfigFileManager Config { get; private set; }
 
-        public static OrderedDictionary Tables => Config.Tables;
+        public static ConfigSheet Sheet => Config.Sheet;
 
         private ConfigManager()
         {
