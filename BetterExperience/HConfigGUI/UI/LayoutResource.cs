@@ -1,4 +1,4 @@
-using UnityEngine;
+using BetterExperience.HAdapter;
 
 namespace BetterExperience.HConfigGUI.UI
 {
@@ -19,7 +19,7 @@ namespace BetterExperience.HConfigGUI.UI
             {
                 foreach (var entry in table.Table)
                 {
-                    var width = GUI.skin.label.CalcSize(new GUIContent(entry.Name)).x;
+                    var width = GuiStyleAdapter.LabelStyle.CalcSize(new GuiContentAdapter(entry.Name)).x;
                     if (width > maxWidth)
                         maxWidth = width;
                 }

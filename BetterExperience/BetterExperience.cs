@@ -1,5 +1,6 @@
 using BepInEx;
 using BetterExperience.BConfigManager;
+using BetterExperience.HAdapter;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -47,7 +48,7 @@ namespace BetterExperience
             HLog.Initialize(
                 Path.Combine(Paths.PluginPath, nameof(BetterExperience), "logs"),
                 PatchInfo.HarmonyLoggerName,
-                Logger,
+                new BepInExAdapter(Logger),
                 ConfigManager.HarmonyLogLevel.Value,
                 ConfigManager.BepInExLogLevel.Value);
 

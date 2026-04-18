@@ -1,11 +1,9 @@
-using BepInEx.Logging;
 using BetterExperience.BConfigManager;
+using BetterExperience.HAdapter;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace BetterExperience
 {
@@ -17,7 +15,7 @@ namespace BetterExperience
         private static LogLevel _logLevel;
         private static LogLevel _bepInExLogLevel;
 
-        private static ManualLogSource _bepLog = null;
+        private static BepInExAdapter _bepLog = null;
         private static int _seq = 0;
 
         private HLog()
@@ -28,7 +26,7 @@ namespace BetterExperience
         public static void Initialize(
             string loggerPath,
             string loggerName,
-            ManualLogSource bepLog = null,
+            BepInExAdapter bepLog = null,
             LogLevel logLevel = LogLevel.Info,
             LogLevel bepInExLogLevel = LogLevel.Warning)
         {
@@ -53,7 +51,7 @@ namespace BetterExperience
                 _writer.WriteLine($"{new string('-', 50)}LOG-START-{DateTime.Now}{new string('-', 50)}");
             }
 
-            Application.quitting += Shutdown;
+            UnityEngineAdapter.UnityQuitting += Shutdown;
         }
 
         public static void Info(string msg,
@@ -101,7 +99,7 @@ namespace BetterExperience
             int id = System.Threading.Interlocked.Increment(ref _seq);
             string time = DateTime.Now.ToString("HH:mm:ss.fff");
             int threadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-            int frame = Time.frameCount;
+            int frame = UnityTimeAdapter.FrameCount;
             string scene = SafeSceneName();
 
             sb.Append('[').Append(id).Append("] ")
@@ -131,7 +129,7 @@ namespace BetterExperience
             {
                 if (_bepLog == null)
                 {
-                    Debug.Log(final);
+                    UnityEngineAdapter.DebugLog(final);
                 }
                 else
                 {
@@ -158,7 +156,7 @@ namespace BetterExperience
         {
             try
             {
-                string scene = SceneManager.GetActiveScene().name;
+                string scene = UnityEngineAdapter.ActiveScene.name;
                 if (string.IsNullOrWhiteSpace(scene))
                 {
                     return "?";

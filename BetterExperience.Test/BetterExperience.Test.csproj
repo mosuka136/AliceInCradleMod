@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="xunit" Version="2.5.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
   </ItemGroup>
@@ -21,19 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileModel.cs" Link="HConfigFileSpace\ConfigFileModel.cs" />
-    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileResult.cs" Link="HConfigFileSpace\ConfigFileResult.cs" />
-    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileEntryModel.cs" Link="HConfigFileSpace\ConfigFileEntryModel.cs" />
-    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileTableModel.cs" Link="HConfigFileSpace\ConfigFileTableModel.cs" />
-    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileSheetModel.cs" Link="HConfigFileSpace\ConfigFileSheetModel.cs" />
-    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigEntry.cs" Link="HConfigFileSpace\ConfigEntry.cs" />
-    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigFileManager.cs" Link="HConfigFileSpace\ConfigFileManager.cs" />
-    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigTable.cs" Link="HConfigFileSpace\ConfigTable.cs" />
-    <Compile Include="..\BetterExperience\HConfigFileSpace\ConfigSheet.cs" Link="HConfigFileSpace\ConfigSheet.cs" />
-    <Compile Include="..\BetterExperience\HTranslatorSpace\Translator.cs" Link="HTranslatorSpace\Translator.cs" />
-    <Compile Include="..\BetterExperience\HTranslatorSpace\LanguageType.cs" Link="HTranslatorSpace\LanguageType.cs" />
-    <Compile Include="..\BetterExperience\HEnumHelper\DisplayEnumAttribute.cs" Link="HEnumHelper\DisplayEnumAttribute.cs" />
-    <Compile Include="..\BetterExperience\HEnumHelper\EnumHelper.cs" Link="HEnumHelper\EnumHelper.cs" />
+    <ProjectReference Include="..\BetterExperience\BetterExperience.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
 using BetterExperience.HTranslatorSpace;
-using UnityEngine;
 
 namespace BetterExperience.HConfigGUI.UI
 {

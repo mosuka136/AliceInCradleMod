@@ -1,9 +1,9 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HAdapter;
 using BetterExperience.HConfigGUI.UI;
 using BetterExperience.HTranslatorSpace;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace BetterExperience.HConfigGUI
 {
@@ -106,7 +106,7 @@ namespace BetterExperience.HConfigGUI
         public void ShowToast(string message, float duration)
         {
             ToastMessage = message;
-            ToastEndTime = Time.realtimeSinceStartup + duration;
+            ToastEndTime = UnityTimeAdapter.RealtimeSinceStartup + duration;
         }
     }
 }

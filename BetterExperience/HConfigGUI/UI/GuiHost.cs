@@ -1,10 +1,14 @@
 using System;
+using BetterExperience.HAdapter;
 using UnityEngine;
+using Rect = BetterExperience.HAdapter.Rect;
 
 namespace BetterExperience.HConfigGUI.UI
 {
     public class GuiHost : MonoBehaviour
     {
+        private static readonly IGuiLayout Layout = new GuiLayoutAdapter();
+
         private ViewModel _viewModel;
         private SheetRenderer _sheetRenderer;
         private ToastRenderer _toastRenderer;
@@ -34,7 +38,7 @@ namespace BetterExperience.HConfigGUI.UI
             if (hotkey != null && hotkey.IsValid && hotkey.WasPressedThisFrame())
                 ToggleVisibility();
 
-            _viewModel.Update(Time.unscaledDeltaTime);
+            _viewModel.Update(UnityTimeAdapter.UnscaledDeltaTime);
         }
 
         private void OnGUI()
@@ -53,13 +57,13 @@ namespace BetterExperience.HConfigGUI.UI
 
         private void DrawWindow(int id)
         {
-            GUILayout.BeginArea(new Rect(10f, 30f, _viewModel.WindowRect.width - 20f, _viewModel.WindowRect.height - 40f));
-            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
+            Layout.BeginArea(new Rect(10f, 30f, _viewModel.WindowRect.width - 20f, _viewModel.WindowRect.height - 40f));
+            _scrollPosition = Layout.BeginScrollView(_scrollPosition);
 
             _sheetRenderer.Render(_viewModel.Sheet);
 
-            GUILayout.EndScrollView();
-            GUILayout.EndArea();
+            Layout.EndScrollView();
+            Layout.EndArea();
 
             _toastRenderer.Render();
             _tooltipRenderer.Render();

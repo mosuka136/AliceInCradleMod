@@ -43,6 +43,10 @@
     <Compile Include="BConfigManager\ConfigManagerPlayerStatus.cs" />
     <Compile Include="BConfigManager\ConfigManagerReel.cs" />
     <Compile Include="BConfigManager\ConfigManagerTexture.cs" />
+    <Compile Include="HAdapter\BepInExAdapter.cs" />
+    <Compile Include="HAdapter\GuiAdapter.cs" />
+    <Compile Include="HAdapter\UnityEngineAdapter.cs" />
+    <Compile Include="HAdapter\UnityEventAdapter.cs" />
     <Compile Include="HClassAttribute\ClassHelper.cs" />
     <Compile Include="HClassAttribute\ConfigSliderAttribute.cs" />
     <Compile Include="HConfigFileSpace\ConfigEntry.cs" />
@@ -54,7 +58,11 @@
     <Compile Include="HConfigFileSpace\ConfigFileTableModel.cs" />
     <Compile Include="HConfigFileSpace\ConfigSheet.cs" />
     <Compile Include="HConfigFileSpace\ConfigTable.cs" />
+    <Compile Include="HAdapter\UnityTimeAdapter.cs" />
+    <Compile Include="HAdapter\MathHelper.cs" />
     <Compile Include="HConfigGUI\ConfigGUI.cs" />
+    <Compile Include="HAdapter\GuiContentAdapter.cs" />
+    <Compile Include="HAdapter\IGuiLayout.cs" />
     <Compile Include="HConfigGUI\UiEntryModel.cs" />
     <Compile Include="HConfigGUI\Parser.cs" />
     <Compile Include="HConfigGUI\ParseResult.cs" />
@@ -63,6 +71,7 @@
     <Compile Include="HConfigGUI\UiSheetModel.cs" />
     <Compile Include="HConfigGUI\UiTableModel.cs" />
     <Compile Include="HConfigGUI\UI\GuiHost.cs" />
+    <Compile Include="HAdapter\GuiStyleAdapter.cs" />
     <Compile Include="HConfigGUI\UI\LayoutResource.cs" />
     <Compile Include="HConfigGUI\UI\Renderers.cs" />
     <Compile Include="HConfigGUI\UI\StyleResource.cs" />

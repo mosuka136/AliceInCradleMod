@@ -1,7 +1,7 @@
+using BetterExperience.HAdapter;
 using BetterExperience.HEnumHelper;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace BetterExperience.HConfigGUI.UI
 {
@@ -13,6 +13,8 @@ namespace BetterExperience.HConfigGUI.UI
 
     public abstract class BaseEntryRenderer : IEntryRenderer
     {
+        protected IGuiLayout Layout { get; } = new GuiLayoutAdapter();
+
         public ViewModel Context { get; }
 
         protected BaseEntryRenderer(ViewModel context)
@@ -25,11 +27,11 @@ namespace BetterExperience.HConfigGUI.UI
             if (Context == null || entry == null)
                 return;
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(new GUIContent(entry.Name, entry.Description), GUILayout.Width(LayoutResource.GetLabelWidth(Context.Sheet)));
+            Layout.BeginHorizontal();
+            Layout.Label(new GuiContentAdapter(entry.Name, entry.Description), Layout.Width(LayoutResource.GetLabelWidth(Context.Sheet)));
             RenderEntry(entry);
             ResetButtonRenderer.Render(Context, entry);
-            GUILayout.EndHorizontal();
+            Layout.EndHorizontal();
 
             RenderAfterRow(entry);
         }
@@ -52,7 +54,7 @@ namespace BetterExperience.HConfigGUI.UI
                 return;
 
             bool value = (entry.CacheValue ?? entry.Value) as bool? ?? false;
-            var newValue = GUILayout.Toggle(value, value ? TranslatorResource.On : TranslatorResource.Off, GUILayout.ExpandWidth(true));
+            var newValue = Layout.Toggle(value, value ? TranslatorResource.On : TranslatorResource.Off, Layout.ExpandWidth(true));
             if (newValue != value)
             {
                 Context.SetValue(entry, newValue);
@@ -73,7 +75,7 @@ namespace BetterExperience.HConfigGUI.UI
                 return;
 
             var value = (entry.CacheValue ?? entry.Value) as string ?? string.Empty;
-            var newValue = GUILayout.TextField(value, GUILayout.ExpandWidth(true));
+            var newValue = Layout.TextField(value, Layout.ExpandWidth(true));
             if (newValue != value)
             {
                 Context.SetValue(entry, newValue, Context.StringDuration);
@@ -105,7 +107,7 @@ namespace BetterExperience.HConfigGUI.UI
                 entry.CacheValueString = valueStr;
             }
 
-            var newValueStr = GUILayout.TextField(valueStr, GUILayout.ExpandWidth(true));
+            var newValueStr = Layout.TextField(valueStr, Layout.ExpandWidth(true));
             if (newValueStr != valueStr)
             {
                 entry.CacheValueString = newValueStr;
@@ -134,7 +136,7 @@ namespace BetterExperience.HConfigGUI.UI
                 return;
 
             var value = (entry.CacheValue ?? entry.Value) as Enum;
-            var clicked = GUILayout.Button(EnumHelper.GetDescription(entry.ValueType, value), GUILayout.ExpandWidth(true));
+            var clicked = Layout.Button(EnumHelper.GetDescription(entry.ValueType, value), Layout.ExpandWidth(true));
             if (clicked)
                 Context.OpenedEnumEntry = Context.OpenedEnumEntry == entry ? null : entry;
         }
@@ -190,15 +192,15 @@ namespace BetterExperience.HConfigGUI.UI
             currentIndex = mapIndexList.IndexOf(currentIndex);
             currentIndex = currentIndex >= 0 ? currentIndex : 0;
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Space(LayoutResource.GetLabelWidth(Context.Sheet));
+            Layout.BeginHorizontal();
+            Layout.Space(LayoutResource.GetLabelWidth(Context.Sheet));
 
-            GUILayout.BeginVertical("box");
-            int newIndex = GUILayout.SelectionGrid(currentIndex, names, 1, GUILayout.ExpandWidth(true));
-            GUILayout.EndVertical();
+            Layout.BeginVertical(GuiStyleAdapter.BoxStyle);
+            int newIndex = Layout.SelectionGrid(currentIndex, names, 1, Layout.ExpandWidth(true));
+            Layout.EndVertical();
 
-            GUILayout.Space(ResetButtonRenderer.GetWidth());
-            GUILayout.EndHorizontal();
+            Layout.Space(ResetButtonRenderer.GetWidth());
+            Layout.EndHorizontal();
 
             if (currentIndex != newIndex)
             {
@@ -224,28 +226,28 @@ namespace BetterExperience.HConfigGUI.UI
             var metadata = entry.Metadata as UiSliderMetadata;
             if (metadata == null)
             {
-                GUILayout.Label(TranslatorResource.InvalidSliderMetadata, GUILayout.ExpandWidth(true));
+                Layout.Label(new GuiContentAdapter(TranslatorResource.InvalidSliderMetadata), Layout.ExpandWidth(true));
                 return;
             }
 
             var parseResult = Parser.Parse<float>(entry.CacheValue ?? entry.Value);
             var value = parseResult.Success ? parseResult.Value : metadata.Min;
-            var displayValue = Mathf.Clamp(value, metadata.Min, metadata.Max);
-            var newSliderValue = GUILayout.HorizontalSlider(
+            var displayValue = MathHelper.Clamp(value, metadata.Min, metadata.Max);
+            var newSliderValue = Layout.HorizontalSlider(
                 displayValue, 
                 metadata.Min,
                 metadata.Max,
                 StyleResource.Instance.SliderStyle,
                 StyleResource.Instance.SliderThumbStyle,
-                GUILayout.ExpandWidth(true));
+                Layout.ExpandWidth(true));
 
-            if (Mathf.Approximately(displayValue, newSliderValue))
+            if (MathHelper.Approximately(displayValue, newSliderValue))
                 newSliderValue = value;
 
-            if (!Mathf.Approximately(value, newSliderValue))
+            if (!MathHelper.Approximately(value, newSliderValue))
             {
                 if (metadata.Step > 0f)
-                    newSliderValue = Mathf.Round(newSliderValue / metadata.Step) * metadata.Step;
+                    newSliderValue = MathHelper.Round(newSliderValue / metadata.Step) * metadata.Step;
 
                 entry.CacheValueString = Parser.Parse<string>(newSliderValue).Value;
 
@@ -264,7 +266,7 @@ namespace BetterExperience.HConfigGUI.UI
                 entry.CacheValueString = textValueStr;
             }
 
-            var newTextValueStr = GUILayout.TextField(textValueStr, GUILayout.MinWidth(50f), GUILayout.ExpandWidth(false));
+            var newTextValueStr = Layout.TextField(textValueStr, Layout.MinWidth(50f), Layout.ExpandWidth(false));
 
             if (newTextValueStr != textValueStr)
             {
@@ -281,24 +283,28 @@ namespace BetterExperience.HConfigGUI.UI
 
     public static class ResetButtonRenderer
     {
+        private static readonly IGuiLayout Layout = new GuiLayoutAdapter();
+
         public static void Render(ViewModel context, UiEntryModel entry)
         {
             if (context == null || entry == null)
                 return;
 
-            var clicked = GUILayout.Button(TranslatorResource.Reset, GUILayout.ExpandWidth(false));
+            var clicked = Layout.Button(TranslatorResource.Reset, Layout.ExpandWidth(false));
             if (clicked)
                 context.ResetValue(entry);
         }
 
         public static float GetWidth()
         {
-            return GUI.skin.button.CalcSize(new GUIContent(TranslatorResource.Reset)).x;
+            return GuiStyleAdapter.ButtonStyle.CalcSize(new GuiContentAdapter(TranslatorResource.Reset)).x;
         }
     }
 
     public class TableRenderer
     {
+        private static readonly IGuiLayout Layout = new GuiLayoutAdapter();
+
         public ViewModel Context { get; }
         public BoolRenderer BoolEntryRenderer { get; }
         public StringRenderer StringEntryRenderer { get; }
@@ -322,10 +328,10 @@ namespace BetterExperience.HConfigGUI.UI
             if (Context == null || table == null)
                 return;
 
-            GUILayout.BeginVertical("box");
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(new GUIContent(table.Name, table.Description), StyleResource.Instance.TableTitleStyle, GUILayout.ExpandWidth(true));
-            GUILayout.EndHorizontal();
+            Layout.BeginVertical(GuiStyleAdapter.BoxStyle);
+            Layout.BeginHorizontal();
+            Layout.Label(new GuiContentAdapter(table.Name, table.Description), StyleResource.Instance.TableTitleStyle, Layout.ExpandWidth(true));
+            Layout.EndHorizontal();
 
             foreach (var entry in table)
             {
@@ -356,13 +362,15 @@ namespace BetterExperience.HConfigGUI.UI
                 }
             }
 
-            GUILayout.Space(10f);
-            GUILayout.EndVertical();
+            Layout.Space(10f);
+            Layout.EndVertical();
         }
     }
 
     public class SheetRenderer
     {
+        private static readonly IGuiLayout Layout = new GuiLayoutAdapter();
+
         public ViewModel Context { get; }
         public TableRenderer TableRenderer { get; }
 
@@ -380,7 +388,7 @@ namespace BetterExperience.HConfigGUI.UI
             foreach (var table in sheet)
             {
                 TableRenderer.Render(table);
-                GUILayout.Space(10f);
+                Layout.Space(10f);
             }
         }
     }
@@ -402,7 +410,7 @@ namespace BetterExperience.HConfigGUI.UI
             if (string.IsNullOrEmpty(Context.ToastMessage))
                 return;
 
-            float remaining = Context.ToastEndTime - Time.realtimeSinceStartup;
+            float remaining = Context.ToastEndTime - UnityTimeAdapter.RealtimeSinceStartup;
             if (remaining <= 0f)
             {
                 Context.ToastMessage = null;
@@ -410,18 +418,18 @@ namespace BetterExperience.HConfigGUI.UI
             }
 
             float alpha = remaining < Context.ToastFadeDuration ? remaining / Context.ToastFadeDuration : 1f;
-            var previousColor = GUI.color;
-            GUI.color = new Color(1f, 1f, 1f, alpha);
+            var previousColor = GuiAdapter.Color;
+            GuiAdapter.Color = new HAdapter.Color(1f, 1f, 1f, alpha);
 
-            var content = new GUIContent(Context.ToastMessage);
+            var content = new GuiContentAdapter(Context.ToastMessage);
             var size = StyleResource.Instance.ToastStyle.CalcSize(content);
-            float toastWidth = Mathf.Min(size.x + 20f, Context.WindowRect.width - 20f);
+            float toastWidth = MathHelper.Min(size.x + 20f, Context.WindowRect.width - 20f);
             float toastHeight = size.y + 4f;
             float x = (Context.WindowRect.width - toastWidth) / 2f;
-            float y = Mathf.Max(0, Context.WindowRect.height - toastHeight - 30f);
+            float y = MathHelper.Max(0f, Context.WindowRect.height - toastHeight - 30f);
 
-            GUI.Label(new Rect(x, y, toastWidth, toastHeight), content, StyleResource.Instance.ToastStyle);
-            GUI.color = previousColor;
+            GuiAdapter.Label(new HAdapter.Rect(x, y, toastWidth, toastHeight), content, StyleResource.Instance.ToastStyle.Style);
+            GuiAdapter.Color = previousColor;
         }
     }
 
@@ -439,18 +447,18 @@ namespace BetterExperience.HConfigGUI.UI
             if (Context == null)
                 return;
 
-            if (string.IsNullOrEmpty(GUI.tooltip))
+            if (string.IsNullOrEmpty(GuiAdapter.Tooltip))
                 return;
 
-            var tooltipContent = new GUIContent(GUI.tooltip);
+            var tooltipContent = new GuiContentAdapter(GuiAdapter.Tooltip);
             float maxTooltipWidth = Context.WindowRect.width * 0.6f;
             float tooltipHeight = StyleResource.Instance.TooltipStyle.CalcHeight(tooltipContent, maxTooltipWidth);
 
-            var mousePosition = Event.current.mousePosition;
-            float x = Mathf.Clamp(mousePosition.x + 15f, 0f, Context.WindowRect.width - maxTooltipWidth);
-            float y = Mathf.Clamp(mousePosition.y + 15f, 0f, Context.WindowRect.height - tooltipHeight);
+            var mousePosition = UnityEventAdapter.Current.MousePosition;
+            float x = MathHelper.Clamp(mousePosition.x + 15f, 0f, Context.WindowRect.width - maxTooltipWidth);
+            float y = MathHelper.Clamp(mousePosition.y + 15f, 0f, Context.WindowRect.height - tooltipHeight);
 
-            GUI.Label(new Rect(x, y, maxTooltipWidth, tooltipHeight), tooltipContent, StyleResource.Instance.TooltipStyle);
+            GuiAdapter.Label(new HAdapter.Rect(x, y, maxTooltipWidth, tooltipHeight), tooltipContent, StyleResource.Instance.TooltipStyle.Style);
         }
     }
 }

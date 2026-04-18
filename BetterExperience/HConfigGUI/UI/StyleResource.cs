@@ -1,4 +1,6 @@
+using BetterExperience.HAdapter;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 namespace BetterExperience.HConfigGUI.UI
 {
@@ -10,21 +12,21 @@ namespace BetterExperience.HConfigGUI.UI
         }
         public static StyleResource Instance { get; } = new StyleResource();
 
-        private GUIStyle _tableTitleStyle;
-        private GUIStyle _tooltipStyle;
-        private GUIStyle _sliderStyle;
-        private GUIStyle _sliderThumbStyle;
-        private GUIStyle _toastStyle;
+        private GuiStyleAdapter _tableTitleStyle;
+        private GuiStyleAdapter _tooltipStyle;
+        private GuiStyleAdapter _sliderStyle;
+        private GuiStyleAdapter _sliderThumbStyle;
+        private GuiStyleAdapter _toastStyle;
 
-        public GUIStyle TableTitleStyle => _tableTitleStyle ?? (_tableTitleStyle = CreateTableTitleStyle());
-        public GUIStyle TooltipStyle => _tooltipStyle ?? (_tooltipStyle = CreateTooltipStyle());
-        public GUIStyle SliderStyle => _sliderStyle ?? (_sliderStyle = CreateSliderStyle());
-        public GUIStyle SliderThumbStyle => _sliderThumbStyle ?? (_sliderThumbStyle = CreateSliderThumbStyle());
-        public GUIStyle ToastStyle => _toastStyle ?? (_toastStyle = CreateToastStyle());
+        public GuiStyleAdapter TableTitleStyle => _tableTitleStyle ?? (_tableTitleStyle = CreateTableTitleStyle());
+        public GuiStyleAdapter TooltipStyle => _tooltipStyle ?? (_tooltipStyle = CreateTooltipStyle());
+        public GuiStyleAdapter SliderStyle => _sliderStyle ?? (_sliderStyle = CreateSliderStyle());
+        public GuiStyleAdapter SliderThumbStyle => _sliderThumbStyle ?? (_sliderThumbStyle = CreateSliderThumbStyle());
+        public GuiStyleAdapter ToastStyle => _toastStyle ?? (_toastStyle = CreateToastStyle());
 
-        private GUIStyle CreateTableTitleStyle()
+        private GuiStyleAdapter CreateTableTitleStyle()
         {
-            return new GUIStyle(GUI.skin.label)
+            return new GUIStyle(GuiStyleAdapter.LabelStyle.Style)
             {
                 alignment = TextAnchor.MiddleCenter,
                 fontStyle = FontStyle.Bold,
@@ -32,9 +34,9 @@ namespace BetterExperience.HConfigGUI.UI
             };
         }
 
-        private GUIStyle CreateTooltipStyle()
+        private GuiStyleAdapter CreateTooltipStyle()
         {
-            var style = new GUIStyle(GUI.skin.box)
+            var style = new GUIStyle(GuiStyleAdapter.BoxStyle.Style)
             {
                 wordWrap = true,
                 alignment = TextAnchor.MiddleCenter,
@@ -45,9 +47,9 @@ namespace BetterExperience.HConfigGUI.UI
             return style;
         }
 
-        private GUIStyle CreateSliderStyle()
+        private GuiStyleAdapter CreateSliderStyle()
         {
-            var baseStyle = GUI.skin.horizontalSlider;
+            var baseStyle = GuiStyleAdapter.HorizontalSlider.Style;
             return new GUIStyle(baseStyle)
             {
                 margin = new RectOffset(baseStyle.margin.left, baseStyle.margin.right, 6, 6),
@@ -55,9 +57,9 @@ namespace BetterExperience.HConfigGUI.UI
             };
         }
 
-        private GUIStyle CreateSliderThumbStyle()
+        private GuiStyleAdapter CreateSliderThumbStyle()
         {
-            return new GUIStyle(GUI.skin.horizontalSliderThumb)
+            return new GUIStyle(GuiStyleAdapter.HorizontalSliderThumb.Style)
             {
                 margin = new RectOffset(0, 0, 2, 0),
                 fixedWidth = 17f,
@@ -65,9 +67,9 @@ namespace BetterExperience.HConfigGUI.UI
             };
         }
 
-        private GUIStyle CreateToastStyle()
+        private GuiStyleAdapter CreateToastStyle()
         {
-            var style = new GUIStyle(GUI.skin.box)
+            var style = new GUIStyle(GuiStyleAdapter.BoxStyle.Style)
             {
                 alignment = TextAnchor.MiddleCenter,
                 padding = new RectOffset(10, 10, 6, 6)

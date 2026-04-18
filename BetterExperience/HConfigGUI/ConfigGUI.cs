@@ -3,7 +3,7 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BetterExperience
+namespace BetterExperience.HConfigGUI
 {
     public sealed class ConfigGUI
     {
