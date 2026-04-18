@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -23,6 +23,26 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BetterExperience\BetterExperience.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029i\AliceInCradle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\\..\\..\\..\\mine\\B\\programme\\AliceInCradle\\ver029i\\AliceInCradle_Data\\Managed\\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029i\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>..\\..\\..\\..\\mine\\B\\programme\\AliceInCradle\\ver029i\\AliceInCradle_Data\\Managed\\Unity.InputSystem.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+
   </ItemGroup>
 
 </Project>

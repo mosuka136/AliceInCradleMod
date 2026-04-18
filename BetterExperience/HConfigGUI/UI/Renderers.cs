@@ -13,13 +13,14 @@ namespace BetterExperience.HConfigGUI.UI
 
     public abstract class BaseEntryRenderer : IEntryRenderer
     {
-        protected IGuiLayout Layout { get; } = new GuiLayoutAdapter();
+        protected IGuiLayout Layout { get; }
 
         public ViewModel Context { get; }
 
-        protected BaseEntryRenderer(ViewModel context)
+        protected BaseEntryRenderer(ViewModel context, IGuiLayout layout)
         {
             Context = context;
+            Layout = layout;
         }
 
         public void Render(UiEntryModel entry)
@@ -30,7 +31,7 @@ namespace BetterExperience.HConfigGUI.UI
             Layout.BeginHorizontal();
             Layout.Label(new GuiContentAdapter(entry.Name, entry.Description), Layout.Width(LayoutResource.GetLabelWidth(Context.Sheet)));
             RenderEntry(entry);
-            ResetButtonRenderer.Render(Context, entry);
+            ResetButtonRenderer.Render(Context, Layout, entry);
             Layout.EndHorizontal();
 
             RenderAfterRow(entry);
@@ -43,7 +44,7 @@ namespace BetterExperience.HConfigGUI.UI
 
     public class BoolRenderer : BaseEntryRenderer
     {
-        public BoolRenderer(ViewModel context) : base(context) { }
+        public BoolRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
 
         public override void RenderEntry(UiEntryModel entry)
         {
@@ -64,7 +65,7 @@ namespace BetterExperience.HConfigGUI.UI
 
     public class StringRenderer : BaseEntryRenderer
     {
-        public StringRenderer(ViewModel context) : base(context) { }
+        public StringRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
 
         public override void RenderEntry(UiEntryModel entry)
         {
@@ -85,7 +86,7 @@ namespace BetterExperience.HConfigGUI.UI
 
     public class NumberRenderer : BaseEntryRenderer
     {
-        public NumberRenderer(ViewModel context) : base(context) { }
+        public NumberRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
 
         public override void RenderEntry(UiEntryModel entry)
         {
@@ -125,7 +126,7 @@ namespace BetterExperience.HConfigGUI.UI
     {
         private readonly Dictionary<UiEntryModel, (Array values, List<int> mapIndex, string[] names)> _cacheEnumInfo = new Dictionary<UiEntryModel, (Array values, List<int> mapIndex, string[] names)>();
 
-        public EnumRenderer(ViewModel context) : base(context) { }
+        public EnumRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
 
         public override void RenderEntry(UiEntryModel entry)
         {
@@ -213,7 +214,7 @@ namespace BetterExperience.HConfigGUI.UI
 
     public class SliderRenderer : BaseEntryRenderer
     {
-        public SliderRenderer(ViewModel context) : base(context) { }
+        public SliderRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
 
         public override void RenderEntry(UiEntryModel entry)
         {
@@ -283,14 +284,12 @@ namespace BetterExperience.HConfigGUI.UI
 
     public static class ResetButtonRenderer
     {
-        private static readonly IGuiLayout Layout = new GuiLayoutAdapter();
-
-        public static void Render(ViewModel context, UiEntryModel entry)
+        public static void Render(ViewModel context, IGuiLayout layout, UiEntryModel entry)
         {
             if (context == null || entry == null)
                 return;
 
-            var clicked = Layout.Button(TranslatorResource.Reset, Layout.ExpandWidth(false));
+            var clicked = layout.Button(TranslatorResource.Reset, layout.ExpandWidth(false));
             if (clicked)
                 context.ResetValue(entry);
         }
@@ -303,24 +302,26 @@ namespace BetterExperience.HConfigGUI.UI
 
     public class TableRenderer
     {
-        private static readonly IGuiLayout Layout = new GuiLayoutAdapter();
 
         public ViewModel Context { get; }
+        private IGuiLayout Layout { get; }
+
         public BoolRenderer BoolEntryRenderer { get; }
         public StringRenderer StringEntryRenderer { get; }
         public NumberRenderer NumberEntryRenderer { get; }
         public EnumRenderer EnumEntryRenderer { get; }
         public SliderRenderer SliderEntryRenderer { get; }
 
-        public TableRenderer(ViewModel context)
+        public TableRenderer(ViewModel context, IGuiLayout layout)
         {
             Context = context;
+            Layout = layout;
 
-            BoolEntryRenderer = new BoolRenderer(context);
-            StringEntryRenderer = new StringRenderer(context);
-            NumberEntryRenderer = new NumberRenderer(context);
-            EnumEntryRenderer = new EnumRenderer(context);
-            SliderEntryRenderer = new SliderRenderer(context);
+            BoolEntryRenderer = new BoolRenderer(context, layout);
+            StringEntryRenderer = new StringRenderer(context, layout);
+            NumberEntryRenderer = new NumberRenderer(context, layout);
+            EnumEntryRenderer = new EnumRenderer(context, layout);
+            SliderEntryRenderer = new SliderRenderer(context, layout);
         }
 
         public void Render(UiTableModel table)
@@ -369,15 +370,16 @@ namespace BetterExperience.HConfigGUI.UI
 
     public class SheetRenderer
     {
-        private static readonly IGuiLayout Layout = new GuiLayoutAdapter();
-
         public ViewModel Context { get; }
+        private IGuiLayout Layout { get; }
+
         public TableRenderer TableRenderer { get; }
 
-        public SheetRenderer(ViewModel context)
+        public SheetRenderer(ViewModel context, IGuiLayout layout)
         {
             Context = context;
-            TableRenderer = new TableRenderer(context);
+            Layout = layout;
+            TableRenderer = new TableRenderer(context, layout);
         }
 
         public void Render(UiSheetModel sheet)
@@ -419,7 +421,7 @@ namespace BetterExperience.HConfigGUI.UI
 
             float alpha = remaining < Context.ToastFadeDuration ? remaining / Context.ToastFadeDuration : 1f;
             var previousColor = GuiAdapter.Color;
-            GuiAdapter.Color = new HAdapter.Color(1f, 1f, 1f, alpha);
+            GuiAdapter.Color = new Color(1f, 1f, 1f, alpha);
 
             var content = new GuiContentAdapter(Context.ToastMessage);
             var size = StyleResource.Instance.ToastStyle.CalcSize(content);
@@ -428,7 +430,7 @@ namespace BetterExperience.HConfigGUI.UI
             float x = (Context.WindowRect.width - toastWidth) / 2f;
             float y = MathHelper.Max(0f, Context.WindowRect.height - toastHeight - 30f);
 
-            GuiAdapter.Label(new HAdapter.Rect(x, y, toastWidth, toastHeight), content, StyleResource.Instance.ToastStyle.Style);
+            GuiAdapter.Label(new Rect(x, y, toastWidth, toastHeight), content, StyleResource.Instance.ToastStyle.Style);
             GuiAdapter.Color = previousColor;
         }
     }
@@ -458,7 +460,7 @@ namespace BetterExperience.HConfigGUI.UI
             float x = MathHelper.Clamp(mousePosition.x + 15f, 0f, Context.WindowRect.width - maxTooltipWidth);
             float y = MathHelper.Clamp(mousePosition.y + 15f, 0f, Context.WindowRect.height - tooltipHeight);
 
-            GuiAdapter.Label(new HAdapter.Rect(x, y, maxTooltipWidth, tooltipHeight), tooltipContent, StyleResource.Instance.TooltipStyle.Style);
+            GuiAdapter.Label(new Rect(x, y, maxTooltipWidth, tooltipHeight), tooltipContent, StyleResource.Instance.TooltipStyle.Style);
         }
     }
 }

@@ -1,5 +1,5 @@
-using System;
 using BetterExperience.HAdapter;
+using System;
 using UnityEngine;
 using Rect = BetterExperience.HAdapter.Rect;
 
@@ -7,9 +7,8 @@ namespace BetterExperience.HConfigGUI.UI
 {
     public class GuiHost : MonoBehaviour
     {
-        private static readonly IGuiLayout Layout = new GuiLayoutAdapter();
-
         private ViewModel _viewModel;
+        private IGuiLayout _layout;
         private SheetRenderer _sheetRenderer;
         private ToastRenderer _toastRenderer;
         private TooltipRenderer _tooltipRenderer;
@@ -23,7 +22,8 @@ namespace BetterExperience.HConfigGUI.UI
         private void Awake()
         {
             _viewModel = new ViewModel();
-            _sheetRenderer = new SheetRenderer(_viewModel);
+            _layout = new GuiLayoutAdapter();
+            _sheetRenderer = new SheetRenderer(_viewModel, _layout);
             _toastRenderer = new ToastRenderer(_viewModel);
             _tooltipRenderer = new TooltipRenderer(_viewModel);
 
@@ -57,13 +57,13 @@ namespace BetterExperience.HConfigGUI.UI
 
         private void DrawWindow(int id)
         {
-            Layout.BeginArea(new Rect(10f, 30f, _viewModel.WindowRect.width - 20f, _viewModel.WindowRect.height - 40f));
-            _scrollPosition = Layout.BeginScrollView(_scrollPosition);
+            _layout.BeginArea(new Rect(10f, 30f, _viewModel.WindowRect.width - 20f, _viewModel.WindowRect.height - 40f));
+            _scrollPosition = _layout.BeginScrollView(_scrollPosition);
 
             _sheetRenderer.Render(_viewModel.Sheet);
 
-            Layout.EndScrollView();
-            Layout.EndArea();
+            _layout.EndScrollView();
+            _layout.EndArea();
 
             _toastRenderer.Render();
             _tooltipRenderer.Render();
