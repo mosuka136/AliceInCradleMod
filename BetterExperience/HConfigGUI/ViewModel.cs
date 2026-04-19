@@ -1,6 +1,7 @@
 using BetterExperience.BConfigManager;
 using BetterExperience.HAdapter;
 using BetterExperience.HConfigGUI.UI;
+using BetterExperience.HotkeyManager;
 using BetterExperience.HTranslatorSpace;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace BetterExperience.HConfigGUI
 
         public UiSheetModel Sheet { get; }
         public UiEntryModel OpenedEnumEntry { get; set; }
-        public HotkeyInputSystem ConfigUIHotkey { get; set; }
+        public Hotkey ConfigUIHotkey { get; set; }
         public string ToastMessage { get; set; }
         public float ToastEndTime { get; set; }
         public float ToastDuration { get; set; } = 2f;
@@ -91,14 +92,14 @@ namespace BetterExperience.HConfigGUI
 
         public void SetUiHotkey(string hotkeyText)
         {
+            ConfigUIHotkey = new Hotkey();
             var configuredHotkey = hotkeyText;
-            if (!HotkeyInputSystem.TryParse(configuredHotkey, out var hotkey))
+            if (!ConfigUIHotkey.TryParse(configuredHotkey))
             {
                 HLog.Warn("Invalid Hotkey: " + configuredHotkey);
                 configuredHotkey = "F1";
-                HotkeyInputSystem.TryParse(configuredHotkey, out hotkey);
+                ConfigUIHotkey.TryParse(configuredHotkey);
             }
-            ConfigUIHotkey = hotkey;
 
             HLog.Info("Config UI hotkey set: " + configuredHotkey);
         }

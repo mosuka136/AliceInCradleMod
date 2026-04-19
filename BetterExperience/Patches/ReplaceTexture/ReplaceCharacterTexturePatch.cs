@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HotkeyManager;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using nel;
@@ -12,7 +13,7 @@ namespace BetterExperience.Patches
         [HarmonyPatch]
         public class ReplaceCharacterTexturePatch
         {
-            private static HotkeyInputSystem _flushTextureHotkey = null;
+            private static Hotkey _flushTextureHotkey = null;
             private static readonly List<BetobetoManager.SvTexture> _texture = new List<BetobetoManager.SvTexture>();
 
             [HarmonyPostfix]
@@ -34,18 +35,19 @@ namespace BetterExperience.Patches
 
                 if (_flushTextureHotkey == null)
                 {
+                    _flushTextureHotkey = new Hotkey();
                     var h = ConfigManager.FlushTextureHotkey.Value;
-                    if (!HotkeyInputSystem.TryParse(h, out _flushTextureHotkey))
+                    if (!_flushTextureHotkey.TryParse(h))
                     {
                         HLog.Warn("Invalid Hotkey: " + h);
 
                         h = "Ctrl+T";
-                        HotkeyInputSystem.TryParse(h, out _flushTextureHotkey);
+                        _flushTextureHotkey.TryParse(h);
                         HLog.Info("Flush texture hotkey set: " + h);
                     }
                 }
 
-                if (_flushTextureHotkey != null && _flushTextureHotkey.IsValid && _flushTextureHotkey.WasPressedThisFrame())
+                if (_flushTextureHotkey != null && _flushTextureHotkey.WasPressedThisFrame())
                 {
                     TextureManager.Instance.Reload();
 

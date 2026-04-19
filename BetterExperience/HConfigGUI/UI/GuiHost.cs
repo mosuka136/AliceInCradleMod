@@ -35,7 +35,7 @@ namespace BetterExperience.HConfigGUI.UI
         private void Update()
         {
             var hotkey = _viewModel.ConfigUIHotkey;
-            if (hotkey != null && hotkey.IsValid && hotkey.WasPressedThisFrame())
+            if (hotkey != null && hotkey.WasPressedThisFrame())
                 ToggleVisibility();
 
             _viewModel.Update(UnityTimeAdapter.UnscaledDeltaTime);

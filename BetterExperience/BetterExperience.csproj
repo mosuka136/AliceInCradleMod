@@ -80,6 +80,9 @@
     <Compile Include="HEnumHelper\DisplayEnumAttribute.cs" />
     <Compile Include="HEnumHelper\EnumHelper.cs" />
     <Compile Include="GameAttributePatchManager.cs" />
+    <Compile Include="HotkeyManager\Hotkey.cs" />
+    <Compile Include="HotkeyManager\HotkeyChord.cs" />
+    <Compile Include="HotkeyManager\HotkeyTrigger.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
     <Compile Include="Patches\DisableDrowning.cs" />
     <Compile Include="FrameUpdateBooster.cs" />
@@ -99,7 +102,6 @@
     <Compile Include="BConfigManager\ConfigManager.cs" />
     <Compile Include="Patches\FlushStorePatch.cs" />
     <Compile Include="HLog.cs" />
-    <Compile Include="HotkeyInputSystem.cs" />
     <Compile Include="Patches\InfiniteShieldPatch.cs" />
     <Compile Include="Patches\NoHpDamagePatch.cs" />
     <Compile Include="Patches\NoMapDamagePatch.cs" />

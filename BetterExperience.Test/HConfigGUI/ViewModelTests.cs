@@ -333,7 +333,7 @@ namespace BetterExperience.Test
 
             // Assert
             Assert.NotNull(viewModel.ConfigUIHotkey);
-            Assert.True(viewModel.ConfigUIHotkey.IsValid);
+            Assert.Equal("F5", viewModel.ConfigUIHotkey.ToString());
         }
 
         [Fact]
@@ -346,7 +346,7 @@ namespace BetterExperience.Test
 
             // Assert
             Assert.NotNull(viewModel.ConfigUIHotkey);
-            Assert.True(viewModel.ConfigUIHotkey.IsValid);
+            Assert.Equal("F1", viewModel.ConfigUIHotkey.ToString());
         }
 
         [Fact]
@@ -360,7 +360,7 @@ namespace BetterExperience.Test
 
             // Assert
             Assert.NotNull(viewModel.ConfigUIHotkey);
-            Assert.True(viewModel.ConfigUIHotkey.IsValid);
+            Assert.Equal("F1", viewModel.ConfigUIHotkey.ToString());
         }
 
         [Fact]

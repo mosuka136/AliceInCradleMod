@@ -1,6 +1,7 @@
 using BepInEx;
 using BetterExperience.BConfigManager;
 using BetterExperience.HAdapter;
+using BetterExperience.HotkeyManager;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace BetterExperience
     [BepInPlugin(PatchInfo.BepInPluginId, nameof(BetterExperience), PatchInfo.BepInPluginVersion)]
     public class BetterExperience : BaseUnityPlugin
     {
-        private HotkeyInputSystem _reloadConfigHotkey;
+        private Hotkey _reloadConfigHotkey;
 
         public static BetterExperience Instance { get; private set; }
 
@@ -76,17 +77,18 @@ namespace BetterExperience
         {
             if (_reloadConfigHotkey == null)
             {
+                _reloadConfigHotkey = new Hotkey();
                 var h = ConfigManager.ReloadConfigHotkey.Value;
-                if (!HotkeyInputSystem.TryParse(h, out _reloadConfigHotkey))
+                if (!_reloadConfigHotkey.TryParse(h))
                 {
                     Logger.LogWarning("Invalid Hotkey: " + h);
                     h = "Ctrl+R";
-                    HotkeyInputSystem.TryParse(h, out _reloadConfigHotkey);
+                    _reloadConfigHotkey.TryParse(h);
                 }
                 Logger.LogInfo("Reload config hotkey set: " + h);
             }
 
-            if (_reloadConfigHotkey != null && _reloadConfigHotkey.IsValid && _reloadConfigHotkey.WasPressedThisFrame())
+            if (_reloadConfigHotkey != null && _reloadConfigHotkey.WasPressedThisFrame())
             {
                 ConfigManager.ReloadConfig();
                 Logger.LogInfo("Reloaded config!");

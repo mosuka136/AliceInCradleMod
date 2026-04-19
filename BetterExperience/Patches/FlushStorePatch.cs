@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HotkeyManager;
 using HarmonyLib;
 using nel;
 using System;
@@ -9,7 +10,7 @@ namespace BetterExperience.Patches
     {
         public class FlushStorePatch
         {
-            private static HotkeyInputSystem _flushStoreHotkey;
+            private static Hotkey _flushStoreHotkey;
 
             [HarmonyPatch]
             public class FrameUpdateBoosterPatch
@@ -34,18 +35,19 @@ namespace BetterExperience.Patches
 
                 if (_flushStoreHotkey == null)
                 {
+                    _flushStoreHotkey = new Hotkey();
                     var h = ConfigManager.FlushAllStoreHotkey.Value;
-                    if (!HotkeyInputSystem.TryParse(h, out _flushStoreHotkey))
+                    if (!_flushStoreHotkey.TryParse(h))
                     {
                         HLog.Warn("Invalid Hotkey: " + h);
 
                         h = "F";
-                        HotkeyInputSystem.TryParse(h, out _flushStoreHotkey);
+                        _flushStoreHotkey.TryParse(h);
                         HLog.Info("Flush store hotkey set: " + h);
                     }
                 }
 
-                if (_flushStoreHotkey != null && _flushStoreHotkey.IsValid && _flushStoreHotkey.WasPressedThisFrame())
+                if (_flushStoreHotkey != null && _flushStoreHotkey.WasPressedThisFrame())
                 {
                     try
                     {
