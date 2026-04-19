@@ -65,6 +65,9 @@ namespace BetterExperience.HConfigFileSpace
                 sb.AppendLine();
             }
 
+            if (result.Errors.Count > 0)
+                return ConfigFileResult<string>.Fail(result.Errors);
+
             result.SetValue(sb.ToString().Trim());
             return result;
         }

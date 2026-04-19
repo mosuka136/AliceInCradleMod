@@ -94,7 +94,7 @@ namespace BetterExperience.HConfigFileSpace
             {
                 foreach (var error in valueTypeResult.Errors)
                     HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                throw new InvalidOperationException($"Failed to encode value type for key: {Key}, type: {typeof(T).FullName}. Errors: {string.Join(", ", valueTypeResult.Errors)}");
+                throw new InvalidOperationException($"Failed to encode value type for key: {entry.Key}, type: {typeof(T).FullName}. Errors: {string.Join(", ", valueTypeResult.Errors)}");
             }
             entry.ValueType = valueTypeResult.Value;
 
@@ -107,7 +107,7 @@ namespace BetterExperience.HConfigFileSpace
             {
                 foreach (var error in defaultValueResult.Errors)
                     HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                throw new InvalidOperationException($"Failed to encode default value for key: {Key}, value: {defaultValue}. Errors: {string.Join(", ", defaultValueResult.Errors)}");
+                throw new InvalidOperationException($"Failed to encode default value for key: {entry.Key}, value: {defaultValue}. Errors: {string.Join(", ", defaultValueResult.Errors)}");
             }
             entry.DefaultValue = defaultValueResult.Value;
 

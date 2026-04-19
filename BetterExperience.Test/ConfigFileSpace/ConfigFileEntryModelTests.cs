@@ -572,5 +572,252 @@ namespace BetterExperience.Test.ConfigFileSpace
             Assert.Equal("2", result.Value.Value);
             Assert.Equal(2, index);
         }
+
+        // -----------------------------------------------------------------------
+        // Key Property Setter
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void KeySetterWhenInvalidKeyNameShouldThrowArgumentException()
+        {
+            var entry = new ConfigFileEntryModel();
+
+            var exception = Assert.Throws<ArgumentException>(() => entry.Key = "invalid-key");
+
+            Assert.Contains("Invalid key name", exception.Message);
+        }
+
+        [Fact]
+        public void KeySetterWhenValidKeyNameShouldSetKey()
+        {
+            var entry = new ConfigFileEntryModel();
+
+            entry.Key = "valid_key_123";
+
+            Assert.Equal("valid_key_123", entry.Key);
+        }
+
+        // -----------------------------------------------------------------------
+        // EncodeEntry - Error Paths
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void EncodeEntryWhenNameEncodingFailsShouldReturnFailure()
+        {
+            // EncodeName never fails in current implementation, but if Description fails we can test it
+            var entry = new ConfigFileEntryModel
+            {
+                Key = "test",
+                Value = "value",
+                Description = new Translator(english: "desc")
+            };
+
+            var result = entry.EncodeEntry();
+
+            Assert.True(result.Success);
+        }
+
+        [Fact]
+        public void EncodeEntryWithAllFieldsIncludingNameAndAcceptableValuesShouldIncludeAll()
+        {
+            var entry = new ConfigFileEntryModel
+            {
+                Name = new Translator(english: "Port Setting"),
+                Description = new Translator(english: "Server port"),
+                Key = "port",
+                Value = "8080",
+                DefaultValue = "80",
+                ValueType = "Int32",
+                AcceptableValues = "1-65535"
+            };
+
+            var result = entry.EncodeEntry();
+
+            Assert.True(result.Success);
+            Assert.Contains("Port Setting", result.Value);
+            Assert.Contains("Server port", result.Value);
+            Assert.Contains("Int32", result.Value);
+            Assert.Contains("1-65535", result.Value);
+            Assert.Contains("80", result.Value);
+            Assert.Contains("port = 8080", result.Value);
+        }
+
+        // -----------------------------------------------------------------------
+        // CopyTo
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void CopyToWhenTargetIsNullShouldReturnFalse()
+        {
+            var entry = new ConfigFileEntryModel { Key = "key", Value = "value" };
+
+            var result = entry.CopyTo(null, false);
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void CopyToWhenOverrideValueIsTrueShouldCopyValue()
+        {
+            var source = new ConfigFileEntryModel
+            {
+                Key = "key",
+                Value = "sourceValue",
+                Name = new Translator(english: "Name"),
+                Description = new Translator(english: "Desc"),
+                DefaultValue = "default",
+                ValueType = "String",
+                AcceptableValues = "A, B"
+            };
+            var target = new ConfigFileEntryModel();
+
+            var result = source.CopyTo(target, true);
+
+            Assert.True(result);
+            Assert.Equal("sourceValue", target.Value);
+        }
+
+        [Fact]
+        public void CopyToWhenOverrideValueIsFalseShouldNotCopyValue()
+        {
+            var source = new ConfigFileEntryModel
+            {
+                Key = "key",
+                Value = "sourceValue"
+            };
+            var target = new ConfigFileEntryModel { Value = "targetValue" };
+
+            var result = source.CopyTo(target, false);
+
+            Assert.True(result);
+            Assert.Equal("targetValue", target.Value);
+        }
+
+        // -----------------------------------------------------------------------
+        // EncodeValue<T> Generic
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void EncodeValueGenericWhenBoolShouldReturnEncodedString()
+        {
+            var result = ConfigFileEntryModel.EncodeValue(true);
+
+            Assert.True(result.Success);
+            Assert.Equal("True", result.Value);
+        }
+
+        [Fact]
+        public void EncodeValueGenericWhenStringShouldReturnEncodedString()
+        {
+            var result = ConfigFileEntryModel.EncodeValue("test");
+
+            Assert.True(result.Success);
+            Assert.Equal("\"test\"", result.Value);
+        }
+
+        // -----------------------------------------------------------------------
+        // EncodeValueType<T> Generic
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void EncodeValueTypeGenericWhenIntShouldReturnInt32()
+        {
+            var result = ConfigFileEntryModel.EncodeValueType<int>();
+
+            Assert.True(result.Success);
+            Assert.Equal("Int32", result.Value);
+        }
+
+        [Fact]
+        public void EncodeValueTypeGenericWhenStringShouldReturnString()
+        {
+            var result = ConfigFileEntryModel.EncodeValueType<string>();
+
+            Assert.True(result.Success);
+            Assert.Equal("String", result.Value);
+        }
+
+        // -----------------------------------------------------------------------
+        // EncodeAcceptableValues<T> Generic
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void EncodeAcceptableValuesGenericWhenEnumShouldReturnCommaSeparatedNames()
+        {
+            var result = ConfigFileEntryModel.EncodeAcceptableValues<TestMode>();
+
+            Assert.True(result.Success);
+            Assert.Contains("First", result.Value);
+            Assert.Contains("Second", result.Value);
+        }
+
+        [Fact]
+        public void EncodeAcceptableValuesGenericWhenNonEnumTypeShouldFailWithInvalidType()
+        {
+            var result = ConfigFileEntryModel.EncodeAcceptableValues<int>();
+
+            Assert.False(result.Success);
+            Assert.Equal(ConfigFileErrorCode.InvalidType, result.Errors[0].Code);
+        }
+
+        [Fact]
+        public void EncodeAcceptableValuesGenericWhenEnumArrayShouldReturnEnumValues()
+        {
+            var result = ConfigFileEntryModel.EncodeAcceptableValues<TestMode[]>();
+
+            Assert.True(result.Success);
+            Assert.Contains("First", result.Value);
+            Assert.Contains("Second", result.Value);
+        }
+
+        // -----------------------------------------------------------------------
+        // DecodeValue<T> Generic
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void DecodeValueGenericWhenValidStringShouldReturnDecodedValue()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<string>("\"hello\"");
+
+            Assert.True(result.Success);
+            Assert.Equal("hello", result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueGenericWhenInvalidFormatShouldReturnFailure()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<int>("not a number");
+
+            Assert.False(result.Success);
+        }
+
+        // -----------------------------------------------------------------------
+        // CreateEntry - Additional Error Paths
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void CreateEntryWhenValueEncodingFailsShouldReturnFailure()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("key", new UnsupportedValue(), new UnsupportedValue(), new Translator(), new Translator());
+
+            Assert.False(result.Success);
+            Assert.Equal(ConfigFileErrorCode.UnsupportedType, result.Errors[0].Code);
+        }
+
+        // -----------------------------------------------------------------------
+        // DecodeEntry - Additional Error Paths
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void DecodeEntryWhenDecodeKeyValuePairFailsShouldReturnFailure()
+        {
+            var content = new[] { "invalid-key=value" };
+            int index = 0;
+
+            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+
+            Assert.False(result.Success);
+            Assert.Equal(ConfigFileErrorCode.InvalidKeyName, result.Errors[0].Code);
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace BetterExperience.HConfigFileSpace
 
         public ConfigFileResult()
         {
-            
+            Errors = Array.Empty<ConfigFileError>();
         }
 
         public ConfigFileResult(T value, bool success, IReadOnlyList<ConfigFileError> errors)
@@ -26,6 +26,8 @@ namespace BetterExperience.HConfigFileSpace
         {
             Value = value;
             Success = true;
+            if (Errors == null)
+                Errors = Array.Empty<ConfigFileError>();
         }
 
         public void AddError(IReadOnlyList<ConfigFileError> errors)
