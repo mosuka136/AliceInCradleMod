@@ -109,8 +109,6 @@ namespace BetterExperience.HConfigFileSpace
 
         public ConfigEntry<T> Bind<T>(string tableKey, string key, T defaultValue, Translator entryName, Translator description)
         {
-            HLog.Info($"Rebinding config entry");
-
             ConfigEntry<T> result = null;
             var entryResult = FileSheet.GetEntry(tableKey, key);
             if (entryResult.Success)
@@ -154,9 +152,6 @@ namespace BetterExperience.HConfigFileSpace
 
             result.OnValueChanged += OnConfigEntryChanged;
 
-            if (!Sheet.Contains(tableKey))
-                throw new InvalidOperationException($"Config table '{tableKey}' is missing from the manager.");
-
             Sheet[tableKey].Add(result);
             return result;
         }
@@ -167,7 +162,7 @@ namespace BetterExperience.HConfigFileSpace
             if (tableResult.Success)
             {
                 if (!Sheet.Contains(tableKey))
-                    Sheet.Add(tableKey, new ConfigTable(tableKey, tableName, description));
+                    Sheet.Add(tableKey, new ConfigTable(tableKey, tableResult.Value, tableName, description));
                 return;
             }
 
@@ -187,10 +182,7 @@ namespace BetterExperience.HConfigFileSpace
                 throw new InvalidOperationException($"Failed to add config table: {tableKey}.");
             }
 
-            if (Sheet.Contains(tableKey))
-                throw new InvalidOperationException($"Config table already exists in manager: {tableKey}.");
-
-            Sheet.Add(tableKey, new ConfigTable(tableKey, tableName, description));
+            Sheet.Add(tableKey, new ConfigTable(tableKey, newTableResult.Value, tableName, description));
         }
 
         public void Save()

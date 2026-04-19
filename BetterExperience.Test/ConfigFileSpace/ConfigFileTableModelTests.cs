@@ -58,7 +58,7 @@ namespace BetterExperience.Test.ConfigFileSpace
             var result = ConfigFileTableModel.DecodeTableHeader(content, ref index);
 
             Assert.True(result.Success);
-            Assert.Equal("General", result.Value.TableKey);
+            Assert.Equal("General", result.Value.Key);
             Assert.Equal(string.Empty, result.Value.Description);
             Assert.Equal(3, index);
         }
@@ -72,7 +72,7 @@ namespace BetterExperience.Test.ConfigFileSpace
             var result = ConfigFileTableModel.DecodeTable(content, ref index);
 
             Assert.True(result.Success);
-            Assert.Equal("General", result.Value.TableKey);
+            Assert.Equal("General", result.Value.Key);
             Assert.Single(result.Value.Table);
             var entry = (ConfigFileEntryModel)result.Value.Table[0];
             Assert.Equal("port", entry.Key);

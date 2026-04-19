@@ -1342,7 +1342,8 @@ namespace BetterExperience.Test
         private static UiTableModel CreateUiTableModelWithEntries(string name, string description, UiEntryModel[] entries)
         {
             var table = CreateUninitializedUiTableModel();
-            var configTable = new ConfigTable("TestTableKey", new Translator(name, name), new Translator(description, description));
+            var tableDescription = new Translator(description, description);
+            var configTable = new ConfigTable("TestTableKey", new ConfigFileTableModel("TestTableKey", tableDescription), new Translator(name, name), tableDescription);
 
             var tableField = typeof(UiTableModel).GetField("_table", BindingFlags.NonPublic | BindingFlags.Instance);
             tableField.SetValue(table, configTable);

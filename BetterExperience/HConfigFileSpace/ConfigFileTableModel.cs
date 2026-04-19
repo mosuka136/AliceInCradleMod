@@ -1,5 +1,6 @@
 using BetterExperience.HTranslatorSpace;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
@@ -8,14 +9,15 @@ namespace BetterExperience.HConfigFileSpace
 {
     public class ConfigFileTableModel
     {
+        public Translator Name { get; set; }
         public Translator Description { get; set; }
-        public string TableKey { get; set; }
+        public string Key { get; set; }
         public OrderedDictionary Table { get; private set; } = new OrderedDictionary();
 
         public ConfigFileTableModel(string tableKey, Translator description)
         {
             if (IsValidTableName(tableKey))
-                TableKey = tableKey;
+                Key = tableKey;
             else
                 throw new ArgumentException($"Invalid table name: {tableKey}", nameof(tableKey));
             Description = description;
@@ -40,6 +42,20 @@ namespace BetterExperience.HConfigFileSpace
             return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.EntryNotFound, $"Entry not found: {key}"));
         }
 
+        public ConfigFileResult<string> EncodeName()
+        {
+            if (Name == null)
+                return string.Empty;
+            var list = new List<string>();
+            foreach (var name in Name)
+            {
+                if (string.IsNullOrEmpty(name))
+                    continue;
+                list.Add(name);
+            }
+            return $"# Name: {string.Join(", ", list)}";
+        }
+
         public ConfigFileResult<string> EncodeDescription()
         {
             if (Description == null)
@@ -58,13 +74,17 @@ namespace BetterExperience.HConfigFileSpace
 
         public ConfigFileResult<string> EncodeTableHeader()
         {
-            if (!IsValidTableName(TableKey))
-                return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidTableName, $"Invalid table name: {TableKey}"));
-            return $"[{TableKey}]";
+            if (!IsValidTableName(Key))
+                return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidTableName, $"Invalid table name: {Key}"));
+            return $"[{Key}]";
         }
 
         public ConfigFileResult<string> EncodeTable()
         {
+            var nameResult = EncodeName();
+            if (!nameResult.Success)
+                return ConfigFileResult<string>.Fail(nameResult.Errors);
+
             var descriptionResult = EncodeDescription();
             if (!descriptionResult.Success)
                 return ConfigFileResult<string>.Fail(descriptionResult.Errors);
@@ -76,9 +96,10 @@ namespace BetterExperience.HConfigFileSpace
             var sb = new StringBuilder();
             var result = new ConfigFileResult<string>();
 
+            if (nameResult.Value != string.Empty)
+                sb.AppendLine(nameResult.Value);
             if (descriptionResult.Value != string.Empty)
                 sb.AppendLine(descriptionResult.Value);
-
             sb.AppendLine(tableHeaderResult.Value);
             sb.AppendLine();
 
@@ -119,7 +140,7 @@ namespace BetterExperience.HConfigFileSpace
             if (!headerResult.Success)
                 return ConfigFileResult<ConfigFileTableModel>.Fail(headerResult.Errors);
 
-            var table = new ConfigFileTableModel(headerResult.Value.TableKey, headerResult.Value.Description);
+            var table = new ConfigFileTableModel(headerResult.Value.Key, headerResult.Value.Description);
             var result = new ConfigFileResult<ConfigFileTableModel>(table, true, null);
 
             for (var i = index; index < content.Length && !DecodeTableHeader(content, ref i).Success; i = index)

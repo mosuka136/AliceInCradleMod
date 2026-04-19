@@ -15,7 +15,7 @@ namespace BetterExperience.Test
         {
             var name = new Translator("表名", "Table Name");
             var description = new Translator("表描述", "Table Description");
-            return new ConfigTable("TestTable", name, description);
+            return new ConfigTable("TestTable", new ConfigFileTableModel("TestTable", description), name, description);
         }
 
         [Fact]
@@ -23,7 +23,7 @@ namespace BetterExperience.Test
         {
             var expectedName = new Translator("表名", "Table Name");
             var description = new Translator("表描述", "Table Description");
-            var table = new ConfigTable("TestTable", expectedName, description);
+            var table = new ConfigTable("TestTable", new ConfigFileTableModel("TestTable", description), expectedName, description);
             var model = new UiTableModel(table);
 
             var result = model.Name;
@@ -36,7 +36,7 @@ namespace BetterExperience.Test
         {
             var name = new Translator("表名", "Table Name");
             var expectedDescription = new Translator("表描述", "Table Description");
-            var table = new ConfigTable("TestTable", name, expectedDescription);
+            var table = new ConfigTable("TestTable", new ConfigFileTableModel("TestTable", expectedDescription), name, expectedDescription);
             var model = new UiTableModel(table);
 
             var result = model.Description;

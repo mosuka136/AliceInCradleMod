@@ -11,7 +11,7 @@ namespace BetterExperience.HConfigFileSpace
 
         public ConfigFileResult<ConfigFileTableModel> AddTable(ConfigFileTableModel table)
         {
-            return AddTable(table.TableKey, table);
+            return AddTable(table.Key, table);
         }
 
         public ConfigFileResult<ConfigFileTableModel> AddTable(string tableKey, ConfigFileTableModel table)
