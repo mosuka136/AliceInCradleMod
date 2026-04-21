@@ -153,6 +153,87 @@ namespace BetterExperience.Test
             Assert.Contains(error2, result.Errors);
             Assert.Contains(error3, result.Errors);
         }
+
+        [Fact]
+        public void SetValue_WithNullErrors_InitializesErrorsToEmptyArray()
+        {
+            // Arrange
+            var result = new ConfigFileResult<string>();
+            var errorsProperty = typeof(ConfigFileResult<string>).GetProperty("Errors");
+            errorsProperty.SetValue(result, null);
+
+            // Act
+            result.SetValue("test value");
+
+            // Assert
+            Assert.NotNull(result.Errors);
+            Assert.Empty(result.Errors);
+            Assert.Equal("test value", result.Value);
+            Assert.True(result.Success);
+        }
+
+        [Fact]
+        public void SetValue_WithNonNullErrors_PreservesErrors()
+        {
+            // Arrange
+            var error = new ConfigFileError(ConfigFileErrorCode.InvalidValue, "Test error");
+            var result = new ConfigFileResult<int>(0, false, new List<ConfigFileError> { error });
+
+            // Act
+            result.SetValue(42);
+
+            // Assert
+            Assert.Equal(42, result.Value);
+            Assert.True(result.Success);
+            Assert.NotNull(result.Errors);
+            Assert.Single(result.Errors);
+            Assert.Contains(error, result.Errors);
+        }
+
+        [Fact]
+        public void SetValue_WithEmptyErrors_PreservesEmptyErrors()
+        {
+            // Arrange
+            var result = new ConfigFileResult<string>();
+
+            // Act
+            result.SetValue("new value");
+
+            // Assert
+            Assert.Equal("new value", result.Value);
+            Assert.True(result.Success);
+            Assert.NotNull(result.Errors);
+            Assert.Empty(result.Errors);
+        }
+
+        [Fact]
+        public void SetValue_WithNullValue_SetsNullValue()
+        {
+            // Arrange
+            var result = new ConfigFileResult<string>("initial", true, Array.Empty<ConfigFileError>());
+
+            // Act
+            result.SetValue(null);
+
+            // Assert
+            Assert.Null(result.Value);
+            Assert.True(result.Success);
+            Assert.NotNull(result.Errors);
+        }
+
+        [Fact]
+        public void SetValue_UpdatesSuccessToTrue()
+        {
+            // Arrange
+            var result = new ConfigFileResult<int>(0, false, Array.Empty<ConfigFileError>());
+
+            // Act
+            result.SetValue(100);
+
+            // Assert
+            Assert.Equal(100, result.Value);
+            Assert.True(result.Success);
+        }
     }
 
     public class ConfigFileErrorTests

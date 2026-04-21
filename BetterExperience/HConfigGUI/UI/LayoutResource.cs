@@ -1,9 +1,14 @@
 using BetterExperience.HAdapter;
+using System;
+using System.Security;
 
 namespace BetterExperience.HConfigGUI.UI
 {
     public static class LayoutResource
     {
+        private const float LabelWidthMargin = 10f;
+        private const float FallbackCharacterWidth = 8f;
+
         private static float _labelWidth = -1f;
 
         public static float GetLabelWidth(UiSheetModel sheet)
@@ -19,19 +24,32 @@ namespace BetterExperience.HConfigGUI.UI
             {
                 foreach (var entry in table.Table)
                 {
-                    var width = GuiStyleAdapter.LabelStyle.CalcSize(new GuiContentAdapter(entry.Name)).x;
+                    var width = GetEntryLabelWidth(entry);
                     if (width > maxWidth)
                         maxWidth = width;
                 }
             }
 
-            _labelWidth = maxWidth + 10f;
+            _labelWidth = maxWidth + LabelWidthMargin;
             return _labelWidth;
         }
 
         public static void InvalidateLayout()
         {
             _labelWidth = -1f;
+        }
+
+        private static float GetEntryLabelWidth(UiEntryModel entry)
+        {
+            try
+            {
+                return GuiStyleAdapter.LabelStyle.CalcSize(new GuiContentAdapter(entry.Name)).x;
+            }
+            catch (Exception ex) when (ex is SecurityException || ex is InvalidOperationException)
+            {
+                var text = entry.Name == null ? string.Empty : entry.Name.ToString();
+                return text.Length * FallbackCharacterWidth;
+            }
         }
     }
 }

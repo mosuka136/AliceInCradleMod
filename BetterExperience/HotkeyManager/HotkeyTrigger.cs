@@ -83,7 +83,7 @@ namespace BetterExperience.HotkeyManager
         public static readonly List<string> LShiftStr = new List<string>() { "LeftShift", "LShift" };
         public static readonly List<string> RShiftStr = new List<string>() { "RightShift", "RShift" };
         public static readonly List<string> LAltStr = new List<string>() { "LeftAlt", "LAlt" };
-        public static readonly List<string> RAltStr = new List<string>() { "RightAlt", "RAlt    " };
+        public static readonly List<string> RAltStr = new List<string>() { "RightAlt", "RAlt" };
 
         public static readonly KeyboardModifierTrigger Ctrl = new KeyboardModifierTrigger(Key.LeftCtrl, Key.RightCtrl, true, true);
         public static readonly KeyboardModifierTrigger Shift = new KeyboardModifierTrigger(Key.LeftShift, Key.RightShift, true, true);

@@ -249,6 +249,77 @@ namespace BetterExperience.Test
             Assert.NotEmpty(result.Errors);
         }
 
+        [Fact]
+        public void ParseGeneric_ValidBoolInput_ReturnsSuccess()
+        {
+            // Arrange
+            object input = "true";
+
+            // Act
+            var result = Parser.Parse<bool>(input);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.True(result.Value);
+        }
+
+        [Fact]
+        public void ParseGeneric_ValidDoubleInput_ReturnsSuccess()
+        {
+            // Arrange
+            object input = "3.14";
+
+            // Act
+            var result = Parser.Parse<double>(input);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal(3.14, result.Value, 2);
+        }
+
+        [Fact]
+        public void ParseGeneric_InvalidBoolInput_ReturnsFail()
+        {
+            // Arrange
+            object input = "not a bool";
+
+            // Act
+            var result = Parser.Parse<bool>(input);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.NotEmpty(result.Errors);
+        }
+
+        [Fact]
+        public void ParseGeneric_ValidStringInput_ReturnsSuccess()
+        {
+            // Arrange
+            object input = "hello";
+
+            // Act
+            var result = Parser.Parse<string>(input);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal("hello", result.Value);
+        }
+
+        [Fact]
+        public void ParseGeneric_ErrorPropagation_ContainsOriginalError()
+        {
+            // Arrange
+            object input = "not a number";
+
+            // Act
+            var result = Parser.Parse<int>(input);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.NotEmpty(result.Errors);
+            Assert.Contains("Failed to parse input:", result.Errors[0]);
+        }
+
         // -----------------------------------------------------------------------
         // Test helper enum
         // -----------------------------------------------------------------------

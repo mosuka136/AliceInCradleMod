@@ -909,6 +909,16 @@ namespace BetterExperience.Test.ConfigFileSpace
         }
 
         [Fact]
+        public void ValidateCollectionElement_BoxedValueForNullableType_ReturnsSuccess()
+        {
+            object boxedValue = 42;
+            var result = ConfigFileModel.ValidateCollectionElement(typeof(int?), boxedValue, 0);
+
+            Assert.True(result.Success);
+            Assert.Equal(42, result.Value);
+        }
+
+        [Fact]
         public void CreateTypedArray_InvalidCast_ReturnsFail()
         {
             var elements = new object[] { "notAnInt" };
@@ -1200,6 +1210,123 @@ namespace BetterExperience.Test.ConfigFileSpace
             Assert.Single(converted.Errors);
             Assert.Equal(ConfigFileErrorCode.UnsupportedType, converted.Errors[0].Code);
         }
+
+        [Fact]
+        public void Encode_LongValue_ShouldReturnInvariantString()
+        {
+            long value = 9223372036854775807L;
+
+            var result = ConfigFileModel.Encode(value);
+
+            Assert.True(result.Success);
+            Assert.Equal("9223372036854775807", result.Value);
+        }
+
+        [Fact]
+        public void Encode_FloatValue_ShouldReturnInvariantString()
+        {
+            float value = 3.14159f;
+
+            var result = ConfigFileModel.Encode(value);
+
+            Assert.True(result.Success);
+            Assert.Equal("3.14159", result.Value);
+        }
+
+        [Fact]
+        public void Encode_EnumValue_ShouldReturnEnumString()
+        {
+            var value = TestMode.First;
+
+            var result = ConfigFileModel.Encode(value);
+
+            Assert.True(result.Success);
+            Assert.Equal("First", result.Value);
+        }
+
+        [Fact]
+        public void Encode_IConfigEntryAdapter_WithFailedEncode_ShouldReturnFail()
+        {
+            var adapter = new EncodeFailingAdapter();
+
+            var result = ConfigFileModel.Encode(adapter);
+
+            Assert.False(result.Success);
+            Assert.Single(result.Errors);
+            Assert.Equal(ConfigFileErrorCode.InvalidValue, result.Errors[0].Code);
+        }
+
+        [Fact]
+        public void Encode_IConfigEntryAdapter_WithException_ShouldReturnFail()
+        {
+            var adapter = new EncodeThrowingAdapter();
+
+            var result = ConfigFileModel.Encode(adapter);
+
+            Assert.False(result.Success);
+            Assert.Single(result.Errors);
+            Assert.Equal(ConfigFileErrorCode.InvalidValue, result.Errors[0].Code);
+            Assert.Contains("Failed to encode using IConfigEntryAdapter", result.Errors[0].Message);
+        }
+
+        [Fact]
+        public void Decode_LongString_ShouldReturnTypedValue()
+        {
+            var result = ConfigFileModel.Decode<long>("9223372036854775807");
+
+            Assert.True(result.Success);
+            Assert.Equal(9223372036854775807L, result.Value);
+        }
+
+        [Fact]
+        public void Decode_FloatString_ShouldReturnTypedValue()
+        {
+            var result = ConfigFileModel.Decode<float>("3.14159");
+
+            Assert.True(result.Success);
+            Assert.Equal(3.14159f, result.Value);
+        }
+
+        [Fact]
+        public void Decode_IConfigEntryAdapter_WithFailedDecode_ShouldReturnFail()
+        {
+            var result = ConfigFileModel.Decode("test", typeof(DecodeFailingAdapter));
+
+            Assert.False(result.Success);
+            Assert.Single(result.Errors);
+            Assert.Equal(ConfigFileErrorCode.InvalidValue, result.Errors[0].Code);
+        }
+
+        [Fact]
+        public void Decode_IConfigEntryAdapter_WithException_ShouldReturnFail()
+        {
+            var result = ConfigFileModel.Decode("test", typeof(DecodeThrowingAdapter));
+
+            Assert.False(result.Success);
+            Assert.Single(result.Errors);
+            Assert.Equal(ConfigFileErrorCode.InvalidValue, result.Errors[0].Code);
+            Assert.Contains("Failed to decode using IConfigEntryAdapter", result.Errors[0].Message);
+        }
+
+        [Fact]
+        public void CreateCollectionResult_WithArrayCreationFailure_ShouldReturnFail()
+        {
+            var elements = new List<object> { "not an int" };
+
+            var result = ConfigFileModel.CreateCollectionResult(typeof(int[]), typeof(int), elements);
+
+            Assert.False(result.Success);
+        }
+
+        [Fact]
+        public void CreateCollectionResult_WithListCreationFailure_ShouldReturnFail()
+        {
+            var elements = new List<object> { "not an int" };
+
+            var result = ConfigFileModel.CreateCollectionResult(typeof(List<int>), typeof(int), elements);
+
+            Assert.False(result.Success);
+        }
     }
 
     public enum TestMode
@@ -1444,6 +1571,78 @@ namespace BetterExperience.Test.ConfigFileSpace
         IEnumerator IEnumerable.GetEnumerator()
         {
             return _items.GetEnumerator();
+        }
+    }
+
+    internal class EncodeFailingAdapter : IConfigEntryAdapter
+    {
+        public ConfigFileResult<string> Encode()
+        {
+            return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, "Encode failed"));
+        }
+
+        public ConfigFileResult<object> Decode(string content)
+        {
+            return new object();
+        }
+
+        public ConfigFileResult<string> EncodeValueType()
+        {
+            return "test";
+        }
+    }
+
+    internal class EncodeThrowingAdapter : IConfigEntryAdapter
+    {
+        public ConfigFileResult<string> Encode()
+        {
+            throw new InvalidOperationException("Encode exception");
+        }
+
+        public ConfigFileResult<object> Decode(string content)
+        {
+            return new object();
+        }
+
+        public ConfigFileResult<string> EncodeValueType()
+        {
+            return "test";
+        }
+    }
+
+    internal class DecodeFailingAdapter : IConfigEntryAdapter
+    {
+        public ConfigFileResult<string> Encode()
+        {
+            return "test";
+        }
+
+        public ConfigFileResult<object> Decode(string content)
+        {
+            return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, "Decode failed"));
+        }
+
+        public ConfigFileResult<string> EncodeValueType()
+        {
+            return "test";
+        }
+    }
+
+    internal class DecodeThrowingAdapter : IConfigEntryAdapter
+    {
+        public ConfigFileResult<string> Encode()
+        {
+            return "test";
+        }
+
+        public ConfigFileResult<object> Decode(string content)
+        {
+            throw new InvalidOperationException("Decode exception");
+        }
+
+        public ConfigFileResult<string> EncodeValueType()
+        {
+            return "test";
         }
     }
 }

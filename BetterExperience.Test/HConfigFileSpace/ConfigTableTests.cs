@@ -198,5 +198,48 @@ namespace BetterExperience.Test.HConfigFileSpace
             // Assert
             Assert.Empty(result);
         }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_EmptyTable_ReturnsEmptyEnumerator()
+        {
+            // Arrange
+            var validKey = "Valid_Table";
+            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var configTable = new ConfigTable(validKey, table, new Translator("Name"), new Translator("Desc"));
+
+            // Act
+            var result = new List<object>();
+            var enumerable = (IEnumerable)configTable;
+            foreach (var entry in enumerable)
+            {
+                result.Add(entry);
+            }
+
+            // Assert
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_DirectCall_ReturnsTableEnumerator()
+        {
+            // Arrange
+            var validKey = "Valid_Table";
+            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var configTable = new ConfigTable(validKey, table, new Translator("Name"), new Translator("Desc"));
+            var mockEntry = new Mock<IConfigEntry>();
+            configTable.Add(mockEntry.Object);
+
+            // Act
+            var enumerable = (IEnumerable)configTable;
+            var enumerator = enumerable.GetEnumerator();
+            var hasFirst = enumerator.MoveNext();
+            var first = enumerator.Current;
+            var hasSecond = enumerator.MoveNext();
+
+            // Assert
+            Assert.True(hasFirst);
+            Assert.Same(mockEntry.Object, first);
+            Assert.False(hasSecond);
+        }
     }
 }

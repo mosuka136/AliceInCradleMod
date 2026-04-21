@@ -3,6 +3,7 @@ using BetterExperience.HTranslatorSpace;
 using BetterExperience.HotkeyManager;
 using Moq;
 using System;
+using System.Collections;
 using Xunit;
 
 namespace BetterExperience.Test
@@ -553,17 +554,100 @@ namespace BetterExperience.Test
             var model = new ConfigFileEntryModel
             {
                 Key = "Hotkey",
-                Value = "GamepadStart+GamepadSouth"
+                Value = "InvalidKey+A"
             };
 
             // Act & Assert
             var exception = Assert.Throws<InvalidOperationException>(() => new ConfigEntry<Hotkey>("General", model, new Hotkey("F1")));
             Assert.Contains("Hotkey", exception.Message);
-            Assert.Contains("GamepadStart+GamepadSouth", exception.Message);
+            Assert.Contains("InvalidKey+A", exception.Message);
+        }
+
+        [Fact]
+        public void Constructor_WhenEnumType_SetsAcceptableValues()
+        {
+            // Arrange
+            var model = new ConfigFileEntryModel
+            {
+                Key = "TestKey",
+                Value = "Value1"
+            };
+            var name = new Translator(chinese: "名称", english: "Name");
+            var description = new Translator(chinese: "描述", english: "Description");
+
+            // Act
+            var entry = new ConfigEntry<TestEnum>("General", model, TestEnum.Value1, name, description);
+
+            // Assert
+            Assert.NotNull(entry.Entry.AcceptableValues);
+            Assert.Contains("Value1", entry.Entry.AcceptableValues);
+        }
+
+        [Fact]
+        public void Constructor_WhenInvalidKeyName_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var model = new ConfigFileEntryModel();
+            model.GetType().GetField("_key", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(model, "Invalid.Key");
+            model.Value = "42";
+            var name = new Translator(chinese: "名称", english: "Name");
+            var description = new Translator(chinese: "描述", english: "Description");
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidOperationException>(() => new ConfigEntry<int>("General", model, 0, name, description));
+            Assert.Contains("Invalid key name", exception.Message);
+        }
+
+        [Fact]
+        public void EqualBoxed_WhenEnumsEqual_ReturnsTrue()
+        {
+            // Act
+            var result = ConfigEntry<int>.EqualBoxed(TestEnum.Value1, TestEnum.Value1);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void EqualBoxed_WhenEnumsNotEqual_ReturnsFalse()
+        {
+            // Act
+            var result = ConfigEntry<int>.EqualBoxed(TestEnum.Value1, TestEnum.Value2);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void EqualBoxed_WhenEnumerableWithNullEnumerator_ReturnsFalse()
+        {
+            // Arrange
+            var enumerable = new EnumerableWithNullEnumerator();
+
+            // Act
+            var result = ConfigEntry<int>.EqualBoxed(enumerable, enumerable);
+
+            // Assert
+            Assert.False(result);
         }
     }
 
     public class UnsupportedType
     {
+    }
+
+    public enum TestEnum
+    {
+        Value1,
+        Value2,
+        Value3
+    }
+
+    public class EnumerableWithNullEnumerator : IEnumerable
+    {
+        public IEnumerator GetEnumerator()
+        {
+            return null;
+        }
     }
 }

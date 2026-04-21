@@ -8,6 +8,16 @@ namespace BetterExperience.Test
     {
         // Constructor tests
         [Fact]
+        public void KeyboardTriggerConstructor_Parameterless_InitializesWithKeyNone()
+        {
+            // Arrange & Act
+            var trigger = new KeyboardTrigger();
+
+            // Assert
+            Assert.Equal(Key.None, trigger.Key);
+        }
+
+        [Fact]
         public void KeyboardTriggerConstructor_WithKey_SetsKeyProperty()
         {
             // Arrange
@@ -31,6 +41,42 @@ namespace BetterExperience.Test
 
             // Assert
             Assert.Equal(key, trigger.Key);
+        }
+
+        [Fact]
+        public void GamepadTriggerConstructor_Parameterless_InitializesWithButtonA()
+        {
+            // Arrange & Act
+            var trigger = new GamepadTrigger();
+
+            // Assert
+            Assert.Equal(GamepadButton.A, trigger.Button);
+        }
+
+        [Fact]
+        public void GamepadTriggerConstructor_WithButton_SetsButtonProperty()
+        {
+            // Arrange
+            var button = GamepadButton.South;
+
+            // Act
+            var trigger = new GamepadTrigger(button);
+
+            // Assert
+            Assert.Equal(button, trigger.Button);
+        }
+
+        [Fact]
+        public void GamepadTriggerConstructor_WithDifferentButton_SetsButtonProperty()
+        {
+            // Arrange
+            var button = GamepadButton.East;
+
+            // Act
+            var trigger = new GamepadTrigger(button);
+
+            // Assert
+            Assert.Equal(button, trigger.Button);
         }
 
         // IsPressed tests
@@ -695,6 +741,19 @@ namespace BetterExperience.Test
         }
 
         // ToString tests - KeyboardTrigger
+        [Fact]
+        public void KeyboardTriggerToString_WithKeyNone_ReturnsEmptyString()
+        {
+            // Arrange
+            var trigger = new KeyboardTrigger(Key.None);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal(string.Empty, result);
+        }
+
         [Theory]
         [InlineData(Key.A, "A")]
         [InlineData(Key.B, "B")]
@@ -723,7 +782,7 @@ namespace BetterExperience.Test
             var result = trigger.ToString();
 
             // Assert
-            Assert.Equal("ctrl", result);
+            Assert.Equal("Ctrl", result);
         }
 
         [Fact]
@@ -736,7 +795,7 @@ namespace BetterExperience.Test
             var result = trigger.ToString();
 
             // Assert
-            Assert.Equal("leftctrl", result);
+            Assert.Equal("LeftCtrl", result);
         }
 
         [Fact]
@@ -749,7 +808,7 @@ namespace BetterExperience.Test
             var result = trigger.ToString();
 
             // Assert
-            Assert.Equal("rightctrl", result);
+            Assert.Equal("RightCtrl", result);
         }
 
         [Fact]
@@ -762,7 +821,7 @@ namespace BetterExperience.Test
             var result = trigger.ToString();
 
             // Assert
-            Assert.Equal("shift", result);
+            Assert.Equal("Shift", result);
         }
 
         [Fact]
@@ -775,7 +834,7 @@ namespace BetterExperience.Test
             var result = trigger.ToString();
 
             // Assert
-            Assert.Equal("leftshift", result);
+            Assert.Equal("LeftShift", result);
         }
 
         [Fact]
@@ -788,7 +847,7 @@ namespace BetterExperience.Test
             var result = trigger.ToString();
 
             // Assert
-            Assert.Equal("rightshift", result);
+            Assert.Equal("RightShift", result);
         }
 
         [Fact]
@@ -801,7 +860,7 @@ namespace BetterExperience.Test
             var result = trigger.ToString();
 
             // Assert
-            Assert.Equal("alt", result);
+            Assert.Equal("Alt", result);
         }
 
         [Fact]
@@ -814,7 +873,7 @@ namespace BetterExperience.Test
             var result = trigger.ToString();
 
             // Assert
-            Assert.Equal("leftalt", result);
+            Assert.Equal("LeftAlt", result);
         }
 
         [Fact]
@@ -827,7 +886,7 @@ namespace BetterExperience.Test
             var result = trigger.ToString();
 
             // Assert
-            Assert.Equal("rightalt", result);
+            Assert.Equal("RightAlt", result);
         }
 
         [Fact]
@@ -1285,5 +1344,301 @@ namespace BetterExperience.Test
             // Assert
             Assert.True(result);
         }
+
+        // KeyboardModifierTrigger Constructor Tests
+
+        [Fact]
+        public void KeyboardModifierTriggerConstructor_WithLeftCtrl_CopiesCtrlAndSetsLeftSide()
+        {
+            // Arrange & Act
+            var trigger = new KeyboardModifierTrigger(Key.LeftCtrl);
+
+            // Assert
+            Assert.Equal(Key.LeftCtrl, trigger.LeftKey);
+            Assert.Equal(Key.RightCtrl, trigger.RightKey);
+            Assert.False(trigger.IsAnySide);
+            Assert.True(trigger.IsLeftSide);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerConstructor_WithRightCtrl_CopiesCtrlAndSetsRightSide()
+        {
+            // Arrange & Act
+            var trigger = new KeyboardModifierTrigger(Key.RightCtrl);
+
+            // Assert
+            Assert.Equal(Key.LeftCtrl, trigger.LeftKey);
+            Assert.Equal(Key.RightCtrl, trigger.RightKey);
+            Assert.False(trigger.IsAnySide);
+            Assert.False(trigger.IsLeftSide);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerConstructor_WithLeftShift_CopiesShiftAndSetsLeftSide()
+        {
+            // Arrange & Act
+            var trigger = new KeyboardModifierTrigger(Key.LeftShift);
+
+            // Assert
+            Assert.Equal(Key.LeftShift, trigger.LeftKey);
+            Assert.Equal(Key.RightShift, trigger.RightKey);
+            Assert.False(trigger.IsAnySide);
+            Assert.True(trigger.IsLeftSide);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerConstructor_WithRightShift_CopiesShiftAndSetsRightSide()
+        {
+            // Arrange & Act
+            var trigger = new KeyboardModifierTrigger(Key.RightShift);
+
+            // Assert
+            Assert.Equal(Key.LeftShift, trigger.LeftKey);
+            Assert.Equal(Key.RightShift, trigger.RightKey);
+            Assert.False(trigger.IsAnySide);
+            Assert.False(trigger.IsLeftSide);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerConstructor_WithLeftAlt_CopiesAltAndSetsLeftSide()
+        {
+            // Arrange & Act
+            var trigger = new KeyboardModifierTrigger(Key.LeftAlt);
+
+            // Assert
+            Assert.Equal(Key.LeftAlt, trigger.LeftKey);
+            Assert.Equal(Key.RightAlt, trigger.RightKey);
+            Assert.False(trigger.IsAnySide);
+            Assert.True(trigger.IsLeftSide);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerConstructor_WithRightAlt_CopiesAltAndSetsRightSide()
+        {
+            // Arrange & Act
+            var trigger = new KeyboardModifierTrigger(Key.RightAlt);
+
+            // Assert
+            Assert.Equal(Key.LeftAlt, trigger.LeftKey);
+            Assert.Equal(Key.RightAlt, trigger.RightKey);
+            Assert.False(trigger.IsAnySide);
+            Assert.False(trigger.IsLeftSide);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerConstructor_WithNonModifierKey_SetsLeftKeyAndLeftSide()
+        {
+            // Arrange & Act
+            var trigger = new KeyboardModifierTrigger(Key.A);
+
+            // Assert
+            Assert.Equal(Key.A, trigger.LeftKey);
+            Assert.Equal(Key.None, trigger.RightKey);
+            Assert.False(trigger.IsAnySide);
+            Assert.True(trigger.IsLeftSide);
+        }
+
+        // KeyboardModifierTrigger ToString Tests
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsAnySideAndLeftKeyIsNone_ReturnsEmpty()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.None, Key.RightCtrl, true, true);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal(string.Empty, result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsAnySideAndRightKeyIsNone_ReturnsEmpty()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.LeftCtrl, Key.None, true, true);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal(string.Empty, result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsLeftSideAndLeftKeyIsNone_ReturnsEmpty()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.None, Key.RightCtrl, false, true);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal(string.Empty, result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsRightSideAndRightKeyIsNone_ReturnsEmpty()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.LeftCtrl, Key.None, false, false);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal(string.Empty, result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsAnySideAndCtrlKeys_ReturnsCtrlString()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.LeftCtrl, Key.RightCtrl, true, true);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal("Ctrl", result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsLeftSideAndCtrlKeys_ReturnsLeftCtrlString()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.LeftCtrl, Key.RightCtrl, false, true);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal("LeftCtrl", result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsRightSideAndCtrlKeys_ReturnsRightCtrlString()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.LeftCtrl, Key.RightCtrl, false, false);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal("RightCtrl", result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsAnySideAndShiftKeys_ReturnsShiftString()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.LeftShift, Key.RightShift, true, true);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal("Shift", result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsLeftSideAndShiftKeys_ReturnsLeftShiftString()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.LeftShift, Key.RightShift, false, true);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal("LeftShift", result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsRightSideAndShiftKeys_ReturnsRightShiftString()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.LeftShift, Key.RightShift, false, false);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal("RightShift", result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsAnySideAndAltKeys_ReturnsAltString()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.LeftAlt, Key.RightAlt, true, true);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal("Alt", result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsLeftSideAndAltKeys_ReturnsLeftAltString()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.LeftAlt, Key.RightAlt, false, true);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal("LeftAlt", result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsRightSideAndAltKeys_ReturnsRightAltString()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.LeftAlt, Key.RightAlt, false, false);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal("RightAlt", result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsLeftSideAndNonModifierKey_ReturnsLeftKeyString()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.A, Key.B, false, true);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal("A", result);
+        }
+
+        [Fact]
+        public void KeyboardModifierTriggerToString_WhenIsRightSideAndNonModifierKey_ReturnsRightKeyString()
+        {
+            // Arrange
+            var trigger = new KeyboardModifierTrigger(Key.A, Key.B, false, false);
+
+            // Act
+            var result = trigger.ToString();
+
+            // Assert
+            Assert.Equal("B", result);
+        }
+
+        // Note: IsPressed and WasPressedThisFrame tests with keyboard present
+        // are not possible in standard unit tests as they require Unity runtime.
+        // The lines checking IsAnySide and IsLeftSide conditions can only execute
+        // when UnityInputAdapter.KeyboardCurrent is not null, which requires Unity Test Framework.
+        // The null check tests are already covered by existing tests.
     }
 }

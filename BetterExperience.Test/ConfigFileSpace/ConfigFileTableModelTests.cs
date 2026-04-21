@@ -333,5 +333,43 @@ namespace BetterExperience.Test.ConfigFileSpace
             Assert.Equal("TestTable", result.Value.Key);
             Assert.Single(result.Value.Table);
         }
+
+        [Fact]
+        public void EncodeName_WhenNameHasValidValues_ShouldReturnFormattedName()
+        {
+            var table = new ConfigFileTableModel("TestTable", new Translator("测试", "test"));
+            table.Name = new Translator("中文名", "EnglishName");
+
+            var result = table.EncodeName();
+
+            Assert.True(result.Success);
+            Assert.Contains("# Name:", result.Value);
+            Assert.Contains("中文名", result.Value);
+            Assert.Contains("EnglishName", result.Value);
+        }
+
+        [Fact]
+        public void EncodeName_WhenNameHasEmptyAndNonEmptyValues_ShouldOnlyIncludeNonEmptyValues()
+        {
+            var table = new ConfigFileTableModel("TestTable", new Translator("测试", "test"));
+            table.Name = new Translator("", "EnglishName");
+
+            var result = table.EncodeName();
+
+            Assert.True(result.Success);
+            Assert.Contains("# Name: EnglishName", result.Value);
+        }
+
+        [Fact]
+        public void EncodeTable_WhenNameIsNotNull_ShouldIncludeName()
+        {
+            var table = new ConfigFileTableModel("TestTable", new Translator("测试", "test"));
+            table.Name = new Translator("中文名", "EnglishName");
+
+            var result = table.EncodeTable();
+
+            Assert.True(result.Success);
+            Assert.Contains("# Name:", result.Value);
+        }
     }
 }

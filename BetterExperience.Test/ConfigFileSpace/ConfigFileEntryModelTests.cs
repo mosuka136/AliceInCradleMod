@@ -791,6 +791,281 @@ namespace BetterExperience.Test.ConfigFileSpace
             Assert.False(result.Success);
         }
 
+        [Fact]
+        public void DecodeValueWhenBoolShouldReturnDecodedBool()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<bool>("True");
+
+            Assert.True(result.Success);
+            Assert.True(result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenDoubleShouldReturnDecodedDouble()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<double>("3.14");
+
+            Assert.True(result.Success);
+            Assert.Equal(3.14, result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenFloatShouldReturnDecodedFloat()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<float>("2.5");
+
+            Assert.True(result.Success);
+            Assert.Equal(2.5f, result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenLongShouldReturnDecodedLong()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<long>("9223372036854775807");
+
+            Assert.True(result.Success);
+            Assert.Equal(9223372036854775807L, result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenByteShouldReturnDecodedByte()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<byte>("255");
+
+            Assert.True(result.Success);
+            Assert.Equal((byte)255, result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenEnumShouldReturnDecodedEnum()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<TestMode>("Second");
+
+            Assert.True(result.Success);
+            Assert.Equal(TestMode.Second, result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenIntArrayShouldReturnDecodedArray()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<int[]>("[1,2,3]");
+
+            Assert.True(result.Success);
+            Assert.Equal(new[] { 1, 2, 3 }, result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenStringListShouldReturnDecodedList()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<List<string>>("[\"a\",\"b\",\"c\"]");
+
+            Assert.True(result.Success);
+            Assert.Equal(3, result.Value.Count);
+            Assert.Equal("a", result.Value[0]);
+            Assert.Equal("b", result.Value[1]);
+            Assert.Equal("c", result.Value[2]);
+        }
+
+        [Fact]
+        public void DecodeValueWhenEmptyStringShouldReturnFailure()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<int>("");
+
+            Assert.False(result.Success);
+        }
+
+        [Fact]
+        public void DecodeValueWhenNullShouldReturnFailure()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<int>(null);
+
+            Assert.False(result.Success);
+        }
+
+        [Fact]
+        public void DecodeValueWhenInvalidBoolShouldReturnFailure()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<bool>("not a bool");
+
+            Assert.False(result.Success);
+        }
+
+        [Fact]
+        public void DecodeValueWhenInvalidEnumShouldReturnFailure()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<TestMode>("InvalidValue");
+
+            Assert.False(result.Success);
+        }
+
+        [Fact]
+        public void DecodeValueWhenShortShouldReturnDecodedShort()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<short>("32767");
+
+            Assert.True(result.Success);
+            Assert.Equal((short)32767, result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenSByteShouldReturnDecodedSByte()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<sbyte>("127");
+
+            Assert.True(result.Success);
+            Assert.Equal((sbyte)127, result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenUIntShouldReturnDecodedUInt()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<uint>("4294967295");
+
+            Assert.True(result.Success);
+            Assert.Equal(4294967295u, result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenUShortShouldReturnDecodedUShort()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<ushort>("65535");
+
+            Assert.True(result.Success);
+            Assert.Equal((ushort)65535, result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenULongShouldReturnDecodedULong()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<ulong>("18446744073709551615");
+
+            Assert.True(result.Success);
+            Assert.Equal(18446744073709551615UL, result.Value);
+        }
+
+        [Fact]
+        public void CreateEntryWhenNullNameShouldStoreNull()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("key", 1, 0, null, new Translator());
+
+            Assert.True(result.Success);
+            Assert.Null(result.Value.Name);
+        }
+
+        [Fact]
+        public void CreateEntryWhenNullDescriptionShouldStoreNull()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("key", 1, 0, new Translator(), null);
+
+            Assert.True(result.Success);
+            Assert.Null(result.Value.Description);
+        }
+
+        [Fact]
+        public void DecodeValueWhenEmptyArrayStringShouldReturnEmptyArray()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<int[]>("[]");
+
+            Assert.True(result.Success);
+            Assert.Empty(result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenEmptyListStringShouldReturnEmptyList()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<List<string>>("[]");
+
+            Assert.True(result.Success);
+            Assert.Empty(result.Value);
+        }
+
+        [Fact]
+        public void CreateEntryWhenEmptyListShouldEncodeEmptyArray()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("items", new List<int>(), new List<int>(), new Translator(), new Translator());
+
+            Assert.True(result.Success);
+            Assert.Equal("[]", result.Value.Value);
+            Assert.Equal("[]", result.Value.DefaultValue);
+        }
+
+        [Fact]
+        public void DecodeValueWhenBoolFalseShouldReturnFalse()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<bool>("False");
+
+            Assert.True(result.Success);
+            Assert.False(result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenNegativeIntShouldReturnNegativeValue()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<int>("-42");
+
+            Assert.True(result.Success);
+            Assert.Equal(-42, result.Value);
+        }
+
+        [Fact]
+        public void DecodeValueWhenNegativeDoubleShouldReturnNegativeValue()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<double>("-3.14");
+
+            Assert.True(result.Success);
+            Assert.Equal(-3.14, result.Value);
+        }
+
+        [Fact]
+        public void CreateEntryWhenNegativeValuesShouldEncodeCorrectly()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("temp", -10, -5, new Translator(), new Translator());
+
+            Assert.True(result.Success);
+            Assert.Equal("-10", result.Value.Value);
+            Assert.Equal("-5", result.Value.DefaultValue);
+        }
+
+        [Fact]
+        public void DecodeValueWhenEnumArrayShouldReturnDecodedArray()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<TestMode[]>("[First,Second]");
+
+            Assert.True(result.Success);
+            Assert.Equal(2, result.Value.Length);
+            Assert.Equal(TestMode.First, result.Value[0]);
+            Assert.Equal(TestMode.Second, result.Value[1]);
+        }
+
+        [Fact]
+        public void CreateEntryWhenEnumArrayShouldEncodeCorrectly()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("modes", new[] { TestMode.First, TestMode.Second }, new[] { TestMode.First }, new Translator(), new Translator());
+
+            Assert.True(result.Success);
+            Assert.Equal("[First,Second]", result.Value.Value);
+            Assert.Equal("[First]", result.Value.DefaultValue);
+            Assert.Equal("Enum TestMode[]", result.Value.ValueType);
+        }
+
+        [Fact]
+        public void DecodeValueWhenStringWithEscapesShouldReturnUnescapedString()
+        {
+            var result = ConfigFileEntryModel.DecodeValue<string>("\"hello\\nworld\"");
+
+            Assert.True(result.Success);
+            Assert.Equal("hello\nworld", result.Value);
+        }
+
+        [Fact]
+        public void CreateEntryWhenStringWithSpecialCharsShouldEncodeWithEscapes()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("msg", "hello\nworld", "test", new Translator(), new Translator());
+
+            Assert.True(result.Success);
+            Assert.Contains("\\n", result.Value.Value);
+        }
+
         // -----------------------------------------------------------------------
         // CreateEntry - Additional Error Paths
         // -----------------------------------------------------------------------
@@ -802,6 +1077,105 @@ namespace BetterExperience.Test.ConfigFileSpace
 
             Assert.False(result.Success);
             Assert.Equal(ConfigFileErrorCode.UnsupportedType, result.Errors[0].Code);
+        }
+
+        [Fact]
+        public void CreateEntryWhenDefaultValueEncodingFailsShouldReturnFailure()
+        {
+            var result = ConfigFileEntryModel.CreateEntry<object>("key", 42, new UnsupportedValue(), new Translator(), new Translator());
+
+            Assert.False(result.Success);
+        }
+
+        [Fact]
+        public void CreateEntryWhenStringTypeShouldEncodeCorrectly()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("key", "test", "default", new Translator(english: "Name"), new Translator(english: "Desc"));
+
+            Assert.True(result.Success);
+            Assert.Equal("key", result.Value.Key);
+            Assert.Equal("\"test\"", result.Value.Value);
+            Assert.Equal("\"default\"", result.Value.DefaultValue);
+            Assert.Equal("String", result.Value.ValueType);
+        }
+
+        [Fact]
+        public void CreateEntryWhenBoolTypeShouldEncodeCorrectly()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("enabled", true, false, new Translator(english: "Enable"), new Translator(english: "Enable feature"));
+
+            Assert.True(result.Success);
+            Assert.Equal("enabled", result.Value.Key);
+            Assert.Equal("True", result.Value.Value);
+            Assert.Equal("False", result.Value.DefaultValue);
+            Assert.Equal("Boolean", result.Value.ValueType);
+        }
+
+        [Fact]
+        public void CreateEntryWhenDoubleTypeShouldEncodeCorrectly()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("ratio", 3.14, 1.0, new Translator(), new Translator());
+
+            Assert.True(result.Success);
+            Assert.Equal("3.14", result.Value.Value);
+            Assert.Equal("1", result.Value.DefaultValue);
+            Assert.Equal("Double", result.Value.ValueType);
+        }
+
+        [Fact]
+        public void CreateEntryWhenFloatTypeShouldEncodeCorrectly()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("factor", 2.5f, 1.0f, new Translator(), new Translator());
+
+            Assert.True(result.Success);
+            Assert.Equal("2.5", result.Value.Value);
+            Assert.Equal("1", result.Value.DefaultValue);
+            Assert.Equal("Float", result.Value.ValueType);
+        }
+
+        [Fact]
+        public void CreateEntryWhenEnumTypeShouldEncodeCorrectly()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("mode", TestMode.Second, TestMode.First, new Translator(), new Translator());
+
+            Assert.True(result.Success);
+            Assert.Equal("Second", result.Value.Value);
+            Assert.Equal("First", result.Value.DefaultValue);
+            Assert.Equal("Enum TestMode", result.Value.ValueType);
+        }
+
+        [Fact]
+        public void CreateEntryWhenIntArrayTypeShouldEncodeCorrectly()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("numbers", new[] { 1, 2, 3 }, new[] { 0 }, new Translator(), new Translator());
+
+            Assert.True(result.Success);
+            Assert.Equal("[1,2,3]", result.Value.Value);
+            Assert.Equal("[0]", result.Value.DefaultValue);
+            Assert.Equal("Int32[]", result.Value.ValueType);
+        }
+
+        [Fact]
+        public void CreateEntryWhenListTypeShouldEncodeCorrectly()
+        {
+            var result = ConfigFileEntryModel.CreateEntry("items", new List<string> { "a", "b" }, new List<string>(), new Translator(), new Translator());
+
+            Assert.True(result.Success);
+            Assert.Equal("[\"a\",\"b\"]", result.Value.Value);
+            Assert.Equal("String[]", result.Value.ValueType);
+        }
+
+        [Fact]
+        public void CreateEntryWhenNameAndDescriptionProvidedShouldStoreCorrectly()
+        {
+            var name = new Translator(chinese: "名称", english: "Name");
+            var description = new Translator(chinese: "描述", english: "Description");
+
+            var result = ConfigFileEntryModel.CreateEntry("key", 100, 0, name, description);
+
+            Assert.True(result.Success);
+            Assert.Equal(name, result.Value.Name);
+            Assert.Equal(description, result.Value.Description);
         }
 
         // -----------------------------------------------------------------------
@@ -818,6 +1192,97 @@ namespace BetterExperience.Test.ConfigFileSpace
 
             Assert.False(result.Success);
             Assert.Equal(ConfigFileErrorCode.InvalidKeyName, result.Errors[0].Code);
+        }
+
+        // -----------------------------------------------------------------------
+        // EncodeValueType (static, with IConfigEntryAdapter)
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void EncodeValueTypeStaticWhenAdapterTypeThrowsExceptionShouldReturnFailure()
+        {
+            var result = ConfigFileEntryModel.EncodeValueType(typeof(ThrowingAdapter));
+
+            Assert.False(result.Success);
+            Assert.Equal(ConfigFileErrorCode.InvalidType, result.Errors[0].Code);
+            Assert.Contains("Failed to encode value type", result.Errors[0].Message);
+        }
+
+        [Fact]
+        public void EncodeValueTypeStaticWhenAdapterEncodeValueTypeFailsShouldReturnFailure()
+        {
+            var result = ConfigFileEntryModel.EncodeValueType(typeof(FailingAdapter));
+
+            Assert.False(result.Success);
+            Assert.Equal(ConfigFileErrorCode.UnsupportedType, result.Errors[0].Code);
+        }
+
+        [Fact]
+        public void EncodeValueTypeStaticWhenAdapterEncodeValueTypeSucceedsShouldReturnValue()
+        {
+            var result = ConfigFileEntryModel.EncodeValueType(typeof(SuccessfulAdapter));
+
+            Assert.True(result.Success);
+            Assert.Equal("CustomType", result.Value);
+        }
+    }
+
+    internal class ThrowingAdapter : IConfigEntryAdapter
+    {
+        public ThrowingAdapter()
+        {
+            throw new InvalidOperationException("Test exception");
+        }
+
+        public ConfigFileResult<string> Encode()
+        {
+            return "test";
+        }
+
+        public ConfigFileResult<object> Decode(string content)
+        {
+            return new object();
+        }
+
+        public ConfigFileResult<string> EncodeValueType()
+        {
+            return "test";
+        }
+    }
+
+    internal class FailingAdapter : IConfigEntryAdapter
+    {
+        public ConfigFileResult<string> Encode()
+        {
+            return "test";
+        }
+
+        public ConfigFileResult<object> Decode(string content)
+        {
+            return new object();
+        }
+
+        public ConfigFileResult<string> EncodeValueType()
+        {
+            return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.UnsupportedType, "Test error"));
+        }
+    }
+
+    internal class SuccessfulAdapter : IConfigEntryAdapter
+    {
+        public ConfigFileResult<string> Encode()
+        {
+            return "test";
+        }
+
+        public ConfigFileResult<object> Decode(string content)
+        {
+            return new object();
+        }
+
+        public ConfigFileResult<string> EncodeValueType()
+        {
+            return "CustomType";
         }
     }
 }

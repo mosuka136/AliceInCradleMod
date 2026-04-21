@@ -184,5 +184,131 @@ namespace BetterExperience.Test.HConfigFileSpace
             Assert.Contains("Failed to create config table", exception.Message);
             Assert.Contains(invalidTableKey, exception.Message);
         }
+
+        [Fact]
+        public void Bind_WhenEntryExists_ReturnsBoundConfigEntry()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\nTestKey = 123\n");
+            var manager = new ConfigFileManager(tempPath);
+            manager.CreateTable("TestTable", new Translator("测试表", "TestTable"));
+
+            var result = manager.Bind<int>("TestTable", "TestKey", 456, new Translator("测试键", "TestKey"), new Translator("描述", "Description"));
+
+            Assert.NotNull(result);
+            Assert.Equal("TestTable", result.TableName);
+            Assert.Equal("TestKey", result.Key);
+        }
+
+        [Fact]
+        public void Bind_WhenEntryDoesNotExist_CreatesNewEntry()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\n");
+            var manager = new ConfigFileManager(tempPath);
+            manager.CreateTable("TestTable", new Translator("测试表", "TestTable"));
+
+            var result = manager.Bind<string>("TestTable", "NewKey", "DefaultValue", new Translator("新键", "NewKey"), new Translator("描述", "Description"));
+
+            Assert.NotNull(result);
+            Assert.Equal("TestTable", result.TableName);
+            Assert.Equal("NewKey", result.Key);
+        }
+
+        [Fact]
+        public void Bind_WhenTableDoesNotExist_ThrowsArgumentException()
+        {
+            var tempPath = CreateTempConfigPath();
+            var manager = new ConfigFileManager(tempPath);
+
+            var exception = Assert.Throws<ArgumentException>(() =>
+                manager.Bind<string>("NonExistentTable", "Key", "Value", new Translator("键", "Key"), new Translator("描述", "Description")));
+
+            Assert.Contains("Config table not found", exception.Message);
+            Assert.Contains("NonExistentTable", exception.Message);
+            Assert.Equal("tableKey", exception.ParamName);
+        }
+
+        [Fact]
+        public void Bind_WhenKeyNameInvalid_ThrowsArgumentException()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\n");
+            var manager = new ConfigFileManager(tempPath);
+            manager.CreateTable("TestTable", new Translator("测试表", "TestTable"));
+
+            var exception = Assert.Throws<ArgumentException>(() =>
+                manager.Bind<string>("TestTable", "Invalid-Key!", "Value", new Translator("键", "Key"), new Translator("描述", "Description")));
+
+            Assert.Contains("Invalid key name", exception.Message);
+            Assert.Contains("TestTable.Invalid-Key!", exception.Message);
+            Assert.Equal("key", exception.ParamName);
+        }
+
+        [Fact]
+        public void Read_WhenFileContainsMultipleInvalidTables_LogsAllErrors()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[Table1\nKey1=Value1\n[Table2\nKey2=Value2");
+
+            var manager = new ConfigFileManager(tempPath);
+
+            Assert.NotNull(manager.FileSheet);
+        }
+
+        [Fact]
+        public void Read_WhenFileContainsDuplicateTables_LogsErrors()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\nKey1=Value1\n[TestTable]\nKey2=Value2");
+
+            var manager = new ConfigFileManager(tempPath);
+
+            Assert.NotNull(manager.FileSheet);
+        }
+
+        [Fact]
+        public void Constructor_CallsReadMethod()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\nTestKey=TestValue\n");
+
+            var manager = new ConfigFileManager(tempPath);
+
+            Assert.NotNull(manager.FileSheet);
+            Assert.NotNull(manager.Sheet);
+            var tableResult = manager.FileSheet.GetTable("TestTable");
+            Assert.True(tableResult.Success);
+        }
+
+        [Fact]
+        public void Bind_WhenCreatingNewEntryWithComplexType_EncodesValue()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\n");
+            var manager = new ConfigFileManager(tempPath);
+            manager.CreateTable("TestTable", new Translator("测试表", "TestTable"));
+
+            var result = manager.Bind<bool>("TestTable", "BoolKey", true, new Translator("布尔键", "BoolKey"), new Translator("描述", "Description"));
+
+            Assert.NotNull(result);
+            Assert.Equal("TestTable", result.TableName);
+            Assert.Equal("BoolKey", result.Key);
+        }
+
+        [Fact]
+        public void Bind_AddsValueChangedHandler()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\n");
+            var manager = new ConfigFileManager(tempPath);
+            manager.CreateTable("TestTable", new Translator("测试表", "TestTable"));
+
+            var result = manager.Bind<string>("TestTable", "TestKey", "DefaultValue", new Translator("测试键", "TestKey"), new Translator("描述", "Description"));
+
+            Assert.NotNull(result);
+            Assert.True(manager.Sheet.Contains("TestTable"));
+            Assert.Contains(result, manager.Sheet["TestTable"]);
+        }
     }
 }

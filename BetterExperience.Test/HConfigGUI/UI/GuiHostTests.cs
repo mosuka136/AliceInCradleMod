@@ -1,6 +1,7 @@
 using BetterExperience.HConfigFileSpace;
 using BetterExperience.HConfigGUI;
 using BetterExperience.HConfigGUI.UI;
+using BetterExperience.HotkeyManager;
 using Moq;
 using System;
 using System.Reflection;
@@ -64,6 +65,45 @@ namespace BetterExperience.Test.HConfigGUI.UI
             // Assert
             var hasDraggedWindowSinceOpen = GetPrivateField<bool>(guiHost, "_hasDraggedWindowSinceOpen");
             Assert.False(hasDraggedWindowSinceOpen);
+        }
+
+        [Fact]
+        public void Hide_WhenRecordingHotkeyIsNotNull_DoesNotModifyState()
+        {
+            // Arrange
+            var guiHost = new GuiHost();
+            var viewModel = CreateUninitializedViewModel();
+            var hotkeyChord = CreateUninitializedHotkeyChord();
+            var enumEntry = CreateUninitializedUiEntryModel();
+            viewModel.RecordingHotkey = hotkeyChord;
+            viewModel.ToastDuration = 2f;
+            viewModel.OpenedEnumEntry = enumEntry;
+            SetPrivateField(guiHost, "_viewModel", viewModel);
+            SetPrivateField(guiHost, "_isVisible", true);
+            SetPrivateField(guiHost, "_hasDraggedWindowSinceOpen", true);
+
+            // Act
+            try
+            {
+                guiHost.Hide();
+            }
+            catch (System.Security.SecurityException)
+            {
+                // Expected due to Unity API call in ShowToast
+            }
+
+            // Assert - verify state was not modified (early return happened)
+            var isVisible = GetPrivateField<bool>(guiHost, "_isVisible");
+            Assert.True(isVisible);
+            Assert.NotNull(viewModel.OpenedEnumEntry);
+            Assert.NotNull(viewModel.RecordingHotkey);
+            var hasDraggedWindowSinceOpen = GetPrivateField<bool>(guiHost, "_hasDraggedWindowSinceOpen");
+            Assert.True(hasDraggedWindowSinceOpen);
+        }
+
+        private static HotkeyChord CreateUninitializedHotkeyChord()
+        {
+            return (HotkeyChord)RuntimeHelpers.GetUninitializedObject(typeof(HotkeyChord));
         }
 
         // -----------------------------------------------------------------------

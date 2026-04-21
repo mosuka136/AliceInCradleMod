@@ -269,7 +269,7 @@ namespace BetterExperience.Test.HotkeyManager
             Assert.True(result);
             Assert.NotNull(chord.MainKey);
             Assert.Single(chord.Modifiers);
-            Assert.Equal("GamepadStart+GamepadSouth", chord.ToString());
+            Assert.Equal("GamepadStart+GamepadA", chord.ToString());
         }
 
         [Fact]
@@ -314,7 +314,7 @@ namespace BetterExperience.Test.HotkeyManager
             var modifier = Assert.Single(chord.Modifiers.OfType<KeyboardModifierTrigger>());
             Assert.False(modifier.IsAnySide);
             Assert.True(modifier.IsLeftSide);
-            Assert.Equal("LCtrl", modifier.ToString());
+            Assert.Equal("LeftCtrl", modifier.ToString());
         }
 
         [Fact]
@@ -392,6 +392,206 @@ namespace BetterExperience.Test.HotkeyManager
 
             // Assert
             Assert.Equal("Alt+B", result);
+        }
+
+        // -----------------------------------------------------------------------
+        // IsValid
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void IsValid_WhenMainKeyIsNull_ShouldReturnFalse()
+        {
+            // Arrange
+            var chord = new HotkeyChord();
+
+            // Act
+            var result = chord.IsValid;
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void IsValid_WhenMainKeyIsSet_ShouldReturnTrue()
+        {
+            // Arrange
+            var mainKey = new Mock<IHotkeyTrigger>();
+            var chord = new HotkeyChord(mainKey.Object);
+
+            // Act
+            var result = chord.IsValid;
+
+            // Assert
+            Assert.True(result);
+        }
+
+        // -----------------------------------------------------------------------
+        // AddModifier - Non-modifier key
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void AddModifier_WhenKeyIsNotModifier_ShouldNotAddToModifiers()
+        {
+            // Arrange
+            var chord = new HotkeyChord();
+
+            // Act
+            chord.AddModifier(Key.A);
+
+            // Assert
+            Assert.Empty(chord.Modifiers);
+        }
+
+        // -----------------------------------------------------------------------
+        // ClearModifiers
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void ClearModifiers_WhenCalledWithModifiers_ShouldRemoveAllModifiers()
+        {
+            // Arrange
+            var chord = new HotkeyChord();
+            chord.AddModifier(Key.LeftCtrl);
+            chord.AddModifier(Key.LeftShift);
+
+            // Act
+            chord.ClearModifiers();
+
+            // Assert
+            Assert.Empty(chord.Modifiers);
+        }
+
+        [Fact]
+        public void ClearModifiers_WhenCalledWithEmptyModifiers_ShouldNotThrow()
+        {
+            // Arrange
+            var chord = new HotkeyChord();
+
+            // Act
+            chord.ClearModifiers();
+
+            // Assert
+            Assert.Empty(chord.Modifiers);
+        }
+
+        // -----------------------------------------------------------------------
+        // Clear
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void Clear_WhenCalledWithModifiersAndMainKey_ShouldRemoveBoth()
+        {
+            // Arrange
+            var mainKey = new Mock<IHotkeyTrigger>();
+            var chord = new HotkeyChord(mainKey.Object);
+            chord.AddModifier(Key.LeftCtrl);
+
+            // Act
+            chord.Clear();
+
+            // Assert
+            Assert.Empty(chord.Modifiers);
+            Assert.Null(chord.MainKey);
+        }
+
+        [Fact]
+        public void Clear_WhenCalledWithEmptyChord_ShouldNotThrow()
+        {
+            // Arrange
+            var chord = new HotkeyChord();
+
+            // Act
+            chord.Clear();
+
+            // Assert
+            Assert.Empty(chord.Modifiers);
+            Assert.Null(chord.MainKey);
+        }
+
+        // -----------------------------------------------------------------------
+        // ToString - MainKey is null with modifiers
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void ToString_WhenMainKeyIsNullAndHasModifiers_ShouldReturnModifiersWithoutTrailingSeparator()
+        {
+            // Arrange
+            var chord = new HotkeyChord();
+            chord.AddModifier(Key.LeftCtrl);
+            chord.AddModifier(Key.LeftShift);
+
+            // Act
+            var result = chord.ToString();
+
+            // Assert
+            Assert.Equal("LeftCtrl+LeftShift", result);
+        }
+
+        [Fact]
+        public void ToString_WhenMainKeyIsNullAndNoModifiers_ShouldReturnEmptyString()
+        {
+            // Arrange
+            var chord = new HotkeyChord();
+
+            // Act
+            var result = chord.ToString();
+
+            // Assert
+            Assert.Equal("", result);
+        }
+
+        // -----------------------------------------------------------------------
+        // GetAnotherModifierKey
+        // -----------------------------------------------------------------------
+
+        [Fact]
+        public void GetAnotherModifierKey_WhenLeftShift_ShouldReturnRightShift()
+        {
+            // Arrange & Act
+            var result = HotkeyChord.GetAnotherModifierKey(Key.LeftShift);
+
+            // Assert
+            Assert.Equal(Key.RightShift, result);
+        }
+
+        [Fact]
+        public void GetAnotherModifierKey_WhenRightShift_ShouldReturnLeftShift()
+        {
+            // Arrange & Act
+            var result = HotkeyChord.GetAnotherModifierKey(Key.RightShift);
+
+            // Assert
+            Assert.Equal(Key.LeftShift, result);
+        }
+
+        [Fact]
+        public void GetAnotherModifierKey_WhenLeftAlt_ShouldReturnRightAlt()
+        {
+            // Arrange & Act
+            var result = HotkeyChord.GetAnotherModifierKey(Key.LeftAlt);
+
+            // Assert
+            Assert.Equal(Key.RightAlt, result);
+        }
+
+        [Fact]
+        public void GetAnotherModifierKey_WhenRightAlt_ShouldReturnLeftAlt()
+        {
+            // Arrange & Act
+            var result = HotkeyChord.GetAnotherModifierKey(Key.RightAlt);
+
+            // Assert
+            Assert.Equal(Key.LeftAlt, result);
+        }
+
+        [Fact]
+        public void GetAnotherModifierKey_WhenNonModifierKey_ShouldReturnSameKey()
+        {
+            // Arrange & Act
+            var result = HotkeyChord.GetAnotherModifierKey(Key.A);
+
+            // Assert
+            Assert.Equal(Key.A, result);
         }
     }
 }
