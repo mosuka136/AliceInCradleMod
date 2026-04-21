@@ -1,5 +1,7 @@
 using BetterExperience.HotkeyManager;
 using Moq;
+using System.Linq;
+using UnityEngine.InputSystem;
 
 namespace BetterExperience.Test.HotkeyManager
 {
@@ -255,29 +257,80 @@ namespace BetterExperience.Test.HotkeyManager
         }
 
         [Fact]
-        public void TryParse_WhenGamepadTriggerWithMultipleParts_ShouldReturnFalse()
+        public void TryParse_WhenGamepadTriggerWithModifier_ShouldParseCorrectly()
         {
             // Arrange
             var chord = new HotkeyChord();
 
-            // Act - gamepad with multiple parts should fail
+            // Act
+            var result = chord.TryParse("GamepadStart+GamepadSouth");
+
+            // Assert
+            Assert.True(result);
+            Assert.NotNull(chord.MainKey);
+            Assert.Single(chord.Modifiers);
+            Assert.Equal("GamepadStart+GamepadSouth", chord.ToString());
+        }
+
+        [Fact]
+        public void TryParse_WhenGamepadTriggerWithMultipleParts_ShouldParseCorrectly()
+        {
+            // Arrange
+            var chord = new HotkeyChord();
+
+            // Act
             var result = chord.TryParse("DpadUp+DpadDown");
+
+            // Assert
+            Assert.True(result);
+            Assert.NotNull(chord.MainKey);
+            Assert.Single(chord.Modifiers);
+        }
+
+        [Fact]
+        public void TryParse_WhenMixedKeyboardAndGamepadTrigger_ShouldReturnFalse()
+        {
+            // Arrange
+            var chord = new HotkeyChord();
+
+            // Act
+            var result = chord.TryParse("Ctrl+GamepadSouth");
 
             // Assert
             Assert.False(result);
         }
 
         [Fact]
-        public void TryParse_WhenNeitherKeyboardNorGamepad_ShouldReturnFalse()
+        public void AddModifier_WhenSameSideModifierAddedRepeatedly_ShouldKeepSpecificSide()
         {
             // Arrange
             var chord = new HotkeyChord();
 
             // Act
-            var result = chord.TryParse("InvalidKey");
+            chord.AddModifier(Key.LeftCtrl);
+            chord.AddModifier(Key.LeftCtrl);
 
             // Assert
-            Assert.False(result);
+            var modifier = Assert.Single(chord.Modifiers.OfType<KeyboardModifierTrigger>());
+            Assert.False(modifier.IsAnySide);
+            Assert.True(modifier.IsLeftSide);
+            Assert.Equal("LCtrl", modifier.ToString());
+        }
+
+        [Fact]
+        public void AddModifier_WhenOppositeSideModifierAdded_ShouldMergeToAnySide()
+        {
+            // Arrange
+            var chord = new HotkeyChord();
+
+            // Act
+            chord.AddModifier(Key.LeftCtrl);
+            chord.AddModifier(Key.RightCtrl);
+
+            // Assert
+            var modifier = Assert.Single(chord.Modifiers.OfType<KeyboardModifierTrigger>());
+            Assert.True(modifier.IsAnySide);
+            Assert.Equal("Ctrl", modifier.ToString());
         }
 
         // -----------------------------------------------------------------------

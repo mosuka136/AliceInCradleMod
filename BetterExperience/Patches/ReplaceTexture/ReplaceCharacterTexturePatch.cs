@@ -1,5 +1,4 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HotkeyManager;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using nel;
@@ -13,7 +12,6 @@ namespace BetterExperience.Patches
         [HarmonyPatch]
         public class ReplaceCharacterTexturePatch
         {
-            private static Hotkey _flushTextureHotkey = null;
             private static readonly List<BetobetoManager.SvTexture> _texture = new List<BetobetoManager.SvTexture>();
 
             [HarmonyPostfix]
@@ -21,11 +19,6 @@ namespace BetterExperience.Patches
             public static void Initialize()
             {
                 FrameUpdateBooster.Instance.OnFrameUpdate += Update;
-
-                ConfigManager.FlushTextureHotkey.OnValueChanged += (s, e) =>
-                {
-                    _flushTextureHotkey = null;
-                };
             }
 
             public static void Update()
@@ -33,21 +26,7 @@ namespace BetterExperience.Patches
                 if (!ConfigManager.EnableReplaceTexture.Value)
                     return;
 
-                if (_flushTextureHotkey == null)
-                {
-                    _flushTextureHotkey = new Hotkey();
-                    var h = ConfigManager.FlushTextureHotkey.Value;
-                    if (!_flushTextureHotkey.TryParse(h))
-                    {
-                        HLog.Warn("Invalid Hotkey: " + h);
-
-                        h = "Ctrl+T";
-                        _flushTextureHotkey.TryParse(h);
-                        HLog.Info("Flush texture hotkey set: " + h);
-                    }
-                }
-
-                if (_flushTextureHotkey != null && _flushTextureHotkey.WasPressedThisFrame())
+                if (ConfigManager.FlushTextureHotkey.Value.WasPressedThisFrame())
                 {
                     TextureManager.Instance.Reload();
 
@@ -56,7 +35,6 @@ namespace BetterExperience.Patches
                         texture.cleanExecute();
                     }
                 }
-
             }
 
             [HarmonyPostfix]

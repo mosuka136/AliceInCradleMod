@@ -177,6 +177,23 @@ namespace BetterExperience.HConfigFileSpace
 
         public static ConfigFileResult<string> EncodeValueType(Type type)
         {
+            if (typeof(IConfigEntryAdapter).IsAssignableFrom(type))
+            {
+                try
+                {
+                    var adapterInstance = (IConfigEntryAdapter)Activator.CreateInstance(type);
+                    var result = adapterInstance.EncodeValueType();
+                    if (!result.Success)
+                        return ConfigFileResult<string>.Fail(result.Errors);
+
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidType, $"Failed to encode value type for {type.FullName}: {ex.Message}"));
+                }
+            }
+
             switch (type)
             {
                 case Type t when t == typeof(string):

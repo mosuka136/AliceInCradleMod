@@ -131,7 +131,7 @@ namespace BetterExperience.HConfigFileSpace
             {
                 foreach (var error in decodeResult.Errors)
                     HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
-                throw new InvalidOperationException($"Failed to decode value for key: {Key}, value: {entry.Value}. Errors: {string.Join(", ", decodeResult.Errors)}");
+                throw new InvalidOperationException($"Failed to decode value for key: {entry.Key}, value: {entry.Value}. Errors: {string.Join(", ", decodeResult.Errors)}");
             }
             Entry = entry;
             Value = decodeResult.Value;

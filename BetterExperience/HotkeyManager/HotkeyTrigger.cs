@@ -1,3 +1,4 @@
+using BetterExperience.HAdapter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace BetterExperience.HotkeyManager
 
     public class KeyboardTrigger : IHotkeyTrigger
     {
-        public Key Key { get; set; }
+        public Key Key { get; set; } = Key.None;
 
         public KeyboardTrigger()
         {
@@ -30,7 +31,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool IsPressed()
         {
-            var kb = Keyboard.current;
+            var kb = UnityInputAdapter.KeyboardCurrent;
             if (kb == null)
                 return false;
             return kb[Key].isPressed;
@@ -38,7 +39,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool WasPressedThisFrame()
         {
-            var kb = Keyboard.current;
+            var kb = UnityInputAdapter.KeyboardCurrent;
             if (kb == null)
                 return false;
             return kb[Key].wasPressedThisFrame;
@@ -61,26 +62,28 @@ namespace BetterExperience.HotkeyManager
 
         public override string ToString()
         {
+            if (Key == Key.None)
+                return string.Empty;
             return Key.ToString();
         }
     }
 
-    public class  KeyboardModifierTrigger: IHotkeyTrigger
+    public class KeyboardModifierTrigger : IHotkeyTrigger
     {
-        public Key LeftKey {  get; set; }
-        public Key RightKey { get; set; }
-        public bool IsAnySide { get; set; }
-        public bool IsLeftSide { get; set; }
+        public Key LeftKey { get; set; } = Key.None;
+        public Key RightKey { get; set; } = Key.None;
+        public bool IsAnySide { get; set; } = true;
+        public bool IsLeftSide { get; set; } = true;
 
-        public static readonly List<string> CtrlStr = new List<string>() { "ctrl", "control" };
-        public static readonly List<string> ShiftStr = new List<string>() { "shift" };
-        public static readonly List<string> AltStr = new List<string>() { "alt" };
-        public static readonly List<string> LCtrlStr = new List<string>() { "leftctrl", "lctrl" };
-        public static readonly List<string> RCtrlStr = new List<string>() { "rightctrl", "rctrl" };
-        public static readonly List<string> LShiftStr = new List<string>() { "leftshift", "lshift" };
-        public static readonly List<string> RShiftStr = new List<string>() { "rightshift", "rshift" };
-        public static readonly List<string> LAltStr = new List<string>() { "leftalt", "lalt" };
-        public static readonly List<string> RAltStr = new List<string>() { "rightalt", "ralt" };
+        public static readonly List<string> CtrlStr = new List<string>() { "Ctrl", "Control" };
+        public static readonly List<string> ShiftStr = new List<string>() { "Shift" };
+        public static readonly List<string> AltStr = new List<string>() { "Alt" };
+        public static readonly List<string> LCtrlStr = new List<string>() { "LeftCtrl", "LCtrl" };
+        public static readonly List<string> RCtrlStr = new List<string>() { "RightCtrl", "RCtrl" };
+        public static readonly List<string> LShiftStr = new List<string>() { "LeftShift", "LShift" };
+        public static readonly List<string> RShiftStr = new List<string>() { "RightShift", "RShift" };
+        public static readonly List<string> LAltStr = new List<string>() { "LeftAlt", "LAlt" };
+        public static readonly List<string> RAltStr = new List<string>() { "RightAlt", "RAlt    " };
 
         public static readonly KeyboardModifierTrigger Ctrl = new KeyboardModifierTrigger(Key.LeftCtrl, Key.RightCtrl, true, true);
         public static readonly KeyboardModifierTrigger Shift = new KeyboardModifierTrigger(Key.LeftShift, Key.RightShift, true, true);
@@ -88,7 +91,48 @@ namespace BetterExperience.HotkeyManager
 
         public KeyboardModifierTrigger()
         {
-            
+
+        }
+
+        public KeyboardModifierTrigger(Key key)
+        {
+            if (key == Key.LeftCtrl)
+            {
+                Ctrl.CopyTo(this);
+                IsLeftSide = true;
+            }
+            else if (key == Key.RightCtrl)
+            {
+                Ctrl.CopyTo(this);
+                IsLeftSide = false;
+            }
+            else if (key == Key.LeftShift)
+            {
+                Shift.CopyTo(this);
+                IsLeftSide = true;
+            }
+            else if (key == Key.RightShift)
+            {
+                Shift.CopyTo(this);
+                IsLeftSide = false;
+            }
+            else if (key == Key.LeftAlt)
+            {
+                Alt.CopyTo(this);
+                IsLeftSide = true;
+            }
+            else if (key == Key.RightAlt)
+            {
+                Alt.CopyTo(this);
+                IsLeftSide = false;
+            }
+            else
+            {
+                LeftKey = key;
+                IsLeftSide = true;
+            }
+
+            IsAnySide = false;
         }
 
         public KeyboardModifierTrigger(Key leftKey, Key rightKey, bool isAnySide, bool isLeftSide)
@@ -101,7 +145,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool IsPressed()
         {
-            var kb = Keyboard.current;
+            var kb = UnityInputAdapter.KeyboardCurrent;
             if (kb == null)
                 return false;
 
@@ -113,7 +157,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool WasPressedThisFrame()
         {
-            var kb = Keyboard.current;
+            var kb = UnityInputAdapter.KeyboardCurrent;
             if (kb == null)
                 return false;
 
@@ -199,16 +243,6 @@ namespace BetterExperience.HotkeyManager
             return false;
         }
 
-        public static bool EqualsL(string entry, List<string> list)
-        {
-            foreach (var item in list)
-            {
-                if (item.Equals(entry, StringComparison.OrdinalIgnoreCase))
-                    return true;
-            }
-            return false;
-        }
-
         public void CopyTo(KeyboardModifierTrigger other)
         {
             other.LeftKey = LeftKey;
@@ -219,6 +253,25 @@ namespace BetterExperience.HotkeyManager
 
         public override string ToString()
         {
+            if (IsAnySide)
+            {
+                if (LeftKey == Key.None || RightKey == Key.None)
+                    return string.Empty;
+            }
+            else
+            {
+                if (IsLeftSide)
+                {
+                    if (LeftKey == Key.None)
+                        return string.Empty;
+                }
+                else
+                {
+                    if (RightKey == Key.None)
+                        return string.Empty;
+                }
+            }
+
             if (LeftKey == Key.LeftCtrl && RightKey == Key.RightCtrl)
             {
                 if (IsAnySide)
@@ -245,11 +298,26 @@ namespace BetterExperience.HotkeyManager
 
             return IsLeftSide ? LeftKey.ToString() : RightKey.ToString();
         }
+
+        public static bool EqualsL(string entry, List<string> list)
+        {
+            foreach (var item in list)
+            {
+                if (item.Equals(entry, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
+
+        public static bool IsModifierKey(Key key)
+        {
+            return key == Key.LeftCtrl || key == Key.RightCtrl || key == Key.LeftShift || key == Key.RightShift || key == Key.LeftAlt || key == Key.RightAlt;
+        }
     }
 
     public class GamepadTrigger : IHotkeyTrigger
     {
-        public GamepadButton Button { get; set; }
+        public GamepadButton Button { get; set; } = GamepadButton.A;
 
         public const string Prefix = "Gamepad";
 
@@ -280,7 +348,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool IsPressed()
         {
-            var gp = Gamepad.current;
+            var gp = UnityInputAdapter.GamepadCurrent;
             if (gp == null)
                 return false;
             return gp[Button].isPressed;
@@ -288,7 +356,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool WasPressedThisFrame()
         {
-            var gp = Gamepad.current;
+            var gp = UnityInputAdapter.GamepadCurrent;
             if (gp == null)
                 return false;
             return gp[Button].wasPressedThisFrame;

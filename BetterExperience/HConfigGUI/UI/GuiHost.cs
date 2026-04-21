@@ -88,8 +88,16 @@ namespace BetterExperience.HConfigGUI.UI
 
         public void Hide()
         {
+            if (_viewModel.RecordingHotkey != null)
+            {
+                _viewModel.ShowToast(TranslatorResource.CanNotHideBeforeEndRecord, _viewModel.ToastDuration);
+                return;
+            }
+
             _isVisible = false;
             _viewModel.OpenedEnumEntry = null;
+            _viewModel.OpenedHotkeyEntry = null;
+            _viewModel.RecordingHotkey = null;
             _hasDraggedWindowSinceOpen = false;
         }
 

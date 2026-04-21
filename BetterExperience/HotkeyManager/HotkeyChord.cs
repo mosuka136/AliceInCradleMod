@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine.InputSystem;
 
 namespace BetterExperience.HotkeyManager
 {
@@ -10,6 +11,7 @@ namespace BetterExperience.HotkeyManager
 
         public List<IHotkeyTrigger> Modifiers { get; set; }
         public IHotkeyTrigger MainKey { get; set; }
+        public bool IsValid => MainKey != null;
 
         public HotkeyChord()
         {
@@ -31,6 +33,67 @@ namespace BetterExperience.HotkeyManager
             }
 
             return MainKey.WasPressedThisFrame();
+        }
+
+        public void AddModifier(Key key)
+        {
+            if (!KeyboardModifierTrigger.IsModifierKey(key))
+                return;
+
+            var anotherKey = GetAnotherModifierKey(key);
+            var modifiers = Modifiers.OfType<KeyboardModifierTrigger>().ToList();
+
+            var currentModifiers = modifiers.Where(modifier =>
+                {
+                    if (modifier.IsAnySide)
+                    {
+                        if (modifier.LeftKey == key || modifier.RightKey == key)
+                            return true;
+                    }
+                    else
+                    {
+                        if (modifier.IsLeftSide)
+                        {
+                            if (modifier.LeftKey == key)
+                                return true;
+                        }
+                        else
+                        {
+                            if (modifier.RightKey == key)
+                                return true;
+                        }
+                    }
+                    return false;
+                });
+
+            if (currentModifiers.Any())
+                return;
+
+            var oppositeModifiers = modifiers.Where(modifier =>
+                !modifier.IsAnySide &&
+                ((modifier.IsLeftSide && modifier.RightKey == key && modifier.LeftKey == anotherKey) ||
+                 (!modifier.IsLeftSide && modifier.LeftKey == key && modifier.RightKey == anotherKey)));
+
+            if (oppositeModifiers.Any())
+            {
+                foreach (var modifier in oppositeModifiers)
+                    modifier.IsAnySide = true;
+
+                return;
+            }
+
+            Modifiers.Add(new KeyboardModifierTrigger(key));
+        }
+
+        public void ClearModifiers()
+        {
+            Modifiers.Clear();
+        }
+
+        public void Clear()
+        {
+            Modifiers.Clear();
+            MainKey = null;
         }
 
         public bool TryParse(string chordStr)
@@ -63,13 +126,22 @@ namespace BetterExperience.HotkeyManager
                     keyboardModifierTrigger.CopyTo(modifier);
                     Modifiers.Add(modifier);
                 }
+
+                return true;
             }
-            else if (gamepadTrigger.TryParse(parts.First()) && parts.Count == 1)
-            {
-                MainKey = gamepadTrigger;
-            }
-            else
+
+            if (!gamepadTrigger.TryParse(parts.Last()))
                 return false;
+
+            MainKey = gamepadTrigger;
+            Modifiers.Clear();
+            for (int i = 0; i < parts.Count - 1; i++)
+            {
+                var modifier = new GamepadTrigger();
+                if (!modifier.TryParse(parts[i]))
+                    return false;
+                Modifiers.Add(modifier);
+            }
 
             return true;
         }
@@ -82,8 +154,37 @@ namespace BetterExperience.HotkeyManager
                 sb.Append(modifier.ToString());
                 sb.Append(Separator);
             }
-            sb.Append(MainKey.ToString());
+
+            if (MainKey != null)
+                sb.Append(MainKey.ToString());
+            else
+            {
+                if (sb.Length > 0)
+                    sb.Remove(sb.Length - 1, 1);
+            }
+
             return sb.ToString();
+        }
+
+        public static Key GetAnotherModifierKey(Key key)
+        {
+            switch (key)
+            {
+                case Key.LeftShift:
+                    return Key.RightShift;
+                case Key.RightShift:
+                    return Key.LeftShift;
+                case Key.LeftCtrl:
+                    return Key.RightCtrl;
+                case Key.RightCtrl:
+                    return Key.LeftCtrl;
+                case Key.LeftAlt:
+                    return Key.RightAlt;
+                case Key.RightAlt:
+                    return Key.LeftAlt;
+                default:
+                    return key;
+            }
         }
     }
 }

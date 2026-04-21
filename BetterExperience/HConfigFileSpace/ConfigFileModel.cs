@@ -23,6 +23,23 @@ namespace BetterExperience.HConfigFileSpace
             if (type == null)
                 return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, "Type cannot be null"));
 
+            if (typeof(IConfigEntryAdapter).IsAssignableFrom(type))
+            {
+                try
+                {
+                    var adapter = (IConfigEntryAdapter)value;
+                    var result = adapter.Encode();
+                    if (!result.Success)
+                        return ConfigFileResult<string>.Fail(result.Errors);
+
+                    return ConfigFileResult<string>.Ok(result.Value);
+                }
+                catch (Exception ex)
+                {
+                    return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Failed to encode using IConfigEntryAdapter. Error: {ex.Message}"));
+                }
+            }
+
             switch (type)
             {
                 case Type t when t == typeof(string):
@@ -98,6 +115,22 @@ namespace BetterExperience.HConfigFileSpace
                 return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, "Type cannot be null"));
 
             value = value.Trim();
+
+            if (typeof(IConfigEntryAdapter).IsAssignableFrom(type))
+            {
+                try
+                {
+                    var adapterInstance = (IConfigEntryAdapter)Activator.CreateInstance(type);
+                    var result = adapterInstance.Decode(value);
+                    if (!result.Success)
+                        return ConfigFileResult<object>.Fail(result.Errors);
+                    return ConfigFileResult<object>.Ok(result.Value);
+                }
+                catch (Exception ex)
+                {
+                    return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Failed to decode using IConfigEntryAdapter. Error: {ex.Message}"));
+                }
+            }
 
             switch (type)
             {

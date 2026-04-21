@@ -1,5 +1,6 @@
 using BetterExperience.HAdapter;
 using BetterExperience.HEnumHelper;
+using BetterExperience.HotkeyManager;
 using System;
 using System.Collections.Generic;
 
@@ -282,6 +283,127 @@ namespace BetterExperience.HConfigGUI.UI
         }
     }
 
+    public class HotkeyRenderer : BaseEntryRenderer
+    {
+        public HotkeyRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
+
+        public override void RenderEntry(UiEntryModel entry)
+        {
+            if (Context == null || entry == null)
+                return;
+
+            if (!typeof(Hotkey).IsAssignableFrom(entry.ValueType))
+                return;
+
+            var value = (entry.CacheValue ?? entry.Value) as Hotkey;
+            string displayText = value != null ? value.ToString() : string.Empty;
+            var clicked = Layout.Button(displayText, Layout.ExpandWidth(true));
+            if (clicked)
+            {
+                ApplyHotkey();
+
+                if (Context.OpenedHotkeyEntry == entry)
+                {
+                    Context.OpenedHotkeyEntry = null;
+                    Context.RecordingHotkey = null;
+                }
+                else
+                    Context.OpenedHotkeyEntry = entry;
+            }
+        }
+
+        public override void RenderAfterRow(UiEntryModel entry)
+        {
+            if (Context == null || entry == null)
+                return;
+
+            if (!typeof(Hotkey).IsAssignableFrom(entry.ValueType))
+                return;
+
+            if (Context.OpenedHotkeyEntry != entry)
+                return;
+
+            Hotkey value;
+            if (entry.CacheValue == null)
+            {
+                value = new Hotkey(entry.Value as Hotkey) { Valid = false };
+                entry.CacheValue = value;
+            }
+            else
+                value = entry.CacheValue as Hotkey;
+
+            HotkeyChord needRemoveHotkey = null;
+            Layout.BeginHorizontal();
+            Layout.Space(LayoutResource.GetLabelWidth(Context.Sheet));
+            Layout.BeginVertical(GuiStyleAdapter.BoxStyle);
+            foreach (var hotkey in value.Hotkeys)
+            {
+                Layout.BeginHorizontal();
+
+                Layout.Button(hotkey.ToString(), Layout.ExpandWidth(true));
+                if (Layout.Button(Context.RecordingHotkey == hotkey ? TranslatorResource.Apply : TranslatorResource.Record, Layout.ExpandWidth(false)))
+                {
+                    if (Context.RecordingHotkey == hotkey)
+                    {
+                        ApplyHotkey();
+                        Context.RecordingHotkey = null;
+                    }
+                    else
+                    {
+                        (entry.Value as Hotkey).Valid = false;
+                        hotkey.Clear();
+                        Context.RecordingHotkey = hotkey;
+                    }
+                }
+                if (value.Count > 1)
+                {
+                    if (Layout.Button(TranslatorResource.Remove, Layout.ExpandWidth(false)))
+                    {
+                        if (Context.RecordingHotkey == hotkey)
+                        {
+                            Context.RecordingHotkey = null;
+                        }
+                        needRemoveHotkey = hotkey;
+                    }
+                }
+
+                Layout.EndHorizontal();
+            }
+            value.Remove(needRemoveHotkey);
+
+            Layout.BeginHorizontal();
+
+            if (Layout.Button(TranslatorResource.Add, Layout.ExpandWidth(true)))
+            {
+                var newHotkeyChord = new HotkeyChord();
+                value.Add(newHotkeyChord);
+                Context.RecordingHotkey = newHotkeyChord;
+            }
+
+            Layout.EndHorizontal();
+
+            Layout.EndVertical();
+            Layout.EndHorizontal();
+        }
+
+        public void ApplyHotkey()
+        {
+            var entry = Context.OpenedHotkeyEntry;
+            if (entry == null)
+                return;
+
+            var newValue = entry.CacheValue as Hotkey;
+            if (!(entry.Value as Hotkey).HasSameHotkey(newValue))
+            {
+                newValue.RemoveInvalidHotkey();
+                newValue.Valid = true;
+                Context.SetValue(entry, entry.CacheValue);
+            }
+            entry.CacheValue = null;
+            (entry.Value as Hotkey).Valid = true;
+        }
+    }
+
     public static class ResetButtonRenderer
     {
         public static void Render(ViewModel context, IGuiLayout layout, UiEntryModel entry)
@@ -311,6 +433,7 @@ namespace BetterExperience.HConfigGUI.UI
         public NumberRenderer NumberEntryRenderer { get; }
         public EnumRenderer EnumEntryRenderer { get; }
         public SliderRenderer SliderEntryRenderer { get; }
+        public HotkeyRenderer HotkeyRenderer { get; }
 
         public TableRenderer(ViewModel context, IGuiLayout layout)
         {
@@ -322,6 +445,7 @@ namespace BetterExperience.HConfigGUI.UI
             NumberEntryRenderer = new NumberRenderer(context, layout);
             EnumEntryRenderer = new EnumRenderer(context, layout);
             SliderEntryRenderer = new SliderRenderer(context, layout);
+            HotkeyRenderer = new HotkeyRenderer(context, layout);
         }
 
         public void Render(UiTableModel table)
@@ -360,6 +484,10 @@ namespace BetterExperience.HConfigGUI.UI
                 else if (type.IsEnum)
                 {
                     EnumEntryRenderer.Render(entry);
+                }
+                else if (typeof(Hotkey).IsAssignableFrom(type))
+                {
+                    HotkeyRenderer.Render(entry);
                 }
             }
 
