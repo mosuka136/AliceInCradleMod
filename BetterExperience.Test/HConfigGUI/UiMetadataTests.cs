@@ -1,6 +1,4 @@
 using BetterExperience.HConfigGUI;
-using System;
-using Xunit;
 
 namespace BetterExperience.Test
 {

@@ -1,7 +1,4 @@
 using BetterExperience.HConfigFileSpace;
-using System;
-using System.Collections.Generic;
-using Xunit;
 
 namespace BetterExperience.Test
 {

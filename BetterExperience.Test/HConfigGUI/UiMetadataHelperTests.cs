@@ -1,7 +1,6 @@
-using BetterExperience.HConfigGUI;
 using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigGUI;
 using Moq;
-using Xunit;
 
 namespace BetterExperience.Test
 {

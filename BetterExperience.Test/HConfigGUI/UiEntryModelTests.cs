@@ -2,8 +2,6 @@ using BetterExperience.HConfigFileSpace;
 using BetterExperience.HConfigGUI;
 using BetterExperience.HTranslatorSpace;
 using Moq;
-using System;
-using Xunit;
 
 namespace BetterExperience.Test
 {

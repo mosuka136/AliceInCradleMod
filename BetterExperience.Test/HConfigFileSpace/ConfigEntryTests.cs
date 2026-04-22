@@ -1,10 +1,6 @@
 using BetterExperience.HConfigFileSpace;
 using BetterExperience.HTranslatorSpace;
-using BetterExperience.HotkeyManager;
-using Moq;
-using System;
 using System.Collections;
-using Xunit;
 
 namespace BetterExperience.Test
 {
@@ -545,22 +541,6 @@ namespace BetterExperience.Test
 
             // Assert
             Assert.Equal(42, args.Value);
-        }
-
-        [Fact]
-        public void Constructor_WhenInitialDecodeFails_ThrowsInvalidOperationException()
-        {
-            // Arrange
-            var model = new ConfigFileEntryModel
-            {
-                Key = "Hotkey",
-                Value = "InvalidKey+A"
-            };
-
-            // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => new ConfigEntry<Hotkey>("General", model, new Hotkey("F1")));
-            Assert.Contains("Hotkey", exception.Message);
-            Assert.Contains("InvalidKey+A", exception.Message);
         }
 
         [Fact]

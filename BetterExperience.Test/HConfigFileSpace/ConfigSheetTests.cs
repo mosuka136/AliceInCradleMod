@@ -1,7 +1,5 @@
 using BetterExperience.HConfigFileSpace;
 using BetterExperience.HTranslatorSpace;
-using Moq;
-using System.Linq;
 
 namespace BetterExperience.Test
 {

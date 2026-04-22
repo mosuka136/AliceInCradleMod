@@ -2,10 +2,6 @@ using BetterExperience.HConfigFileSpace;
 using BetterExperience.HConfigGUI;
 using BetterExperience.HTranslatorSpace;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
 
 namespace BetterExperience.Test
 {
@@ -134,6 +130,99 @@ namespace BetterExperience.Test
             var hasItems = enumerator.MoveNext();
 
             Assert.True(hasItems);
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_WithEmptyTable_ReturnsEmptyEnumerator()
+        {
+            var table = CreateConfigTable();
+            var model = new UiTableModel(table);
+
+            var enumerable = (System.Collections.IEnumerable)model;
+            var enumerator = enumerable.GetEnumerator();
+            var hasItems = enumerator.MoveNext();
+
+            Assert.False(hasItems);
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_WithMultipleEntries_EnumeratesAllItems()
+        {
+            var table = CreateConfigTable();
+            var mockEntry1 = new Mock<IConfigEntry>();
+            mockEntry1.Setup(e => e.Key).Returns("SetLootDropRatio");
+            var mockEntry2 = new Mock<IConfigEntry>();
+            mockEntry2.Setup(e => e.Key).Returns("EnableBetterFishing");
+            var mockEntry3 = new Mock<IConfigEntry>();
+            mockEntry3.Setup(e => e.Key).Returns("EnableDebugMode");
+            table.Add(mockEntry1.Object);
+            table.Add(mockEntry2.Object);
+            table.Add(mockEntry3.Object);
+            var model = new UiTableModel(table);
+
+            var enumerable = (System.Collections.IEnumerable)model;
+            var enumerator = enumerable.GetEnumerator();
+            var count = 0;
+            while (enumerator.MoveNext())
+            {
+                Assert.NotNull(enumerator.Current);
+                count++;
+            }
+
+            Assert.Equal(3, count);
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_CalledTwice_ReturnsIndependentEnumerators()
+        {
+            var table = CreateConfigTable();
+            var mockEntry = new Mock<IConfigEntry>();
+            mockEntry.Setup(e => e.Key).Returns("SetLootDropRatio");
+            table.Add(mockEntry.Object);
+            var model = new UiTableModel(table);
+
+            var enumerable = (System.Collections.IEnumerable)model;
+            var enumerator1 = enumerable.GetEnumerator();
+            var enumerator2 = enumerable.GetEnumerator();
+            
+            enumerator1.MoveNext();
+            var hasItems = enumerator2.MoveNext();
+
+            Assert.True(hasItems);
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_AfterEnumeration_MoveNextReturnsFalse()
+        {
+            var table = CreateConfigTable();
+            var mockEntry = new Mock<IConfigEntry>();
+            mockEntry.Setup(e => e.Key).Returns("SetLootDropRatio");
+            table.Add(mockEntry.Object);
+            var model = new UiTableModel(table);
+
+            var enumerable = (System.Collections.IEnumerable)model;
+            var enumerator = enumerable.GetEnumerator();
+            enumerator.MoveNext();
+            var hasMoreItems = enumerator.MoveNext();
+
+            Assert.False(hasMoreItems);
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_CurrentReturnsUiEntryModel()
+        {
+            var table = CreateConfigTable();
+            var mockEntry = new Mock<IConfigEntry>();
+            mockEntry.Setup(e => e.Key).Returns("SetLootDropRatio");
+            table.Add(mockEntry.Object);
+            var model = new UiTableModel(table);
+
+            var enumerable = (System.Collections.IEnumerable)model;
+            var enumerator = enumerable.GetEnumerator();
+            enumerator.MoveNext();
+            var current = enumerator.Current;
+
+            Assert.IsType<UiEntryModel>(current);
         }
     }
 }

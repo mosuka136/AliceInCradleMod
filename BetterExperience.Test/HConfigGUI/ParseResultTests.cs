@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using BetterExperience.HConfigGUI;
-using Xunit;
 
 namespace BetterExperience.Test
 {

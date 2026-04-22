@@ -1,13 +1,6 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HConfigFileSpace;
 using BetterExperience.HConfigGUI;
-using BetterExperience.HTranslatorSpace;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Xunit;
 
 namespace BetterExperience.Test
 {
@@ -110,6 +103,133 @@ namespace BetterExperience.Test
             }
 
             Assert.Equal(model.Sheet.Count, items.Count);
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_ReturnsIEnumeratorOfUiTableModel()
+        {
+            var model = new UiSheetModel();
+
+            var enumerable = (IEnumerable)model;
+            var enumerator = enumerable.GetEnumerator();
+
+            Assert.IsAssignableFrom<IEnumerator<UiTableModel>>(enumerator);
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_ReturnsSameItemsAsGeneric()
+        {
+            var model = new UiSheetModel();
+
+            var genericItems = new List<UiTableModel>();
+            foreach (var item in model)
+            {
+                genericItems.Add(item);
+            }
+
+            var nonGenericItems = new List<object>();
+            var enumerable = (IEnumerable)model;
+            var enumerator = enumerable.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                nonGenericItems.Add(enumerator.Current);
+            }
+
+            Assert.Equal(genericItems.Count, nonGenericItems.Count);
+            for (int i = 0; i < genericItems.Count; i++)
+            {
+                Assert.Same(genericItems[i], nonGenericItems[i]);
+            }
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_SupportsMultipleEnumerations()
+        {
+            var model = new UiSheetModel();
+            var enumerable = (IEnumerable)model;
+
+            var enumerator1 = enumerable.GetEnumerator();
+            var count1 = 0;
+            while (enumerator1.MoveNext())
+            {
+                count1++;
+            }
+
+            var enumerator2 = enumerable.GetEnumerator();
+            var count2 = 0;
+            while (enumerator2.MoveNext())
+            {
+                count2++;
+            }
+
+            Assert.Equal(count1, count2);
+            Assert.Equal(model.Sheet.Count, count1);
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_MoveNextReturnsFalseAfterLastItem()
+        {
+            var model = new UiSheetModel();
+            var enumerable = (IEnumerable)model;
+            var enumerator = enumerable.GetEnumerator();
+
+            var expectedCount = model.Sheet.Count;
+            var moveNextCount = 0;
+            while (enumerator.MoveNext())
+            {
+                moveNextCount++;
+            }
+
+            Assert.Equal(expectedCount, moveNextCount);
+            Assert.False(enumerator.MoveNext());
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_CurrentReturnsUiTableModel()
+        {
+            var model = new UiSheetModel();
+            var enumerable = (IEnumerable)model;
+            var enumerator = enumerable.GetEnumerator();
+
+            if (enumerator.MoveNext())
+            {
+                var current = enumerator.Current;
+
+                Assert.NotNull(current);
+                Assert.IsType<UiTableModel>(current);
+            }
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_EnumeratesInSameOrderAsSheet()
+        {
+            var model = new UiSheetModel();
+            var enumerable = (IEnumerable)model;
+            var enumerator = enumerable.GetEnumerator();
+
+            var index = 0;
+            while (enumerator.MoveNext())
+            {
+                Assert.Same(model.Sheet[index], enumerator.Current);
+                index++;
+            }
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_EnumeratorIsIndependentFromSheet()
+        {
+            var model = new UiSheetModel();
+            var enumerable = (IEnumerable)model;
+            var enumerator = enumerable.GetEnumerator();
+
+            var originalCount = model.Sheet.Count;
+            var enumeratedCount = 0;
+            while (enumerator.MoveNext())
+            {
+                enumeratedCount++;
+            }
+
+            Assert.Equal(originalCount, enumeratedCount);
         }
     }
 }

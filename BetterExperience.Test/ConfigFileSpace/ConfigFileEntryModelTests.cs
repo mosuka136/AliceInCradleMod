@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using BetterExperience.HConfigFileSpace;
 using BetterExperience.HTranslatorSpace;
 
