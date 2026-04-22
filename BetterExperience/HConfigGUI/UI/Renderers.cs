@@ -1,4 +1,3 @@
-using BetterExperience.HAdapter;
 using BetterExperience.HEnumHelper;
 using BetterExperience.HotkeyManager;
 using System;
@@ -14,14 +13,11 @@ namespace BetterExperience.HConfigGUI.UI
 
     public abstract class BaseEntryRenderer : IEntryRenderer
     {
-        protected IGuiLayout Layout { get; }
-
         public ViewModel Context { get; }
 
-        protected BaseEntryRenderer(ViewModel context, IGuiLayout layout)
+        protected BaseEntryRenderer(ViewModel context)
         {
             Context = context;
-            Layout = layout;
         }
 
         public void Render(UiEntryModel entry)
@@ -29,11 +25,11 @@ namespace BetterExperience.HConfigGUI.UI
             if (Context == null || entry == null)
                 return;
 
-            Layout.BeginHorizontal();
-            Layout.Label(new GuiContentAdapter(entry.Name, entry.Description), Layout.Width(LayoutResource.GetLabelWidth(Context.Sheet)));
+            Context.UnityGuiService.BeginHorizontal();
+            Context.UnityGuiService.Label(Context.UnityGuiService.GetContent(entry.Name, entry.Description), Context.UnityGuiService.Width(Context.LabelWidth));
             RenderEntry(entry);
-            ResetButtonRenderer.Render(Context, Layout, entry);
-            Layout.EndHorizontal();
+            ResetButtonRenderer.Render(Context, entry);
+            Context.UnityGuiService.EndHorizontal();
 
             RenderAfterRow(entry);
         }
@@ -45,7 +41,7 @@ namespace BetterExperience.HConfigGUI.UI
 
     public class BoolRenderer : BaseEntryRenderer
     {
-        public BoolRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
+        public BoolRenderer(ViewModel context) : base(context) { }
 
         public override void RenderEntry(UiEntryModel entry)
         {
@@ -56,7 +52,7 @@ namespace BetterExperience.HConfigGUI.UI
                 return;
 
             bool value = (entry.CacheValue ?? entry.Value) as bool? ?? false;
-            var newValue = Layout.Toggle(value, value ? TranslatorResource.On : TranslatorResource.Off, Layout.ExpandWidth(true));
+            var newValue = Context.UnityGuiService.Toggle(value, value ? TranslatorResource.On : TranslatorResource.Off, Context.UnityGuiService.ExpandWidth(true));
             if (newValue != value)
             {
                 Context.SetValue(entry, newValue);
@@ -66,7 +62,7 @@ namespace BetterExperience.HConfigGUI.UI
 
     public class StringRenderer : BaseEntryRenderer
     {
-        public StringRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
+        public StringRenderer(ViewModel context) : base(context) { }
 
         public override void RenderEntry(UiEntryModel entry)
         {
@@ -77,7 +73,7 @@ namespace BetterExperience.HConfigGUI.UI
                 return;
 
             var value = (entry.CacheValue ?? entry.Value) as string ?? string.Empty;
-            var newValue = Layout.TextField(value, Layout.ExpandWidth(true));
+            var newValue = Context.UnityGuiService.TextField(value, Context.UnityGuiService.ExpandWidth(true));
             if (newValue != value)
             {
                 Context.SetValue(entry, newValue, Context.StringDuration);
@@ -87,7 +83,7 @@ namespace BetterExperience.HConfigGUI.UI
 
     public class NumberRenderer : BaseEntryRenderer
     {
-        public NumberRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
+        public NumberRenderer(ViewModel context) : base(context) { }
 
         public override void RenderEntry(UiEntryModel entry)
         {
@@ -109,7 +105,7 @@ namespace BetterExperience.HConfigGUI.UI
                 entry.CacheValueString = valueStr;
             }
 
-            var newValueStr = Layout.TextField(valueStr, Layout.ExpandWidth(true));
+            var newValueStr = Context.UnityGuiService.TextField(valueStr, Context.UnityGuiService.ExpandWidth(true));
             if (newValueStr != valueStr)
             {
                 entry.CacheValueString = newValueStr;
@@ -127,7 +123,7 @@ namespace BetterExperience.HConfigGUI.UI
     {
         private readonly Dictionary<UiEntryModel, (Array values, List<int> mapIndex, string[] names)> _cacheEnumInfo = new Dictionary<UiEntryModel, (Array values, List<int> mapIndex, string[] names)>();
 
-        public EnumRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
+        public EnumRenderer(ViewModel context) : base(context) { }
 
         public override void RenderEntry(UiEntryModel entry)
         {
@@ -138,7 +134,7 @@ namespace BetterExperience.HConfigGUI.UI
                 return;
 
             var value = (entry.CacheValue ?? entry.Value) as Enum;
-            var clicked = Layout.Button(EnumHelper.GetDescription(entry.ValueType, value), Layout.ExpandWidth(true));
+            var clicked = Context.UnityGuiService.Button(EnumHelper.GetDescription(entry.ValueType, value), Context.UnityGuiService.ExpandWidth(true));
             if (clicked)
                 Context.OpenedEnumEntry = Context.OpenedEnumEntry == entry ? null : entry;
         }
@@ -194,15 +190,15 @@ namespace BetterExperience.HConfigGUI.UI
             currentIndex = mapIndexList.IndexOf(currentIndex);
             currentIndex = currentIndex >= 0 ? currentIndex : 0;
 
-            Layout.BeginHorizontal();
-            Layout.Space(LayoutResource.GetLabelWidth(Context.Sheet));
+            Context.UnityGuiService.BeginHorizontal();
+            Context.UnityGuiService.Space(Context.LabelWidth);
 
-            Layout.BeginVertical(GuiStyleAdapter.BoxStyle);
-            int newIndex = Layout.SelectionGrid(currentIndex, names, 1, Layout.ExpandWidth(true));
-            Layout.EndVertical();
+            Context.UnityGuiService.BeginVertical(Context.UnityGuiService.BoxStyle);
+            int newIndex = Context.UnityGuiService.SelectionGrid(currentIndex, names, 1, Context.UnityGuiService.ExpandWidth(true));
+            Context.UnityGuiService.EndVertical();
 
-            Layout.Space(ResetButtonRenderer.GetWidth());
-            Layout.EndHorizontal();
+            Context.UnityGuiService.Space(ResetButtonRenderer.GetWidth(Context));
+            Context.UnityGuiService.EndHorizontal();
 
             if (currentIndex != newIndex)
             {
@@ -215,7 +211,7 @@ namespace BetterExperience.HConfigGUI.UI
 
     public class SliderRenderer : BaseEntryRenderer
     {
-        public SliderRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
+        public SliderRenderer(ViewModel context) : base(context) { }
 
         public override void RenderEntry(UiEntryModel entry)
         {
@@ -225,31 +221,34 @@ namespace BetterExperience.HConfigGUI.UI
             if (!entry.ValueType.IsPrimitive || entry.ValueType == typeof(bool) || entry.ValueType == typeof(char))
                 return;
 
+            var unityService = Context.UnityService;
+            var unityGuiService = Context.UnityGuiService;
+
             var metadata = entry.Metadata as UiSliderMetadata;
             if (metadata == null)
             {
-                Layout.Label(new GuiContentAdapter(TranslatorResource.InvalidSliderMetadata), Layout.ExpandWidth(true));
+                unityGuiService.Label(unityGuiService.GetContent(TranslatorResource.InvalidSliderMetadata), unityGuiService.ExpandWidth(true));
                 return;
             }
 
             var parseResult = Parser.Parse<float>(entry.CacheValue ?? entry.Value);
             var value = parseResult.Success ? parseResult.Value : metadata.Min;
-            var displayValue = MathHelper.Clamp(value, metadata.Min, metadata.Max);
-            var newSliderValue = Layout.HorizontalSlider(
+            var displayValue = unityService.Clamp(value, metadata.Min, metadata.Max);
+            var newSliderValue = unityGuiService.HorizontalSlider(
                 displayValue, 
                 metadata.Min,
                 metadata.Max,
-                StyleResource.Instance.SliderStyle,
-                StyleResource.Instance.SliderThumbStyle,
-                Layout.ExpandWidth(true));
+                Context.StyleResourceInstance.SliderStyle,
+                Context.StyleResourceInstance.SliderThumbStyle,
+                unityGuiService.ExpandWidth(true));
 
-            if (MathHelper.Approximately(displayValue, newSliderValue))
+            if (unityService.Approximately(displayValue, newSliderValue))
                 newSliderValue = value;
 
-            if (!MathHelper.Approximately(value, newSliderValue))
+            if (!unityService.Approximately(value, newSliderValue))
             {
                 if (metadata.Step > 0f)
-                    newSliderValue = MathHelper.Round(newSliderValue / metadata.Step) * metadata.Step;
+                    newSliderValue = unityService.Round(newSliderValue / metadata.Step) * metadata.Step;
 
                 entry.CacheValueString = Parser.Parse<string>(newSliderValue).Value;
 
@@ -268,7 +267,7 @@ namespace BetterExperience.HConfigGUI.UI
                 entry.CacheValueString = textValueStr;
             }
 
-            var newTextValueStr = Layout.TextField(textValueStr, Layout.MinWidth(50f), Layout.ExpandWidth(false));
+            var newTextValueStr = unityGuiService.TextField(textValueStr, unityGuiService.MinWidth(50f), unityGuiService.ExpandWidth(false));
 
             if (newTextValueStr != textValueStr)
             {
@@ -285,7 +284,7 @@ namespace BetterExperience.HConfigGUI.UI
 
     public class HotkeyRenderer : BaseEntryRenderer
     {
-        public HotkeyRenderer(ViewModel context, IGuiLayout layout) : base(context, layout) { }
+        public HotkeyRenderer(ViewModel context) : base(context) { }
 
         public override void RenderEntry(UiEntryModel entry)
         {
@@ -297,7 +296,7 @@ namespace BetterExperience.HConfigGUI.UI
 
             var value = (entry.CacheValue ?? entry.Value) as Hotkey;
             string displayText = value != null ? value.ToString() : string.Empty;
-            var clicked = Layout.Button(displayText, Layout.ExpandWidth(true));
+            var clicked = Context.UnityGuiService.Button(displayText, Context.UnityGuiService.ExpandWidth(true));
             if (clicked)
             {
                 ApplyHotkey();
@@ -326,22 +325,23 @@ namespace BetterExperience.HConfigGUI.UI
             Hotkey value;
             if (entry.CacheValue == null)
             {
-                value = new Hotkey(entry.Value as Hotkey) { Valid = false };
+                value = new Hotkey(entry.Value as Hotkey, Context.UnityService) { Valid = false };
                 entry.CacheValue = value;
             }
             else
                 value = entry.CacheValue as Hotkey;
 
+            var unityGuiService = Context.UnityGuiService;
             HotkeyChord needRemoveHotkey = null;
-            Layout.BeginHorizontal();
-            Layout.Space(LayoutResource.GetLabelWidth(Context.Sheet));
-            Layout.BeginVertical(GuiStyleAdapter.BoxStyle);
+            unityGuiService.BeginHorizontal();
+            unityGuiService.Space(Context.LabelWidth);
+            unityGuiService.BeginVertical(unityGuiService.BoxStyle);
             foreach (var hotkey in value.Hotkeys)
             {
-                Layout.BeginHorizontal();
+                unityGuiService.BeginHorizontal();
 
-                Layout.Button(hotkey.ToString(), Layout.ExpandWidth(true));
-                if (Layout.Button(Context.RecordingHotkey == hotkey ? TranslatorResource.Apply : TranslatorResource.Record, Layout.ExpandWidth(false)))
+                unityGuiService.Button(hotkey.ToString(), unityGuiService.ExpandWidth(true));
+                if (unityGuiService.Button(Context.RecordingHotkey == hotkey ? TranslatorResource.Apply : TranslatorResource.Record, unityGuiService.ExpandWidth(false)))
                 {
                     if (Context.RecordingHotkey == hotkey)
                     {
@@ -357,7 +357,7 @@ namespace BetterExperience.HConfigGUI.UI
                 }
                 if (value.Count > 1)
                 {
-                    if (Layout.Button(TranslatorResource.Remove, Layout.ExpandWidth(false)))
+                    if (unityGuiService.Button(TranslatorResource.Remove, unityGuiService.ExpandWidth(false)))
                     {
                         if (Context.RecordingHotkey == hotkey)
                         {
@@ -367,23 +367,23 @@ namespace BetterExperience.HConfigGUI.UI
                     }
                 }
 
-                Layout.EndHorizontal();
+                unityGuiService.EndHorizontal();
             }
             value.Remove(needRemoveHotkey);
 
-            Layout.BeginHorizontal();
+            unityGuiService.BeginHorizontal();
 
-            if (Layout.Button(TranslatorResource.Add, Layout.ExpandWidth(true)))
+            if (unityGuiService.Button(TranslatorResource.Add, unityGuiService.ExpandWidth(true)))
             {
-                var newHotkeyChord = new HotkeyChord();
+                var newHotkeyChord = new HotkeyChord(Context.UnityService);
                 value.Add(newHotkeyChord);
                 Context.RecordingHotkey = newHotkeyChord;
             }
 
-            Layout.EndHorizontal();
+            unityGuiService.EndHorizontal();
 
-            Layout.EndVertical();
-            Layout.EndHorizontal();
+            unityGuiService.EndVertical();
+            unityGuiService.EndHorizontal();
         }
 
         public void ApplyHotkey()
@@ -406,19 +406,19 @@ namespace BetterExperience.HConfigGUI.UI
 
     public static class ResetButtonRenderer
     {
-        public static void Render(ViewModel context, IGuiLayout layout, UiEntryModel entry)
+        public static void Render(ViewModel context, UiEntryModel entry)
         {
             if (context == null || entry == null)
                 return;
 
-            var clicked = layout.Button(TranslatorResource.Reset, layout.ExpandWidth(false));
+            var clicked = context.UnityGuiService.Button(TranslatorResource.Reset, context.UnityGuiService.ExpandWidth(false));
             if (clicked)
                 context.ResetValue(entry);
         }
 
-        public static float GetWidth()
+        public static float GetWidth(ViewModel context)
         {
-            return GuiStyleAdapter.ButtonStyle.CalcSize(new GuiContentAdapter(TranslatorResource.Reset)).x;
+            return context.UnityGuiService.ButtonStyle.CalcSize(context.UnityGuiService.GetContent(TranslatorResource.Reset)).x;
         }
     }
 
@@ -426,7 +426,6 @@ namespace BetterExperience.HConfigGUI.UI
     {
 
         public ViewModel Context { get; }
-        private IGuiLayout Layout { get; }
 
         public BoolRenderer BoolEntryRenderer { get; }
         public StringRenderer StringEntryRenderer { get; }
@@ -435,17 +434,16 @@ namespace BetterExperience.HConfigGUI.UI
         public SliderRenderer SliderEntryRenderer { get; }
         public HotkeyRenderer HotkeyRenderer { get; }
 
-        public TableRenderer(ViewModel context, IGuiLayout layout)
+        public TableRenderer(ViewModel context)
         {
             Context = context;
-            Layout = layout;
 
-            BoolEntryRenderer = new BoolRenderer(context, layout);
-            StringEntryRenderer = new StringRenderer(context, layout);
-            NumberEntryRenderer = new NumberRenderer(context, layout);
-            EnumEntryRenderer = new EnumRenderer(context, layout);
-            SliderEntryRenderer = new SliderRenderer(context, layout);
-            HotkeyRenderer = new HotkeyRenderer(context, layout);
+            BoolEntryRenderer = new BoolRenderer(context);
+            StringEntryRenderer = new StringRenderer(context);
+            NumberEntryRenderer = new NumberRenderer(context);
+            EnumEntryRenderer = new EnumRenderer(context);
+            SliderEntryRenderer = new SliderRenderer(context);
+            HotkeyRenderer = new HotkeyRenderer(context);
         }
 
         public void Render(UiTableModel table)
@@ -453,10 +451,11 @@ namespace BetterExperience.HConfigGUI.UI
             if (Context == null || table == null)
                 return;
 
-            Layout.BeginVertical(GuiStyleAdapter.BoxStyle);
-            Layout.BeginHorizontal();
-            Layout.Label(new GuiContentAdapter(table.Name, table.Description), StyleResource.Instance.TableTitleStyle, Layout.ExpandWidth(true));
-            Layout.EndHorizontal();
+            var unityGuiService = Context.UnityGuiService;
+            unityGuiService.BeginVertical(unityGuiService.BoxStyle);
+            unityGuiService.BeginHorizontal();
+            unityGuiService.Label(unityGuiService.GetContent(table.Name, table.Description), Context.StyleResourceInstance.TableTitleStyle, unityGuiService.ExpandWidth(true));
+            unityGuiService.EndHorizontal();
 
             foreach (var entry in table)
             {
@@ -491,23 +490,21 @@ namespace BetterExperience.HConfigGUI.UI
                 }
             }
 
-            Layout.Space(10f);
-            Layout.EndVertical();
+            unityGuiService.Space(10f);
+            unityGuiService.EndVertical();
         }
     }
 
     public class SheetRenderer
     {
         public ViewModel Context { get; }
-        private IGuiLayout Layout { get; }
 
         public TableRenderer TableRenderer { get; }
 
-        public SheetRenderer(ViewModel context, IGuiLayout layout)
+        public SheetRenderer(ViewModel context)
         {
             Context = context;
-            Layout = layout;
-            TableRenderer = new TableRenderer(context, layout);
+            TableRenderer = new TableRenderer(context);
         }
 
         public void Render(UiSheetModel sheet)
@@ -518,7 +515,7 @@ namespace BetterExperience.HConfigGUI.UI
             foreach (var table in sheet)
             {
                 TableRenderer.Render(table);
-                Layout.Space(10f);
+                Context.UnityGuiService.Space(10f);
             }
         }
     }
@@ -540,26 +537,27 @@ namespace BetterExperience.HConfigGUI.UI
             if (string.IsNullOrEmpty(Context.ToastMessage))
                 return;
 
-            float remaining = Context.ToastEndTime - UnityTimeAdapter.RealtimeSinceStartup;
+            float remaining = Context.ToastEndTime - Context.UnityService.RealtimeSinceStartup;
             if (remaining <= 0f)
             {
                 Context.ToastMessage = null;
                 return;
             }
 
+            var unityGuiService = Context.UnityGuiService;
             float alpha = remaining < Context.ToastFadeDuration ? remaining / Context.ToastFadeDuration : 1f;
-            var previousColor = GuiAdapter.Color;
-            GuiAdapter.Color = new Color(1f, 1f, 1f, alpha);
+            var previousColor = unityGuiService.Color;
+            unityGuiService.Color = unityGuiService.GetColor(1f, 1f, 1f, alpha);
 
-            var content = new GuiContentAdapter(Context.ToastMessage);
-            var size = StyleResource.Instance.ToastStyle.CalcSize(content);
-            float toastWidth = MathHelper.Min(size.x + 20f, Context.WindowRect.width - 20f);
+            var content = unityGuiService.GetContent(Context.ToastMessage);
+            var size = Context.StyleResourceInstance.ToastStyle.CalcSize(content);
+            float toastWidth = Context.UnityService.Min(size.x + 20f, Context.WindowRect.width - 20f);
             float toastHeight = size.y + 4f;
             float x = (Context.WindowRect.width - toastWidth) / 2f;
-            float y = MathHelper.Max(0f, Context.WindowRect.height - toastHeight - 30f);
+            float y = Context.UnityService.Max(0f, Context.WindowRect.height - toastHeight - 30f);
 
-            GuiAdapter.Label(new Rect(x, y, toastWidth, toastHeight), content, StyleResource.Instance.ToastStyle.Style);
-            GuiAdapter.Color = previousColor;
+            unityGuiService.Label(unityGuiService.GetRect(x, y, toastWidth, toastHeight), content, Context.StyleResourceInstance.ToastStyle);
+            unityGuiService.Color = previousColor;
         }
     }
 
@@ -577,18 +575,20 @@ namespace BetterExperience.HConfigGUI.UI
             if (Context == null)
                 return;
 
-            if (string.IsNullOrEmpty(GuiAdapter.Tooltip))
+            var unityGuiService = Context.UnityGuiService;
+
+            if (string.IsNullOrEmpty(unityGuiService.Tooltip))
                 return;
 
-            var tooltipContent = new GuiContentAdapter(GuiAdapter.Tooltip);
+            var tooltipContent = unityGuiService.GetContent(unityGuiService.Tooltip);
             float maxTooltipWidth = Context.WindowRect.width * 0.6f;
-            float tooltipHeight = StyleResource.Instance.TooltipStyle.CalcHeight(tooltipContent, maxTooltipWidth);
+            float tooltipHeight = Context.StyleResourceInstance.TooltipStyle.CalcHeight(tooltipContent, maxTooltipWidth);
 
-            var mousePosition = UnityEventAdapter.Current.MousePosition;
-            float x = MathHelper.Clamp(mousePosition.x + 15f, 0f, Context.WindowRect.width - maxTooltipWidth);
-            float y = MathHelper.Clamp(mousePosition.y + 15f, 0f, Context.WindowRect.height - tooltipHeight);
+            var mousePosition = Context.UnityService.CurrentMousePosition;
+            float x = Context.UnityService.Clamp(mousePosition.x + 15f, 0f, Context.WindowRect.width - maxTooltipWidth);
+            float y = Context.UnityService.Clamp(mousePosition.y + 15f, 0f, Context.WindowRect.height - tooltipHeight);
 
-            GuiAdapter.Label(new Rect(x, y, maxTooltipWidth, tooltipHeight), tooltipContent, StyleResource.Instance.TooltipStyle.Style);
+            unityGuiService.Label(unityGuiService.GetRect(x, y, maxTooltipWidth, tooltipHeight), tooltipContent, Context.StyleResourceInstance.TooltipStyle);
         }
     }
 }

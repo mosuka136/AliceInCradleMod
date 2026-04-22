@@ -1,3 +1,4 @@
+using BetterExperience.HProvider;
 using BetterExperience.HConfigFileSpace;
 using BetterExperience.HotkeyManager;
 using BetterExperience.HTranslatorSpace;
@@ -62,10 +63,12 @@ namespace BetterExperience.BConfigManager
                 )
                 );
 
+            var unityService = new UnityProvider();
+
             ConfigUIHotkey = Config.Bind(
                 SectionHotkey,
                 nameof(ConfigUIHotkey),
-                new Hotkey("F1"),
+                new Hotkey("F1", unityService),
                 new Translator(chinese: "配置界面热键", english: "Config UI Hotkey"),
                 new Translator(
                     chinese: "打开配置界面的热键。默认是 F1。",
@@ -75,7 +78,7 @@ namespace BetterExperience.BConfigManager
             ReloadConfigHotkey = Config.Bind(
                 SectionHotkey,
                 nameof(ReloadConfigHotkey),
-                new Hotkey("Ctrl+R"),
+                new Hotkey("Ctrl+R", unityService),
                 new Translator(chinese: "重新加载配置热键", english: "Reload Config Hotkey"),
                 new Translator(
                     chinese: "重新加载配置的热键。默认值为 Ctrl+R。",
@@ -85,7 +88,7 @@ namespace BetterExperience.BConfigManager
             FlushAllStoreHotkey = Config.Bind(
                 SectionHotkey,
                 nameof(FlushAllStoreHotkey),
-                new Hotkey("F"),
+                new Hotkey("F", unityService),
                 new Translator(chinese: "刷新商店热键", english: "Flush All Store Hotkey"),
                 new Translator(
                     chinese: "一键刷新商店的热键。默认值为 F。",
@@ -95,7 +98,7 @@ namespace BetterExperience.BConfigManager
             FlushTextureHotkey = Config.Bind(
                 SectionHotkey,
                 nameof(FlushTextureHotkey),
-                new Hotkey("Ctrl+T"),
+                new Hotkey("Ctrl+T", unityService),
                 new Translator(chinese: "刷新贴图热键", english: "Flush Texture Hotkey"),
                 new Translator(
                     chinese: "一键刷新贴图的热键。默认值为 Ctrl+T。",

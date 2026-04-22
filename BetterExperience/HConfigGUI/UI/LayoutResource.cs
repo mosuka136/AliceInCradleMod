@@ -1,26 +1,30 @@
-using BetterExperience.HAdapter;
 using System;
 using System.Security;
 
 namespace BetterExperience.HConfigGUI.UI
 {
-    public static class LayoutResource
+    public class LayoutResource
     {
         private const float LabelWidthMargin = 10f;
         private const float FallbackCharacterWidth = 8f;
 
-        private static float _labelWidth = -1f;
+        private readonly ViewModel _context;
 
-        public static float GetLabelWidth(UiSheetModel sheet)
+        public LayoutResource(ViewModel context)
         {
-            if (_labelWidth > 0f)
-                return _labelWidth;
+            _context = context;
+        }
 
-            if (sheet == null || sheet.Sheet.Count == 0)
+        public float GetLabelWidth()
+        {
+            if (_context == null)
+                return 0f;
+
+            if (_context.Sheet == null || _context.Sheet.Sheet.Count == 0)
                 return 0f;
 
             float maxWidth = 0f;
-            foreach (var table in sheet.Sheet)
+            foreach (var table in _context.Sheet.Sheet)
             {
                 foreach (var entry in table.Table)
                 {
@@ -30,20 +34,14 @@ namespace BetterExperience.HConfigGUI.UI
                 }
             }
 
-            _labelWidth = maxWidth + LabelWidthMargin;
-            return _labelWidth;
+            return maxWidth + LabelWidthMargin;
         }
 
-        public static void InvalidateLayout()
-        {
-            _labelWidth = -1f;
-        }
-
-        private static float GetEntryLabelWidth(UiEntryModel entry)
+        private float GetEntryLabelWidth(UiEntryModel entry)
         {
             try
             {
-                return GuiStyleAdapter.LabelStyle.CalcSize(new GuiContentAdapter(entry.Name)).x;
+                return _context.UnityGuiService.LabelStyle.CalcSize(_context.UnityGuiService.GetContent(entry.Name)).x;
             }
             catch (Exception ex) when (ex is SecurityException || ex is InvalidOperationException)
             {

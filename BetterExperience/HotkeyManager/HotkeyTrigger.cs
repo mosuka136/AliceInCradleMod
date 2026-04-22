@@ -1,4 +1,4 @@
-using BetterExperience.HAdapter;
+using BetterExperience.HProvider;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,8 @@ namespace BetterExperience.HotkeyManager
 {
     public interface IHotkeyTrigger
     {
+        UnityProvider UnityService { get; }
+
         bool IsPressed();
         bool WasPressedThisFrame();
         bool TryParse(string token);
@@ -17,21 +19,23 @@ namespace BetterExperience.HotkeyManager
 
     public class KeyboardTrigger : IHotkeyTrigger
     {
+        public UnityProvider UnityService { get; }
         public Key Key { get; set; } = Key.None;
 
-        public KeyboardTrigger()
+        public KeyboardTrigger(UnityProvider unityService)
         {
-            
+            UnityService = unityService;
         }
 
-        public KeyboardTrigger(Key key)
+        public KeyboardTrigger(Key key, UnityProvider unityService)
         {
+            UnityService = unityService;
             Key = key;
         }
 
         public bool IsPressed()
         {
-            var kb = UnityInputAdapter.KeyboardCurrent;
+            var kb = UnityService.KeyboardCurrent;
             if (kb == null)
                 return false;
             return kb[Key].isPressed;
@@ -39,7 +43,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool WasPressedThisFrame()
         {
-            var kb = UnityInputAdapter.KeyboardCurrent;
+            var kb = UnityService.KeyboardCurrent;
             if (kb == null)
                 return false;
             return kb[Key].wasPressedThisFrame;
@@ -70,6 +74,7 @@ namespace BetterExperience.HotkeyManager
 
     public class KeyboardModifierTrigger : IHotkeyTrigger
     {
+        public UnityProvider UnityService { get; }
         public Key LeftKey { get; set; } = Key.None;
         public Key RightKey { get; set; } = Key.None;
         public bool IsAnySide { get; set; } = true;
@@ -85,16 +90,16 @@ namespace BetterExperience.HotkeyManager
         public static readonly List<string> LAltStr = new List<string>() { "LeftAlt", "LAlt" };
         public static readonly List<string> RAltStr = new List<string>() { "RightAlt", "RAlt" };
 
-        public static readonly KeyboardModifierTrigger Ctrl = new KeyboardModifierTrigger(Key.LeftCtrl, Key.RightCtrl, true, true);
-        public static readonly KeyboardModifierTrigger Shift = new KeyboardModifierTrigger(Key.LeftShift, Key.RightShift, true, true);
-        public static readonly KeyboardModifierTrigger Alt = new KeyboardModifierTrigger(Key.LeftAlt, Key.RightAlt, true, true);
+        public static readonly KeyboardModifierTrigger Ctrl = new KeyboardModifierTrigger(Key.LeftCtrl, Key.RightCtrl, true, true, null);
+        public static readonly KeyboardModifierTrigger Shift = new KeyboardModifierTrigger(Key.LeftShift, Key.RightShift, true, true, null);
+        public static readonly KeyboardModifierTrigger Alt = new KeyboardModifierTrigger(Key.LeftAlt, Key.RightAlt, true, true, null);
 
-        public KeyboardModifierTrigger()
+        public KeyboardModifierTrigger(UnityProvider unityService)
         {
-
+            UnityService = unityService;
         }
 
-        public KeyboardModifierTrigger(Key key)
+        public KeyboardModifierTrigger(Key key, UnityProvider unityService)
         {
             if (key == Key.LeftCtrl)
             {
@@ -132,11 +137,14 @@ namespace BetterExperience.HotkeyManager
                 IsLeftSide = true;
             }
 
+            UnityService = unityService;
             IsAnySide = false;
         }
 
-        public KeyboardModifierTrigger(Key leftKey, Key rightKey, bool isAnySide, bool isLeftSide)
+        public KeyboardModifierTrigger(Key leftKey, Key rightKey, bool isAnySide, bool isLeftSide, UnityProvider unityService)
         {
+            UnityService = unityService;
+
             LeftKey = leftKey;
             RightKey = rightKey;
             IsAnySide = isAnySide;
@@ -145,7 +153,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool IsPressed()
         {
-            var kb = UnityInputAdapter.KeyboardCurrent;
+            var kb = UnityService.KeyboardCurrent;
             if (kb == null)
                 return false;
 
@@ -157,7 +165,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool WasPressedThisFrame()
         {
-            var kb = UnityInputAdapter.KeyboardCurrent;
+            var kb = UnityService.KeyboardCurrent;
             if (kb == null)
                 return false;
 
@@ -317,6 +325,7 @@ namespace BetterExperience.HotkeyManager
 
     public class GamepadTrigger : IHotkeyTrigger
     {
+        public UnityProvider UnityService { get; }
         public GamepadButton Button { get; set; } = GamepadButton.A;
 
         public const string Prefix = "Gamepad";
@@ -336,19 +345,20 @@ namespace BetterExperience.HotkeyManager
         public static readonly List<string> DpadLeftStr = new List<string>() { "DpadLeft" };
         public static readonly List<string> DpadRightStr = new List<string>() { "DpadRight" };
 
-        public GamepadTrigger()
+        public GamepadTrigger(UnityProvider unityService)
         {
-            
+            UnityService = unityService;
         }
 
-        public GamepadTrigger(GamepadButton button)
+        public GamepadTrigger(GamepadButton button, UnityProvider unityService)
         {
+            UnityService = unityService;
             Button = button;
         }
 
         public bool IsPressed()
         {
-            var gp = UnityInputAdapter.GamepadCurrent;
+            var gp = UnityService.GamepadCurrent;
             if (gp == null)
                 return false;
             return gp[Button].isPressed;
@@ -356,7 +366,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool WasPressedThisFrame()
         {
-            var gp = UnityInputAdapter.GamepadCurrent;
+            var gp = UnityService.GamepadCurrent;
             if (gp == null)
                 return false;
             return gp[Button].wasPressedThisFrame;

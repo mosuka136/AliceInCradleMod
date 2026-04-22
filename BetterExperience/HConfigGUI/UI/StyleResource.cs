@@ -1,32 +1,31 @@
-using BetterExperience.HAdapter;
 using UnityEngine;
-using Color = UnityEngine.Color;
 
 namespace BetterExperience.HConfigGUI.UI
 {
     public class StyleResource
     {
-        private StyleResource()
+        private readonly ViewModel _context;
+
+        public StyleResource(ViewModel context)
         {
-            
+            _context = context;
         }
-        public static StyleResource Instance { get; } = new StyleResource();
 
-        private GuiStyleAdapter _tableTitleStyle;
-        private GuiStyleAdapter _tooltipStyle;
-        private GuiStyleAdapter _sliderStyle;
-        private GuiStyleAdapter _sliderThumbStyle;
-        private GuiStyleAdapter _toastStyle;
+        private GUIStyle _tableTitleStyle;
+        private GUIStyle _tooltipStyle;
+        private GUIStyle _sliderStyle;
+        private GUIStyle _sliderThumbStyle;
+        private GUIStyle _toastStyle;
 
-        public GuiStyleAdapter TableTitleStyle => _tableTitleStyle ?? (_tableTitleStyle = CreateTableTitleStyle());
-        public GuiStyleAdapter TooltipStyle => _tooltipStyle ?? (_tooltipStyle = CreateTooltipStyle());
-        public GuiStyleAdapter SliderStyle => _sliderStyle ?? (_sliderStyle = CreateSliderStyle());
-        public GuiStyleAdapter SliderThumbStyle => _sliderThumbStyle ?? (_sliderThumbStyle = CreateSliderThumbStyle());
-        public GuiStyleAdapter ToastStyle => _toastStyle ?? (_toastStyle = CreateToastStyle());
+        public GUIStyle TableTitleStyle => _tableTitleStyle ?? (_tableTitleStyle = CreateTableTitleStyle());
+        public GUIStyle TooltipStyle => _tooltipStyle ?? (_tooltipStyle = CreateTooltipStyle());
+        public GUIStyle SliderStyle => _sliderStyle ?? (_sliderStyle = CreateSliderStyle());
+        public GUIStyle SliderThumbStyle => _sliderThumbStyle ?? (_sliderThumbStyle = CreateSliderThumbStyle());
+        public GUIStyle ToastStyle => _toastStyle ?? (_toastStyle = CreateToastStyle());
 
-        private GuiStyleAdapter CreateTableTitleStyle()
+        private GUIStyle CreateTableTitleStyle()
         {
-            return new GUIStyle(GuiStyleAdapter.LabelStyle.Style)
+            return new GUIStyle(_context.UnityGuiService.LabelStyle)
             {
                 alignment = TextAnchor.MiddleCenter,
                 fontStyle = FontStyle.Bold,
@@ -34,9 +33,9 @@ namespace BetterExperience.HConfigGUI.UI
             };
         }
 
-        private GuiStyleAdapter CreateTooltipStyle()
+        private GUIStyle CreateTooltipStyle()
         {
-            var style = new GUIStyle(GuiStyleAdapter.BoxStyle.Style)
+            var style = new GUIStyle(_context.UnityGuiService.BoxStyle)
             {
                 wordWrap = true,
                 alignment = TextAnchor.MiddleCenter,
@@ -47,9 +46,9 @@ namespace BetterExperience.HConfigGUI.UI
             return style;
         }
 
-        private GuiStyleAdapter CreateSliderStyle()
+        private GUIStyle CreateSliderStyle()
         {
-            var baseStyle = GuiStyleAdapter.HorizontalSlider.Style;
+            var baseStyle = _context.UnityGuiService.HorizontalSliderStyle;
             return new GUIStyle(baseStyle)
             {
                 margin = new RectOffset(baseStyle.margin.left, baseStyle.margin.right, 6, 6),
@@ -57,9 +56,9 @@ namespace BetterExperience.HConfigGUI.UI
             };
         }
 
-        private GuiStyleAdapter CreateSliderThumbStyle()
+        private GUIStyle CreateSliderThumbStyle()
         {
-            return new GUIStyle(GuiStyleAdapter.HorizontalSliderThumb.Style)
+            return new GUIStyle(_context.UnityGuiService.HorizontalSliderThumbStyle)
             {
                 margin = new RectOffset(0, 0, 2, 0),
                 fixedWidth = 17f,
@@ -67,9 +66,9 @@ namespace BetterExperience.HConfigGUI.UI
             };
         }
 
-        private GuiStyleAdapter CreateToastStyle()
+        private GUIStyle CreateToastStyle()
         {
-            var style = new GUIStyle(GuiStyleAdapter.BoxStyle.Style)
+            var style = new GUIStyle(_context.UnityGuiService.BoxStyle)
             {
                 alignment = TextAnchor.MiddleCenter,
                 padding = new RectOffset(10, 10, 6, 6)

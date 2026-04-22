@@ -1,12 +1,12 @@
 using BepInEx.Logging;
 
-namespace BetterExperience.HAdapter
+namespace BetterExperience.HProvider
 {
-    public class BepInExAdapter
+    public class BepInExLoggerProvider
     {
         public ManualLogSource Logger { get; }
 
-        public BepInExAdapter(ManualLogSource logSource)
+        public BepInExLoggerProvider(ManualLogSource logSource)
         {
             Logger = logSource;
         }

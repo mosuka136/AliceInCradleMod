@@ -1,11 +1,12 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HAdapter;
+using BetterExperience.HProvider;
 using BetterExperience.HConfigGUI.UI;
 using BetterExperience.HotkeyManager;
 using BetterExperience.HTranslatorSpace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 
 namespace BetterExperience.HConfigGUI
@@ -14,7 +15,14 @@ namespace BetterExperience.HConfigGUI
     {
         private readonly Dictionary<UiEntryModel, float> _entryDelayApplyTime = new Dictionary<UiEntryModel, float>();
 
+        public UnityProvider UnityService { get; private set; }
+        public UnityGuiProvider UnityGuiService { get; private set; }
+
+        public StyleResource StyleResourceInstance { get; private set; }
+        public LayoutResource LayoutResourceInstance { get; private set; }
+
         public Rect WindowRect { get; set; }
+        public float LabelWidth { get; set; } = -1f;
 
         public UiSheetModel Sheet { get; }
         public UiEntryModel OpenedEnumEntry { get; set; }
@@ -31,6 +39,12 @@ namespace BetterExperience.HConfigGUI
 
         public ViewModel()
         {
+            UnityService = new UnityProvider();
+            UnityGuiService = new UnityGuiProvider();
+
+            StyleResourceInstance = new StyleResource(this);
+            LayoutResourceInstance = new LayoutResource(this);
+
             Sheet = new UiSheetModel();
 
             ConfigUIHotkey = ConfigManager.ConfigUIHotkey.Value;
@@ -40,7 +54,7 @@ namespace BetterExperience.HConfigGUI
             ConfigManager.SetLanguage.OnValueChanged += (s, e) =>
             {
                 Translator.DefaultLanguage = e;
-                LayoutResource.InvalidateLayout();
+                LabelWidth = -1f;
             };
         }
 
@@ -79,7 +93,7 @@ namespace BetterExperience.HConfigGUI
             if (recordingHotkey.Modifiers == null)
                 recordingHotkey.Modifiers = new List<IHotkeyTrigger>();
 
-            var gamepad = UnityInputAdapter.GamepadCurrent;
+            var gamepad = UnityService.GamepadCurrent;
             if (gamepad != null)
             {
                 foreach (GamepadButton button in Enum.GetValues(typeof(GamepadButton)))
@@ -87,13 +101,13 @@ namespace BetterExperience.HConfigGUI
                     var gamepadButtonControl = gamepad[button];
                     if (gamepadButtonControl != null && gamepadButtonControl.wasPressedThisFrame)
                     {
-                        recordingHotkey.MainKey = new GamepadTrigger(button);
+                        recordingHotkey.MainKey = new GamepadTrigger(button, UnityService);
                         return;
                     }
                 }
             }
 
-            var keyboard = UnityInputAdapter.KeyboardCurrent;
+            var keyboard = UnityService.KeyboardCurrent;
             if (keyboard == null)
                 return;
 
@@ -113,7 +127,7 @@ namespace BetterExperience.HConfigGUI
 
                 if (key.wasPressedThisFrame)
                 {
-                    recordingHotkey.MainKey = new KeyboardTrigger(key.keyCode);
+                    recordingHotkey.MainKey = new KeyboardTrigger(key.keyCode, UnityService);
                     return;
                 }
             }
@@ -147,7 +161,7 @@ namespace BetterExperience.HConfigGUI
         public void ShowToast(string message, float duration)
         {
             ToastMessage = message;
-            ToastEndTime = UnityTimeAdapter.RealtimeSinceStartup + duration;
+            ToastEndTime = UnityService.RealtimeSinceStartup + duration;
         }
     }
 }

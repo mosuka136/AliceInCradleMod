@@ -1,3 +1,4 @@
+using BetterExperience.HProvider;
 using BetterExperience.HConfigFileSpace;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,11 @@ namespace BetterExperience.HotkeyManager
 {
     public class Hotkey : IConfigEntryAdapter
     {
+        private static readonly UnityProvider _defaultUnityService = new UnityProvider();
+
         public const char Separator = ',';
+
+        public UnityProvider UnityService { get; }
 
         public List<HotkeyChord> Hotkeys { get; set; }
 
@@ -17,29 +22,40 @@ namespace BetterExperience.HotkeyManager
 
         public Hotkey()
         {
+            UnityService = _defaultUnityService;
             Hotkeys = new List<HotkeyChord>();
         }
 
-        public Hotkey(string hotkey)
+        public Hotkey(UnityProvider unityService)
         {
+            UnityService = unityService;
+            Hotkeys = new List<HotkeyChord>();
+        }
+
+        public Hotkey(string hotkey, UnityProvider unityService)
+        {
+            UnityService = unityService;
             Hotkeys = new List<HotkeyChord>();
             if (!TryParse(hotkey))
                 throw new ArgumentException($"Invalid hotkey string: {hotkey}");
         }
 
-        public Hotkey(Hotkey hotkey)
+        public Hotkey(Hotkey hotkey, UnityProvider unityService)
         {
-            Hotkeys = hotkey.Hotkeys.Select(h => new HotkeyChord(h.MainKey, h.Modifiers.ToArray())).ToList();
+            UnityService = unityService;
+            Hotkeys = hotkey.Hotkeys.Select(h => new HotkeyChord(UnityService, h.MainKey, h.Modifiers.ToArray())).ToList();
         }
 
-        public Hotkey(params HotkeyChord[] hotkeys)
+        public Hotkey(UnityProvider unityService, params HotkeyChord[] hotkeys)
         {
+            UnityService = unityService;
             Hotkeys = hotkeys.ToList();
         }
 
-        public Hotkey(IHotkeyTrigger main, params IHotkeyTrigger[] modifiers)
+        public Hotkey(UnityProvider unityService, IHotkeyTrigger main, params IHotkeyTrigger[] modifiers)
         {
-            var chord = new HotkeyChord(main, modifiers);
+            UnityService = unityService;
+            var chord = new HotkeyChord(UnityService, main, modifiers);
             Hotkeys = new List<HotkeyChord> { chord };
         }
 
@@ -103,7 +119,7 @@ namespace BetterExperience.HotkeyManager
                 if (string.IsNullOrWhiteSpace(chordStr))
                     continue;
 
-                var chord = new HotkeyChord();
+                var chord = new HotkeyChord(UnityService);
                 if (!chord.TryParse(chordStr))
                     return false;
                 Hotkeys.Add(chord);

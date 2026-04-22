@@ -1,3 +1,4 @@
+using BetterExperience.HProvider;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,17 +10,21 @@ namespace BetterExperience.HotkeyManager
     {
         public const char Separator = '+';
 
+        public UnityProvider UnityService { get; }
+
         public List<IHotkeyTrigger> Modifiers { get; set; }
         public IHotkeyTrigger MainKey { get; set; }
         public bool IsValid => MainKey != null;
 
-        public HotkeyChord()
+        public HotkeyChord(UnityProvider unityService)
         {
+            UnityService = unityService;
             Modifiers = new List<IHotkeyTrigger>();
         }
 
-        public HotkeyChord(IHotkeyTrigger main, params IHotkeyTrigger[] modifiers)
+        public HotkeyChord(UnityProvider unityService, IHotkeyTrigger main, params IHotkeyTrigger[] modifiers)
         {
+            UnityService = unityService;
             MainKey = main;
             Modifiers = modifiers.ToList();
         }
@@ -82,7 +87,7 @@ namespace BetterExperience.HotkeyManager
                 return;
             }
 
-            Modifiers.Add(new KeyboardModifierTrigger(key));
+            Modifiers.Add(new KeyboardModifierTrigger(key, UnityService));
         }
 
         public void ClearModifiers()
@@ -110,9 +115,9 @@ namespace BetterExperience.HotkeyManager
             if (parts.Count == 0)
                 return false;
 
-            var keyboardTrigger = new KeyboardTrigger();
-            var keyboardModifierTrigger = new KeyboardModifierTrigger();
-            var gamepadTrigger = new GamepadTrigger();
+            var keyboardTrigger = new KeyboardTrigger(UnityService);
+            var keyboardModifierTrigger = new KeyboardModifierTrigger(UnityService);
+            var gamepadTrigger = new GamepadTrigger(UnityService);
 
             if (keyboardTrigger.TryParse(parts.Last()))
             {
@@ -122,7 +127,7 @@ namespace BetterExperience.HotkeyManager
                 {
                     if (!keyboardModifierTrigger.TryParse(parts[i]))
                         return false;
-                    var modifier = new KeyboardModifierTrigger();
+                    var modifier = new KeyboardModifierTrigger(UnityService);
                     keyboardModifierTrigger.CopyTo(modifier);
                     Modifiers.Add(modifier);
                 }
@@ -137,7 +142,7 @@ namespace BetterExperience.HotkeyManager
             Modifiers.Clear();
             for (int i = 0; i < parts.Count - 1; i++)
             {
-                var modifier = new GamepadTrigger();
+                var modifier = new GamepadTrigger(UnityService);
                 if (!modifier.TryParse(parts[i]))
                     return false;
                 Modifiers.Add(modifier);

@@ -1080,7 +1080,7 @@ namespace BetterExperience.Test
             renderer.RenderEntry(entry);
 
             // Assert
-            mockLayout.Verify(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiLayoutOptionAdapter>()), Times.Never);
+            mockLayout.Verify(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiLayoutOptionAdapter>()), Times.Never);
         }
 
         [Fact]
@@ -1095,7 +1095,7 @@ namespace BetterExperience.Test
             renderer.RenderEntry(null);
 
             // Assert
-            mockLayout.Verify(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiLayoutOptionAdapter>()), Times.Never);
+            mockLayout.Verify(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiLayoutOptionAdapter>()), Times.Never);
         }
 
         [Fact]
@@ -1111,7 +1111,7 @@ namespace BetterExperience.Test
             renderer.RenderEntry(entry);
 
             // Assert
-            mockLayout.Verify(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiLayoutOptionAdapter>()), Times.Never);
+            mockLayout.Verify(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiLayoutOptionAdapter>()), Times.Never);
         }
 
         [Fact]
@@ -1127,7 +1127,7 @@ namespace BetterExperience.Test
             renderer.RenderEntry(entry);
 
             // Assert
-            mockLayout.Verify(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiLayoutOptionAdapter>()), Times.Never);
+            mockLayout.Verify(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiLayoutOptionAdapter>()), Times.Never);
         }
 
         [Fact]
@@ -1143,7 +1143,7 @@ namespace BetterExperience.Test
             renderer.RenderEntry(entry);
 
             // Assert
-            mockLayout.Verify(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiLayoutOptionAdapter>()), Times.Never);
+            mockLayout.Verify(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiLayoutOptionAdapter>()), Times.Never);
         }
 
         [Fact]
@@ -1173,7 +1173,7 @@ namespace BetterExperience.Test
             var mockLayoutOption = new Mock<GuiLayoutOptionAdapter>(null);
             mockLayout.Setup(l => l.ExpandWidth(It.IsAny<bool>())).Returns(mockLayoutOption.Object);
             mockLayout.Setup(l => l.MinWidth(It.IsAny<float>())).Returns(mockLayoutOption.Object);
-            mockLayout.Setup(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiLayoutOptionAdapter>())).Returns(50f);
+            mockLayout.Setup(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiLayoutOptionAdapter>())).Returns(50f);
             mockLayout.Setup(l => l.TextField(It.IsAny<string>(), It.IsAny<GuiLayoutOptionAdapter[]>())).Returns((string s, GuiLayoutOptionAdapter[] opts) => s);
             var renderer = new SliderRenderer(context, mockLayout.Object);
             var metadata = new UiSliderMetadata(0f, 100f, 1f);
@@ -1193,7 +1193,7 @@ namespace BetterExperience.Test
             var mockLayoutOption = new Mock<GuiLayoutOptionAdapter>(null);
             mockLayout.Setup(l => l.ExpandWidth(It.IsAny<bool>())).Returns(mockLayoutOption.Object);
             mockLayout.Setup(l => l.MinWidth(It.IsAny<float>())).Returns(mockLayoutOption.Object);
-            mockLayout.Setup(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiLayoutOptionAdapter>())).Returns(50f);
+            mockLayout.Setup(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiLayoutOptionAdapter>())).Returns(50f);
             mockLayout.Setup(l => l.TextField(It.IsAny<string>(), It.IsAny<GuiLayoutOptionAdapter[]>())).Returns((string s, GuiLayoutOptionAdapter[] opts) => s);
             var renderer = new SliderRenderer(context, mockLayout.Object);
             var metadata = new UiSliderMetadata(0f, 100f, 1f);
@@ -1693,7 +1693,7 @@ namespace BetterExperience.Test
             renderer.Render(table);
 
             // Assert
-            mockLayout.Verify(l => l.BeginVertical(It.IsAny<GuiStyleAdapter>()), Times.Never);
+            mockLayout.Verify(l => l.BeginVertical(It.IsAny<GuiStyleProvider>()), Times.Never);
         }
 
         [Fact]
@@ -1708,7 +1708,7 @@ namespace BetterExperience.Test
             renderer.Render(null);
 
             // Assert
-            mockLayout.Verify(l => l.BeginVertical(It.IsAny<GuiStyleAdapter>()), Times.Never);
+            mockLayout.Verify(l => l.BeginVertical(It.IsAny<GuiStyleProvider>()), Times.Never);
         }
 
         [Fact]
@@ -1762,7 +1762,7 @@ namespace BetterExperience.Test
             mockLayout.Setup(l => l.ExpandWidth(It.IsAny<bool>())).Returns(mockLayoutOption.Object);
             mockLayout.Setup(l => l.Width(It.IsAny<float>())).Returns(mockLayoutOption.Object);
             mockLayout.Setup(l => l.MinWidth(It.IsAny<float>())).Returns(mockLayoutOption.Object);
-            mockLayout.Setup(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiStyleAdapter>(), It.IsAny<GuiLayoutOptionAdapter>())).Returns(5.0f);
+            mockLayout.Setup(l => l.HorizontalSlider(It.IsAny<float>(), It.IsAny<float>(), It.IsAny<float>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiStyleProvider>(), It.IsAny<GuiLayoutOptionAdapter>())).Returns(5.0f);
             mockLayout.Setup(l => l.TextField(It.IsAny<string>(), It.IsAny<GuiLayoutOptionAdapter[]>())).Returns("5");
             var renderer = new TableRenderer(context, mockLayout.Object);
             var metadata = new UiSliderMetadata(0f, 10f, 1f);
