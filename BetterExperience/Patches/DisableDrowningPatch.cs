@@ -8,7 +8,7 @@ namespace BetterExperience.Patches
     public partial class HPatches
     {
         [HarmonyPatch]
-        public class DisableDrowning
+        public class DisableDrowningPatch
         {
             [HarmonyPostfix]
             [HarmonyPatch(typeof(M2PrMistApplier), "applyGasDamage")]

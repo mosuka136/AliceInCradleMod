@@ -2,13 +2,13 @@ using BetterExperience.HTranslatorSpace;
 using System;
 using System.IO;
 
-namespace BetterExperience.HConfigFileSpace
+namespace BetterExperience.HConfigSpace
 {
     public class ConfigFileManager
     {
         public bool SaveOnConfigSet { get; set; } = true;
 
-        public ConfigFileSheetModel FileSheet { get; private set; }
+        public ConfigFileSheet FileSheet { get; private set; }
 
         public ConfigSheet Sheet { get; private set; }
 
@@ -29,13 +29,13 @@ namespace BetterExperience.HConfigFileSpace
             {
                 if (!File.Exists(FilePath))
                 {
-                    FileSheet = new ConfigFileSheetModel();
+                    FileSheet = new ConfigFileSheet();
                     return true;
                 }
 
                 var content = File.ReadAllText(FilePath).Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
                 int index = 0;
-                var decodeResult = ConfigFileSheetModel.DecodeSheet(content, ref index);
+                var decodeResult = ConfigFileSheet.DecodeSheet(content, ref index);
                 if (!decodeResult.Success)
                 {
                     foreach (var error in decodeResult.Errors)
@@ -124,13 +124,13 @@ namespace BetterExperience.HConfigFileSpace
                         HLog.Error(error.GetFullMessage(), null, string.Empty, string.Empty, 0);
                     throw new ArgumentException($"Config table not found: {tableKey}.", nameof(tableKey));
                 }
-                var newEntry = new ConfigFileEntryModel();
+                var newEntry = new ConfigFileEntry();
 
-                if (!ConfigFileEntryModel.IsValidKeyName(key))
+                if (!ConfigFileEntry.IsValidKeyName(key))
                     throw new ArgumentException($"Invalid key name for config entry: {tableKey}.{key}.", nameof(key));
                 newEntry.Key = key;
 
-                var valueResult = ConfigFileEntryModel.EncodeValue(defaultValue);
+                var valueResult = ConfigFileEntry.EncodeValue(defaultValue);
                 if (!valueResult.Success)
                 {
                     foreach (var error in valueResult.Errors)
@@ -166,7 +166,7 @@ namespace BetterExperience.HConfigFileSpace
                 return;
             }
 
-            var newTableResult = ConfigFileSheetModel.CreateTable(tableKey, description);
+            var newTableResult = ConfigFileSheet.CreateTable(tableKey, description);
             if (!newTableResult.Success)
             {
                 foreach (var error in newTableResult.Errors)

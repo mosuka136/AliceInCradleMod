@@ -1,7 +1,7 @@
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 using BetterExperience.HTranslatorSpace;
 
-namespace BetterExperience.Test.HConfigFileSpace
+namespace BetterExperience.Test.HConfigSpace
 {
     public class ConfigFileEntryModelTests
     {
@@ -12,7 +12,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(sbyte);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -26,7 +26,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(short);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -40,7 +40,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(byte);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -54,7 +54,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(ushort);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -68,7 +68,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(uint);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -82,7 +82,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(ulong);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -96,7 +96,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(double);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -110,7 +110,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(List<int>);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -124,7 +124,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(TestAdapterWithFailure);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.False(result.Success);
@@ -138,7 +138,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(TestAdapterThatThrows);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.False(result.Success);
@@ -153,7 +153,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "InvalidContentWithoutEquals";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.False(result.Success);
@@ -168,7 +168,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "Invalid Key! = value";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.False(result.Success);
@@ -183,7 +183,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "validKey =   ";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.False(result.Success);
@@ -195,7 +195,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeAcceptableValues_WithEnumType_ReturnsEnumValues()
         {
             // Arrange & Act
-            var result = ConfigFileEntryModel.EncodeAcceptableValues<TestEnum>();
+            var result = ConfigFileEntry.EncodeAcceptableValues<TestEnum>();
 
             // Assert
             Assert.True(result.Success);
@@ -211,7 +211,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var value = "42";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeValue<int>(value);
+            var result = ConfigFileEntry.DecodeValue<int>(value);
 
             // Assert
             Assert.True(result.Success);
@@ -229,7 +229,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("描述", "Description");
 
             // Act
-            var result = ConfigFileEntryModel.CreateEntry(key, value, defaultValue, name, description);
+            var result = ConfigFileEntry.CreateEntry(key, value, defaultValue, name, description);
 
             // Assert
             Assert.True(result.Success);
@@ -246,7 +246,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "# key = value";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.False(result.Success);
@@ -261,7 +261,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "key = value";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.True(result.Success);
@@ -276,7 +276,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(string);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -290,7 +290,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(int);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -304,7 +304,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(long);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -318,7 +318,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(float);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -332,7 +332,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(bool);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -346,7 +346,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(TestEnum);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -360,7 +360,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(ConfigFileEntryModelTests);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.False(result.Success);
@@ -375,7 +375,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(TestAdapterWithSuccess);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -393,7 +393,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("描述", "Description");
 
             // Act
-            var result = ConfigFileEntryModel.CreateEntry(key, value, defaultValue, name, description);
+            var result = ConfigFileEntry.CreateEntry(key, value, defaultValue, name, description);
 
             // Assert
             Assert.False(result.Success);
@@ -408,7 +408,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "  key  =  value  ";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.True(result.Success);
@@ -423,7 +423,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "key = value = extra";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.True(result.Success);
@@ -438,7 +438,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(int[]);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -449,7 +449,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeAcceptableValues_WithNonEnumType_ReturnsFailure()
         {
             // Arrange & Act
-            var result = ConfigFileEntryModel.EncodeAcceptableValues<int>();
+            var result = ConfigFileEntry.EncodeAcceptableValues<int>();
 
             // Assert
             Assert.False(result.Success);
@@ -464,7 +464,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var value = "not_a_number";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeValue<int>(value);
+            var result = ConfigFileEntry.DecodeValue<int>(value);
 
             // Assert
             Assert.False(result.Success);
@@ -478,7 +478,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(List<string>);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -496,7 +496,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("描述", "Description");
 
             // Act
-            var result = ConfigFileEntryModel.CreateEntry(key, value, defaultValue, name, description);
+            var result = ConfigFileEntry.CreateEntry(key, value, defaultValue, name, description);
 
             // Assert
             Assert.False(result.Success);
@@ -511,7 +511,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             string value = null;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeValue<int>(value);
+            var result = ConfigFileEntry.DecodeValue<int>(value);
 
             // Assert
             Assert.False(result.Success);
@@ -525,7 +525,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var value = "   ";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeValue<int>(value);
+            var result = ConfigFileEntry.DecodeValue<int>(value);
 
             // Assert
             Assert.False(result.Success);
@@ -539,7 +539,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.False(result.Success);
@@ -554,7 +554,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "=";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.False(result.Success);
@@ -565,7 +565,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeAcceptableValues_WithEnumInArray_ReturnsEnumValues()
         {
             // Arrange & Act
-            var result = ConfigFileEntryModel.EncodeAcceptableValues<List<TestEnum>>();
+            var result = ConfigFileEntry.EncodeAcceptableValues<List<TestEnum>>();
 
             // Assert
             Assert.True(result.Success);
@@ -581,7 +581,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(TestEnum[]);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -595,7 +595,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var value = "true";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeValue<bool>(value);
+            var result = ConfigFileEntry.DecodeValue<bool>(value);
 
             // Assert
             Assert.True(result.Success);
@@ -609,7 +609,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var value = "\"test string\"";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeValue<string>(value);
+            var result = ConfigFileEntry.DecodeValue<string>(value);
 
             // Assert
             Assert.True(result.Success);
@@ -627,7 +627,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("描述", "Description");
 
             // Act
-            var result = ConfigFileEntryModel.CreateEntry(key, value, defaultValue, name, description);
+            var result = ConfigFileEntry.CreateEntry(key, value, defaultValue, name, description);
 
             // Assert
             Assert.True(result.Success);
@@ -647,7 +647,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             Translator description = null;
 
             // Act
-            var result = ConfigFileEntryModel.CreateEntry(key, value, defaultValue, name, description);
+            var result = ConfigFileEntry.CreateEntry(key, value, defaultValue, name, description);
 
             // Assert
             Assert.True(result.Success);
@@ -663,7 +663,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "key123 = value";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.True(result.Success);
@@ -678,7 +678,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "key_test = value";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.True(result.Success);
@@ -690,7 +690,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeValueType_GenericMethod_WithInt_ReturnsInt32()
         {
             // Arrange & Act
-            var result = ConfigFileEntryModel.EncodeValueType<int>();
+            var result = ConfigFileEntry.EncodeValueType<int>();
 
             // Assert
             Assert.True(result.Success);
@@ -701,7 +701,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeValueType_GenericMethod_WithString_ReturnsString()
         {
             // Arrange & Act
-            var result = ConfigFileEntryModel.EncodeValueType<string>();
+            var result = ConfigFileEntry.EncodeValueType<string>();
 
             // Assert
             Assert.True(result.Success);
@@ -715,7 +715,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var value = "0";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeValue<int>(value);
+            var result = ConfigFileEntry.DecodeValue<int>(value);
 
             // Assert
             Assert.True(result.Success);
@@ -729,7 +729,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var value = "-42";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeValue<int>(value);
+            var result = ConfigFileEntry.DecodeValue<int>(value);
 
             // Assert
             Assert.True(result.Success);
@@ -747,7 +747,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("描述", "Description");
 
             // Act
-            var result = ConfigFileEntryModel.CreateEntry(key, value, defaultValue, name, description);
+            var result = ConfigFileEntry.CreateEntry(key, value, defaultValue, name, description);
 
             // Assert
             Assert.True(result.Success);
@@ -767,7 +767,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("描述", "Description");
 
             // Act
-            var result = ConfigFileEntryModel.CreateEntry(key, value, defaultValue, name, description);
+            var result = ConfigFileEntry.CreateEntry(key, value, defaultValue, name, description);
 
             // Assert
             Assert.True(result.Success);
@@ -783,7 +783,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(int[]);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -797,7 +797,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var type = typeof(List<string>);
 
             // Act
-            var result = ConfigFileEntryModel.EncodeValueType(type);
+            var result = ConfigFileEntry.EncodeValueType(type);
 
             // Assert
             Assert.True(result.Success);
@@ -811,7 +811,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var content = "key = value with spaces";
 
             // Act
-            var result = ConfigFileEntryModel.DecodeKeyValuePair(content);
+            var result = ConfigFileEntry.DecodeKeyValuePair(content);
 
             // Assert
             Assert.True(result.Success);
@@ -827,7 +827,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.True(result.Success);
@@ -843,7 +843,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -859,7 +859,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -875,7 +875,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -891,7 +891,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -907,7 +907,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -923,7 +923,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.True(result.Success);
@@ -939,7 +939,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 5;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -955,7 +955,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -971,7 +971,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.True(result.Success);
@@ -986,7 +986,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -1001,7 +1001,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.True(result.Success);
@@ -1017,7 +1017,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 1;
 
             // Act
-            var result = ConfigFileEntryModel.DecodeEntry(content, ref index);
+            var result = ConfigFileEntry.DecodeEntry(content, ref index);
 
             // Assert
             Assert.True(result.Success);

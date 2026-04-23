@@ -1,4 +1,4 @@
-namespace BetterExperience.HConfigFileSpace
+namespace BetterExperience.HConfigSpace
 {
     public interface IConfigEntryAdapter
     {

@@ -1,5 +1,5 @@
 using BetterExperience.HProvider;
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 using BetterExperience.HotkeyManager;
 using BetterExperience.HTranslatorSpace;
 

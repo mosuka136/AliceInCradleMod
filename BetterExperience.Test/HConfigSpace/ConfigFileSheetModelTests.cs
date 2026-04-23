@@ -1,7 +1,7 @@
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 using BetterExperience.HTranslatorSpace;
 
-namespace BetterExperience.Test.HConfigFileSpace
+namespace BetterExperience.Test.HConfigSpace
 {
     public class ConfigFileSheetModelTests
     {
@@ -9,9 +9,9 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void AddTable_WithInvalidTableName_ReturnsFailureWithInvalidTableNameError()
         {
             // Arrange
-            var sheet = new ConfigFileSheetModel();
+            var sheet = new ConfigFileSheet();
             var invalidTableName = "";
-            var table = new ConfigFileTableModel("validName", new Translator("中文", "English"));
+            var table = new ConfigFileTable("validName", new Translator("中文", "English"));
 
             // Act
             var result = sheet.AddTable(invalidTableName, table);
@@ -27,9 +27,9 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void AddTable_WithNullTable_ReturnsFailureWithTableNotFoundError()
         {
             // Arrange
-            var sheet = new ConfigFileSheetModel();
+            var sheet = new ConfigFileSheet();
             var tableKey = "validTable";
-            ConfigFileTableModel table = null;
+            ConfigFileTable table = null;
 
             // Act
             var result = sheet.AddTable(tableKey, table);
@@ -46,9 +46,9 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void AddTable_WithValidTableAndKey_AddsTableSuccessfully()
         {
             // Arrange
-            var sheet = new ConfigFileSheetModel();
+            var sheet = new ConfigFileSheet();
             var tableKey = "validTable";
-            var table = new ConfigFileTableModel(tableKey, new Translator("中文", "English"));
+            var table = new ConfigFileTable(tableKey, new Translator("中文", "English"));
 
             // Act
             var result = sheet.AddTable(tableKey, table);
@@ -63,10 +63,10 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void AddTable_WithDuplicateTableName_ReturnsFailureWithInvalidTableNameError()
         {
             // Arrange
-            var sheet = new ConfigFileSheetModel();
+            var sheet = new ConfigFileSheet();
             var tableKey = "duplicateTable";
-            var table1 = new ConfigFileTableModel(tableKey, new Translator("中文1", "English1"));
-            var table2 = new ConfigFileTableModel(tableKey, new Translator("中文2", "English2"));
+            var table1 = new ConfigFileTable(tableKey, new Translator("中文1", "English1"));
+            var table2 = new ConfigFileTable(tableKey, new Translator("中文2", "English2"));
             sheet.AddTable(tableKey, table1);
 
             // Act
@@ -84,7 +84,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void GetEntry_WithNonExistentTable_ReturnsFailureWithTableNotFoundError()
         {
             // Arrange
-            var sheet = new ConfigFileSheetModel();
+            var sheet = new ConfigFileSheet();
             var tableKey = "nonExistentTable";
             var entryKey = "someKey";
 
@@ -103,9 +103,9 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void GetEntry_WithExistingTable_ReturnsEntryFromTable()
         {
             // Arrange
-            var sheet = new ConfigFileSheetModel();
+            var sheet = new ConfigFileSheet();
             var tableKey = "testTable";
-            var table = new ConfigFileTableModel(tableKey, new Translator("中文", "English"));
+            var table = new ConfigFileTable(tableKey, new Translator("中文", "English"));
             sheet.AddTable(tableKey, table);
 
             var entryKey = "testEntry";
@@ -127,7 +127,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("中文", "English");
 
             // Act
-            var result = ConfigFileSheetModel.CreateTable(invalidTableName, description);
+            var result = ConfigFileSheet.CreateTable(invalidTableName, description);
 
             // Assert
             Assert.False(result.Success);
@@ -144,7 +144,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("中文", "English");
 
             // Act
-            var result = ConfigFileSheetModel.CreateTable(tableName, description);
+            var result = ConfigFileSheet.CreateTable(tableName, description);
 
             // Assert
             Assert.True(result.Success);
@@ -156,7 +156,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeSheet_WithEmptySheet_ReturnsEmptyString()
         {
             // Arrange
-            var sheet = new ConfigFileSheetModel();
+            var sheet = new ConfigFileSheet();
 
             // Act
             var result = sheet.EncodeSheet();
@@ -170,9 +170,9 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeSheet_WithSuccessfulTables_ReturnsEncodedContent()
         {
             // Arrange
-            var sheet = new ConfigFileSheetModel();
-            var table1 = new ConfigFileTableModel("table1", new Translator("表1", "Table1"));
-            var table2 = new ConfigFileTableModel("table2", new Translator("表2", "Table2"));
+            var sheet = new ConfigFileSheet();
+            var table1 = new ConfigFileTable("table1", new Translator("表1", "Table1"));
+            var table2 = new ConfigFileTable("table2", new Translator("表2", "Table2"));
             sheet.AddTable(table1);
             sheet.AddTable(table2);
 
@@ -188,10 +188,10 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeSheet_WithTableEncodingError_AddsErrorsToResult()
         {
             // Arrange
-            var sheet = new ConfigFileSheetModel();
+            var sheet = new ConfigFileSheet();
             
             // Create a table and then corrupt its Key to make EncodeTable fail
-            var table = new ConfigFileTableModel("validTable", new Translator("表1", "Table1"));
+            var table = new ConfigFileTable("validTable", new Translator("表1", "Table1"));
             table.Key = "";  // Invalid key will cause EncodeTableHeader to fail
 
             sheet.Sheet.Add("validTable", table);
@@ -215,7 +215,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileSheetModel.DecodeSheet(content, ref index);
+            var result = ConfigFileSheet.DecodeSheet(content, ref index);
 
             // Assert
             Assert.True(result.Success);
@@ -238,7 +238,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileSheetModel.DecodeSheet(content, ref index);
+            var result = ConfigFileSheet.DecodeSheet(content, ref index);
 
             // Assert
             Assert.True(result.Success);
@@ -271,7 +271,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileSheetModel.DecodeSheet(content, ref index);
+            var result = ConfigFileSheet.DecodeSheet(content, ref index);
 
             // Assert
             Assert.NotNull(result.Value);
@@ -296,7 +296,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileSheetModel.DecodeSheet(content, ref index);
+            var result = ConfigFileSheet.DecodeSheet(content, ref index);
 
             // Assert
             // Should break and return the model even with errors
@@ -318,7 +318,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileSheetModel.DecodeSheet(content, ref index);
+            var result = ConfigFileSheet.DecodeSheet(content, ref index);
 
             // Assert
             Assert.NotNull(result.Value);

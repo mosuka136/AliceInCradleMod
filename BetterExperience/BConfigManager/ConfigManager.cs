@@ -1,5 +1,5 @@
 using BetterExperience.HClassAttribute;
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 using BetterExperience.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager

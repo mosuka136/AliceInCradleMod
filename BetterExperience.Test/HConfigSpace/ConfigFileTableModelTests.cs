@@ -1,7 +1,7 @@
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 using BetterExperience.HTranslatorSpace;
 
-namespace BetterExperience.Test.HConfigFileSpace
+namespace BetterExperience.Test.HConfigSpace
 {
     public class ConfigFileTableModelTests
     {
@@ -13,7 +13,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("描述", "Description");
 
             // Act
-            var model = new ConfigFileTableModel(tableKey, description);
+            var model = new ConfigFileTable(tableKey, description);
 
             // Assert
             Assert.Equal(tableKey, model.Key);
@@ -28,7 +28,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("描述", "Description");
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => new ConfigFileTableModel(invalidTableKey, description));
+            var exception = Assert.Throws<ArgumentException>(() => new ConfigFileTable(invalidTableKey, description));
             Assert.Contains("Invalid table name", exception.Message);
             Assert.Equal("tableKey", exception.ParamName);
         }
@@ -41,7 +41,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("描述", "Description");
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => new ConfigFileTableModel(nullTableKey, description));
+            var exception = Assert.Throws<ArgumentException>(() => new ConfigFileTable(nullTableKey, description));
             Assert.Contains("Invalid table name", exception.Message);
             Assert.Equal("tableKey", exception.ParamName);
         }
@@ -54,7 +54,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var description = new Translator("描述", "Description");
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => new ConfigFileTableModel(emptyTableKey, description));
+            var exception = Assert.Throws<ArgumentException>(() => new ConfigFileTable(emptyTableKey, description));
             Assert.Contains("Invalid table name", exception.Message);
             Assert.Equal("tableKey", exception.ParamName);
         }
@@ -63,8 +63,8 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void AddEntry_WithNullEntry_ReturnsFailureResult()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator());
-            ConfigFileEntryModel nullEntry = null;
+            var model = new ConfigFileTable("TestTable", new Translator());
+            ConfigFileEntry nullEntry = null;
 
             // Act
             var result = model.AddEntry(nullEntry);
@@ -80,9 +80,9 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void AddEntry_WithDuplicateKey_ReturnsFailureResult()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator());
-            var entry1 = new ConfigFileEntryModel { Key = "TestKey", Value = "Value1" };
-            var entry2 = new ConfigFileEntryModel { Key = "TestKey", Value = "Value2" };
+            var model = new ConfigFileTable("TestTable", new Translator());
+            var entry1 = new ConfigFileEntry { Key = "TestKey", Value = "Value1" };
+            var entry2 = new ConfigFileEntry { Key = "TestKey", Value = "Value2" };
             model.AddEntry(entry1);
 
             // Act
@@ -99,8 +99,8 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void AddEntry_WithValidEntry_AddsEntryAndReturnsSuccess()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator());
-            var entry = new ConfigFileEntryModel { Key = "TestKey", Value = "TestValue" };
+            var model = new ConfigFileTable("TestTable", new Translator());
+            var entry = new ConfigFileEntry { Key = "TestKey", Value = "TestValue" };
 
             // Act
             var result = model.AddEntry(entry);
@@ -115,7 +115,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeName_WithNullName_ReturnsEmptyString()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator());
+            var model = new ConfigFileTable("TestTable", new Translator());
             model.Name = null;
 
             // Act
@@ -130,7 +130,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeName_WithEmptyStringInName_SkipsEmptyString()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator());
+            var model = new ConfigFileTable("TestTable", new Translator());
             model.Name = new Translator("", "TestName");
 
             // Act
@@ -146,7 +146,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeName_WithValidName_ReturnsFormattedName()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator());
+            var model = new ConfigFileTable("TestTable", new Translator());
             model.Name = new Translator("测试名称", "TestName");
 
             // Act
@@ -163,7 +163,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeDescription_WithNullDescription_ReturnsEmptyString()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", null);
+            var model = new ConfigFileTable("TestTable", null);
 
             // Act
             var result = model.EncodeDescription();
@@ -177,7 +177,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeDescription_WithValidDescription_ReturnsFormattedDescription()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator("测试描述", "Test Description"));
+            var model = new ConfigFileTable("TestTable", new Translator("测试描述", "Test Description"));
 
             // Act
             var result = model.EncodeDescription();
@@ -193,7 +193,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeDescription_WithEmptyStringInDescription_SkipsEmptyString()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator("", "Description"));
+            var model = new ConfigFileTable("TestTable", new Translator("", "Description"));
 
             // Act
             var result = model.EncodeDescription();
@@ -207,7 +207,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeDescription_WithMultilineDescription_FormatsEachLine()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator("Line1\nLine2\rLine3\r\nLine4", "Description"));
+            var model = new ConfigFileTable("TestTable", new Translator("Line1\nLine2\rLine3\r\nLine4", "Description"));
 
             // Act
             var result = model.EncodeDescription();
@@ -224,7 +224,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeTable_WithValidTableHeaderFailure_ReturnsFailureResult()
         {
             // Arrange
-            var model = new ConfigFileTableModel("ValidTable", new Translator());
+            var model = new ConfigFileTable("ValidTable", new Translator());
             model.Key = null;
 
             // Act
@@ -239,8 +239,8 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeTable_WithEntryEncodingFailure_CollectsErrorsButContinues()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator());
-            var entry = new ConfigFileEntryModel { Key = "TestKey", Value = "" };
+            var model = new ConfigFileTable("TestTable", new Translator());
+            var entry = new ConfigFileEntry { Key = "TestKey", Value = "" };
             model.AddEntry(entry);
 
             // Act
@@ -258,7 +258,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeTable_WithNoNameAndNoDescription_EncodesTableHeaderOnly()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator());
+            var model = new ConfigFileTable("TestTable", new Translator());
 
             // Act
             var result = model.EncodeTable();
@@ -272,7 +272,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeTable_WithNameAndDescription_EncodesAll()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator("描述", "Description"));
+            var model = new ConfigFileTable("TestTable", new Translator("描述", "Description"));
             model.Name = new Translator("名称", "Name");
 
             // Act
@@ -289,9 +289,9 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void EncodeTable_WithEntries_EncodesEntriesWithBlankLines()
         {
             // Arrange
-            var model = new ConfigFileTableModel("TestTable", new Translator());
-            var entry1 = new ConfigFileEntryModel { Key = "Key1", Value = "Value1" };
-            var entry2 = new ConfigFileEntryModel { Key = "Key2", Value = "Value2" };
+            var model = new ConfigFileTable("TestTable", new Translator());
+            var entry1 = new ConfigFileEntry { Key = "Key1", Value = "Value1" };
+            var entry2 = new ConfigFileEntry { Key = "Key2", Value = "Value2" };
             model.AddEntry(entry1);
             model.AddEntry(entry2);
 
@@ -312,7 +312,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTableHeader(content, ref index);
+            var result = ConfigFileTable.DecodeTableHeader(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -328,7 +328,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTableHeader(content, ref index);
+            var result = ConfigFileTable.DecodeTableHeader(content, ref index);
 
             // Assert
             Assert.True(result.Success);
@@ -343,7 +343,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTableHeader(content, ref index);
+            var result = ConfigFileTable.DecodeTableHeader(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -359,7 +359,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTableHeader(content, ref index);
+            var result = ConfigFileTable.DecodeTableHeader(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -375,7 +375,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTableHeader(content, ref index);
+            var result = ConfigFileTable.DecodeTableHeader(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -392,7 +392,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTableHeader(content, ref index);
+            var result = ConfigFileTable.DecodeTableHeader(content, ref index);
 
             // Assert
             Assert.True(result.Success);
@@ -413,7 +413,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTable(content, ref index);
+            var result = ConfigFileTable.DecodeTable(content, ref index);
 
             // Assert
             Assert.True(result.Success);
@@ -430,7 +430,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTable(content, ref index);
+            var result = ConfigFileTable.DecodeTable(content, ref index);
 
             // Assert
             Assert.False(result.Success);
@@ -450,7 +450,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTable(content, ref index);
+            var result = ConfigFileTable.DecodeTable(content, ref index);
 
             // Assert
             Assert.NotNull(result.Value);
@@ -472,7 +472,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTable(content, ref index);
+            var result = ConfigFileTable.DecodeTable(content, ref index);
 
             // Assert
             Assert.NotNull(result.Value);
@@ -488,7 +488,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTable(content, ref index);
+            var result = ConfigFileTable.DecodeTable(content, ref index);
 
             // Assert
             Assert.True(result.Success);
@@ -510,7 +510,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTable(content, ref index);
+            var result = ConfigFileTable.DecodeTable(content, ref index);
 
             // Assert
             Assert.True(result.Success);
@@ -533,7 +533,7 @@ namespace BetterExperience.Test.HConfigFileSpace
             var index = 0;
 
             // Act
-            var result = ConfigFileTableModel.DecodeTable(content, ref index);
+            var result = ConfigFileTable.DecodeTable(content, ref index);
 
             // Assert
             Assert.NotNull(result.Value);

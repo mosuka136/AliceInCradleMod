@@ -5,16 +5,16 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 
-namespace BetterExperience.HConfigFileSpace
+namespace BetterExperience.HConfigSpace
 {
-    public class ConfigFileTableModel
+    public class ConfigFileTable
     {
         public Translator Name { get; set; }
         public Translator Description { get; set; }
         public string Key { get; set; }
         public OrderedDictionary Table { get; private set; } = new OrderedDictionary();
 
-        public ConfigFileTableModel(string tableKey, Translator description)
+        public ConfigFileTable(string tableKey, Translator description)
         {
             if (IsValidTableName(tableKey))
                 Key = tableKey;
@@ -23,23 +23,23 @@ namespace BetterExperience.HConfigFileSpace
             Description = description;
         }
 
-        public ConfigFileResult<ConfigFileTableModel> AddEntry(ConfigFileEntryModel entry)
+        public ConfigFileResult<ConfigFileTable> AddEntry(ConfigFileEntry entry)
         {
             if (entry == null)
-                return ConfigFileResult<ConfigFileTableModel>.Fail(new ConfigFileError(ConfigFileErrorCode.EntryNotFound, "Entry cannot be null"));
+                return ConfigFileResult<ConfigFileTable>.Fail(new ConfigFileError(ConfigFileErrorCode.EntryNotFound, "Entry cannot be null"));
 
             if (Table.Contains(entry.Key))
-                return ConfigFileResult<ConfigFileTableModel>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidKeyName, $"Duplicate key: {entry.Key}"));
+                return ConfigFileResult<ConfigFileTable>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidKeyName, $"Duplicate key: {entry.Key}"));
 
             Table.Add(entry.Key, entry);
             return this;
         }
 
-        public ConfigFileResult<ConfigFileEntryModel> GetEntry(string key)
+        public ConfigFileResult<ConfigFileEntry> GetEntry(string key)
         {
             if (Table.Contains(key))
-                return (ConfigFileEntryModel)Table[key];
-            return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.EntryNotFound, $"Entry not found: {key}"));
+                return (ConfigFileEntry)Table[key];
+            return ConfigFileResult<ConfigFileEntry>.Fail(new ConfigFileError(ConfigFileErrorCode.EntryNotFound, $"Entry not found: {key}"));
         }
 
         public ConfigFileResult<string> EncodeName()
@@ -105,7 +105,7 @@ namespace BetterExperience.HConfigFileSpace
 
             foreach (var entry in Table.Values)
             {
-                var entryResult = ((ConfigFileEntryModel)entry).EncodeEntry();
+                var entryResult = ((ConfigFileEntry)entry).EncodeEntry();
                 if (entryResult.Success)
                     sb.AppendLine(entryResult.Value);
                 else
@@ -126,26 +126,26 @@ namespace BetterExperience.HConfigFileSpace
             return false;
         }
 
-        public static ConfigFileResult<ConfigFileTableModel> Create(string tableName, Translator description)
+        public static ConfigFileResult<ConfigFileTable> Create(string tableName, Translator description)
         {
             if (!IsValidTableName(tableName))
-                return ConfigFileResult<ConfigFileTableModel>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidTableName, $"Invalid table name: {tableName}"));
-            var table = new ConfigFileTableModel(tableName, description);
+                return ConfigFileResult<ConfigFileTable>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidTableName, $"Invalid table name: {tableName}"));
+            var table = new ConfigFileTable(tableName, description);
             return table;
         }
 
-        public static ConfigFileResult<ConfigFileTableModel> DecodeTable(string[] content, ref int index)
+        public static ConfigFileResult<ConfigFileTable> DecodeTable(string[] content, ref int index)
         {
             var headerResult = DecodeTableHeader(content, ref index);
             if (!headerResult.Success)
-                return ConfigFileResult<ConfigFileTableModel>.Fail(headerResult.Errors);
+                return ConfigFileResult<ConfigFileTable>.Fail(headerResult.Errors);
 
-            var table = new ConfigFileTableModel(headerResult.Value.Key, headerResult.Value.Description);
-            var result = new ConfigFileResult<ConfigFileTableModel>(table, true, null);
+            var table = new ConfigFileTable(headerResult.Value.Key, headerResult.Value.Description);
+            var result = new ConfigFileResult<ConfigFileTable>(table, true, null);
 
             for (var i = index; index < content.Length && !DecodeTableHeader(content, ref i).Success; i = index)
             {
-                var entryResult = ConfigFileEntryModel.DecodeEntry(content, ref index);
+                var entryResult = ConfigFileEntry.DecodeEntry(content, ref index);
                 if (entryResult.Success)
                 {
                     var entryAddResult = table.AddEntry(entryResult.Value);
@@ -164,7 +164,7 @@ namespace BetterExperience.HConfigFileSpace
             return result;
         }
 
-        public static ConfigFileResult<ConfigFileTableModel> DecodeTableHeader(string[] content, ref int index)
+        public static ConfigFileResult<ConfigFileTable> DecodeTableHeader(string[] content, ref int index)
         {
             for (; index < content.Length; index++)
             {
@@ -179,15 +179,15 @@ namespace BetterExperience.HConfigFileSpace
                     var tableName = line.Substring(1, line.Length - 2);
                     var tableResult = Create(tableName, new Translator());
                     if (!tableResult.Success)
-                        return ConfigFileResult<ConfigFileTableModel>.Fail(tableResult.Errors);
+                        return ConfigFileResult<ConfigFileTable>.Fail(tableResult.Errors);
                     return tableResult;
                 }
 
                 index++;
-                return ConfigFileResult<ConfigFileTableModel>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidTableHeader, $"Invalid table header: {line}"));
+                return ConfigFileResult<ConfigFileTable>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidTableHeader, $"Invalid table header: {line}"));
             }
 
-            return ConfigFileResult<ConfigFileTableModel>.Fail(new ConfigFileError(ConfigFileErrorCode.EndOfContent, "No more content to process"));
+            return ConfigFileResult<ConfigFileTable>.Fail(new ConfigFileError(ConfigFileErrorCode.EndOfContent, "No more content to process"));
         }
     }
 }

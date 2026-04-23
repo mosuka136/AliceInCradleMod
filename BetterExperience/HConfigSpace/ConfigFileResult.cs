@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace BetterExperience.HConfigFileSpace
+namespace BetterExperience.HConfigSpace
 {
     public class ConfigFileResult<T>
     {

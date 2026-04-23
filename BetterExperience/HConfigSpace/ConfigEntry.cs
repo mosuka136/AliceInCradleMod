@@ -2,7 +2,7 @@ using BetterExperience.HTranslatorSpace;
 using System;
 using System.Collections;
 
-namespace BetterExperience.HConfigFileSpace
+namespace BetterExperience.HConfigSpace
 {
     public interface IConfigEntry
     {
@@ -10,14 +10,14 @@ namespace BetterExperience.HConfigFileSpace
         Translator Description { get; }
         string TableName { get; }
         string Key { get; }
-        ConfigFileEntryModel Entry { get; }
+        ConfigFileEntry Entry { get; }
         Type ValueType { get; }
         object BoxedValue { get; set; }
         object BoxedDefaultValue { get; }
 
         event EventHandler OnValueChangedBase;
 
-        void RebindEntry(ConfigFileEntryModel entry);
+        void RebindEntry(ConfigFileEntry entry);
     }
 
     public class ConfigEntry<T> : IConfigEntry
@@ -32,7 +32,7 @@ namespace BetterExperience.HConfigFileSpace
                 if (Equal(value, _value))
                     return;
 
-                var valueResult = ConfigFileEntryModel.EncodeValue(value);
+                var valueResult = ConfigFileEntry.EncodeValue(value);
                 if (!valueResult.Success)
                 {
                     foreach (var error in valueResult.Errors)
@@ -52,7 +52,7 @@ namespace BetterExperience.HConfigFileSpace
         public string TableName { get; private set; }
         public string Key => Entry.Key;
         public T DefaultValue { get; private set; }
-        public ConfigFileEntryModel Entry { get; private set; }
+        public ConfigFileEntry Entry { get; private set; }
 
         public Type ValueType => typeof(T);
 
@@ -76,12 +76,12 @@ namespace BetterExperience.HConfigFileSpace
 
         }
 
-        public ConfigEntry(string tableKey, ConfigFileEntryModel entry, T defaultValue) :
+        public ConfigEntry(string tableKey, ConfigFileEntry entry, T defaultValue) :
             this(tableKey, entry, defaultValue, entry.Name, entry.Description)
         {
         }
 
-        public ConfigEntry(string tableKey, ConfigFileEntryModel entry, T defaultValue, Translator name, Translator description)
+        public ConfigEntry(string tableKey, ConfigFileEntry entry, T defaultValue, Translator name, Translator description)
         {
             if (entry == null)
                 throw new ArgumentNullException(nameof(entry));
@@ -89,7 +89,7 @@ namespace BetterExperience.HConfigFileSpace
             entry.Name = name;
             entry.Description = description;
 
-            var valueTypeResult = ConfigFileEntryModel.EncodeValueType<T>();
+            var valueTypeResult = ConfigFileEntry.EncodeValueType<T>();
             if (!valueTypeResult.Success)
             {
                 foreach (var error in valueTypeResult.Errors)
@@ -98,11 +98,11 @@ namespace BetterExperience.HConfigFileSpace
             }
             entry.ValueType = valueTypeResult.Value;
 
-            var acceptableValuesResult = ConfigFileEntryModel.EncodeAcceptableValues<T>();
+            var acceptableValuesResult = ConfigFileEntry.EncodeAcceptableValues<T>();
             if (acceptableValuesResult.Success)
                 entry.AcceptableValues = acceptableValuesResult.Value;
 
-            var defaultValueResult = ConfigFileEntryModel.EncodeValue(defaultValue);
+            var defaultValueResult = ConfigFileEntry.EncodeValue(defaultValue);
             if (!defaultValueResult.Success)
             {
                 foreach (var error in defaultValueResult.Errors)
@@ -111,10 +111,10 @@ namespace BetterExperience.HConfigFileSpace
             }
             entry.DefaultValue = defaultValueResult.Value;
 
-            if (!ConfigFileEntryModel.IsValidKeyName(entry.Key))
+            if (!ConfigFileEntry.IsValidKeyName(entry.Key))
                 throw new InvalidOperationException($"Invalid key name: {entry.Key}");
 
-            if (!ConfigFileTableModel.IsValidTableName(tableKey))
+            if (!ConfigFileTable.IsValidTableName(tableKey))
                 throw new InvalidOperationException($"Invalid table name: {tableKey}");
 
             TableName = tableKey;
@@ -122,11 +122,11 @@ namespace BetterExperience.HConfigFileSpace
             RebindEntry(entry);
         }
 
-        public void RebindEntry(ConfigFileEntryModel entry)
+        public void RebindEntry(ConfigFileEntry entry)
         {
             if (entry == null)
                 return;
-            var decodeResult = ConfigFileEntryModel.DecodeValue<T>(entry.Value);
+            var decodeResult = ConfigFileEntry.DecodeValue<T>(entry.Value);
             if (!decodeResult.Success)
             {
                 foreach (var error in decodeResult.Errors)

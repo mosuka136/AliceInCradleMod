@@ -1,4 +1,4 @@
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 using BetterExperience.HConfigGUI;
 using BetterExperience.HTranslatorSpace;
 using Moq;

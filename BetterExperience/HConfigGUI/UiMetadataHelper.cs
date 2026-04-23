@@ -1,6 +1,6 @@
 using BetterExperience.BConfigManager;
 using BetterExperience.HClassAttribute;
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 
 namespace BetterExperience.HConfigGUI
 {

@@ -1,6 +1,6 @@
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 
-namespace BetterExperience.Test.HConfigFileSpace
+namespace BetterExperience.Test.HConfigSpace
 {
     public class ConfigFileResultTests
     {

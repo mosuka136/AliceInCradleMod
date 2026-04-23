@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace BetterExperience.HConfigFileSpace
+namespace BetterExperience.HConfigSpace
 {
     public class ConfigSheet : IEnumerable<KeyValuePair<string, ConfigTable>>
     {

@@ -11,7 +11,7 @@ namespace BetterExperience.Patches
     public partial class HPatches
     {
          [HarmonyPatch]
-         public class RemoveLimitInBenchMenu
+         public class RemoveLimitInBenchMenuPatch
          {
             static IEnumerable<MethodBase> TargetMethods()
             {

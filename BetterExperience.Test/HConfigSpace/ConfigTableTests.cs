@@ -1,9 +1,9 @@
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 using BetterExperience.HTranslatorSpace;
 using Moq;
 using System.Collections;
 
-namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
+namespace BetterExperience.Test.HConfigSpace
 {
     public class ConfigTableTests
     {
@@ -12,7 +12,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var invalidKey = "invalid-key";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             var name = new Translator("Name");
             var description = new Translator("Desc");
 
@@ -27,7 +27,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var validKey = "Valid_Table";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             var name = new Translator("Name");
             var description = new Translator("Desc");
 
@@ -50,7 +50,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var validKey = "Valid_Table";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             Translator name = null;
             var description = new Translator("Desc");
 
@@ -66,7 +66,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var validKey = "Valid_Table";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             var name = new Translator("Name");
             Translator description = null;
 
@@ -82,7 +82,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var validKey = "Valid_Table";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             var configTable = new ConfigTable(validKey, table, new Translator("Name"), new Translator("Desc"));
 
             // Act
@@ -97,7 +97,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var validKey = "Valid_Table";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             var configTable = new ConfigTable(validKey, table, new Translator("Name"), new Translator("Desc"));
             var mockEntry = new Mock<IConfigEntry>();
 
@@ -114,7 +114,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var validKey = "Valid_Table";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             var configTable = new ConfigTable(validKey, table, new Translator("Name"), new Translator("Desc"));
             var mockEntry1 = new Mock<IConfigEntry>();
             var mockEntry2 = new Mock<IConfigEntry>();
@@ -134,7 +134,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var validKey = "Valid_Table";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             var configTable = new ConfigTable(validKey, table, new Translator("Name"), new Translator("Desc"));
             var mockEntry1 = new Mock<IConfigEntry>();
             var mockEntry2 = new Mock<IConfigEntry>();
@@ -159,7 +159,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var validKey = "Valid_Table";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             var configTable = new ConfigTable(validKey, table, new Translator("Name"), new Translator("Desc"));
             var mockEntry1 = new Mock<IConfigEntry>();
             var mockEntry2 = new Mock<IConfigEntry>();
@@ -185,7 +185,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var validKey = "Valid_Table";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             var configTable = new ConfigTable(validKey, table, new Translator("Name"), new Translator("Desc"));
 
             // Act
@@ -200,7 +200,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var validKey = "Valid_Table";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             var configTable = new ConfigTable(validKey, table, new Translator("Name"), new Translator("Desc"));
 
             // Act
@@ -220,7 +220,7 @@ namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
         {
             // Arrange
             var validKey = "Valid_Table";
-            var table = new ConfigFileTableModel("table", new Translator(string.Empty));
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
             var configTable = new ConfigTable(validKey, table, new Translator("Name"), new Translator("Desc"));
             var mockEntry = new Mock<IConfigEntry>();
             configTable.Add(mockEntry.Object);

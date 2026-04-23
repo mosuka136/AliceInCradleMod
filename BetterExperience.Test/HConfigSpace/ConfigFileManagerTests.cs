@@ -1,7 +1,7 @@
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 using BetterExperience.HTranslatorSpace;
 
-namespace BetterExperience.Test.HConfigFileSpace
+namespace BetterExperience.Test.HConfigSpace
 {
     public class ConfigFileManagerTests : IDisposable
     {
@@ -113,7 +113,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         {
             var tempPath = CreateTempConfigPath();
             var manager = new ConfigFileManager(tempPath);
-            var table = new ConfigFileTableModel("Test", new Translator());
+            var table = new ConfigFileTable("Test", new Translator());
             manager.FileSheet.AddTable(table);
             table.Key = "Invalid-Table-Name!";
 

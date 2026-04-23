@@ -1,7 +1,7 @@
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 using BetterExperience.HTranslatorSpace;
 
-namespace BetterExperience.Test.HConfigFileSpace
+namespace BetterExperience.Test.HConfigSpace
 {
     public class ConfigSheetTests
     {
@@ -637,7 +637,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         private ConfigTable CreateMockConfigTable(string key)
         {
             var translator = new Translator("中文", "English");
-            var tableModel = new ConfigFileTableModel(key, translator);
+            var tableModel = new ConfigFileTable(key, translator);
             return new ConfigTable(key, tableModel, translator, translator);
         }
     }

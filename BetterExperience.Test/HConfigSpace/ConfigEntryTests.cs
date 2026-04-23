@@ -1,8 +1,8 @@
-using BetterExperience.HConfigFileSpace;
+using BetterExperience.HConfigSpace;
 using BetterExperience.HTranslatorSpace;
 using System.Collections;
 
-namespace BetterExperience.Test.HConfigFileSpace
+namespace BetterExperience.Test.HConfigSpace
 {
     public class ConfigEntryTests
     {
@@ -11,7 +11,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         {
             // Arrange
             var expectedName = new Translator(chinese: "名称", english: "Name");
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "\"test\"",
@@ -31,7 +31,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         {
             // Arrange
             var expectedDescription = new Translator(chinese: "描述", english: "Description");
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "\"test\"",
@@ -50,7 +50,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void ValueType_WhenCreated_ReturnsTypeOfGenericParameter()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "42"
@@ -68,7 +68,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void ValueType_WhenStringType_ReturnsStringType()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "\"test\""
@@ -86,7 +86,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void RebindEntry_WhenEntryIsNull_ReturnsWithoutException()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "42"
@@ -103,14 +103,14 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void RebindEntry_WhenValidEntry_UpdatesEntryAndValue()
         {
             // Arrange
-            var initialModel = new ConfigFileEntryModel
+            var initialModel = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "42"
             };
             var entry = new ConfigEntry<int>("General", initialModel, 0);
             
-            var newModel = new ConfigFileEntryModel
+            var newModel = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "99"
@@ -128,14 +128,14 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void RebindEntry_WhenDecodeValueFails_ThrowsInvalidOperationException()
         {
             // Arrange
-            var initialModel = new ConfigFileEntryModel
+            var initialModel = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "42"
             };
             var entry = new ConfigEntry<int>("General", initialModel, 0);
             
-            var newModel = new ConfigFileEntryModel
+            var newModel = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "invalid_integer"
@@ -149,7 +149,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void Value_WhenSetToNull_ThrowsInvalidOperationException()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "\"test\""
@@ -166,7 +166,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void BoxedValue_WhenGetting_ReturnsValue()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "42"
@@ -185,7 +185,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void BoxedValue_WhenSetting_UpdatesValue()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "42"
@@ -205,7 +205,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void BoxedDefaultValue_WhenGetting_ReturnsDefaultValue()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "\"test\""
@@ -224,7 +224,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void OnValueChangedBase_WhenAdding_SubscribesToOnValueChanged()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "42"
@@ -244,7 +244,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void OnValueChangedBase_WhenRemoving_UnsubscribesFromOnValueChanged()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "42"
@@ -275,7 +275,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void Constructor_WithThreeParameters_InitializesProperties()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "42",
@@ -308,7 +308,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void Constructor_WhenInvalidTableName_ThrowsInvalidOperationException()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "42"
@@ -325,7 +325,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void Constructor_WhenUnsupportedValueType_ThrowsInvalidOperationException()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "dummy"
@@ -342,7 +342,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void Constructor_WhenDefaultValueEncodingFails_ThrowsInvalidOperationException()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "null"
@@ -547,7 +547,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void Constructor_WhenEnumType_SetsAcceptableValues()
         {
             // Arrange
-            var model = new ConfigFileEntryModel
+            var model = new ConfigFileEntry
             {
                 Key = "TestKey",
                 Value = "Value1"
@@ -567,7 +567,7 @@ namespace BetterExperience.Test.HConfigFileSpace
         public void Constructor_WhenInvalidKeyName_ThrowsInvalidOperationException()
         {
             // Arrange
-            var model = new ConfigFileEntryModel();
+            var model = new ConfigFileEntry();
             model.GetType().GetField("_key", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(model, "Invalid.Key");
             model.Value = "42";
             var name = new Translator(chinese: "名称", english: "Name");

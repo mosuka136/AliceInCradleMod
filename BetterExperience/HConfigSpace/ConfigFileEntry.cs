@@ -4,11 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static BetterExperience.HConfigFileSpace.ConfigFileModel;
+using static BetterExperience.HConfigSpace.ConfigFileModel;
 
-namespace BetterExperience.HConfigFileSpace
+namespace BetterExperience.HConfigSpace
 {
-    public class ConfigFileEntryModel
+    public class ConfigFileEntry
     {
         private string _key;
 
@@ -133,7 +133,7 @@ namespace BetterExperience.HConfigFileSpace
             return sb.ToString().Trim();
         }
 
-        public bool CopyTo(ConfigFileEntryModel target, bool overrideValue)
+        public bool CopyTo(ConfigFileEntry target, bool overrideValue)
         {
             if (target == null)
                 return false;
@@ -251,24 +251,24 @@ namespace BetterExperience.HConfigFileSpace
             return acceptableValues;
         }
 
-        public static ConfigFileResult<ConfigFileEntryModel> CreateEntry<T>(string key, T value, T defaultValue, Translator name, Translator description)
+        public static ConfigFileResult<ConfigFileEntry> CreateEntry<T>(string key, T value, T defaultValue, Translator name, Translator description)
         {
             if (!IsValidKeyName(key))
-                return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidKeyName, $"Invalid key name: {key}"));
+                return ConfigFileResult<ConfigFileEntry>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidKeyName, $"Invalid key name: {key}"));
 
             var encodedValueResult = EncodeValue(value);
             if (!encodedValueResult.Success)
-                return ConfigFileResult<ConfigFileEntryModel>.Fail(encodedValueResult.Errors);
+                return ConfigFileResult<ConfigFileEntry>.Fail(encodedValueResult.Errors);
 
             var encodedDefaultValueResult = EncodeValue(defaultValue);
             if (!encodedDefaultValueResult.Success)
-                return ConfigFileResult<ConfigFileEntryModel>.Fail(encodedDefaultValueResult.Errors);
+                return ConfigFileResult<ConfigFileEntry>.Fail(encodedDefaultValueResult.Errors);
 
             var encodedValueTypeResult = EncodeValueType<T>();
             if (!encodedValueTypeResult.Success)
-                return ConfigFileResult<ConfigFileEntryModel>.Fail(encodedValueTypeResult.Errors);
+                return ConfigFileResult<ConfigFileEntry>.Fail(encodedValueTypeResult.Errors);
 
-            var entry = new ConfigFileEntryModel
+            var entry = new ConfigFileEntry
             {
                 Name = name,
                 Description = description,
@@ -304,7 +304,7 @@ namespace BetterExperience.HConfigFileSpace
             return (key, value);
         }
 
-        public static ConfigFileResult<ConfigFileEntryModel> DecodeEntry(string[] content, ref int index)
+        public static ConfigFileResult<ConfigFileEntry> DecodeEntry(string[] content, ref int index)
         {
             for (; index < content.Length; index++)
             {
@@ -318,9 +318,9 @@ namespace BetterExperience.HConfigFileSpace
                     var keyValuePairResult = DecodeKeyValuePair(line);
                     index++;
                     if (!keyValuePairResult.Success)
-                        return ConfigFileResult<ConfigFileEntryModel>.Fail(keyValuePairResult.Errors);
+                        return ConfigFileResult<ConfigFileEntry>.Fail(keyValuePairResult.Errors);
 
-                    var entryResult = new ConfigFileEntryModel
+                    var entryResult = new ConfigFileEntry
                     {
                         Key = keyValuePairResult.Value.Item1,
                         Value = keyValuePairResult.Value.Item2
@@ -331,11 +331,11 @@ namespace BetterExperience.HConfigFileSpace
                 else
                 {
                     index++;
-                    return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidKeyValuePair, $"Invalid key-value pair: {line}"));
+                    return ConfigFileResult<ConfigFileEntry>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidKeyValuePair, $"Invalid key-value pair: {line}"));
                 }
             }
 
-            return ConfigFileResult<ConfigFileEntryModel>.Fail(new ConfigFileError(ConfigFileErrorCode.EntryNotFound, "No entry found in content"));
+            return ConfigFileResult<ConfigFileEntry>.Fail(new ConfigFileError(ConfigFileErrorCode.EntryNotFound, "No entry found in content"));
         }
     }
 }
