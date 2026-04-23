@@ -306,5 +306,50 @@ namespace BetterExperience.Test.HConfigFileSpace
             Assert.True(manager.Sheet.Contains("TestTable"));
             Assert.Contains(result, manager.Sheet["TestTable"]);
         }
+
+        [Fact]
+        public void Reload_WhenCalledWithBoundEntries_UpdatesEntriesFromFile()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\nTestKey = \"OriginalValue\"\n");
+            var manager = new ConfigFileManager(tempPath);
+            manager.CreateTable("TestTable", new Translator("测试表", "TestTable"));
+            var entry = manager.Bind<string>("TestTable", "TestKey", "DefaultValue", new Translator("测试键", "TestKey"), new Translator("描述", "Description"));
+
+            File.WriteAllText(tempPath, "[TestTable]\nTestKey = \"UpdatedValue\"\n");
+            manager.Reload();
+
+            Assert.NotNull(manager.FileSheet);
+        }
+
+        [Fact]
+        public void Reload_WhenSaveOnConfigSetIsTrue_PreservesAndRestoresIt()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\nTestKey = \"Value\"\n");
+            var manager = new ConfigFileManager(tempPath);
+            manager.CreateTable("TestTable", new Translator("测试表", "TestTable"));
+            manager.Bind<string>("TestTable", "TestKey", "DefaultValue", new Translator("测试键", "TestKey"), new Translator("描述", "Description"));
+            manager.SaveOnConfigSet = true;
+
+            manager.Reload();
+
+            Assert.True(manager.SaveOnConfigSet);
+        }
+
+        [Fact]
+        public void Reload_WhenEntryDoesNotExistInFile_SkipsRebinding()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\nTestKey = \"Value\"\n");
+            var manager = new ConfigFileManager(tempPath);
+            manager.CreateTable("TestTable", new Translator("测试表", "TestTable"));
+            manager.Bind<string>("TestTable", "TestKey", "DefaultValue", new Translator("测试键", "TestKey"), new Translator("描述", "Description"));
+
+            File.WriteAllText(tempPath, "[TestTable]\n");
+            manager.Reload();
+
+            Assert.NotNull(manager.FileSheet);
+        }
     }
 }
