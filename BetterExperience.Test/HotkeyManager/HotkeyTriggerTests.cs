@@ -1,6 +1,6 @@
 using BetterExperience.HotkeyManager;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HotkeyManager
 {
     public class HotkeyTriggerTests
     {

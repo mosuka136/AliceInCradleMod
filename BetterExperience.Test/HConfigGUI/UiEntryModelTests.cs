@@ -3,7 +3,7 @@ using BetterExperience.HConfigGUI;
 using BetterExperience.HTranslatorSpace;
 using Moq;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI
 {
     public class UiEntryModelTests
     {

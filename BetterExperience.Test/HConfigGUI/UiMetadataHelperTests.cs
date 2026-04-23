@@ -2,7 +2,7 @@ using BetterExperience.HConfigFileSpace;
 using BetterExperience.HConfigGUI;
 using Moq;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI
 {
     public class UiMetadataHelperTests
     {

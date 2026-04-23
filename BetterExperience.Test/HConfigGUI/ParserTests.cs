@@ -1,6 +1,6 @@
 using BetterExperience.HConfigGUI;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI
 {
     public class ParserTests
     {

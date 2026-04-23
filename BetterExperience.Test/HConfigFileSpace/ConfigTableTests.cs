@@ -3,7 +3,7 @@ using BetterExperience.HTranslatorSpace;
 using Moq;
 using System.Collections;
 
-namespace BetterExperience.Test.HConfigFileSpace
+namespace BetterExperience.Test.HConfigFileSpace.HConfigFileSpace
 {
     public class ConfigTableTests
     {

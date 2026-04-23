@@ -2,7 +2,7 @@ using BetterExperience.BConfigManager;
 using BetterExperience.HConfigGUI;
 using System.Collections;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI
 {
     public class UiSheetModelTests : IDisposable
     {

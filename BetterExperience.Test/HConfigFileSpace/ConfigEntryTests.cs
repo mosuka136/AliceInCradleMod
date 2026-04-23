@@ -2,7 +2,7 @@ using BetterExperience.HConfigFileSpace;
 using BetterExperience.HTranslatorSpace;
 using System.Collections;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigFileSpace
 {
     public class ConfigEntryTests
     {

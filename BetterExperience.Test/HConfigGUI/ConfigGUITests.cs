@@ -1,10 +1,8 @@
+using BetterExperience.HConfigGUI;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using BetterExperience.HConfigGUI;
-using Xunit;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI
 {
     public class ConfigGUITests
     {

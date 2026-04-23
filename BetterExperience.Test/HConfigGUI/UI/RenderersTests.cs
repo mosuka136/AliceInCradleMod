@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.UI
 {
     public class RenderersTests
     {

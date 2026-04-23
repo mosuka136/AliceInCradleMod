@@ -2,7 +2,7 @@ using BetterExperience.BConfigManager;
 using BetterExperience.HConfigGUI;
 using BetterExperience.HotkeyManager;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI
 {
     public class ViewModelTests : IDisposable
     {

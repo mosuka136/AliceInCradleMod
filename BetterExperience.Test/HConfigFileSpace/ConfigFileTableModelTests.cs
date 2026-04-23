@@ -1,7 +1,7 @@
 using BetterExperience.HConfigFileSpace;
 using BetterExperience.HTranslatorSpace;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigFileSpace
 {
     public class ConfigFileTableModelTests
     {
