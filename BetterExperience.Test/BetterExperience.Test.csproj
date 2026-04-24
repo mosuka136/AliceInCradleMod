@@ -26,23 +26,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029i\AliceInCradle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\\..\\..\\..\\mine\\B\\programme\\AliceInCradle\\ver029i\\AliceInCradle_Data\\Managed\\UnityEngine.IMGUIModule.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029i\BepInEx\core\BepInEx.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Unity.InputSystem">
-      <HintPath>..\\..\\..\\..\\mine\\B\\programme\\AliceInCradle\\ver029i\\AliceInCradle_Data\\Managed\\Unity.InputSystem.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\Unity.InputSystem.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
 
 </Project>
