@@ -1,15 +1,15 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("AliceInCradleMod")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("BetterExperience")]
+[assembly: AssemblyDescription("A mod that enhances the experience in Alice In Cradle.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("AliceInCradleMod")]
+[assembly: AssemblyProduct("BetterExperience")]
 [assembly: AssemblyCopyright("Copyright ©  2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 //      生成号
 //      修订号
 //
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("BetterExperience.Test")]
+[assembly: InternalsVisibleTo("BetterExperience.Test")]
