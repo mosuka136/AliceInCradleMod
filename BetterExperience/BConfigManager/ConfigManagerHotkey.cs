@@ -22,44 +22,56 @@ namespace BetterExperience.BConfigManager
                 new Translator(
                     chinese: "热键写法说明：\n" +
                              "1) 单键：F / F1 / Space / Tab\n" +
-                             "2) 组合键：Ctrl+Shift+F\n" +
-                             "3) 手柄：GamepadStart+GamepadSouth\n" +
-                             "4) 备选热键：Ctrl+F, GamepadStart+GamepadSouth（用逗号分隔）\n" +
+                             "2) 键盘组合键：修饰键在前，主键在最后，例如 Ctrl+Shift+F\n" +
+                             "3) 手柄组合键：手柄按键用 + 连接，例如 GamepadStart+GamepadA\n" +
+                             "4) 备选热键：Ctrl+F, GamepadStart+GamepadA（用逗号分隔）\n" +
+                             "5) 同一组组合键不能混用键盘和手柄，例如 Ctrl+GamepadA 不支持\n" +
                              "\n" +
-                             "修饰键：\n" +
-                             "- Ctrl / Shift / Alt\n" +
-                             "- 或：LeftCtrl / RightCtrl / LeftShift / RightShift / LeftAlt / RightAlt\n" +
+                             "键盘修饰键：\n" +
+                             "- Ctrl（或 Control）/ Shift / Alt\n" +
+                             "- LeftCtrl（或 LCtrl）/ RightCtrl（或 RCtrl）\n" +
+                             "- LeftShift（或 LShift）/ RightShift（或 RShift）\n" +
+                             "- LeftAlt（或 LAlt）/ RightAlt（或 RAlt）\n" +
                              "\n" +
-                             "手柄按键名称：\n" +
-                             "- GamepadSouth(A/×), GamepadEast(B/○), GamepadWest(X/□), GamepadNorth(Y/△)\n" +
-                             "- GamepadStart, GamepadSelect, GamepadLeftShoulder(LB/L1), GamepadRightShoulder(RB/R1)\n" +
-                             "- GamepadDpadUp/Down/Left/Right, GamepadLeftStick, GamepadRightStick\n" +
+                             "手柄按键名称（配置写回时会规范化为以下名称）：\n" +
+                             "- GamepadA / GamepadB / GamepadX / GamepadY\n" +
+                             "- GamepadStart / GamepadBack / GamepadLB / GamepadRB\n" +
+                             "- GamepadDpadUp / GamepadDpadDown / GamepadDpadLeft / GamepadDpadRight\n" +
+                             "- GamepadLS / GamepadRS\n" +
+                             "- 也接受别名：South / East / West / North、Cross / Circle / Square / Triangle、Select / LeftShoulder / RightShoulder / LeftStick / RightStick\n" +
+                             "- Gamepad 前缀可省略，例如 A 与 GamepadA 等价\n" +
                              "\n" +
                              "示例：\n" +
                              "- Ctrl+F\n" +
                              "- LeftCtrl+RightShift+F\n" +
-                             "- GamepadStart+GamepadSouth\n" +
-                             "- Ctrl+Shift+F, GamepadStart+GamepadSouth",
+                             "- GamepadStart+GamepadA\n" +
+                             "- Ctrl+Shift+F, GamepadStart+GamepadA",
                     english: "Hotkey notation guide:\n" +
                              "1) Single key: F / F1 / Space / Tab\n" +
-                             "2) Combination: Ctrl+Shift+F\n" +
-                             "3) Gamepad: GamepadStart+GamepadSouth\n" +
-                             "4) Alternatives: Ctrl+F, GamepadStart+GamepadSouth (comma-separated)\n" +
+                             "2) Keyboard chord: modifiers first, main key last, e.g. Ctrl+Shift+F\n" +
+                             "3) Gamepad chord: join gamepad buttons with +, e.g. GamepadStart+GamepadA\n" +
+                             "4) Alternatives: Ctrl+F, GamepadStart+GamepadA (comma-separated)\n" +
+                             "5) Keyboard and gamepad cannot be mixed in the same chord, e.g. Ctrl+GamepadA is not supported\n" +
                              "\n" +
-                             "Modifier keys:\n" +
-                             "- Ctrl / Shift / Alt\n" +
-                             "- Or: LeftCtrl / RightCtrl / LeftShift / RightShift / LeftAlt / RightAlt\n" +
+                             "Keyboard modifiers:\n" +
+                             "- Ctrl (or Control) / Shift / Alt\n" +
+                             "- LeftCtrl (or LCtrl) / RightCtrl (or RCtrl)\n" +
+                             "- LeftShift (or LShift) / RightShift (or RShift)\n" +
+                             "- LeftAlt (or LAlt) / RightAlt (or RAlt)\n" +
                              "\n" +
-                             "Gamepad button names:\n" +
-                             "- GamepadSouth(A/×), GamepadEast(B/○), GamepadWest(X/□), GamepadNorth(Y/△)\n" +
-                             "- GamepadStart, GamepadSelect, GamepadLeftShoulder(LB/L1), GamepadRightShoulder(RB/R1)\n" +
-                             "- GamepadDpadUp/Down/Left/Right, GamepadLeftStick, GamepadRightStick\n" +
+                             "Gamepad button names (config values are normalized to these names when written back):\n" +
+                             "- GamepadA / GamepadB / GamepadX / GamepadY\n" +
+                             "- GamepadStart / GamepadBack / GamepadLB / GamepadRB\n" +
+                             "- GamepadDpadUp / GamepadDpadDown / GamepadDpadLeft / GamepadDpadRight\n" +
+                             "- GamepadLS / GamepadRS\n" +
+                             "- Also accepts aliases: South / East / West / North, Cross / Circle / Square / Triangle, Select / LeftShoulder / RightShoulder / LeftStick / RightStick\n" +
+                             "- The Gamepad prefix is optional, e.g. A and GamepadA are equivalent\n" +
                              "\n" +
                              "Examples:\n" +
                              "- Ctrl+F\n" +
                              "- LeftCtrl+RightShift+F\n" +
-                             "- GamepadStart+GamepadSouth\n" +
-                             "- Ctrl+Shift+F, GamepadStart+GamepadSouth"
+                             "- GamepadStart+GamepadA\n" +
+                             "- Ctrl+Shift+F, GamepadStart+GamepadA"
                 )
                 );
 
