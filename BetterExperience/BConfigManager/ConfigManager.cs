@@ -71,8 +71,8 @@ namespace BetterExperience.BConfigManager
                     false,
                     new Translator(chinese: "启用移除椅子菜单限制", english: "Enable Remove Limit In Bench Menu"),
                     new Translator(
-                        chinese: "启用移除玩家在某些情况下椅子菜单中的某些选项不可用的限制。",
-                        english: "Enable the restriction that certain options in the chair menu are unavailable for players under specific circumstances"
+                        chinese: "启用移除玩家在某些情况下椅子菜单中的某些选项不可用的限制,必须在游戏启动前设置。",
+                        english: "Enable the restriction that certain options in the chair menu are unavailable for players under specific circumstances, must be set before launching the game."
                     )
                     );
                 EnableBetterFishing = Config.Bind(
