@@ -19,7 +19,7 @@ namespace BetterExperience
         public const string HarmonyPluginId = "com.buele.betterexperience";
         public const string HarmonyPluginVersion = "2.0.0";
 
-        public const string HarmonyLoggerName = "BetterExperience_Harmony.log";
+        public const string LoggerName = "BetterExperience.log";
     }
 
     [BepInPlugin(PatchInfo.BepInPluginId, nameof(BetterExperience), PatchInfo.BepInPluginVersion)]
@@ -45,7 +45,7 @@ namespace BetterExperience
 
             HLog.Initialize(
                 Path.Combine(Paths.PluginPath, nameof(BetterExperience), "logs"),
-                PatchInfo.HarmonyLoggerName,
+                PatchInfo.LoggerName,
                 new UnityProvider(),
                 new BepInExLoggerProvider(Logger),
                 ConfigManager.HarmonyLogLevel.Value,
