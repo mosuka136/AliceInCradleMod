@@ -20,7 +20,7 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
                     if (ConfigManager.EnablePreloadEnhancerSlotCount.Value)
                         SetEnhancerSlotCount();

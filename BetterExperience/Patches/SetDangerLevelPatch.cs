@@ -18,7 +18,7 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
                     if (ConfigManager.EnablePreloadDangerLevel.Value)
                         SetDangerLevel(ConfigManager.SetDangerLevel.Value);

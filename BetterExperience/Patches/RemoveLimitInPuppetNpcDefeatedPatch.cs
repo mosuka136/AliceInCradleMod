@@ -30,7 +30,7 @@ namespace BetterExperience.Patches
 
                     if (!_isInitialized)
                     {
-                        OnSiteProtectionManager.Instance.OnSiteProtectionActivated += RecoverPupKill;
+                        GameSaveProtectionManager.OnSavingActivated += RecoverPupKill;
                         _isInitialized = true;
                     }
 

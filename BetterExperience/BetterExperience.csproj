@@ -68,6 +68,7 @@
     <Compile Include="BConfigManager\ConfigManagerPlayerStatus.cs" />
     <Compile Include="BConfigManager\ConfigManagerReel.cs" />
     <Compile Include="BConfigManager\ConfigManagerTexture.cs" />
+    <Compile Include="BPatchGUI\PatchGUI.cs" />
     <Compile Include="HProvider\BepInExLoggerProvider.cs" />
     <Compile Include="HProvider\UnityGuiProvider.cs" />
     <Compile Include="HProvider\UnityProvider.cs" />
@@ -99,17 +100,18 @@
     <Compile Include="HConfigGUI\ViewModel.cs" />
     <Compile Include="HEnumHelper\DisplayEnumAttribute.cs" />
     <Compile Include="HEnumHelper\EnumHelper.cs" />
-    <Compile Include="GameAttributePatchManager.cs" />
+    <Compile Include="GameSaveLoadManager.cs" />
     <Compile Include="HotkeyManager\Hotkey.cs" />
     <Compile Include="HotkeyManager\HotkeyChord.cs" />
     <Compile Include="HotkeyManager\HotkeyTrigger.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
+    <Compile Include="Patches\DamageCounterPatch.cs" />
     <Compile Include="Patches\DisableDrowningPatch.cs" />
     <Compile Include="FrameUpdateBooster.cs" />
     <Compile Include="Patches\ImmuneAbnormalitiesPatch.cs" />
     <Compile Include="Patches\InvalidateWormTrapPatch.cs" />
     <Compile Include="Patches\NoEpDamagePatch.cs" />
-    <Compile Include="OnSiteProtectionManager.cs" />
+    <Compile Include="GameSaveProtectionManager.cs" />
     <Compile Include="Patches\BetterSaveSitePatch.cs" />
     <Compile Include="Patches\BetterReelEffectPatch.cs" />
     <Compile Include="Patches\RemoveDarkAreaPatch.cs" />
@@ -218,5 +220,6 @@
   <ItemGroup>
     <None Include="Buele.pfx" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -19,7 +19,7 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
                     if (ConfigManager.EnablePreloadPlayerMaxSatiety.Value)
                         SetMaxSatiety(ConfigManager.SetPlayerMaxSatiety.Value);

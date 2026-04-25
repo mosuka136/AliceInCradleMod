@@ -20,15 +20,15 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
                     if (ConfigManager.EnablePreloadBottleHolderCount.Value)
                         SetBottleHolderCount(ConfigManager.SetBottleHolderCount.Value);
                 };
 
-                OnSiteProtectionManager.Instance.OnSiteProtectionActivated += RecoverBottleHolderCount;
+                GameSaveProtectionManager.OnSavingActivated += RecoverBottleHolderCount;
 
-                OnSiteProtectionManager.Instance.OnSiteProtectionCompleted += () =>
+                GameSaveProtectionManager.OnSavingCompleted += () =>
                 {
                     SetBottleHolderCount(_originalBottleHolderCount);
                 };

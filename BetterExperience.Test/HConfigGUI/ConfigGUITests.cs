@@ -54,23 +54,6 @@ namespace BetterExperience.Test.HConfigGUI
         }
 
         [Fact]
-        public void EnsureInitialized_ExecutesLine21()
-        {
-            // This test verifies that line 21 (Instance.Initialize()) is executed.
-            // We expect a SecurityException because Unity is not available, but this proves
-            // the line was executed (providing code coverage).
-            
-            // Arrange & Act & Assert
-            var exception = Assert.Throws<System.Security.SecurityException>(() =>
-            {
-                ConfigGUI.EnsureInitialized();  // This executes line 21
-            });
-            
-            // Verify we got the expected Unity-related error
-            Assert.Contains("ECall methods must be packaged into a system module", exception.Message);
-        }
-
-        [Fact]
         public void LoadScenePatch_Postfix_ExecutesLine45()
         {
             // This test verifies that line 45 (EnsureInitialized()) is executed.

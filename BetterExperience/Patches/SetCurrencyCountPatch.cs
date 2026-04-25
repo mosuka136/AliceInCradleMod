@@ -19,7 +19,7 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
                     if (ConfigManager.EnablePreloadCurrencyGoldCount.Value
                         && UInt32.TryParse(ConfigManager.SetCurrencyGoldCount.Value.ToString(), out var countGold))

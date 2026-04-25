@@ -20,14 +20,14 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
                     if (ConfigManager.EnablePreloadBackpackCapacity.Value)
                         SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value);
                 };
 
-                OnSiteProtectionManager.Instance.OnSiteProtectionActivated += RecoverBackpackCapacity;
-                OnSiteProtectionManager.Instance.OnSiteProtectionCompleted += () =>
+                GameSaveProtectionManager.OnSavingActivated += RecoverBackpackCapacity;
+                GameSaveProtectionManager.OnSavingCompleted += () =>
                 {
                     SetBackpackCapacity(_currentCapacity);
                 };

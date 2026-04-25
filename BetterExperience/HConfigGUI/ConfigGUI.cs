@@ -5,23 +5,12 @@ using UnityEngine.SceneManagement;
 
 namespace BetterExperience.HConfigGUI
 {
-    public sealed class ConfigGUI
+    public static class ConfigGUI
     {
         private static bool _initialized;
         private static readonly object _lock = new object();
 
-        private ConfigGUI()
-        {
-        }
-
-        public static ConfigGUI Instance { get; } = new ConfigGUI();
-
-        public static void EnsureInitialized()
-        {
-            Instance.Initialize();
-        }
-
-        private void Initialize()
+        private static void Initialize()
         {
             lock (_lock)
             {
@@ -42,7 +31,7 @@ namespace BetterExperience.HConfigGUI
         {
             public static void Postfix()
             {
-                EnsureInitialized();
+                Initialize();
             }
         }
     }

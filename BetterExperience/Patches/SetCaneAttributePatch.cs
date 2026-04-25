@@ -21,7 +21,7 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += () =>
+                GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
                     if (ConfigManager.EnablePreloadCaneSwingSpeed.Value)
                         SetSwingSpeed(ConfigManager.SetCaneSwingSpeed.Value);

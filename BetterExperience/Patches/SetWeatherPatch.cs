@@ -21,7 +21,7 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                GameAttributePatchManager.Instance.OnGameSaveLoadCompleted += Flush;
+                GameSaveLoadManager.OnGameSaveLoadCompleted += Flush;
 
 
                 ConfigManager.SetWeatherWind.OnValueChanged += (s, e) =>
