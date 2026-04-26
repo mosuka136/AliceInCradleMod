@@ -15,7 +15,7 @@ namespace BetterExperience.Patches
             private static bool _isApplying = false;
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
+            [HarmonyPatch(typeof(FrameUpdateManager), nameof(FrameUpdateManager.Initialize))]
             public static void Initialize()
             {
                 if (_initialized)

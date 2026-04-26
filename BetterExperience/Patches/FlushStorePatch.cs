@@ -13,10 +13,10 @@ namespace BetterExperience.Patches
             public class FrameUpdateBoosterPatch
             {
                 [HarmonyPostfix]
-                [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
+                [HarmonyPatch(typeof(FrameUpdateManager), nameof(FrameUpdateManager.Initialize))]
                 public static void Postfix()
                 {
-                    FrameUpdateBooster.Instance.OnFrameUpdate += Update;
+                    FrameUpdateManager.OnFrameUpdate += Update;
                 }
             }
 

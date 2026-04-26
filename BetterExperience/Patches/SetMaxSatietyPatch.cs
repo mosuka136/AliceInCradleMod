@@ -13,7 +13,7 @@ namespace BetterExperience.Patches
             private static int _maxSatiety = -1;
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(FrameUpdateBooster), nameof(FrameUpdateBooster.Awake))]
+            [HarmonyPatch(typeof(FrameUpdateManager), nameof(FrameUpdateManager.Initialize))]
             public static void Initialize()
             {
                 if (_initialized)
