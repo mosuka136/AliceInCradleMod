@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace BetterExperience.Patches.ReplaceTexture
 {
-    public class TextureManager
+    public class TextureManager : IDisposable
     {
         private TextureManager()
         {
@@ -218,6 +218,11 @@ namespace BetterExperience.Patches.ReplaceTexture
             destination.anisoLevel = source.anisoLevel;
             destination.mipMapBias = source.mipMapBias;
             destination.hideFlags = source.hideFlags;
+        }
+
+        public void Dispose()
+        {
+            DestroyAllTextures();
         }
     }
 }
