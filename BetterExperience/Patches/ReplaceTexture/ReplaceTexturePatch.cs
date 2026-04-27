@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HClassAttribute;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using nel;
@@ -13,16 +14,22 @@ namespace BetterExperience.Patches
         [HarmonyPatch]
         public class ReplaceTexturePatch
         {
+            private static bool _initialized = false;
+
             private static readonly List<BetobetoManager.SvTexture> _spineTexture = new List<BetobetoManager.SvTexture>();
             private static readonly Dictionary<string, MTIOneImage> _pictureTexture = new Dictionary<string, MTIOneImage>();
             private static readonly Dictionary<MTIOneImage, Texture> _originalPictureTexture = new Dictionary<MTIOneImage, Texture>();
             private static readonly Dictionary<BetobetoManager.SvTexture, Texture> _originalSpineTexture = new Dictionary<BetobetoManager.SvTexture, Texture>();
 
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(FrameUpdateManager), nameof(FrameUpdateManager.Initialize))]
+            [InitializeOnGameBoot]
             public static void Initialize()
             {
+                if (_initialized)
+                    return;
+
                 FrameUpdateManager.OnFrameUpdate += Update;
+
+                _initialized = true;
             }
 
             public static void Update()

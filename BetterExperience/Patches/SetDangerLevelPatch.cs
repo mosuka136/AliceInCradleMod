@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using nel;
 
@@ -11,8 +12,7 @@ namespace BetterExperience.Patches
         {
             private static bool _initialized = false;
 
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(FrameUpdateManager), nameof(FrameUpdateManager.Initialize))]
+            [InitializeOnGameBoot]
             public static void Initialize()
             {
                 if (_initialized)
@@ -24,10 +24,7 @@ namespace BetterExperience.Patches
                         SetDangerLevel(ConfigManager.SetDangerLevel.Value);
                 };
 
-                ConfigManager.SetDangerLevel.OnValueChanged += (s, e) =>
-                {
-                    SetDangerLevel(ConfigManager.SetDangerLevel.Value);
-                };
+                ConfigManager.SetDangerLevel.OnValueChanged += (s, e) => SetDangerLevel(e);
 
                 _initialized = true;
             }

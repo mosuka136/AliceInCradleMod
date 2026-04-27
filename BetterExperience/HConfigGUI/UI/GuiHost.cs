@@ -1,8 +1,10 @@
+using BetterExperience.HClassAttribute;
 using System;
 using UnityEngine;
 
 namespace BetterExperience.HConfigGUI.UI
 {
+    [RegisterOnGameBoot]
     public class GuiHost : MonoBehaviour
     {
         private ViewModel _viewModel;

@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using nel;
 using System;
@@ -12,8 +13,7 @@ namespace BetterExperience.Patches
         {
             private static bool _initialized = false;
 
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(FrameUpdateManager), nameof(FrameUpdateManager.Initialize))]
+            [InitializeOnGameBoot]
             public static void Initialize()
             {
                 if (_initialized)
@@ -36,17 +36,17 @@ namespace BetterExperience.Patches
 
                 ConfigManager.SetCurrencyGoldCount.OnValueChanged += (s, e) =>
                 {
-                    if (UInt32.TryParse(ConfigManager.SetCurrencyGoldCount.Value.ToString(), out var count))
+                    if (UInt32.TryParse(e.ToString(), out var count))
                         SetCurrencyGoldCount(count);
                 };
                 ConfigManager.SetCurrencyCraftsCount.OnValueChanged += (s, e) =>
                 {
-                    if (UInt32.TryParse(ConfigManager.SetCurrencyCraftsCount.Value.ToString(), out var count))
+                    if (UInt32.TryParse(e.ToString(), out var count))
                         SetCurrencyCraftsCount(count);
                 };
                 ConfigManager.SetCurrencyJuiceCount.OnValueChanged += (s, e) =>
                 {
-                    if (UInt32.TryParse(ConfigManager.SetCurrencyJuiceCount.Value.ToString(), out var count))
+                    if (UInt32.TryParse(e.ToString(), out var count))
                         SetCurrencyJuiceCount(count);
                 };
 

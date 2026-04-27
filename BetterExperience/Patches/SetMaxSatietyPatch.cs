@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using nel;
 
@@ -12,8 +13,7 @@ namespace BetterExperience.Patches
             private static bool _initialized = false;
             private static int _maxSatiety = -1;
 
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(FrameUpdateManager), nameof(FrameUpdateManager.Initialize))]
+            [InitializeOnGameBoot]
             public static void Initialize()
             {
                 if (_initialized)
@@ -32,7 +32,7 @@ namespace BetterExperience.Patches
 
                 ConfigManager.SetPlayerMaxSatiety.OnValueChanged += (s, e) =>
                 {
-                   SetMaxSatiety(ConfigManager.SetPlayerMaxSatiety.Value);
+                   SetMaxSatiety(e);
                 };
 
                 _initialized = true;

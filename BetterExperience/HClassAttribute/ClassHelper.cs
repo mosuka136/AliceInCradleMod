@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Reflection;
 
 namespace BetterExperience.HClassAttribute
 {
@@ -25,6 +26,21 @@ namespace BetterExperience.HClassAttribute
             return attribute;
         }
 
+        public static Type[] GetClasses<TAttribute>(Assembly assembly) where TAttribute : Attribute
+        {
+            return assembly.GetTypes()
+                .Where(t => t.GetCustomAttributes(typeof(TAttribute), false).Length > 0)
+                .ToArray();
+        }
+
+        public static MethodInfo[] GetMethods<TAttribute>(Assembly assembly) where TAttribute : Attribute
+        {
+            return assembly.GetTypes()
+                .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+                .Where(m => m.GetCustomAttributes(typeof(TAttribute), false).Length > 0)
+                .ToArray();
+        }
+
         public static (float Min, float Max, float Step)? GetSliderInfo<TClass>(string propertyName)
         {
             var sliderAttribute = GetAttribute<TClass, ConfigSliderAttribute>(propertyName);
@@ -33,6 +49,16 @@ namespace BetterExperience.HClassAttribute
                 return (sliderAttribute.Min, sliderAttribute.Max, sliderAttribute.Step);
             }
             return null;
+        }
+
+        public static Type[] GetRegisterOnGameBootClasses(Assembly assembly)
+        {
+            return GetClasses<RegisterOnGameBootAttribute>(assembly);
+        }
+
+        public static MethodInfo[] GetInitializeOnGameBootMethods(Assembly assembly)
+        {
+            return GetMethods<InitializeOnGameBootAttribute>(assembly);
         }
     }
 }

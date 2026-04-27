@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using nel;
 using UnityEngine;
@@ -12,8 +13,7 @@ namespace BetterExperience.Patches
         {
             private static bool _initialized = false;
 
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(FrameUpdateManager), nameof(FrameUpdateManager.Initialize))]
+            [InitializeOnGameBoot]
             public static void Initialize()
             {
                 if (_initialized)
@@ -37,27 +37,11 @@ namespace BetterExperience.Patches
                         SetMaxMp(ConfigManager.SetPlayerMaxMp.Value);
                 };
 
-                ConfigManager.SetPlayerHp.OnValueChanged += (s, e) =>
-                {
-                    SetHp(ConfigManager.SetPlayerHp.Value);
-                };
-                ConfigManager.SetPlayerMp.OnValueChanged += (s, e) =>
-                {
-                    SetMp(ConfigManager.SetPlayerMp.Value);
-                };
-                ConfigManager.SetPlayerEp.OnValueChanged += (s, e) =>
-                {
-                    SetEp(ConfigManager.SetPlayerEp.Value);
-                };
-
-                ConfigManager.SetPlayerMaxHp.OnValueChanged += (s, e) =>
-                {
-                    SetMaxHp(ConfigManager.SetPlayerMaxHp.Value);
-                };
-                ConfigManager.SetPlayerMaxMp.OnValueChanged += (s, e) =>
-                {
-                    SetMaxMp(ConfigManager.SetPlayerMaxMp.Value);
-                };
+                ConfigManager.SetPlayerHp.OnValueChanged += (s, e) => SetHp(e);
+                ConfigManager.SetPlayerMp.OnValueChanged += (s, e) => SetMp(e);
+                ConfigManager.SetPlayerEp.OnValueChanged += (s, e) => SetEp(e);
+                ConfigManager.SetPlayerMaxHp.OnValueChanged += (s, e) => SetMaxHp(e);
+                ConfigManager.SetPlayerMaxMp.OnValueChanged += (s, e) => SetMaxMp(e);
 
                 _initialized = true;
             }

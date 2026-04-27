@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using nel;
 using UnityEngine;
@@ -13,8 +14,7 @@ namespace BetterExperience.Patches
             private static bool _initialized = false;
             private static int _originalBottleHolderCount = -1;
 
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(FrameUpdateManager), nameof(FrameUpdateManager.Initialize))]
+            [InitializeOnGameBoot]
             public static void Initialize()
             {
                 if (_initialized)
@@ -35,7 +35,7 @@ namespace BetterExperience.Patches
 
                 ConfigManager.SetBottleHolderCount.OnValueChanged += (s, e) =>
                 {
-                    SetBottleHolderCount(ConfigManager.SetBottleHolderCount.Value);
+                    SetBottleHolderCount(e);
                 };
 
                 _initialized = true;

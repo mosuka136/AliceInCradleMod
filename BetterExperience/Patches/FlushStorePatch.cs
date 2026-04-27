@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using HarmonyLib;
+using BetterExperience.HClassAttribute;
 using nel;
 using System;
 
@@ -9,15 +9,17 @@ namespace BetterExperience.Patches
     {
         public class FlushStorePatch
         {
-            [HarmonyPatch]
-            public class FrameUpdateBoosterPatch
+            private static bool _initialized = false;
+
+            [InitializeOnGameBoot]
+            public static void Initialize()
             {
-                [HarmonyPostfix]
-                [HarmonyPatch(typeof(FrameUpdateManager), nameof(FrameUpdateManager.Initialize))]
-                public static void Postfix()
-                {
-                    FrameUpdateManager.OnFrameUpdate += Update;
-                }
+                if (_initialized)
+                    return;
+
+                FrameUpdateManager.OnFrameUpdate += Update;
+
+                _initialized = true;
             }
 
             public static void Update()

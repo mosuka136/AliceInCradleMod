@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using nel;
 using System.Collections.Generic;
@@ -14,8 +15,7 @@ namespace BetterExperience.Patches
             private static bool _initialized = false;
             private static bool _isApplying = false;
 
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(FrameUpdateManager), nameof(FrameUpdateManager.Initialize))]
+            [InitializeOnGameBoot]
             public static void Initialize()
             {
                 if (_initialized)
@@ -27,32 +27,32 @@ namespace BetterExperience.Patches
                 ConfigManager.SetWeatherWind.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.WIND, ConfigManager.SetWeatherWind.Value);
+                        SetWeather(WeatherItem.WEATHER.WIND, e);
                 };
                 ConfigManager.SetWeatherThunder.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.THUNDER, ConfigManager.SetWeatherThunder.Value);
+                        SetWeather(WeatherItem.WEATHER.THUNDER, e);
                 };
                 ConfigManager.SetWeatherMist.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.MIST, ConfigManager.SetWeatherMist.Value);
+                        SetWeather(WeatherItem.WEATHER.MIST, e);
                 };
                 ConfigManager.SetWeatherDrought.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.DROUGHT, ConfigManager.SetWeatherDrought.Value);
+                        SetWeather(WeatherItem.WEATHER.DROUGHT, e);
                 };
                 ConfigManager.SetWeatherDenseMist.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.MIST_DENSE, ConfigManager.SetWeatherDenseMist.Value);
+                        SetWeather(WeatherItem.WEATHER.MIST_DENSE, e);
                 };
                 ConfigManager.SetWeatherPlague.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.PLAGUE, ConfigManager.SetWeatherPlague.Value);
+                        SetWeather(WeatherItem.WEATHER.PLAGUE, e);
                 };
 
                 _initialized = true;
