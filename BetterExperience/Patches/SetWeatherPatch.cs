@@ -3,7 +3,6 @@ using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using nel;
 using System.Collections.Generic;
-using XX;
 
 namespace BetterExperience.Patches
 {
@@ -78,45 +77,70 @@ namespace BetterExperience.Patches
                 var cur_weather = nct.Field("cur_weather_");
                 var AWeather = nct.Field("AWeather");
 
+                if (cur_weather == null || AWeather == null)
+                    return;
+
+                var hasWeather = GetBit(cur_weather.GetValue<int>(), (int)weather & 0x1F);
                 if (setWeather)
                 {
-                    if ((cur_weather.GetValue<int>() & 1 << ((int)weather & 0x1F)) == 0)
+                    if (!hasWeather)
                     {
                         var weatherItemList = new List<WeatherItem>(AWeather.GetValue<WeatherItem[]>());
-                        var weatherItem = new WeatherItem(weather, nct.Field("dlevel").GetValue<int>() + nct.Field("dlevel_add").GetValue<int>()).initS(null);
-                        if (weatherItem.get_conflict() != 0)
+                        var newWeatherItem = new WeatherItem(weather, nct.Field("dlevel").GetValue<int>() + nct.Field("dlevel_add").GetValue<int>()).initS(null);
+                        var conflict = newWeatherItem.get_conflict();
+                        if (conflict != 0)
                         {
-                            for (int index = weatherItemList.Count - 1; index >= 0; --index)
+                            var conflictWeather = new List<WeatherItem>();
+                            foreach (var weatherItem in weatherItemList)
                             {
-                                if ((1 << ((int)weatherItemList[index].weather & 0x1F) & (int)weatherItem.get_conflict()) != 0)
+                                if (GetBit((int)conflict, (int)weatherItem.weather & 0x1F))
                                 {
-                                    cur_weather.SetValue(cur_weather.GetValue<int>() & ~(1 << ((int)weatherItemList[index].weather & 0x1F)));
-                                    weatherItemList[index].destruct();
-                                    weatherItemList.RemoveAt(index);
+                                    cur_weather.SetValue(SetResetBit(cur_weather.GetValue<int>(), (int)weatherItem.weather & 0x1F, false));
+                                    conflictWeather.Add(weatherItem);
                                 }
                             }
+
+                            conflictWeather.ForEach(w => w.destruct());
+                            weatherItemList.RemoveAll(w => conflictWeather.Contains(w));
                         }
-                        weatherItemList.Add(weatherItem);
+
+                        weatherItemList.Add(newWeatherItem);
                         AWeather.SetValue(weatherItemList.ToArray());
-                        cur_weather.SetValue(cur_weather.GetValue<int>() | 1 << ((int)weather & 0x1F));
-                        weatherItem.showLog();
+                        cur_weather.SetValue(SetResetBit(cur_weather.GetValue<int>(), (int)weather & 0x1F, true));
+                        newWeatherItem.showLog();
                     }
                 }
-                else if ((cur_weather.GetValue<int>() & 1 << ((int)weather & 0x1F)) != 0)
+                else
                 {
-                    int s;
-                    var oldWeather = nc.getWeather(weather);
-                    if (oldWeather != null && (s = X.isinC<WeatherItem>(AWeather.GetValue<WeatherItem[]>(), oldWeather)) >= 0)
+                    if (hasWeather)
                     {
-                        oldWeather.destruct();
-                        WeatherItem[] newWeather = AWeather.GetValue<WeatherItem[]>();
-                        X.splice(ref newWeather, s, 1);
-                        AWeather.SetValue(newWeather);
-                        cur_weather.SetValue(cur_weather.GetValue<int>() & ~(1 << ((int)weather & 0x1F)));
+                        var oldWeather = nc.getWeather(weather);
+                        var newWeatherList = new List<WeatherItem>(AWeather.GetValue<WeatherItem[]>());
+                        var index = newWeatherList.IndexOf(oldWeather);
+                        if (index >= 0)
+                        {
+                            oldWeather.destruct();
+                            newWeatherList.RemoveAt(index);
+                            AWeather.SetValue(newWeatherList.ToArray());
+                            cur_weather.SetValue(SetResetBit(cur_weather.GetValue<int>(), (int)weather & 0x1F, false));
+                        }
                     }
                 }
 
                 Flush();
+            }
+
+            public static int SetResetBit(int value, int bit, bool set)
+            {
+                if (set)
+                    return value | (1 << bit);
+                else
+                    return value & ~(1 << bit);
+            }
+
+            public static bool GetBit(int value, int bit)
+            {
+                return (value & (1 << bit)) != 0;
             }
 
             public static NightController GetNightController()
