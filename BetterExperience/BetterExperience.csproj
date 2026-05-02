@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,7 +25,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -68,7 +68,8 @@
     <Compile Include="BConfigManager\ConfigManagerPlayerStatus.cs" />
     <Compile Include="BConfigManager\ConfigManagerReel.cs" />
     <Compile Include="BConfigManager\ConfigManagerTexture.cs" />
-    <Compile Include="BPatchGUI\PatchGUI.cs" />
+    <Compile Include="BPatchGUI\BattleStatisticsGUI.cs" />
+    <Compile Include="BPatchGUI\TranslatorResource.cs" />
     <Compile Include="GameBootManager.cs" />
     <Compile Include="HClassAttribute\InitialzeOnGameBootAttribute.cs" />
     <Compile Include="HClassAttribute\RegisterOnGameBootAttribute.cs" />
@@ -107,7 +108,7 @@
     <Compile Include="HotkeyManager\HotkeyChord.cs" />
     <Compile Include="HotkeyManager\HotkeyTrigger.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
-    <Compile Include="Patches\DamageCounterPatch.cs" />
+    <Compile Include="Patches\BattleStatisticsPatch.cs" />
     <Compile Include="Patches\DisableDrowningPatch.cs" />
     <Compile Include="FrameUpdateManager.cs" />
     <Compile Include="Patches\ImmuneAbnormalitiesPatch.cs" />

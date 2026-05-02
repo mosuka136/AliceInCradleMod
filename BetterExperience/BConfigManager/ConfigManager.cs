@@ -22,6 +22,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableBetterFishing { get; private set; }
+        public static ConfigEntry<bool> EnableDamageCounter { get; private set; }
         public static ConfigEntry<bool> EnableDebugMode { get; private set; }
         [ConfigSlider(-1f, 20f, 0.1f)]
         public static ConfigEntry<float> SetLootDropRatio { get; private set; }
@@ -83,6 +84,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用更好的钓鱼。它将允许玩家更容易地钓到鱼。",
                         english: "Enable better fishing. It will allow players to catch fish more easily."
+                    )
+                    );
+                EnableDamageCounter = Config.Bind(
+                    SectionGeneral,
+                    nameof(EnableDamageCounter),
+                    false,
+                    new Translator(chinese: "启用伤害计数器", english: "Enable Damage Counter"),
+                    new Translator(
+                        chinese: "启用伤害计数器。它将显示玩家与魔物造成的伤害。",
+                        english: "Enable damage counter. It will display the damage dealt by the player and monsters."
                     )
                     );
                 EnableDebugMode = Config.Bind(
