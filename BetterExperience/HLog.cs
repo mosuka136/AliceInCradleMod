@@ -57,6 +57,11 @@ namespace BetterExperience
             _unityProvider.UnityQuitting += Shutdown;
         }
 
+        public static void Debug(string msg,
+            [CallerMemberName] string member = "",
+            [CallerFilePath] string file = "",
+            [CallerLineNumber] int line = 0) => Write(LogLevel.Debug, msg, null, member, file, line);
+
         public static void Info(string msg,
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
@@ -147,6 +152,9 @@ namespace BetterExperience
                         case LogLevel.Info:
                             _bepLog.LogInfo(final);
                             break;
+                        case LogLevel.Debug:
+                            _bepLog.LogDebug(final);
+                            break;
                         default:
                             _bepLog.LogInfo(final);
                             break;
@@ -195,7 +203,8 @@ namespace BetterExperience
 
         public enum LogLevel
         {
-            Info = 0,
+            Debug = 0,
+            Info,
             Warning,
             Error
         }

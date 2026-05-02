@@ -25,5 +25,10 @@ namespace BetterExperience.HProvider
         {
             Logger.LogInfo(data);
         }
+
+        public void LogDebug(object data)
+        {
+            Logger.LogDebug(data);
+        }
     }
 }
