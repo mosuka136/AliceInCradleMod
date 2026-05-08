@@ -19,6 +19,7 @@ namespace BetterExperience.Patches
 
                 __result = null;
 
+                HLog.Debug($"{nameof(NoMapDamagePatch)} applied.");
                 return false;
             }
         }

@@ -17,6 +17,8 @@ namespace BetterExperience.Patches
                     return true;
 
                 __result = 0f;
+
+                HLog.Debug($"{nameof(RemoveHolyBurstFaintPatch)} applied.");
                 return false;
             }
         }

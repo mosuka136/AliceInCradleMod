@@ -33,11 +33,11 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         public void Initialize()
         {
-            if (!ConfigManager.EnableReplaceTexture.Value)
-                return;
-
             try
             {
+                if (!ConfigManager.EnableReplaceTexture.Value)
+                    return;
+
                 if (!Directory.Exists(ImagePath))
                     Directory.CreateDirectory(ImagePath);
                 if (!Directory.Exists(SensitiveImagePath))
@@ -65,6 +65,7 @@ namespace BetterExperience.Patches.ReplaceTexture
                     }
 
                     _imageInfos[fileWithoutExtension] = CreateTexture(file);
+                    HLog.Info($"Loaded image: {fileWithoutExtension} from {file}");
                 }
 
                 HLog.Info($"Initialized ImageManager with {_imageInfos.Count} images.");

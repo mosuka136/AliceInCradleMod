@@ -129,6 +129,8 @@ namespace BetterExperience.BConfigManager
 
                 Config.SaveOnConfigSet = true;
                 Config.Save();
+
+                HLog.Info($"Config manager initialized: {configFilePath}");
             }
         }
 
@@ -137,6 +139,7 @@ namespace BetterExperience.BConfigManager
             lock (_configSyncRoot)
             {
                 Config.Reload();
+                HLog.Info("Config file reloaded.");
             }
         }
     }

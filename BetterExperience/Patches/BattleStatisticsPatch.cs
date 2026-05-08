@@ -98,7 +98,7 @@ namespace BetterExperience.Patches
 
                     IsInBattle = true;
                     BattleStartTime = Time.time;
-                    HLog.Info("Battle Started");
+                    HLog.Debug("Battle Started");
                 }
             }
 
@@ -108,7 +108,7 @@ namespace BetterExperience.Patches
                 {
                     IsInBattle = false;
                     BattleEndTime = Time.time;
-                    HLog.Info("Battle Ended");
+                    HLog.Debug("Battle Ended");
                 }
             }
 
@@ -124,14 +124,15 @@ namespace BetterExperience.Patches
                     var enemy = GetSource(Atk) as NelEnemy;
 
                     if (enemy != null)
+                    {
                         _objectAttackPlayer = enemy;
+                        HLog.Debug($"Player Injured by Enemy: {GetEnemyKey(enemy)}");
+                    }
                     else
                     {
                         _objectAttackPlayer = null;
-                        return;
+                        HLog.Debug($"Player Injured by {GetSource(Atk)?.GetType().Name ?? "Unknown Source"}");
                     }
-
-                    HLog.Info($"Player Injured by Enemy: {GetEnemyKey(enemy)}");
                 }
 
                 [HarmonyPostfix]
@@ -204,7 +205,7 @@ namespace BetterExperience.Patches
                         }
                     }
 
-                    HLog.Info($"Player Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
+                    HLog.Debug($"Player Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
                 }
             }
 
@@ -221,23 +222,24 @@ namespace BetterExperience.Patches
                     if (source == null)
                     {
                         _objectAttackEnemy = null;
+                        HLog.Debug($"Enemy Injured by Unknown Source");
                         return;
                     }
 
                     if (source is NelEnemy enemy)
                     {
                         _objectAttackEnemy = enemy;
-                        HLog.Info($"Enemy Injured by Enemy: {GetEnemyKey(enemy)}");
+                        HLog.Debug($"Enemy Injured by Enemy: {GetEnemyKey(enemy)}");
                     }
                     else if (source is PR)
                     {
                         _objectAttackEnemy = source;
-                        HLog.Info($"Enemy Injured by Player");
+                        HLog.Debug($"Enemy Injured by Player");
                     }
                     else
                     {
                         _objectAttackEnemy = null;
-                        HLog.Info($"Enemy Injured by {source.GetType().Name}");
+                        HLog.Debug($"Enemy Injured by {source.GetType().Name}");
                     }
                 }
 
@@ -345,7 +347,7 @@ namespace BetterExperience.Patches
                         }
                     }
 
-                    HLog.Info($"Enemy Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
+                    HLog.Debug($"Enemy Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
                 }
             }
 

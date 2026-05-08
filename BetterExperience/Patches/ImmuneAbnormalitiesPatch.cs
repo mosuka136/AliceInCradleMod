@@ -15,7 +15,10 @@ namespace BetterExperience.Patches
             public static bool Prefix(SER ser)
             {
                 if (ConfigManager.EnableImmuneAbnormalities.Value)
+                {
+                    HLog.Debug($"{nameof(ImmuneAbnormalitiesPatch)} applied.");
                     return false;
+                }
 
                 switch (ser)
                 {

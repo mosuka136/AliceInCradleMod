@@ -9,6 +9,8 @@ namespace BetterExperience.Patches
         [HarmonyPatch]
         public class SetReelSpeedPatch
         {
+            private static bool _hasLoggedActivation = false;
+
             [HarmonyPrefix]
             [HarmonyPatch(typeof(ReelExecuter), nameof(ReelExecuter.fineSpeed))]
             public static void SetReelSpeed(ref float reduce_level)
@@ -17,6 +19,12 @@ namespace BetterExperience.Patches
                     return;
 
                 reduce_level = ConfigManager.SetReelSpeed.Value;
+
+                if (!_hasLoggedActivation)
+                {
+                    HLog.Debug($"{nameof(SetReelSpeedPatch)} applied.");
+                    _hasLoggedActivation = true;
+                }
             }
         }
     }

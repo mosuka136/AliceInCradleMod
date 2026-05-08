@@ -44,7 +44,7 @@ namespace BetterExperience.Patches
                 for (int k = 0; k < 8; k++)
                     matcher.SetAndAdvance(OpCodes.Nop, null);
 
-                HLog.Info("Patched: skipped IKRow.count = X.Mn(IKRow.count, 99)");
+                HLog.Debug($"{nameof(RemoveLimitInTreasureChestsPatch)} applied.");
                 return matcher.InstructionEnumeration();
             }
         }

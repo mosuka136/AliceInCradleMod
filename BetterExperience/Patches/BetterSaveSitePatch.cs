@@ -17,13 +17,15 @@ namespace BetterExperience.Patches
                 if (!ConfigManager.EnableBetterSaveSite.Value)
                     return true;
 
-                if (__instance == null)
-                    return true;
-
                 if (__instance.curMap == null)
+                {
+                    HLog.Notice($"curMap is null.");
                     return true;
+                }
 
                 __result = true;
+
+                HLog.Debug($"{nameof(CanSaveInCurMapPrefix)} applied.");
                 return false;
             }
 
@@ -35,6 +37,8 @@ namespace BetterExperience.Patches
                     return true;
 
                 __result = true;
+
+                HLog.Debug($"{nameof(CanSavePrefix)} applied.");
                 return false;
             }
         }

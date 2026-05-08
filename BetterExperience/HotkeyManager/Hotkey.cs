@@ -108,7 +108,10 @@ namespace BetterExperience.HotkeyManager
         public bool TryParse(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
+            {
+                HLog.Debug("Failed to parse hotkey: input is empty.");
                 return false;
+            }
 
             Hotkeys.Clear();
 
@@ -121,7 +124,10 @@ namespace BetterExperience.HotkeyManager
 
                 var chord = new HotkeyChord(UnityService);
                 if (!chord.TryParse(chordStr))
+                {
+                    HLog.Debug($"Failed to parse hotkey chord: {chordStr}");
                     return false;
+                }
                 Hotkeys.Add(chord);
             }
 

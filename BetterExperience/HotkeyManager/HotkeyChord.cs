@@ -126,7 +126,10 @@ namespace BetterExperience.HotkeyManager
                 for (int i = 0; i < parts.Count - 1; i++)
                 {
                     if (!keyboardModifierTrigger.TryParse(parts[i]))
+                    {
+                        HLog.Debug($"Failed to parse keyboard modifier in hotkey chord: {parts[i]}");
                         return false;
+                    }
                     var modifier = new KeyboardModifierTrigger(UnityService);
                     keyboardModifierTrigger.CopyTo(modifier);
                     Modifiers.Add(modifier);
@@ -136,7 +139,10 @@ namespace BetterExperience.HotkeyManager
             }
 
             if (!gamepadTrigger.TryParse(parts.Last()))
+            {
+                HLog.Debug($"Failed to parse hotkey main key: {parts.Last()}");
                 return false;
+            }
 
             MainKey = gamepadTrigger;
             Modifiers.Clear();
@@ -144,7 +150,10 @@ namespace BetterExperience.HotkeyManager
             {
                 var modifier = new GamepadTrigger(UnityService);
                 if (!modifier.TryParse(parts[i]))
+                {
+                    HLog.Debug($"Failed to parse gamepad modifier in hotkey chord: {parts[i]}");
                     return false;
+                }
                 Modifiers.Add(modifier);
             }
 

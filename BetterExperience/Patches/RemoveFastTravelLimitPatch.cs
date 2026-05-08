@@ -4,7 +4,6 @@ using nel;
 using nel.gm;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 
 namespace BetterExperience.Patches
 {
@@ -23,14 +22,14 @@ namespace BetterExperience.Patches
                     var type = AccessTools.TypeByName("nel.gm.UiGMCMap");
                     if (type == null)
                     {
-                        Debug.LogError("Failed to find type: nel.gm.UiGMCMap");
+                        HLog.Error("Failed to find type: nel.gm.UiGMCMap");
                         yield break;
                     }
 
                     var getter = AccessTools.PropertyGetter(type, "can_use_fasttravel");
                     if (getter == null)
                     {
-                        Debug.LogError("Failed to find getter: can_use_fasttravel");
+                        HLog.Error("Failed to find getter: can_use_fasttravel");
                         yield break;
                     }
 
@@ -44,6 +43,8 @@ namespace BetterExperience.Patches
                         return;
 
                     __result = true;
+
+                    HLog.Debug($"{nameof(RemoveFastTravelMapLimitPatch)} applied.");
                 }
             }
 
@@ -55,14 +56,14 @@ namespace BetterExperience.Patches
                     var type = AccessTools.TypeByName("nel.gm.UiGMCMap");
                     if (type == null)
                     {
-                        Debug.LogError("Failed to find type: nel.gm.UiGMCMap");
+                        HLog.Error("Failed to find type: nel.gm.UiGMCMap");
                         yield break;
                     }
 
                     var method = AccessTools.Method(type, "executeFastTravelConfirm");
                     if (method == null)
                     {
-                        Debug.LogError("Failed to find method: executeFastTravelConfirm");
+                        HLog.Error("Failed to find method: executeFastTravelConfirm");
                         yield break;
                     }
 
@@ -77,9 +78,14 @@ namespace BetterExperience.Patches
 
                     var gm = Traverse.Create(__instance).Field("GM").GetValue<UiGameMenu>();
                     if (gm == null)
+                    {
+                        HLog.Notice("UiGameMenu not found while removing fast travel bench restriction.");
                         return;
+                    }
 
                     gm.BenchChip = gm.BenchChip ?? _cachedBenchChip;
+
+                    HLog.Debug($"{nameof(RemoveFastTravelBenchLimitPatch)} applied.");
                 }
             }
 
@@ -94,7 +100,10 @@ namespace BetterExperience.Patches
                         return;
 
                     if (__result != null)
+                    {
                         _cachedBenchChip = __result;
+                        HLog.Debug($"{nameof(GetBenchChipPatch)} applied. Cached bench chip updated: {__result.GetType().FullName}");
+                    }
                 }
             }
         }

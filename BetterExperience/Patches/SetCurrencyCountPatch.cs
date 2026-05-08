@@ -72,6 +72,7 @@ namespace BetterExperience.Patches
                 var ctype = cEntry.ctype;
                 if (ctype == CoinStorage.CTYPE.GOLD)
                 {
+                    HLog.Debug($"Set GOLD count to: {ConfigManager.SetCurrencyGoldCount.Value}");
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyGoldCount.Value,
                         ConfigManager.SetCurrencyGoldCount.Value,
@@ -79,6 +80,7 @@ namespace BetterExperience.Patches
                 }
                 else if (ctype == CoinStorage.CTYPE.CRAFTS)
                 {
+                    HLog.Debug($"Set CRAFTS count to: {ConfigManager.SetCurrencyCraftsCount.Value}");
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyCraftsCount.Value,
                         ConfigManager.SetCurrencyCraftsCount.Value,
@@ -86,15 +88,14 @@ namespace BetterExperience.Patches
                 }
                 else if (ctype == CoinStorage.CTYPE.JUICE)
                 {
+                    HLog.Debug($"Set JUICE count to: {ConfigManager.SetCurrencyJuiceCount.Value}");
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyJuiceCount.Value,
                         ConfigManager.SetCurrencyJuiceCount.Value,
                         cEntry);
                 }
-                else if (ctype == CoinStorage.CTYPE._TEMPORARY)
-                {
-                }
 
+                HLog.Notice($"Unknown currency type: {ctype}. No lock applied.");
                 return true;
             }
 

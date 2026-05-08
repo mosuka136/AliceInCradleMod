@@ -22,118 +22,209 @@ namespace BetterExperience.Patches
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
                     if (ConfigManager.EnablePreloadPlayerHp.Value)
+                    {
+                        HLog.Debug($"Applying preloaded HP: {ConfigManager.SetPlayerHp.Value}");
                         SetHp(ConfigManager.SetPlayerHp.Value);
+                    }
 
                     if (ConfigManager.EnablePreloadPlayerMp.Value)
+                    {
+                        HLog.Debug($"Applying preloaded MP: {ConfigManager.SetPlayerMp.Value}");
                         SetMp(ConfigManager.SetPlayerMp.Value);
+                    }
 
                     if (ConfigManager.EnablePreloadPlayerEp.Value)
+                    {
+                        HLog.Debug($"Applying preloaded EP: {ConfigManager.SetPlayerEp.Value}");
                         SetEp(ConfigManager.SetPlayerEp.Value);
+                    }
 
                     if (ConfigManager.EnablePreloadPlayerMaxHp.Value)
+                    {
+                        HLog.Debug($"Applying preloaded max HP: {ConfigManager.SetPlayerMaxHp.Value}");
                         SetMaxHp(ConfigManager.SetPlayerMaxHp.Value);
+                    }
 
                     if (ConfigManager.EnablePreloadPlayerMaxMp.Value)
+                    {
+                        HLog.Debug($"Applying preloaded max MP: {ConfigManager.SetPlayerMaxMp.Value}");
                         SetMaxMp(ConfigManager.SetPlayerMaxMp.Value);
+                    }
                 };
 
-                ConfigManager.SetPlayerHp.OnValueChanged += (s, e) => SetHp(e);
-                ConfigManager.SetPlayerMp.OnValueChanged += (s, e) => SetMp(e);
-                ConfigManager.SetPlayerEp.OnValueChanged += (s, e) => SetEp(e);
-                ConfigManager.SetPlayerMaxHp.OnValueChanged += (s, e) => SetMaxHp(e);
-                ConfigManager.SetPlayerMaxMp.OnValueChanged += (s, e) => SetMaxMp(e);
+                ConfigManager.SetPlayerHp.OnValueChanged += (s, e) =>
+                {
+                    HLog.Debug($"Player HP config changed: {e}");
+                    SetHp(e);
+                };
+                ConfigManager.SetPlayerMp.OnValueChanged += (s, e) =>
+                {
+                    HLog.Debug($"Player MP config changed: {e}");
+                    SetMp(e);
+                };
+                ConfigManager.SetPlayerEp.OnValueChanged += (s, e) =>
+                {
+                    HLog.Debug($"Player EP config changed: {e}");
+                    SetEp(e);
+                };
+                ConfigManager.SetPlayerMaxHp.OnValueChanged += (s, e) =>
+                {
+                    HLog.Debug($"Player max HP config changed: {e}");
+                    SetMaxHp(e);
+                };
+                ConfigManager.SetPlayerMaxMp.OnValueChanged += (s, e) =>
+                {
+                    HLog.Debug($"Player max MP config changed: {e}");
+                    SetMaxMp(e);
+                };
 
                 _initialized = true;
+                HLog.Debug("HP/MP/EP patch initialized.");
             }
 
             public static void SetHp(int hp)
             {
                 if (hp < 0)
+                {
+                    HLog.Debug($"Ignored invalid HP value: {hp}");
                     return;
+                }
 
                 var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
                 if (pr == null)
+                {
+                    HLog.Notice("Player instance not found while applying HP.");
                     return;
+                }
 
                 var prTraverse = Traverse.Create(pr);
                 if (prTraverse == null)
+                {
+                    HLog.Notice("Player traverse not found while applying HP.");
                     return;
+                }
 
                 hp = Mathf.Min(hp, prTraverse.Field("maxhp").GetValue<int>());
 
                 prTraverse.Field("hp").SetValue(hp);
                 pr.cureHp(0);
+
+                HLog.Debug($"Player HP set to {hp}");
             }
 
             public static void SetMp(int mp)
             {
                 if (mp < 0)
+                {
+                    HLog.Debug($"Ignored invalid MP value: {mp}");
                     return;
+                }
 
                 var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
                 if (pr == null)
+                {
+                    HLog.Notice("Player instance not found while applying MP.");
                     return;
+                }
 
                 var prTraverse = Traverse.Create(pr);
                 if (prTraverse == null)
+                {
+                    HLog.Notice("Player traverse not found while applying MP.");
                     return;
+                }
 
                 mp = Mathf.Min(mp, prTraverse.Field("maxmp").GetValue<int>());
 
                 prTraverse.Field("mp").SetValue(mp);
                 pr.cureMp(0);
+
+                HLog.Debug($"Player MP set to {mp}");
             }
 
             public static void SetEp(int ep)
             {
                 if (ep < 0)
+                {
+                    HLog.Debug($"Ignored invalid EP value: {ep}");
                     return;
+                }
 
                 var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
                 if (pr == null)
+                {
+                    HLog.Notice("Player instance not found while applying EP.");
                     return;
+                }
 
                 var prTraverse = Traverse.Create(pr);
                 if (prTraverse == null)
+                {
+                    HLog.Notice("Player traverse not found while applying EP.");
                     return;
+                }
 
                 prTraverse.Field("ep").SetValue(ep);
                 pr.EpCon.fineCounter(); // 刷新EP显示
+
+                HLog.Debug($"Player EP set to {ep}");
             }
 
             public static void SetMaxHp(int maxHp)
             {
                 if (maxHp <= 0)
+                {
+                    HLog.Debug($"Ignored invalid max HP value: {maxHp}");
                     return;
+                }
 
                 var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
                 if (pr == null)
+                {
+                    HLog.Notice("Player instance not found while applying max HP.");
                     return;
+                }
 
                 var prTraverse = Traverse.Create(pr);
                 if (prTraverse == null)
+                {
+                    HLog.Notice("Player traverse not found while applying max HP.");
                     return;
+                }
 
                 prTraverse.Field("maxhp").SetValue(maxHp);
                 pr.Ser.checkSer();
                 pr.cureHp(0);
+
+                HLog.Debug($"Player max HP set to {maxHp}");
             }
 
             public static void SetMaxMp(int maxMp)
             {
                 if (maxMp <= 0)
+                {
+                    HLog.Debug($"Ignored invalid max MP value: {maxMp}");
                     return;
+                }
 
                 var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
                 if (pr == null)
+                {
+                    HLog.Notice("Player instance not found while applying max MP.");
                     return;
+                }
 
                 var prTraverse = Traverse.Create(pr);
                 if (prTraverse == null)
+                {
+                    HLog.Notice("Player traverse not found while applying max MP.");
                     return;
+                }
 
                 prTraverse.Field("maxmp").SetValue(maxMp);
                 pr.cureMp(0);
+
+                HLog.Debug($"Player max MP set to {maxMp}");
             }
         }
     }

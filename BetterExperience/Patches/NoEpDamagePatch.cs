@@ -16,6 +16,8 @@ namespace BetterExperience.Patches
                     return true;
 
                 __result = false;
+
+                HLog.Debug($"{nameof(NoEpDamagePatch)} applied.");
                 return false;
             }
         }

@@ -22,6 +22,8 @@ namespace BetterExperience.Patches
                     int light_dep_size = 1000;
                     Traverse.Create(__instance).Field("light_dep_size").SetValue(light_dep_size);
                     __instance.MyLight.radius = light_dep_size;
+
+                    HLog.Debug($"{nameof(RemoveDarkAreaPatch)} applied.");
                 }
             }
         }

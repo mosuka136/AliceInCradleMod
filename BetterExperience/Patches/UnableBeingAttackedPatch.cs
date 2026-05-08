@@ -11,6 +11,8 @@ namespace BetterExperience.Patches
         [HarmonyPatch]
         public class UnableBeingAttackedPatch
         {
+            private static bool _hasLoggedActivation = false;
+
             [HarmonyPatch(typeof(M2PrADmg), "applyDamage",
                 new Type[] {
                     typeof(NelAttackInfo),
@@ -30,6 +32,12 @@ namespace BetterExperience.Patches
             {
                 if (ConfigManager.EnableBeingAttacked.Value)
                     return true;
+
+                if (!_hasLoggedActivation)
+                {
+                    HLog.Debug("Player damage reception disabled.");
+                    _hasLoggedActivation = true;
+                }
 
                 return false;
             }

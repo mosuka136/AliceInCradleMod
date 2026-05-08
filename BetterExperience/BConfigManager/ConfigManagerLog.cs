@@ -6,7 +6,7 @@ namespace BetterExperience.BConfigManager
     public partial class ConfigManager
     {
         public static ConfigEntry<bool> EnableHarmonyLog { get; private set; }
-        public static ConfigEntry<HLog.LogLevel> HarmonyLogLevel { get; private set; }
+        public static ConfigEntry<HLog.LogLevel> HLogLevel { get; private set; }
         public static ConfigEntry<HLog.LogLevel> BepInExLogLevel { get; private set; }
 
         private const string SectionLog = "Log";
@@ -39,10 +39,10 @@ namespace BetterExperience.BConfigManager
                     english: "Enable log. It will generate a log file in BetterExperience\\logs folder."
                 )
                 );
-            HarmonyLogLevel = Config.Bind(
+            HLogLevel = Config.Bind(
                 SectionLog,
-                nameof(HarmonyLogLevel),
-                HLog.LogLevel.Warning,
+                nameof(HLogLevel),
+                HLog.LogLevel.Info,
                 new Translator(chinese: "日志等级", english: "Log Level"),
                 new Translator(
                     chinese: "日志等级。默认值为 Warning。",

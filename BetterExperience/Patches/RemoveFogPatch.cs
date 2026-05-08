@@ -22,6 +22,8 @@ namespace BetterExperience.Patches
 
                 __instance.DrM?.destruct();
                 __instance.DrM = null;
+
+                HLog.Debug($"{nameof(RemoveFogPatch)} applied.");
             }
         }
     }

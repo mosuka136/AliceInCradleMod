@@ -41,10 +41,15 @@ namespace BetterExperience.Patches
                     return;
 
                 if (_key == "pee")
+                {
+                    HLog.Debug("Skip modifying the pee option.");
                     return;
+                }
 
                 _only_in_safearea = false;
                 _FnCanUse = (pr) => true;
+
+                HLog.Debug($"{nameof(RemoveLimitInBenchMenuPatch)} applied. Key={_key}");
             }
         }
 
@@ -60,7 +65,10 @@ namespace BetterExperience.Patches
 
                 var buttons = Traverse.Create(__instance).Field("Btns").GetValue<BtnContainerRadio<aBtn>>();
                 if (buttons == null)
+                {
+                    HLog.Notice("Bench menu buttons not found while removing bench menu restrictions.");
                     return;
+                }
 
                 var num = buttons.Length - 1;
                 for (var i = 0; i < num; i++)
@@ -74,6 +82,8 @@ namespace BetterExperience.Patches
 
                     btn.SetLocked(false, no_change_binding: true);
                 }
+
+                HLog.Debug($"{nameof(RemoveLimitInBenchMenuButtonPatch)} applied.");
             }
         }
     }

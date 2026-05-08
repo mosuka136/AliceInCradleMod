@@ -11,9 +11,21 @@ namespace BetterExperience
         [RegisterOnGameBoot]
         public class Updater : MonoBehaviour
         {
+            private void Awake()
+            {
+                HLog.Info("Frame update dispatcher created.");
+            }
+
             private void Update()
             {
-                OnFrameUpdate?.Invoke();
+                try
+                {
+                    OnFrameUpdate?.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error("An error occurred while invoking OnFrameUpdate event.", ex);
+                }
             }
         }
     }

@@ -17,6 +17,7 @@ namespace BetterExperience.Patches
                 if (ConfigManager.EnablePressDamage.Value)
                     return true;
 
+                HLog.Debug($"{nameof(RemovePressDamagePatch)} applied.");
                 return false;
             }
         }

@@ -48,26 +48,21 @@ namespace BetterExperience.Patches
                 if (!ConfigManager.EnableBetterReelEffect.Value)
                     return;
 
-                if (__instance == null)
+                if (Reel == null)
                 {
-                    HLog.Error("__instance is null.");
+                    HLog.Notice("Reel is null.");
                     return;
                 }
 
-                if (Reel == null || __instance == null)
+                var content = Traverse.Create(Reel).Field("Acontent").GetValue<string[]>();
+                if (content == null || __instance.IKRow == null ||
+                    !FEnum<ReelExecuter.EFFECT>.TryParse(content[Reel.content_id_dec % content.Length], out var ik))
                 {
-                    HLog.Error("Reel or __instance is null.");
-                    return;
-                }
-                var acontent = Traverse.Create(Reel).Field("Acontent").GetValue<string[]>();
-                if (acontent == null || __instance.IKRow == null ||
-                    !FEnum<ReelExecuter.EFFECT>.TryParse(acontent[Reel.content_id_dec % acontent.Length], out var ik))
-                {
-                    HLog.Error("acontent is null or __instance.IKRow is null or cannot parse effect from acontent.");
+                    HLog.Notice("content is null or __instance.IKRow is null or cannot parse effect from content.");
                     return;
                 }
 
-                string[] sortedAcontent;
+                string[] sortedContent;
                 switch (ik)
                 {
                     case ReelExecuter.EFFECT.GRADE0:
@@ -75,7 +70,7 @@ namespace BetterExperience.Patches
                     case ReelExecuter.EFFECT.GRADE2:
                     case ReelExecuter.EFFECT.GRADE3:
                     case ReelExecuter.EFFECT.GRADE4:
-                        sortedAcontent = SortByCustomOrder(acontent, _grade);
+                        sortedContent = SortByCustomOrder(content, _grade);
                         break;
                     case ReelExecuter.EFFECT.COUNT_ADD0:
                     case ReelExecuter.EFFECT.COUNT_ADD1:
@@ -83,36 +78,37 @@ namespace BetterExperience.Patches
                     case ReelExecuter.EFFECT.COUNT_ADD3:
                     case ReelExecuter.EFFECT.COUNT_ADD4:
                     case ReelExecuter.EFFECT.COUNT_ADD5:
-                        sortedAcontent = SortByCustomOrder(acontent, _countAdd);
+                        sortedContent = SortByCustomOrder(content, _countAdd);
                         break;
                     case ReelExecuter.EFFECT.COUNT_MUL1:
                     case ReelExecuter.EFFECT.COUNT_MUL2:
-                        sortedAcontent = SortByCustomOrder(acontent, _countMul);
+                        sortedContent = SortByCustomOrder(content, _countMul);
                         break;
                     case ReelExecuter.EFFECT.ADD_MONEY10:
                     case ReelExecuter.EFFECT.ADD_MONEY20:
                     case ReelExecuter.EFFECT.ADD_MONEY30:
                     case ReelExecuter.EFFECT.ADD_MONEY100:
-                        sortedAcontent = SortByCustomOrder(acontent, _addMoney);
+                        sortedContent = SortByCustomOrder(content, _addMoney);
                         break;
                     default:
-                        sortedAcontent = null;
+                        sortedContent = null;
                         break;
                 }
 
-                if (sortedAcontent == null)
+                if (sortedContent == null)
                 {
-                    HLog.Error($"No custom order defined for effect {ik}");
+                    HLog.Warn($"No custom order defined for effect {ik}");
                     return;
                 }
-                var index = Array.IndexOf(acontent, sortedAcontent[0]);
+                var index = Array.IndexOf(content, sortedContent[0]);
                 if (index < 0)
                 {
-                    HLog.Error($"Sorted acontent's first element '{sortedAcontent[0]}' not found in original acontent.");
+                    HLog.Warn($"Sorted content's first element '{sortedContent[0]}' not found in original content.");
                     return;
                 }
 
                 Reel.content_id_dec = index;
+                HLog.Debug($"{nameof(BetterReelEffectPatch)} applied.");
             }
 
             /// <summary>

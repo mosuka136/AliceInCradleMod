@@ -48,14 +48,18 @@ namespace BetterExperience
                 PatchInfo.LoggerName,
                 new UnityProvider(),
                 new BepInExLoggerProvider(Logger),
-                ConfigManager.HarmonyLogLevel.Value,
+                ConfigManager.HLogLevel.Value,
                 ConfigManager.BepInExLogLevel.Value);
+
+            HLog.Info($"{nameof(BetterExperience)} startup initialized. Version={PatchInfo.BepInPluginVersion}");
 
             var harmony = new Harmony(PatchInfo.HarmonyPluginId);
             try
             {
+                HLog.Debug($"Starting Harmony patch registration: {PatchInfo.HarmonyPluginId}");
                 SafePatchAll(harmony, typeof(BetterExperience).Assembly);
                 LogPatchesInfo(harmony);
+                HLog.Info("Harmony patch registration completed.");
             }
             catch (Exception ex)
             {
@@ -77,11 +81,14 @@ namespace BetterExperience
             {
                 ConfigManager.ReloadConfig();
                 Logger.LogInfo("Reloaded config!");
+                HLog.Info("Reloaded config.");
             }
         }
 
         public void SafePatchAll(Harmony harmony, Assembly asm)
         {
+            int patchClassCount = 0;
+
             foreach (var t in GetTypesSafe(asm))
             {
                 if (t == null)
@@ -103,6 +110,7 @@ namespace BetterExperience
 
                 try
                 {
+                    patchClassCount++;
                     harmony.CreateClassProcessor(t).Patch();
                 }
                 catch (Exception ex)
@@ -110,6 +118,8 @@ namespace BetterExperience
                     HLog.Error("Skip patch class: " + t.FullName, ex);
                 }
             }
+
+            HLog.Debug($"Scanned and processed Harmony patch classes: {patchClassCount}");
         }
 
         public IEnumerable<Type> GetTypesSafe(Assembly asm)
@@ -120,6 +130,7 @@ namespace BetterExperience
             }
             catch (ReflectionTypeLoadException e)
             {
+                HLog.Warn($"ReflectionTypeLoadException occurred while enumerating assembly types: {asm.FullName}");
                 return e.Types.Where(t => t != null);
             }
         }
@@ -140,7 +151,7 @@ namespace BetterExperience
                 if (info == null) continue;
 
                 patchedMethodCount++;
-                HLog.Info($"Original: {original.DeclaringType.FullName}.{original.Name}");
+                HLog.Debug($"Original: {original.DeclaringType.FullName}.{original.Name}");
 
                 CountList(info.Prefixes, ref prefixCount);
                 CountList(info.Postfixes, ref postfixCount);
@@ -155,16 +166,16 @@ namespace BetterExperience
                         var p = patches[i];
                         if (p.owner != id) continue;
                         count++;
-                        HLog.Info($"  {p.PatchMethod.DeclaringType.FullName}.{p.PatchMethod.Name} ({p.PatchMethod.MetadataToken:X8})");
+                        HLog.Debug($"  {p.PatchMethod.DeclaringType.FullName}.{p.PatchMethod.Name} ({p.PatchMethod.MetadataToken:X8})");
                     }
                 }
             }
 
             HLog.Info($"Total patched methods: {patchedMethodCount}");
-            HLog.Info($"Total prefixes: {prefixCount}");
-            HLog.Info($"Total postfixes: {postfixCount}");
-            HLog.Info($"Total transpilers: {transpilerCount}");
-            HLog.Info($"Total finalizers: {finalizerCount}");
+            HLog.Debug($"Total prefixes: {prefixCount}");
+            HLog.Debug($"Total postfixes: {postfixCount}");
+            HLog.Debug($"Total transpilers: {transpilerCount}");
+            HLog.Debug($"Total finalizers: {finalizerCount}");
             HLog.Info($"Total patch methods: {prefixCount + postfixCount + transpilerCount + finalizerCount}");
             HLog.WriteLine();
         }

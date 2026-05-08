@@ -22,6 +22,10 @@ namespace BetterExperience.Patches
                 {
                     X.DEBUGTIMESTAMP = false;
                 }
+
+                HLog.Debug(ConfigManager.EnableDebugMode.Value
+                    ? "Debug mode enabled."
+                    : "Debug mode disabled.");
             }
         }
     }

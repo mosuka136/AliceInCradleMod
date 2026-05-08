@@ -36,6 +36,7 @@ namespace BetterExperience.Patches
                 if (!ConfigManager.EnableNoMpDamage.Value)
                     return true;
 
+                HLog.Debug($"{nameof(NoMpDamagePatch)} applied.");
                 return false;
             }
         }

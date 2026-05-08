@@ -2,6 +2,7 @@ using BetterExperience.BConfigManager;
 using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using nel;
+using System;
 using System.Collections.Generic;
 
 namespace BetterExperience.Patches
@@ -20,65 +21,94 @@ namespace BetterExperience.Patches
                 if (_initialized)
                     return;
 
-                GameSaveLoadManager.OnGameSaveLoadCompleted += Flush;
+                GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
+                {
+                    HLog.Debug("Game save/load completed. Synchronizing weather config from game state.");
+                    Flush();
+                };
 
 
                 ConfigManager.SetWeatherWind.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.WIND, e);
+                        TrySetWeather(WeatherItem.WEATHER.WIND, e);
                 };
                 ConfigManager.SetWeatherThunder.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.THUNDER, e);
+                        TrySetWeather(WeatherItem.WEATHER.THUNDER, e);
                 };
                 ConfigManager.SetWeatherMist.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.MIST, e);
+                        TrySetWeather(WeatherItem.WEATHER.MIST, e);
                 };
                 ConfigManager.SetWeatherDrought.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.DROUGHT, e);
+                        TrySetWeather(WeatherItem.WEATHER.DROUGHT, e);
                 };
                 ConfigManager.SetWeatherDenseMist.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.MIST_DENSE, e);
+                        TrySetWeather(WeatherItem.WEATHER.MIST_DENSE, e);
                 };
                 ConfigManager.SetWeatherPlague.OnValueChanged += (s, e) =>
                 {
                     if (!_isApplying)
-                        SetWeather(WeatherItem.WEATHER.PLAGUE, e);
+                        TrySetWeather(WeatherItem.WEATHER.PLAGUE, e);
                 };
 
                 _initialized = true;
+                HLog.Debug("Weather patch initialized.");
             }
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(NightController), nameof(NightController.weatherShuffle))]
             public static void WeatherShufflePostfix()
             {
+                HLog.Debug("Detected weather shuffle. Synchronizing weather config from game state.");
                 Flush();
+            }
+
+            private static void TrySetWeather(WeatherItem.WEATHER weather, bool setWeather)
+            {
+                try
+                {
+                    SetWeather(weather, setWeather);
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexcepted error in {nameof(SetWeatherPatch)}", ex);
+                }
             }
 
             public static void SetWeather(WeatherItem.WEATHER weather, bool setWeather)
             {
                 var nc = GetNightController();
                 if (nc == null)
+                {
+                    HLog.Notice($"NightController not found while applying weather setting: {weather} => {setWeather}");
                     return;
+                }
 
                 var nct = Traverse.Create(nc);
                 if (nct == null)
+                {
+                    HLog.Notice($"Traverse creation failed while applying weather setting: {weather} => {setWeather}");
                     return;
+                }
 
                 var cur_weather = nct.Field("cur_weather_");
                 var AWeather = nct.Field("AWeather");
 
                 if (cur_weather == null || AWeather == null)
+                {
+                    HLog.Notice($"Weather fields not found while applying weather setting: {weather} => {setWeather}");
                     return;
+                }
+
+                HLog.Debug($"Applying weather setting: {weather} => {setWeather}");
 
                 var hasWeather = GetBit(cur_weather.GetValue<int>(), (int)weather & 0x1F);
                 if (setWeather)
@@ -108,6 +138,7 @@ namespace BetterExperience.Patches
                         AWeather.SetValue(weatherItemList.ToArray());
                         cur_weather.SetValue(SetResetBit(cur_weather.GetValue<int>(), (int)weather & 0x1F, true));
                         newWeatherItem.showLog();
+                        HLog.Debug($"Weather enabled: {weather}");
                     }
                 }
                 else
@@ -123,6 +154,7 @@ namespace BetterExperience.Patches
                             newWeatherList.RemoveAt(index);
                             AWeather.SetValue(newWeatherList.ToArray());
                             cur_weather.SetValue(SetResetBit(cur_weather.GetValue<int>(), (int)weather & 0x1F, false));
+                            HLog.Debug($"Weather disabled: {weather}");
                         }
                     }
                 }
@@ -160,7 +192,10 @@ namespace BetterExperience.Patches
             {
                 var nc = GetNightController();
                 if (nc == null)
+                {
+                    HLog.Notice("NightController not found while synchronizing weather config.");
                     return;
+                }
 
                 _isApplying = true;
                 ConfigManager.SetWeatherWind.Value = nc.getWeather(WeatherItem.WEATHER.WIND) != null;
@@ -170,6 +205,8 @@ namespace BetterExperience.Patches
                 ConfigManager.SetWeatherDenseMist.Value = nc.getWeather(WeatherItem.WEATHER.MIST_DENSE) != null;
                 ConfigManager.SetWeatherPlague.Value = nc.getWeather(WeatherItem.WEATHER.PLAGUE) != null;
                 _isApplying = false;
+
+                HLog.Debug("Weather config synchronized from game state.");
             }
         }
     }

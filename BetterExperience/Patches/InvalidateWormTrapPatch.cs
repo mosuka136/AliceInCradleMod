@@ -16,6 +16,8 @@ namespace BetterExperience.Patches
                     return true;
 
                 __result = false;
+
+                HLog.Debug($"{nameof(InvalidateWormTrapPatch)} applied.");
                 return false;
             }
         }

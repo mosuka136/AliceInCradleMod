@@ -15,7 +15,7 @@ namespace BetterExperience.Patches
                 var m = AccessTools.Method(typeof(nel.PR), "applyHpDamage");
                 if (m == null)
                 {
-                    HLog.Error("applyHpDamage not found on PR. Skip.");
+                    HLog.Error("applyHpDamage not found on PR.");
                     yield break;
                 }
 
@@ -27,6 +27,7 @@ namespace BetterExperience.Patches
                 if (!ConfigManager.EnableNoHpDamage.Value)
                     return true;
 
+                HLog.Debug($"{nameof(NoHpDamagePatch)} applied.");
                 return false;
             }
         }

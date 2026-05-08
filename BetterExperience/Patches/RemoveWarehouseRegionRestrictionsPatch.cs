@@ -11,12 +11,14 @@ namespace BetterExperience.Patches
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(NelM2DBase), nameof(NelM2DBase.canAccesableToHouseInventory))]
-            public static bool NelM2DBase_canAccesableToHouseInventory_Prefix(ref bool __result)
+            public static bool CanAccesableToHouseInventoryPrefix(ref bool __result)
             {
                 if (!ConfigManager.EnableAccessWarehouseAnywhere.Value)
                     return true;
 
                 __result = true;
+
+                HLog.Debug($"{nameof(RemoveWarehouseRegionRestrictionsPatch)} applied.");
                 return false;
             }
         }

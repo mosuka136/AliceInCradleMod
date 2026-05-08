@@ -17,6 +17,7 @@ namespace BetterExperience.Patches
 
                 __instance.cure();
 
+                HLog.Debug($"{nameof(InfiniteShieldPatch)} applied.");
                 return true;
             }
         }

@@ -66,6 +66,12 @@ namespace BetterExperience
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
             [CallerLineNumber] int line = 0) => Write(LogLevel.Info, msg, null, member, file, line);
+
+        public static void Notice(string msg,
+            [CallerMemberName] string member = "",
+            [CallerFilePath] string file = "",
+            [CallerLineNumber] int line = 0) => Write(LogLevel.Notice, msg, null, member, file, line);
+
         public static void Warn(string msg,
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
@@ -114,10 +120,14 @@ namespace BetterExperience
               .Append(time).Append(" T").Append(threadId)
               .Append(" F").Append(frame)
               .Append(" S=").Append(scene)
-              .Append(" ").Append(logLevel.ToString()).Append(" | ").Append(msg)
-              .Append(" (").Append(Path.GetFileName(file))
-              .Append(':').Append(line)
-              .Append(" ").Append(member).Append(')');
+              .Append(" ").Append(logLevel.ToString()).Append(" | ").Append(msg);
+
+            if (!string.IsNullOrEmpty(member) && !string.IsNullOrEmpty(Path.GetFileName(file)) && line > 0)
+            {
+                sb.Append(" (").Append(Path.GetFileName(file))
+                  .Append(':').Append(line)
+                  .Append(" ").Append(member).Append(')');
+            }
 
             if (ex != null)
             {
@@ -205,6 +215,7 @@ namespace BetterExperience
         {
             Debug = 0,
             Info,
+            Notice,
             Warning,
             Error
         }

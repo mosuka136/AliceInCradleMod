@@ -24,16 +24,35 @@ namespace BetterExperience
                         return;
 
                     var types = ClassHelper.GetRegisterOnGameBootClasses(typeof(GameBootManager).Assembly);
+                    int registeredComponentCount = 0;
                     foreach (var type in types)
                     {
+                        registeredComponentCount++;
                         RegisterComponentOnGameBoot(type);
                     }
 
                     var methods = ClassHelper.GetInitializeOnGameBootMethods(typeof(GameBootManager).Assembly);
+                    int registeredMethodCount = 0;
                     foreach (var method in methods)
                     {
-                        OnGameBoot += () => method.Invoke(null, null);
+                        registeredMethodCount++;
+                        HLog.Debug($"Register game boot initializer: {method.DeclaringType.FullName}.{method.Name}");
+                        OnGameBoot += () =>
+                        {
+                            try
+                            {
+                                HLog.Debug($"Invoke game boot initializer: {method.DeclaringType.FullName}.{method.Name}");
+                                method.Invoke(null, null);
+                            }
+                            catch (Exception ex)
+                            {
+                                HLog.Error($"Failed to invoke game boot initializer: {method.DeclaringType.FullName}.{method.Name}", ex);
+                                throw;
+                            }
+                        };
                     }
+
+                    HLog.Info($"Game boot registration completed. Components={registeredComponentCount}, Initializers={registeredMethodCount}");
                 }
             }
 
@@ -54,6 +73,7 @@ namespace BetterExperience
                     }
 
                     _initialized = true;
+                    HLog.Info("Game boot initialization completed.");
                 }
             }
         }
@@ -66,14 +86,24 @@ namespace BetterExperience
                 return;
             }
 
+            HLog.Debug($"Register game boot component: {type.FullName}");
             OnGameBoot += () =>
             {
-                var go = new GameObject($"{nameof(BetterExperience)}_{type.Name}")
+                try
                 {
-                    hideFlags = HideFlags.HideAndDontSave
-                };
-                UnityEngine.Object.DontDestroyOnLoad(go);
-                go.AddComponent(type);
+                    var go = new GameObject($"{nameof(BetterExperience)}_{type.Name}")
+                    {
+                        hideFlags = HideFlags.HideAndDontSave
+                    };
+                    UnityEngine.Object.DontDestroyOnLoad(go);
+                    go.AddComponent(type);
+                    HLog.Debug($"Created game boot component: {type.FullName}");
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Failed to create game boot component: {type.FullName}", ex);
+                    throw;
+                }
             };
         }
     }

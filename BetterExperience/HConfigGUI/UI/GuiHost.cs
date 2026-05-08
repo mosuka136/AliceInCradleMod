@@ -28,13 +28,18 @@ namespace BetterExperience.HConfigGUI.UI
             float width = Screen.width * 0.3f;
             float height = Screen.height * 0.8f;
             _viewModel.WindowRect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
+
+            HLog.Debug($"Config GUI host created. WindowId={WindowID}");
         }
 
         private void Update()
         {
             var hotkey = _viewModel.ConfigUIHotkey;
             if (hotkey != null && hotkey.WasPressedThisFrame())
+            {
+                HLog.Debug("Config GUI toggle hotkey pressed.");
                 ToggleVisibility();
+            }
 
             _viewModel.Update(_viewModel.UnityService.UnscaledDeltaTime);
         }
@@ -83,6 +88,7 @@ namespace BetterExperience.HConfigGUI.UI
             if (_viewModel.WindowRect.Contains(currentEvent.mousePosition))
                 return;
 
+            HLog.Debug("Config GUI auto-hidden because focus was lost.");
             Hide();
             GUI.FocusControl(null);
         }
@@ -91,15 +97,21 @@ namespace BetterExperience.HConfigGUI.UI
         {
             if (_viewModel.RecordingHotkey != null)
             {
+                HLog.Info("Cannot hide config GUI while hotkey recording is active.");
                 _viewModel.ShowToast(TranslatorResource.CanNotHideBeforeEndRecord, _viewModel.ToastDuration);
                 return;
             }
+
+            if (!_isVisible && _viewModel.OpenedEnumEntry == null && _viewModel.OpenedHotkeyEntry == null && _viewModel.RecordingHotkey == null && !_hasDraggedWindowSinceOpen)
+                return;
 
             _isVisible = false;
             _viewModel.OpenedEnumEntry = null;
             _viewModel.OpenedHotkeyEntry = null;
             _viewModel.RecordingHotkey = null;
             _hasDraggedWindowSinceOpen = false;
+
+            HLog.Debug("Config GUI hidden.");
         }
 
         public void ToggleVisibility()
@@ -107,7 +119,10 @@ namespace BetterExperience.HConfigGUI.UI
             if (_isVisible)
                 Hide();
             else
+            {
                 _isVisible = true;
+                HLog.Debug("Config GUI shown.");
+            }
         }
     }
 }

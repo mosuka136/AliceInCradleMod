@@ -52,6 +52,8 @@ namespace BetterExperience.Patches
                 var fistjump_multiple = _Mki.fistjump_multiple_max - _Mki.fistjump_multiple_min;
                 _Mki.fistjump_multiple_min *= DecreaseRatio;
                 _Mki.fistjump_multiple_max = _Mki.fistjump_multiple_min + fistjump_multiple;
+
+                HLog.Debug($"{nameof(BetterFishingPrefix)} applied.");
             }
         }
     }

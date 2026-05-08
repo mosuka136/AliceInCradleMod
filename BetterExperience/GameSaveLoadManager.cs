@@ -18,7 +18,16 @@ namespace BetterExperience
                 if (_name != "__INITNEWGAME")
                     return;
 
-                OnGameSaveLoadCompleted?.Invoke();
+                HLog.Info("Detected game save/load completion event.");
+
+                try
+                {
+                    OnGameSaveLoadCompleted?.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error("An error occurred while invoking OnGameSaveLoadCompleted event.", ex);
+                }
             }
         }
     }

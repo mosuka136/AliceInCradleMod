@@ -32,6 +32,7 @@ namespace BetterExperience.Patches
                     {
                         GameSaveProtectionManager.OnSavingActivated += RecoverPupKill;
                         _isInitialized = true;
+                        HLog.Debug($"{nameof(RemoveLimitInPuppetNpcDefeatedPatch)} applied.");
                     }
 
                     _isChanging = true;
@@ -60,11 +61,13 @@ namespace BetterExperience.Patches
 
                 if (type == WanderingManager.TYPE.PUP)
                     __result = true;
+                HLog.Debug($"{nameof(IsWNpcEnablePostfix)} applied.");
             }
 
             public static void RecoverPupKill()
             {
                 GF.setC(PUP_KILL, _pup_kill);
+                HLog.Debug($"Recovered PUP_KILL before save: {_pup_kill}");
             }
         }
     }

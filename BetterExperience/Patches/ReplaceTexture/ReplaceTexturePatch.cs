@@ -30,6 +30,7 @@ namespace BetterExperience.Patches
                 FrameUpdateManager.OnFrameUpdate += Update;
 
                 _initialized = true;
+                HLog.Debug($"{nameof(ReplaceTexturePatch)} initialized.");
             }
 
             public static void Update()
@@ -52,6 +53,8 @@ namespace BetterExperience.Patches
                     {
                         TryReplace(texture.Value, texture.Key);
                     }
+
+                    HLog.Info("Textures flushed.");
                 }
             }
 
@@ -63,19 +66,27 @@ namespace BetterExperience.Patches
                     return;
 
                 if (__instance.MtiImage0 == null || __instance.MtiImage0.Image == null)
+                {
+                    HLog.Debug("SvTexture has no image.");
                     return;
+                }
 
                 if (!_spineTexture.Contains(__instance))
                     _spineTexture.Add(__instance);
 
-                var image = TextureManager.Instance.GetReplaceTexture(__instance.MtiImage0.Image.name);
+                var imageName = __instance.MtiImage0.Image.name;
+                var image = TextureManager.Instance.GetReplaceTexture(imageName);
                 if (image == null)
+                {
+                    HLog.Debug("No replacement texture found for " + imageName);
                     return;
+                }
 
                 if (!_originalSpineTexture.ContainsKey(__instance))
                     _originalSpineTexture[__instance] = __instance.MtiImage0.Image;
 
                 TryReplace(__instance, image);
+                HLog.Info($"SvTexture {imageName} replaced.");
             }
 
             [HarmonyPostfix]
@@ -88,6 +99,7 @@ namespace BetterExperience.Patches
                 if (!_pictureTexture.ContainsKey(asset_key))
                     _pictureTexture[asset_key] = __result;
 
+                HLog.Debug($"Try replace texture for {asset_key}.");
                 TryReplace(__result, asset_key);
             }
 
@@ -133,8 +145,6 @@ namespace BetterExperience.Patches
 
                 var Base = svTexture.getRendered();
                 BLIT.PasteTo(Base, image, Base.width * 0.5f, Base.height * 0.5f, 1f);
-
-                HLog.Info($"ReplaceTexture: {svTexture.MtiImage0.Image.name}");
             }
 
             public static void RestoreOriginalTexture()

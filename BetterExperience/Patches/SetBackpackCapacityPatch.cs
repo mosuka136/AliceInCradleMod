@@ -23,37 +23,53 @@ namespace BetterExperience.Patches
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
                     if (ConfigManager.EnablePreloadBackpackCapacity.Value)
+                    {
+                        HLog.Debug($"Applying preloaded backpack capacity: {ConfigManager.SetBackpackCapacity.Value}");
                         SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value);
+                    }
                 };
 
                 GameSaveProtectionManager.OnSavingActivated += RecoverBackpackCapacity;
                 GameSaveProtectionManager.OnSavingCompleted += () =>
                 {
+                    HLog.Debug($"Restoring backpack capacity after save: {_currentCapacity}");
                     SetBackpackCapacity(_currentCapacity);
                 };
 
                 ConfigManager.SetBackpackCapacity.OnValueChanged += (s, e) =>
                 {
+                    HLog.Debug($"Backpack capacity config changed: {e}");
                     SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value);
                 };
 
                 _initialized = true;
+                HLog.Debug("Backpack capacity patch initialized.");
             }
 
             public static void SetBackpackCapacity(int count)
             {
                 if (count <= 0)
+                {
+                    HLog.Debug($"Ignored invalid backpack capacity: {count}");
                     return;
+                }
 
                 var imng = GetIMNG();
                 if (imng == null)
+                {
+                    HLog.Notice("Item manager not found while applying backpack capacity.");
                     return;
+                }
 
                 var inventory = imng.getInventory();
                 if (inventory == null)
+                {
+                    HLog.Notice("Inventory not found while applying backpack capacity.");
                     return;
+                }
 
                 inventory.row_max = count;
+                HLog.Debug($"{nameof(SetBackpackCapacity)} applied. New capacity: {count}");
             }
 
             public static NelItemManager GetIMNG()
@@ -76,21 +92,31 @@ namespace BetterExperience.Patches
             {
                 var imng = GetIMNG();
                 if (imng == null)
+                {
+                    HLog.Notice("Item manager not found while recovering backpack capacity.");
                     return;
+                }
 
                 var inventory = imng.getInventory();
                 if (inventory == null)
+                {
+                    HLog.Notice("Inventory not found while recovering backpack capacity.");
                     return;
+                }
 
                 var item = NelItem.GetById("workbench_capacity");
                 if (item == null)
+                {
+                    HLog.Notice("workbench_capacity item not found while recovering backpack capacity.");
                     return;
+                }
 
                 var count = imng.getInventoryPrecious().getCount(item);
                 count = Math.Max(count, 0);
 
                 _currentCapacity = inventory.row_max;
                 inventory.row_max = count + 12;
+                HLog.Debug($"Recovered backpack capacity for save operation. TemporaryCapacity={inventory.row_max}, CurrentCapacity={_currentCapacity}");
             }
         }
     }
