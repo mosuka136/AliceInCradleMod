@@ -1,6 +1,7 @@
 using BetterExperience.BConfigManager;
 using HarmonyLib;
 using nel;
+using System;
 
 namespace BetterExperience.Patches
 {
@@ -11,15 +12,23 @@ namespace BetterExperience.Patches
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(MDAT), "calcBurstFaintedRatio")]
-            static bool Perfix(ref float __result)
+            public static bool Prefix(ref float __result)
             {
-                if (ConfigManager.EnableHolyBurstFaint.Value)
+                try
+                {
+                    if (ConfigManager.EnableHolyBurstFaint.Value)
+                        return true;
+
+                    __result = 0f;
+
+                    HLog.Debug($"{nameof(RemoveHolyBurstFaintPatch)} applied.");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(RemoveHolyBurstFaintPatch)}", ex);
                     return true;
-
-                __result = 0f;
-
-                HLog.Debug($"{nameof(RemoveHolyBurstFaintPatch)} applied.");
-                return false;
+                }
             }
         }
     }

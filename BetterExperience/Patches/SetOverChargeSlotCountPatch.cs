@@ -42,37 +42,39 @@ namespace BetterExperience.Patches
 
             public static void SetOverChargeSlotCount()
             {
-                var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
-                if (pr == null)
-                {
-                    HLog.Notice("Player instance not found while applying overcharge slot count.");
-                    return;
-                }
-
-                if(pr.Skill == null)
-                {
-                    HLog.Notice("Player skill data not found while applying overcharge slot count.");
-                    return;
-                }
-
-                var oc = Traverse.Create(pr.Skill).Field("OcSlots").GetValue<M2PrOverChargeSlot>();
-                if (oc == null)
-                {
-                    HLog.Notice("Overcharge slot component not found while applying overcharge slot count.");
-                    return;
-                }
-
-                HLog.Debug($"Refresh overcharge slots. TargetCount={ConfigManager.SetOverChargeSlotCount.Value}");
-
-                _isChanging = true;
-                _hasLoggedOverrideForCurrentApply = false;
                 try
                 {
+                    var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
+                    if (pr == null)
+                    {
+                        HLog.Notice("Player instance not found while applying overcharge slot count.");
+                        return;
+                    }
+
+                    if (pr.Skill == null)
+                    {
+                        HLog.Notice("Player skill data not found while applying overcharge slot count.");
+                        return;
+                    }
+
+                    var oc = Traverse.Create(pr.Skill).Field("OcSlots").GetValue<M2PrOverChargeSlot>();
+                    if (oc == null)
+                    {
+                        HLog.Notice("Overcharge slot component not found while applying overcharge slot count.");
+                        return;
+                    }
+
+                    HLog.Debug($"Refresh overcharge slots. TargetCount={ConfigManager.SetOverChargeSlotCount.Value}");
+
+                    _isChanging = true;
+                    _hasLoggedOverrideForCurrentApply = false;
                     oc.fineSlots(); // fineSlots方法会调用ItemStorage.getCount方法
+                    _isChanging = false;
                 }
-                finally
+                catch (Exception ex)
                 {
                     _isChanging = false;
+                    HLog.Error($"Unexpected error in {nameof(SetOverChargeSlotCount)}.", ex);
                 }
             }
 
@@ -80,20 +82,28 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(ItemStorage), nameof(ItemStorage.getCount), new Type[] { typeof(NelItem), typeof(int)})]
             public static bool GetCountPrefix(NelItem Data, ref int __result)
             {
-                if (NelItem.GetById("oc_slot") != Data)
-                    return true;
-
-                if (!_isChanging || ConfigManager.SetOverChargeSlotCount.Value < 0)
-                    return true;
-
-                if (!_hasLoggedOverrideForCurrentApply)
+                try
                 {
-                    HLog.Debug($"{nameof(SetOverChargeSlotCountPatch)} applied.");
-                    _hasLoggedOverrideForCurrentApply = true;
-                }
+                    if (NelItem.GetById("oc_slot") != Data)
+                        return true;
 
-                __result = ConfigManager.SetOverChargeSlotCount.Value;
-                return false;
+                    if (!_isChanging || ConfigManager.SetOverChargeSlotCount.Value < 0)
+                        return true;
+
+                    if (!_hasLoggedOverrideForCurrentApply)
+                    {
+                        HLog.Debug($"{nameof(SetOverChargeSlotCountPatch)} applied.");
+                        _hasLoggedOverrideForCurrentApply = true;
+                    }
+
+                    __result = ConfigManager.SetOverChargeSlotCount.Value;
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(SetOverChargeSlotCountPatch)}", ex);
+                    return true;
+                }
             }
         }
     }

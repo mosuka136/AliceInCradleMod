@@ -55,16 +55,32 @@ namespace BetterExperience.Patches
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(CoinEntry), "Add")]
-            static bool AddPrefix(CoinEntry __instance)
+            public static bool AddPrefix(CoinEntry __instance)
             {
-                return DealWithCurrencyCount(__instance);
+                try
+                {
+                    return DealWithCurrencyCount(__instance);
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(SetCurrencyCountPatch)}", ex);
+                    return true;
+                }
             }
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(CoinEntry), "Reduce")]
-            static bool ReducePrefix(CoinEntry __instance)
+            public static bool ReducePrefix(CoinEntry __instance)
             {
-                return DealWithCurrencyCount(__instance);
+                try
+                {
+                    return DealWithCurrencyCount(__instance);
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(SetCurrencyCountPatch)}", ex);
+                    return true;
+                }
             }
 
             public static bool DealWithCurrencyCount(CoinEntry cEntry)
@@ -123,38 +139,65 @@ namespace BetterExperience.Patches
 
             public static void SetCurrencyGoldCount(uint count)
             {
-                var Aentry = Traverse.Create(typeof(CoinStorage)).Field("Aentry").GetValue<CoinEntry[]>();
-                if (Aentry == null)
-                    return;
+                try
+                {
+                    var entry = Traverse.Create(typeof(CoinStorage)).Field("Aentry").GetValue<CoinEntry[]>();
+                    if (entry == null)
+                        return;
 
-                count = count > CoinEntry.MAX_COUNT ? CoinEntry.MAX_COUNT : count;
+                    count = count > CoinEntry.MAX_COUNT ? CoinEntry.MAX_COUNT : count;
 
-                Aentry[0].Set(count, true);
-                Aentry[0].Add(0);
+                    entry[0].Set(count, true);
+                    entry[0].Add(0);
+
+                    HLog.Debug($"GOLD count set to: {count}");
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error while setting GOLD count in {nameof(SetCurrencyCountPatch)}", ex);
+                }
             }
 
             public static void SetCurrencyCraftsCount(uint count)
             {
-                var Aentry = Traverse.Create(typeof(CoinStorage)).Field("Aentry").GetValue<CoinEntry[]>();
-                if (Aentry == null)
-                    return;
+                try
+                {
+                    var entry = Traverse.Create(typeof(CoinStorage)).Field("Aentry").GetValue<CoinEntry[]>();
+                    if (entry == null)
+                        return;
 
-                count = count > CoinEntry.MAX_COUNT ? CoinEntry.MAX_COUNT : count;
+                    count = count > CoinEntry.MAX_COUNT ? CoinEntry.MAX_COUNT : count;
 
-                Aentry[1].Set(count, true);
-                Aentry[1].Add(0);
+                    entry[1].Set(count, true);
+                    entry[1].Add(0);
+
+                    HLog.Debug($"CRAFTS count set to: {count}");
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error while setting CRAFTS count in {nameof(SetCurrencyCountPatch)}", ex);
+                }
             }
 
             public static void SetCurrencyJuiceCount(uint count)
             {
-                var Aentry = Traverse.Create(typeof(CoinStorage)).Field("Aentry").GetValue<CoinEntry[]>();
-                if (Aentry == null)
-                    return;
+                try
+                {
+                    var entry = Traverse.Create(typeof(CoinStorage)).Field("Aentry").GetValue<CoinEntry[]>();
+                    if (entry == null)
+                        return;
 
-                count = count > CoinEntry.MAX_COUNT ? CoinEntry.MAX_COUNT : count;
+                    count = count > CoinEntry.MAX_COUNT ? CoinEntry.MAX_COUNT : count;
 
-                Aentry[2].Set(count, true);
-                Aentry[2].Add(0);
+                    entry[2].Set(count, true);
+                    entry[2].Add(0);
+
+                    HLog.Debug($"JUICE count set to: {count}");
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error while setting JUICE count in {nameof(SetCurrencyCountPatch)}", ex);
+                }
             }
         }
     }

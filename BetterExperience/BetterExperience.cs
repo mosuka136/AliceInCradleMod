@@ -29,33 +29,33 @@ namespace BetterExperience
 
         private void Awake()
         {
-            Instance = this;
-
-            gameObject.hideFlags = HideFlags.HideAndDontSave;
-
-            ConfigManager.Initialize(Path.Combine(Paths.PluginPath, nameof(BetterExperience), $"{nameof(BetterExperience)}.cfg"));
-
-            if (ConfigManager.EnableBetterExperience.Value)
-                Logger.LogWarning($"{nameof(BetterExperience)} Enabled!");
-            else
-            {
-                Logger.LogWarning($"{nameof(BetterExperience)} Disabled!");
-                return;
-            }
-
-            HLog.Initialize(
-                Path.Combine(Paths.PluginPath, nameof(BetterExperience), "logs"),
-                PatchInfo.LoggerName,
-                new UnityProvider(),
-                new BepInExLoggerProvider(Logger),
-                ConfigManager.HLogLevel.Value,
-                ConfigManager.BepInExLogLevel.Value);
-
-            HLog.Info($"{nameof(BetterExperience)} startup initialized. Version={PatchInfo.BepInPluginVersion}");
-
-            var harmony = new Harmony(PatchInfo.HarmonyPluginId);
             try
             {
+                Instance = this;
+
+                gameObject.hideFlags = HideFlags.HideAndDontSave;
+
+                ConfigManager.Initialize(Path.Combine(Paths.PluginPath, nameof(BetterExperience), $"{nameof(BetterExperience)}.cfg"));
+
+                if (ConfigManager.EnableBetterExperience.Value)
+                    Logger.LogWarning($"{nameof(BetterExperience)} Enabled!");
+                else
+                {
+                    Logger.LogWarning($"{nameof(BetterExperience)} Disabled!");
+                    return;
+                }
+
+                HLog.Initialize(
+                    Path.Combine(Paths.PluginPath, nameof(BetterExperience), "logs"),
+                    PatchInfo.LoggerName,
+                    new UnityProvider(),
+                    new BepInExLoggerProvider(Logger),
+                    ConfigManager.HLogLevel.Value,
+                    ConfigManager.BepInExLogLevel.Value);
+
+                HLog.Info($"{nameof(BetterExperience)} startup initialized. Version={PatchInfo.BepInPluginVersion}");
+
+                var harmony = new Harmony(PatchInfo.HarmonyPluginId);
                 HLog.Debug($"Starting Harmony patch registration: {PatchInfo.HarmonyPluginId}");
                 SafePatchAll(harmony, typeof(BetterExperience).Assembly);
                 LogPatchesInfo(harmony);
@@ -79,9 +79,16 @@ namespace BetterExperience
         {
             if (ConfigManager.ReloadConfigHotkey.Value.WasPressedThisFrame())
             {
-                ConfigManager.ReloadConfig();
-                Logger.LogInfo("Reloaded config!");
-                HLog.Info("Reloaded config.");
+                try
+                {
+                    ConfigManager.ReloadConfig();
+                    Logger.LogInfo("Reloaded config!");
+                    HLog.Info("Reloaded config.");
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {name}.", ex);
+                }
             }
         }
 
@@ -94,24 +101,12 @@ namespace BetterExperience
                 if (t == null)
                     continue;
 
-                bool isPatchClass = false;
                 try
                 {
-                    isPatchClass = t.GetCustomAttributes(true)
-                        .Any(a => a.GetType().Name.StartsWith("HarmonyPatch"));
-                }
-                catch (Exception ex)
-                {
-                    HLog.Error("Skip type (attribute load failed): " + t.FullName, ex);
-                    continue;
-                }
-
-                if (!isPatchClass) continue;
-
-                try
-                {
-                    patchClassCount++;
+                    if (!t.GetCustomAttributes(true).Any(a => a.GetType().Name.StartsWith("HarmonyPatch")))
+                        continue;
                     harmony.CreateClassProcessor(t).Patch();
+                    patchClassCount++;
                 }
                 catch (Exception ex)
                 {

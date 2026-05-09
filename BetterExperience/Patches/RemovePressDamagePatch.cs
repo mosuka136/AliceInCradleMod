@@ -14,11 +14,19 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(PR), nameof(PR.applyPressDamage), new Type[] { typeof(NelAttackInfo), typeof(bool), typeof(int) })]
             public static bool Prefix()
             {
-                if (ConfigManager.EnablePressDamage.Value)
-                    return true;
+                try
+                {
+                    if (ConfigManager.EnablePressDamage.Value)
+                        return true;
 
-                HLog.Debug($"{nameof(RemovePressDamagePatch)} applied.");
-                return false;
+                    HLog.Debug($"{nameof(RemovePressDamagePatch)} applied.");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(RemovePressDamagePatch)}", ex);
+                    return true;
+                }
             }
         }
     }

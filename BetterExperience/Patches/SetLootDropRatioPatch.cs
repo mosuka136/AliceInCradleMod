@@ -17,29 +17,37 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(NelEnemy), "checkDropChance")]
             public static bool Prefix(NelEnemy __instance)
             {
-                if (ConfigManager.SetLootDropRatio.Value < 0f)
-                    return true;
-
-                if (ConfigManager.SetLootDropRatio.Value == 0f)
+                try
                 {
-                    if (!_hasLoggedDisableDrop)
+                    if (ConfigManager.SetLootDropRatio.Value < 0f)
+                        return true;
+
+                    if (ConfigManager.SetLootDropRatio.Value == 0f)
                     {
-                        HLog.Debug("Loot drop disabled.");
-                        _hasLoggedDisableDrop = true;
+                        if (!_hasLoggedDisableDrop)
+                        {
+                            HLog.Debug("Loot drop disabled.");
+                            _hasLoggedDisableDrop = true;
+                        }
+
+                        return false;
                     }
 
-                    return false;
+                    __instance.dropratio1000 = Convert.ToUInt16(__instance.dropratio1000 / ConfigManager.SetLootDropRatio.Value);
+
+                    if (!_hasLoggedRatioOverride)
+                    {
+                        HLog.Debug($"Loot drop ratio override applied.");
+                        _hasLoggedRatioOverride = true;
+                    }
+
+                    return true;
                 }
-
-                __instance.dropratio1000 = Convert.ToUInt16(__instance.dropratio1000 / ConfigManager.SetLootDropRatio.Value);
-
-                if (!_hasLoggedRatioOverride)
+                catch (Exception ex)
                 {
-                    HLog.Debug($"Loot drop ratio override applied.");
-                    _hasLoggedRatioOverride = true;
+                    HLog.Error($"Unexpected error in {nameof(SetLootDropRatioPatch)}", ex);
+                    return true;
                 }
-
-                return true;
             }
         }
     }

@@ -2,6 +2,7 @@ using BetterExperience.BConfigManager;
 using HarmonyLib;
 using nel;
 using nel.gm;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -39,12 +40,19 @@ namespace BetterExperience.Patches
                 [HarmonyPostfix]
                 public static void Postfix(object __instance, ref bool __result)
                 {
-                    if (!ConfigManager.EnableFastTravelAnywhere.Value)
-                        return;
+                    try
+                    {
+                        if (!ConfigManager.EnableFastTravelAnywhere.Value)
+                            return;
 
-                    __result = true;
+                        __result = true;
 
-                    HLog.Debug($"{nameof(RemoveFastTravelMapLimitPatch)} applied.");
+                        HLog.Debug($"{nameof(RemoveFastTravelMapLimitPatch)} applied.");
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error($"Unexpected error in {nameof(RemoveFastTravelMapLimitPatch)}", ex);
+                    }
                 }
             }
 
@@ -73,19 +81,26 @@ namespace BetterExperience.Patches
                 [HarmonyPrefix]
                 public static void Prefix(object __instance, ref bool __result)
                 {
-                    if (!ConfigManager.EnableFastTravelAnywhere.Value)
-                        return;
-
-                    var gm = Traverse.Create(__instance).Field("GM").GetValue<UiGameMenu>();
-                    if (gm == null)
+                    try
                     {
-                        HLog.Notice("UiGameMenu not found while removing fast travel bench restriction.");
-                        return;
+                        if (!ConfigManager.EnableFastTravelAnywhere.Value)
+                            return;
+
+                        var gm = Traverse.Create(__instance).Field("GM").GetValue<UiGameMenu>();
+                        if (gm == null)
+                        {
+                            HLog.Notice("UiGameMenu not found while removing fast travel bench restriction.");
+                            return;
+                        }
+
+                        gm.BenchChip = gm.BenchChip ?? _cachedBenchChip;
+
+                        HLog.Debug($"{nameof(RemoveFastTravelBenchLimitPatch)} applied.");
                     }
-
-                    gm.BenchChip = gm.BenchChip ?? _cachedBenchChip;
-
-                    HLog.Debug($"{nameof(RemoveFastTravelBenchLimitPatch)} applied.");
+                    catch (Exception ex)
+                    {
+                        HLog.Error($"Unexpected error in {nameof(RemoveFastTravelBenchLimitPatch)}", ex);
+                    }
                 }
             }
 
@@ -96,13 +111,20 @@ namespace BetterExperience.Patches
                 [HarmonyPatch(typeof(PR), nameof(PR.getNearBench))]
                 public static void Postfix(ref NelChipBench __result)
                 {
-                    if (!ConfigManager.EnableFastTravelAnywhere.Value)
-                        return;
-
-                    if (__result != null)
+                    try
                     {
-                        _cachedBenchChip = __result;
-                        HLog.Debug($"{nameof(GetBenchChipPatch)} applied. Cached bench chip updated: {__result.GetType().FullName}");
+                        if (!ConfigManager.EnableFastTravelAnywhere.Value)
+                            return;
+
+                        if (__result != null)
+                        {
+                            _cachedBenchChip = __result;
+                            HLog.Debug($"{nameof(GetBenchChipPatch)} applied. Cached bench chip updated: {__result.GetType().FullName}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error($"Unexpected error in {nameof(GetBenchChipPatch)}", ex);
                     }
                 }
             }

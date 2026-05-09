@@ -20,48 +20,70 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(SCN), "isPuppetWNpcDefeated")]
             public static bool IsPuppetWNpcDefeatedPrefix(ref bool __result)
             {
-                if (!ConfigManager.EnableRemoveLimitInPuppetNpcDefeated.Value)
-                    return true;
-
-                var n = GF.getC(PUP_KILL);
-                if (n % 2 == 1)
+                try
                 {
-                    _pup_kill = n;
+                    if (!ConfigManager.EnableRemoveLimitInPuppetNpcDefeated.Value)
+                        return true;
 
-                    if (!_isInitialized)
+                    var n = GF.getC(PUP_KILL);
+                    if (n % 2 == 1)
                     {
-                        GameSaveProtectionManager.OnSavingActivated += RecoverPupKill;
-                        _isInitialized = true;
-                        HLog.Debug($"{nameof(RemoveLimitInPuppetNpcDefeatedPatch)} applied.");
+                        _pup_kill = n;
+
+                        if (!_isInitialized)
+                        {
+                            GameSaveProtectionManager.OnSavingActivated += RecoverPupKill;
+                            _isInitialized = true;
+                            HLog.Debug($"{nameof(RemoveLimitInPuppetNpcDefeatedPatch)} applied.");
+                        }
+
+                        _isChanging = true;
+                        GF.setC(PUP_KILL, X.Mn(14U, (uint)((int)n * 2 + 2)));
+                        _isChanging = false;
                     }
+                    __result = false;
 
-                    _isChanging = true;
-                    GF.setC(PUP_KILL, X.Mn(14U, (uint)((int)n * 2 + 2)));
-                    _isChanging = false;
+                    return false;
                 }
-                __result = false;
-
-                return false;
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(RemoveLimitInPuppetNpcDefeatedPatch)}", ex);
+                    return true;
+                }
             }
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(GF), "setC", new Type[] { typeof(string), typeof(uint) })]
             public static void SetCPrefix(string key)
             {
-                if (_isInitialized && key == PUP_KILL && !_isChanging)
-                    _pup_kill = GF.getC(PUP_KILL);
+                try
+                {
+                    if (_isInitialized && key == PUP_KILL && !_isChanging)
+                        _pup_kill = GF.getC(PUP_KILL);
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(RemoveLimitInPuppetNpcDefeatedPatch)}", ex);
+                }
             }
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(SCN), "isWNpcEnable")]
             public static void IsWNpcEnablePostfix(WanderingManager.TYPE type, ref bool __result)
             {
-                if (!ConfigManager.EnableRemoveLimitInPuppetNpcDefeated.Value)
-                    return;
+                try
+                {
+                    if (!ConfigManager.EnableRemoveLimitInPuppetNpcDefeated.Value)
+                        return;
 
-                if (type == WanderingManager.TYPE.PUP)
-                    __result = true;
-                HLog.Debug($"{nameof(IsWNpcEnablePostfix)} applied.");
+                    if (type == WanderingManager.TYPE.PUP)
+                        __result = true;
+                    HLog.Debug($"{nameof(IsWNpcEnablePostfix)} applied.");
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(RemoveLimitInPuppetNpcDefeatedPatch)}", ex);
+                }
             }
 
             public static void RecoverPupKill()

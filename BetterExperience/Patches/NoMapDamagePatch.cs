@@ -2,6 +2,7 @@ using BetterExperience.BConfigManager;
 using HarmonyLib;
 using m2d;
 using nel;
+using System;
 
 namespace BetterExperience.Patches
 {
@@ -14,13 +15,21 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(PR), "applyDamageFromMap")]
             public static bool Prefix(ref AttackInfo __result)
             {
-                if (ConfigManager.EnableMapDamage.Value)
+                try
+                {
+                    if (ConfigManager.EnableMapDamage.Value)
+                        return true;
+
+                    __result = null;
+
+                    HLog.Debug($"{nameof(NoMapDamagePatch)} applied.");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(NoMapDamagePatch)}", ex);
                     return true;
-
-                __result = null;
-
-                HLog.Debug($"{nameof(NoMapDamagePatch)} applied.");
-                return false;
+                }
             }
         }
     }

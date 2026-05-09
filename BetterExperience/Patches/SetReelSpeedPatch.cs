@@ -1,6 +1,7 @@
 using BetterExperience.BConfigManager;
 using HarmonyLib;
 using nel;
+using System;
 
 namespace BetterExperience.Patches
 {
@@ -15,15 +16,22 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(ReelExecuter), nameof(ReelExecuter.fineSpeed))]
             public static void SetReelSpeed(ref float reduce_level)
             {
-                if (ConfigManager.SetReelSpeed.Value < 0f || ConfigManager.SetReelSpeed.Value > 1f)
-                    return;
-
-                reduce_level = ConfigManager.SetReelSpeed.Value;
-
-                if (!_hasLoggedActivation)
+                try
                 {
-                    HLog.Debug($"{nameof(SetReelSpeedPatch)} applied.");
-                    _hasLoggedActivation = true;
+                    if (ConfigManager.SetReelSpeed.Value < 0f || ConfigManager.SetReelSpeed.Value > 1f)
+                        return;
+
+                    reduce_level = ConfigManager.SetReelSpeed.Value;
+
+                    if (!_hasLoggedActivation)
+                    {
+                        HLog.Debug($"{nameof(SetReelSpeedPatch)} applied.");
+                        _hasLoggedActivation = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(SetReelSpeedPatch)}", ex);
                 }
             }
         }

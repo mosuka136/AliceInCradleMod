@@ -45,70 +45,77 @@ namespace BetterExperience.Patches
 
             public static void Prefix(ReelExecuter __instance, ReelExecuter Reel)
             {
-                if (!ConfigManager.EnableBetterReelEffect.Value)
-                    return;
-
-                if (Reel == null)
+                try
                 {
-                    HLog.Notice("Reel is null.");
-                    return;
-                }
+                    if (!ConfigManager.EnableBetterReelEffect.Value)
+                        return;
 
-                var content = Traverse.Create(Reel).Field("Acontent").GetValue<string[]>();
-                if (content == null || __instance.IKRow == null ||
-                    !FEnum<ReelExecuter.EFFECT>.TryParse(content[Reel.content_id_dec % content.Length], out var ik))
-                {
-                    HLog.Notice("content is null or __instance.IKRow is null or cannot parse effect from content.");
-                    return;
-                }
+                    if (Reel == null)
+                    {
+                        HLog.Notice("Reel is null.");
+                        return;
+                    }
 
-                string[] sortedContent;
-                switch (ik)
-                {
-                    case ReelExecuter.EFFECT.GRADE0:
-                    case ReelExecuter.EFFECT.GRADE1:
-                    case ReelExecuter.EFFECT.GRADE2:
-                    case ReelExecuter.EFFECT.GRADE3:
-                    case ReelExecuter.EFFECT.GRADE4:
-                        sortedContent = SortByCustomOrder(content, _grade);
-                        break;
-                    case ReelExecuter.EFFECT.COUNT_ADD0:
-                    case ReelExecuter.EFFECT.COUNT_ADD1:
-                    case ReelExecuter.EFFECT.COUNT_ADD2:
-                    case ReelExecuter.EFFECT.COUNT_ADD3:
-                    case ReelExecuter.EFFECT.COUNT_ADD4:
-                    case ReelExecuter.EFFECT.COUNT_ADD5:
-                        sortedContent = SortByCustomOrder(content, _countAdd);
-                        break;
-                    case ReelExecuter.EFFECT.COUNT_MUL1:
-                    case ReelExecuter.EFFECT.COUNT_MUL2:
-                        sortedContent = SortByCustomOrder(content, _countMul);
-                        break;
-                    case ReelExecuter.EFFECT.ADD_MONEY10:
-                    case ReelExecuter.EFFECT.ADD_MONEY20:
-                    case ReelExecuter.EFFECT.ADD_MONEY30:
-                    case ReelExecuter.EFFECT.ADD_MONEY100:
-                        sortedContent = SortByCustomOrder(content, _addMoney);
-                        break;
-                    default:
-                        sortedContent = null;
-                        break;
-                }
+                    var content = Traverse.Create(Reel).Field("Acontent").GetValue<string[]>();
+                    if (content == null || __instance.IKRow == null ||
+                        !FEnum<ReelExecuter.EFFECT>.TryParse(content[Reel.content_id_dec % content.Length], out var ik))
+                    {
+                        HLog.Notice("content is null or __instance.IKRow is null or cannot parse effect from content.");
+                        return;
+                    }
 
-                if (sortedContent == null)
-                {
-                    HLog.Warn($"No custom order defined for effect {ik}");
-                    return;
-                }
-                var index = Array.IndexOf(content, sortedContent[0]);
-                if (index < 0)
-                {
-                    HLog.Warn($"Sorted content's first element '{sortedContent[0]}' not found in original content.");
-                    return;
-                }
+                    string[] sortedContent;
+                    switch (ik)
+                    {
+                        case ReelExecuter.EFFECT.GRADE0:
+                        case ReelExecuter.EFFECT.GRADE1:
+                        case ReelExecuter.EFFECT.GRADE2:
+                        case ReelExecuter.EFFECT.GRADE3:
+                        case ReelExecuter.EFFECT.GRADE4:
+                            sortedContent = SortByCustomOrder(content, _grade);
+                            break;
+                        case ReelExecuter.EFFECT.COUNT_ADD0:
+                        case ReelExecuter.EFFECT.COUNT_ADD1:
+                        case ReelExecuter.EFFECT.COUNT_ADD2:
+                        case ReelExecuter.EFFECT.COUNT_ADD3:
+                        case ReelExecuter.EFFECT.COUNT_ADD4:
+                        case ReelExecuter.EFFECT.COUNT_ADD5:
+                            sortedContent = SortByCustomOrder(content, _countAdd);
+                            break;
+                        case ReelExecuter.EFFECT.COUNT_MUL1:
+                        case ReelExecuter.EFFECT.COUNT_MUL2:
+                            sortedContent = SortByCustomOrder(content, _countMul);
+                            break;
+                        case ReelExecuter.EFFECT.ADD_MONEY10:
+                        case ReelExecuter.EFFECT.ADD_MONEY20:
+                        case ReelExecuter.EFFECT.ADD_MONEY30:
+                        case ReelExecuter.EFFECT.ADD_MONEY100:
+                            sortedContent = SortByCustomOrder(content, _addMoney);
+                            break;
+                        default:
+                            sortedContent = null;
+                            break;
+                    }
 
-                Reel.content_id_dec = index;
-                HLog.Debug($"{nameof(BetterReelEffectPatch)} applied.");
+                    if (sortedContent == null)
+                    {
+                        HLog.Warn($"No custom order defined for effect {ik}");
+                        return;
+                    }
+                    var index = Array.IndexOf(content, sortedContent[0]);
+                    if (index < 0)
+                    {
+                        HLog.Warn($"Sorted content's first element '{sortedContent[0]}' not found in original content.");
+                        return;
+                    }
+
+                    Reel.content_id_dec = index;
+                    HLog.Debug($"{nameof(BetterReelEffectPatch)} applied.");
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(BetterReelEffectPatch)}", ex);
+                }
             }
 
             /// <summary>

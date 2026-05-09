@@ -1,6 +1,7 @@
 using BetterExperience.BConfigManager;
 using BetterExperience.HClassAttribute;
 using nel;
+using System;
 
 namespace BetterExperience.Patches
 {
@@ -28,8 +29,15 @@ namespace BetterExperience.Patches
 
                 if (ConfigManager.FlushAllStoreHotkey.Value.WasPressedThisFrame())
                 {
-                    StoreManager.FlushAll();
-                    HLog.Info("Flushed all store!");
+                    try
+                    {
+                        StoreManager.FlushAll();
+                        HLog.Info("Flushed all store!");
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error($"Unexpected error in {nameof(FlushStorePatch)}", ex);
+                    }
                 }
             }
         }

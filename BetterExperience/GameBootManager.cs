@@ -47,7 +47,6 @@ namespace BetterExperience
                             catch (Exception ex)
                             {
                                 HLog.Error($"Failed to invoke game boot initializer: {method.DeclaringType.FullName}.{method.Name}", ex);
-                                throw;
                             }
                         };
                     }

@@ -90,7 +90,11 @@ namespace BetterExperience
 
             lock (_lock)
             {
-                _writer.WriteLine();
+                try
+                {
+                    _writer.WriteLine();
+                }
+                catch { }
             }
         }
 
@@ -102,73 +106,82 @@ namespace BetterExperience
             string file,
             int line)
         {
-            if (ConfigManager.EnableHarmonyLog == null || !ConfigManager.EnableHarmonyLog.Value)
-                return;
-
-            if (_writer == null)
-                return;
-
-            var sb = new StringBuilder(256);
-
-            int id = System.Threading.Interlocked.Increment(ref _seq);
-            string time = DateTime.Now.ToString("HH:mm:ss.fff");
-            int threadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-            int frame = _unityProvider.FrameCount;
-            string scene = SafeSceneName();
-
-            sb.Append('[').Append(id).Append("] ")
-              .Append(time).Append(" T").Append(threadId)
-              .Append(" F").Append(frame)
-              .Append(" S=").Append(scene)
-              .Append(" ").Append(logLevel.ToString()).Append(" | ").Append(msg);
-
-            if (!string.IsNullOrEmpty(member) && !string.IsNullOrEmpty(Path.GetFileName(file)) && line > 0)
+            try
             {
-                sb.Append(" (").Append(Path.GetFileName(file))
-                  .Append(':').Append(line)
-                  .Append(" ").Append(member).Append(')');
-            }
+                if (ConfigManager.EnableHarmonyLog == null || !ConfigManager.EnableHarmonyLog.Value)
+                    return;
 
-            if (ex != null)
-            {
-                sb.AppendLine();
-                sb.Append(ex);
-            }
+                if (_writer == null)
+                    return;
 
-            string final = sb.ToString();
+                var sb = new StringBuilder(256);
 
-            lock (_lock)
-            {
-                if (logLevel >= _logLevel)
-                    _writer.WriteLine(final);
-            }
+                int id = System.Threading.Interlocked.Increment(ref _seq);
+                string time = DateTime.Now.ToString("HH:mm:ss.fff");
+                int threadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+                int frame = _unityProvider.FrameCount;
+                string scene = SafeSceneName();
 
-            if (logLevel >= _bepInExLogLevel)
-            {
-                if (_bepLog == null)
+                sb.Append('[').Append(id).Append("] ")
+                  .Append(time).Append(" T").Append(threadId)
+                  .Append(" F").Append(frame)
+                  .Append(" S=").Append(scene)
+                  .Append(" ").Append(logLevel.ToString()).Append(" | ").Append(msg);
+
+                if (!string.IsNullOrEmpty(member) && !string.IsNullOrEmpty(Path.GetFileName(file)) && line > 0)
                 {
-                    _unityProvider.DebugLog(final);
+                    sb.Append(" (").Append(Path.GetFileName(file))
+                      .Append(':').Append(line)
+                      .Append(" ").Append(member).Append(')');
                 }
-                else
+
+                if (ex != null)
                 {
-                    switch (logLevel)
-                    {
-                        case LogLevel.Error:
-                            _bepLog.LogError(final);
-                            break;
-                        case LogLevel.Warning:
-                            _bepLog.LogWarning(final);
-                            break;
-                        case LogLevel.Info:
-                            _bepLog.LogInfo(final);
-                            break;
-                        case LogLevel.Debug:
-                            _bepLog.LogDebug(final);
-                            break;
-                        default:
-                            _bepLog.LogInfo(final);
-                            break;
-                    }
+                    sb.AppendLine();
+                    sb.Append(ex);
+                }
+
+                string final = sb.ToString();
+
+                lock (_lock)
+                {
+                    if (logLevel >= _logLevel)
+                        _writer.WriteLine(final);
+                }
+
+                if (logLevel >= _bepInExLogLevel)
+                {
+                    AdditionalLog(logLevel, final);
+                }
+            }
+            catch { }
+        }
+
+        public static void AdditionalLog(LogLevel level, string msg)
+        {
+            if (_bepLog == null)
+            {
+                _unityProvider.DebugLog(msg);
+            }
+            else
+            {
+                switch (level)
+                {
+                    case LogLevel.Error:
+                        _bepLog.LogError(msg);
+                        break;
+                    case LogLevel.Warning:
+                        _bepLog.LogWarning(msg);
+                        break;
+                    case LogLevel.Info:
+                        _bepLog.LogInfo(msg);
+                        break;
+                    case LogLevel.Debug:
+                        _bepLog.LogDebug(msg);
+                        break;
+                    default:
+                        _bepLog.LogInfo(msg);
+                        break;
                 }
             }
         }

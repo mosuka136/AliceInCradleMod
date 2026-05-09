@@ -14,32 +14,48 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(NelM2DBase), "canSaveInCurMap")]
             public static bool CanSaveInCurMapPrefix(NelM2DBase __instance, ref bool __result)
             {
-                if (!ConfigManager.EnableBetterSaveSite.Value)
-                    return true;
-
-                if (__instance.curMap == null)
+                try
                 {
-                    HLog.Notice($"curMap is null.");
+                    if (!ConfigManager.EnableBetterSaveSite.Value)
+                        return true;
+
+                    if (__instance.curMap == null)
+                    {
+                        HLog.Notice($"curMap is null.");
+                        return true;
+                    }
+
+                    __result = true;
+
+                    HLog.Debug($"{nameof(CanSaveInCurMapPrefix)} applied.");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(BetterSaveSitePatch)}", ex);
                     return true;
                 }
-
-                __result = true;
-
-                HLog.Debug($"{nameof(CanSaveInCurMapPrefix)} applied.");
-                return false;
             }
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(PR), "canSave", new Type[] { typeof(bool) })]
             public static bool CanSavePrefix(ref bool __result)
             {
-                if (!ConfigManager.EnableBetterSaveSite.Value)
+                try
+                {
+                    if (!ConfigManager.EnableBetterSaveSite.Value)
+                        return true;
+
+                    __result = true;
+
+                    HLog.Debug($"{nameof(CanSavePrefix)} applied.");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(BetterSaveSitePatch)}", ex);
                     return true;
-
-                __result = true;
-
-                HLog.Debug($"{nameof(CanSavePrefix)} applied.");
-                return false;
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ using BetterExperience.BConfigManager;
 using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using nel;
+using System;
 using UnityEngine;
 
 namespace BetterExperience.Patches
@@ -49,53 +50,67 @@ namespace BetterExperience.Patches
 
             public static void SetBottleHolderCount(int count)
             {
-                if (count < 0)
+                try
                 {
-                    HLog.Debug($"Ignored invalid bottle holder count: {count}");
-                    return;
-                }
+                    if (count < 0)
+                    {
+                        HLog.Debug($"Ignored invalid bottle holder count: {count}");
+                        return;
+                    }
 
-                var inventory = GetIMNG()?.getInventory();
-                if (inventory == null)
+                    var inventory = GetIMNG()?.getInventory();
+                    if (inventory == null)
+                    {
+                        HLog.Notice("Inventory not found while applying bottle holder count.");
+                        return;
+                    }
+
+                    inventory.hide_bottle_max = count;
+                    inventory.fineRows(true);
+                    HLog.Debug($"{nameof(SetBottleHolderCount)} applied. New count: {count}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Inventory not found while applying bottle holder count.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetBottleHolderCount)}.", ex);
                 }
-
-                inventory.hide_bottle_max = count;
-                inventory.fineRows(true);
-                HLog.Debug($"{nameof(SetBottleHolderCount)} applied. New count: {count}");
             }
 
             public static void RecoverBottleHolderCount()
             {
-                var imng = GetIMNG();
-                if (imng == null)
+                try
                 {
-                    HLog.Notice("Item manager not found while recovering bottle holder count.");
-                    return;
-                }
+                    var imng = GetIMNG();
+                    if (imng == null)
+                    {
+                        HLog.Notice("Item manager not found while recovering bottle holder count.");
+                        return;
+                    }
 
-                var inventory = imng.getInventory();
-                if (inventory == null)
+                    var inventory = imng.getInventory();
+                    if (inventory == null)
+                    {
+                        HLog.Notice("Inventory not found while recovering bottle holder count.");
+                        return;
+                    }
+
+                    var item = NelItem.GetById("workbench_bottle");
+                    if (item == null)
+                    {
+                        HLog.Notice("workbench_bottle item not found while recovering bottle holder count.");
+                        return;
+                    }
+
+                    var count = imng.getInventoryPrecious().getCount(item);
+                    count = Mathf.Max(count, 0);
+
+                    _originalBottleHolderCount = inventory.hide_bottle_max;
+                    inventory.hide_bottle_max = count;
+                    HLog.Debug($"Recovered bottle holder count for save operation. TemporaryCount={count}, OriginalCount={_originalBottleHolderCount}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Inventory not found while recovering bottle holder count.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(RecoverBottleHolderCount)}.", ex);
                 }
-
-                var item = NelItem.GetById("workbench_bottle");
-                if (item == null)
-                {
-                    HLog.Notice("workbench_bottle item not found while recovering bottle holder count.");
-                    return;
-                }
-
-                var count = imng.getInventoryPrecious().getCount(item);
-                count = Mathf.Max(count, 0);
-
-                _originalBottleHolderCount = inventory.hide_bottle_max;
-                inventory.hide_bottle_max = count;
-                HLog.Debug($"Recovered bottle holder count for save operation. TemporaryCount={count}, OriginalCount={_originalBottleHolderCount}");
             }
 
             public static NelItemManager GetIMNG()

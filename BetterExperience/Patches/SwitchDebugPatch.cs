@@ -1,5 +1,6 @@
 using BetterExperience.BConfigManager;
 using HarmonyLib;
+using System;
 using XX;
 
 namespace BetterExperience.Patches
@@ -13,19 +14,26 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(X), nameof(X.init1))]
             public static void Prefix()
             {
-                if (ConfigManager.EnableDebugMode.Value)
+                try
                 {
-                    X.DEBUGANNOUNCE = true;
-                    X.DEBUGTIMESTAMP = true;
-                }
-                else
-                {
-                    X.DEBUGTIMESTAMP = false;
-                }
+                    if (ConfigManager.EnableDebugMode.Value)
+                    {
+                        X.DEBUGANNOUNCE = true;
+                        X.DEBUGTIMESTAMP = true;
+                    }
+                    else
+                    {
+                        X.DEBUGTIMESTAMP = false;
+                    }
 
-                HLog.Debug(ConfigManager.EnableDebugMode.Value
-                    ? "Debug mode enabled."
-                    : "Debug mode disabled.");
+                    HLog.Debug(ConfigManager.EnableDebugMode.Value
+                        ? "Debug mode enabled."
+                        : "Debug mode disabled.");
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(SwitchDebugPatch)}", ex);
+                }
             }
         }
     }

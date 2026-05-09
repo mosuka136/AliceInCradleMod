@@ -3,6 +3,7 @@ using BetterExperience.HClassAttribute;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using nel;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using XX;
@@ -40,21 +41,28 @@ namespace BetterExperience.Patches
 
                 if (ConfigManager.FlushTextureHotkey.Value.WasPressedThisFrame())
                 {
-                    RestoreOriginalTexture();
-
-                    TextureManager.Instance.Reload();
-
-                    foreach (var texture in new List<BetobetoManager.SvTexture>(_spineTexture))
+                    try
                     {
-                        texture?.cleanExecute();
-                    }
+                        RestoreOriginalTexture();
 
-                    foreach (var texture in _pictureTexture)
+                        TextureManager.Instance.Reload();
+
+                        foreach (var texture in new List<BetobetoManager.SvTexture>(_spineTexture))
+                        {
+                            texture?.cleanExecute();
+                        }
+
+                        foreach (var texture in _pictureTexture)
+                        {
+                            TryReplace(texture.Value, texture.Key);
+                        }
+
+                        HLog.Info("Textures flushed.");
+                    }
+                    catch (Exception ex)
                     {
-                        TryReplace(texture.Value, texture.Key);
+                        HLog.Error($"Unexpected error while flushing textures.", ex);
                     }
-
-                    HLog.Info("Textures flushed.");
                 }
             }
 
@@ -62,45 +70,59 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(BetobetoManager.SvTexture), nameof(BetobetoManager.SvTexture.cleanExecute))]
             public static void CleanExecutePostfix(BetobetoManager.SvTexture __instance)
             {
-                if (!ConfigManager.EnableReplaceTexture.Value)
-                    return;
-
-                if (__instance.MtiImage0 == null || __instance.MtiImage0.Image == null)
+                try
                 {
-                    HLog.Debug("SvTexture has no image.");
-                    return;
+                    if (!ConfigManager.EnableReplaceTexture.Value)
+                        return;
+
+                    if (__instance.MtiImage0 == null || __instance.MtiImage0.Image == null)
+                    {
+                        HLog.Debug("SvTexture has no image.");
+                        return;
+                    }
+
+                    if (!_spineTexture.Contains(__instance))
+                        _spineTexture.Add(__instance);
+
+                    var imageName = __instance.MtiImage0.Image.name;
+                    var image = TextureManager.Instance.GetReplaceTexture(imageName);
+                    if (image == null)
+                    {
+                        HLog.Debug("No replacement texture found for " + imageName);
+                        return;
+                    }
+
+                    if (!_originalSpineTexture.ContainsKey(__instance))
+                        _originalSpineTexture[__instance] = __instance.MtiImage0.Image;
+
+                    TryReplace(__instance, image);
+                    HLog.Info($"SvTexture {imageName} replaced.");
                 }
-
-                if (!_spineTexture.Contains(__instance))
-                    _spineTexture.Add(__instance);
-
-                var imageName = __instance.MtiImage0.Image.name;
-                var image = TextureManager.Instance.GetReplaceTexture(imageName);
-                if (image == null)
+                catch (Exception ex)
                 {
-                    HLog.Debug("No replacement texture found for " + imageName);
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(ReplaceTexturePatch)}", ex);
                 }
-
-                if (!_originalSpineTexture.ContainsKey(__instance))
-                    _originalSpineTexture[__instance] = __instance.MtiImage0.Image;
-
-                TryReplace(__instance, image);
-                HLog.Info($"SvTexture {imageName} replaced.");
             }
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(MTI), nameof(MTI.LoadContainerOneImage))]
             public static void LoadContainerOneImagePostfix(MTIOneImage __result, string asset_key, string load_key, string image_key)
             {
-                if (!ConfigManager.EnableReplaceTexture.Value)
-                    return;
+                try
+                {
+                    if (!ConfigManager.EnableReplaceTexture.Value)
+                        return;
 
-                if (!_pictureTexture.ContainsKey(asset_key))
-                    _pictureTexture[asset_key] = __result;
+                    if (!_pictureTexture.ContainsKey(asset_key))
+                        _pictureTexture[asset_key] = __result;
 
-                HLog.Debug($"Try replace texture for {asset_key}.");
-                TryReplace(__result, asset_key);
+                    HLog.Debug($"Try replace texture for {asset_key}.");
+                    TryReplace(__result, asset_key);
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(ReplaceTexturePatch)}", ex);
+                }
             }
 
             public static void TryReplace(MTIOneImage mti, string asset_key)

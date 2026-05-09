@@ -37,19 +37,26 @@ namespace BetterExperience.Patches
 
             static void Prefix(string _key, ref Func<PR, bool> _FnCanUse, bool _can_set_auto, ref bool _only_in_safearea)
             {
-                if (!ConfigManager.EnableRemoveLimitInBenchMenu.Value)
-                    return;
-
-                if (_key == "pee")
+                try
                 {
-                    HLog.Debug("Skip modifying the pee option.");
-                    return;
+                    if (!ConfigManager.EnableRemoveLimitInBenchMenu.Value)
+                        return;
+
+                    if (_key == "pee")
+                    {
+                        HLog.Debug("Skip modifying the pee option.");
+                        return;
+                    }
+
+                    _only_in_safearea = false;
+                    _FnCanUse = (pr) => true;
+
+                    HLog.Debug($"{nameof(RemoveLimitInBenchMenuPatch)} applied. Key={_key}");
                 }
-
-                _only_in_safearea = false;
-                _FnCanUse = (pr) => true;
-
-                HLog.Debug($"{nameof(RemoveLimitInBenchMenuPatch)} applied. Key={_key}");
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(RemoveLimitInBenchMenuPatch)}", ex);
+                }
             }
         }
 
@@ -60,30 +67,37 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(UiBenchMenu), "setEnableBtns")]
             public static void SetEnableBtnsPostfix(UiBenchMenu __instance)
             {
-                if (!ConfigManager.EnableRemoveLimitInBenchMenu.Value)
-                    return;
-
-                var buttons = Traverse.Create(__instance).Field("Btns").GetValue<BtnContainerRadio<aBtn>>();
-                if (buttons == null)
+                try
                 {
-                    HLog.Notice("Bench menu buttons not found while removing bench menu restrictions.");
-                    return;
-                }
+                    if (!ConfigManager.EnableRemoveLimitInBenchMenu.Value)
+                        return;
 
-                var num = buttons.Length - 1;
-                for (var i = 0; i < num; i++)
+                    var buttons = Traverse.Create(__instance).Field("Btns").GetValue<BtnContainerRadio<aBtn>>();
+                    if (buttons == null)
+                    {
+                        HLog.Notice("Bench menu buttons not found while removing bench menu restrictions.");
+                        return;
+                    }
+
+                    var num = buttons.Length - 1;
+                    for (var i = 0; i < num; i++)
+                    {
+                        var btn = buttons.Get(i);
+                        var cmd = Traverse.Create<UiBenchMenu>().Method("GetCmd", btn.title).GetValue();
+                        if (cmd == null)
+                            continue;
+
+                        Traverse.Create(cmd).Field("currennt_useable").SetValue(true);
+
+                        btn.SetLocked(false, no_change_binding: true);
+                    }
+
+                    HLog.Debug($"{nameof(RemoveLimitInBenchMenuButtonPatch)} applied.");
+                }
+                catch (Exception ex)
                 {
-                    var btn = buttons.Get(i);
-                    var cmd = Traverse.Create<UiBenchMenu>().Method("GetCmd", btn.title).GetValue();
-                    if (cmd == null)
-                        continue;
-
-                    Traverse.Create(cmd).Field("currennt_useable").SetValue(true);
-
-                    btn.SetLocked(false, no_change_binding: true);
+                    HLog.Error($"Unexpected error in {nameof(RemoveLimitInBenchMenuButtonPatch)}", ex);
                 }
-
-                HLog.Debug($"{nameof(RemoveLimitInBenchMenuButtonPatch)} applied.");
             }
         }
     }

@@ -2,6 +2,7 @@ using BetterExperience.BConfigManager;
 using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using nel;
+using System;
 
 namespace BetterExperience.Patches
 {
@@ -38,8 +39,8 @@ namespace BetterExperience.Patches
 
                 ConfigManager.SetPlayerMaxSatiety.OnValueChanged += (s, e) =>
                 {
-                   HLog.Debug($"Max satiety config changed: {e}");
-                   SetMaxSatiety(e);
+                    HLog.Debug($"Max satiety config changed: {e}");
+                    SetMaxSatiety(e);
                 };
 
                 _initialized = true;
@@ -48,33 +49,40 @@ namespace BetterExperience.Patches
 
             public static void SetMaxSatiety(int maxSatiety)
             {
-                if (maxSatiety <= 0)
+                try
                 {
-                    HLog.Debug($"Ignored invalid max satiety value: {maxSatiety}");
-                    return;
-                }
+                    if (maxSatiety <= 0)
+                    {
+                        HLog.Debug($"Ignored invalid max satiety value: {maxSatiety}");
+                        return;
+                    }
 
-                var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
-                if (pr == null)
+                    var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
+                    if (pr == null)
+                    {
+                        HLog.Notice("Player instance not found while applying max satiety.");
+                        return;
+                    }
+
+                    if (pr.MyStomach == null)
+                    {
+                        HLog.Notice("Player stomach data not found while applying max satiety.");
+                        return;
+                    }
+
+                    if (_maxSatiety < 0)
+                    {
+                        _maxSatiety = pr.MyStomach.cost_max;
+                        HLog.Debug($"Captured original max satiety: {_maxSatiety}");
+                    }
+
+                    pr.MyStomach.cost_max = maxSatiety;
+                    HLog.Debug($"Player max satiety set to {maxSatiety}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Player instance not found while applying max satiety.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetMaxSatiety)}.", ex);
                 }
-
-                if (pr.MyStomach == null)
-                {
-                    HLog.Notice("Player stomach data not found while applying max satiety.");
-                    return;
-                }
-
-                if (_maxSatiety < 0)
-                {
-                    _maxSatiety = pr.MyStomach.cost_max;
-                    HLog.Debug($"Captured original max satiety: {_maxSatiety}");
-                }
-
-                pr.MyStomach.cost_max = maxSatiety;
-                HLog.Debug($"Player max satiety set to {maxSatiety}");
             }
         }
     }

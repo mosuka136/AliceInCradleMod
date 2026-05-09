@@ -1,5 +1,6 @@
 using BetterExperience.BConfigManager;
 using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -24,11 +25,19 @@ namespace BetterExperience.Patches
 
             static bool Prefix()
             {
-                if (!ConfigManager.EnableNoHpDamage.Value)
-                    return true;
+                try
+                {
+                    if (!ConfigManager.EnableNoHpDamage.Value)
+                        return true;
 
-                HLog.Debug($"{nameof(NoHpDamagePatch)} applied.");
-                return false;
+                    HLog.Debug($"{nameof(NoHpDamagePatch)} applied.");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(NoHpDamagePatch)}.", ex);
+                    return true;
+                }
             }
         }
     }

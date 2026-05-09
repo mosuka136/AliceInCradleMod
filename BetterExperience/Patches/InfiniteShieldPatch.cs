@@ -1,6 +1,7 @@
 using BetterExperience.BConfigManager;
 using HarmonyLib;
 using nel;
+using System;
 
 namespace BetterExperience.Patches
 {
@@ -10,15 +11,21 @@ namespace BetterExperience.Patches
         public class InfiniteShieldPatch
         {
             [HarmonyPatch(typeof(M2Shield), "canGuard")]
-            public static bool Prefix(M2Shield __instance, ref bool __result)
+            public static void Prefix(M2Shield __instance, ref bool __result)
             {
-                if (!ConfigManager.EnableInfiniteShield.Value)
-                    return true;
+                try
+                {
+                    if (!ConfigManager.EnableInfiniteShield.Value)
+                        return;
 
-                __instance.cure();
+                    __instance.cure();
 
-                HLog.Debug($"{nameof(InfiniteShieldPatch)} applied.");
-                return true;
+                    HLog.Debug($"{nameof(InfiniteShieldPatch)} applied.");
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(InfiniteShieldPatch)}", ex);
+                }
             }
         }
     }

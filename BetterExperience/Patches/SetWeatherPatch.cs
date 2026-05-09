@@ -190,23 +190,31 @@ namespace BetterExperience.Patches
 
             public static void Flush()
             {
-                var nc = GetNightController();
-                if (nc == null)
+                try
                 {
-                    HLog.Notice("NightController not found while synchronizing weather config.");
-                    return;
+                    var nc = GetNightController();
+                    if (nc == null)
+                    {
+                        HLog.Notice("NightController not found while synchronizing weather config.");
+                        return;
+                    }
+
+                    _isApplying = true;
+                    ConfigManager.SetWeatherWind.Value = nc.getWeather(WeatherItem.WEATHER.WIND) != null;
+                    ConfigManager.SetWeatherThunder.Value = nc.getWeather(WeatherItem.WEATHER.THUNDER) != null;
+                    ConfigManager.SetWeatherMist.Value = nc.getWeather(WeatherItem.WEATHER.MIST) != null;
+                    ConfigManager.SetWeatherDrought.Value = nc.getWeather(WeatherItem.WEATHER.DROUGHT) != null;
+                    ConfigManager.SetWeatherDenseMist.Value = nc.getWeather(WeatherItem.WEATHER.MIST_DENSE) != null;
+                    ConfigManager.SetWeatherPlague.Value = nc.getWeather(WeatherItem.WEATHER.PLAGUE) != null;
+                    _isApplying = false;
+
+                    HLog.Debug("Weather config synchronized from game state.");
                 }
-
-                _isApplying = true;
-                ConfigManager.SetWeatherWind.Value = nc.getWeather(WeatherItem.WEATHER.WIND) != null;
-                ConfigManager.SetWeatherThunder.Value = nc.getWeather(WeatherItem.WEATHER.THUNDER) != null;
-                ConfigManager.SetWeatherMist.Value = nc.getWeather(WeatherItem.WEATHER.MIST) != null;
-                ConfigManager.SetWeatherDrought.Value = nc.getWeather(WeatherItem.WEATHER.DROUGHT) != null;
-                ConfigManager.SetWeatherDenseMist.Value = nc.getWeather(WeatherItem.WEATHER.MIST_DENSE) != null;
-                ConfigManager.SetWeatherPlague.Value = nc.getWeather(WeatherItem.WEATHER.PLAGUE) != null;
-                _isApplying = false;
-
-                HLog.Debug("Weather config synchronized from game state.");
+                catch (Exception ex)
+                {
+                    _isApplying = false;
+                    HLog.Error($"Unexpected error in {nameof(Flush)}.", ex);
+                }
             }
         }
     }

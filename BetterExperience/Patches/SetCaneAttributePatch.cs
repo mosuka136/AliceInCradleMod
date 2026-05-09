@@ -2,6 +2,7 @@ using BetterExperience.BConfigManager;
 using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using nel;
+using System;
 using UnityEngine;
 
 namespace BetterExperience.Patches
@@ -100,383 +101,502 @@ namespace BetterExperience.Patches
 
             public static void SetSwingSpeed(float speed)
             {
-                if (speed < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid swing speed: {speed}");
-                    return;
-                }
+                    if (speed < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid swing speed: {speed}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.near_punch_speed = speed / 50f;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane swing speed set to: {speed}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetSwingSpeed)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.near_punch_speed = speed / 50f;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane swing speed set to: {speed}");
             }
 
             public static void SetCastSpeed(float speed)
             {
-                if (speed < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid caneCast speed: {speed}");
-                    return;
-                }
+                    if (speed < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid caneCast speed: {speed}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.castspeed = speed / (50f * (0.33f * (cane.magic_prepare_speed - 1f) + 1f) * (0.25f * (cane.castspeed_overhold - 1f) + 1f));
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane cast speed set to: {cane.castspeed})");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetCastSpeed)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.castspeed = speed / (50f * (0.33f * (cane.magic_prepare_speed - 1f) + 1f) * (0.25f * (cane.castspeed_overhold - 1f) + 1f));
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane cast speed set to: {cane.castspeed})");
             }
 
             public static void SetBalance(float balance)
             {
-                if (balance < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane balance: {balance}");
-                    return;
-                }
+                    if (balance < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane balance: {balance}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.neutral = balance / 60f;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane balance set to: {balance}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetBalance)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.neutral = balance / 60f;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane balance set to: {balance}");
             }
 
             public static void SetEfficiency(float efficiency)
             {
-                if (efficiency < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane efficiency: {efficiency}");
-                    return;
-                }
+                    if (efficiency < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane efficiency: {efficiency}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    if (efficiency == 0f)
+                        cane.mp_use_ratio = 12f;
+                    else if (efficiency <= 65f)
+                        cane.mp_use_ratio = Mathf.Sqrt(65f / efficiency);
+                    else if (efficiency <= 169f)
+                        cane.mp_use_ratio = (float)((169.0 - efficiency) / 104.0);
+                    else
+                        cane.mp_use_ratio = 0f;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane efficiency set to: {efficiency} (mp_use_ratio: {cane.mp_use_ratio})");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetEfficiency)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                if (efficiency == 0f)
-                    cane.mp_use_ratio = 12f;
-                else if (efficiency <= 65f)
-                    cane.mp_use_ratio = Mathf.Sqrt(65f / efficiency);
-                else if (efficiency <= 169f)
-                    cane.mp_use_ratio = (float)((169.0 - efficiency) / 104.0);
-                else
-                    cane.mp_use_ratio = 0f;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane efficiency set to: {efficiency} (mp_use_ratio: {cane.mp_use_ratio})");
             }
 
             public static void SetRetention(float retention)
             {
-                if (retention < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane retention: {retention}");
-                    return;
-                }
+                    if (retention < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane retention: {retention}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.stability = retention / (55f * cane.mana_splash_ratio * (0.75f * (cane.castspeed_overhold - 1f) + 1f) * (0.5f * (cane.drain_after_lock - 1f) + 1f));
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane retention set to: {retention} (stability: {cane.stability})");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetRetention)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.stability = retention / (55f * cane.mana_splash_ratio * (0.75f * (cane.castspeed_overhold - 1f) + 1f) * (0.5f * (cane.drain_after_lock - 1f) + 1f));
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane retention set to: {retention} (stability: {cane.stability})");
             }
 
             public static void SetLockOn(float lockOn)
             {
-                if (lockOn < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane lock-on: {lockOn}");
-                    return;
-                }
+                    if (lockOn < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane lock-on: {lockOn}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.lockon_power = lockOn / 50f;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane lock-on set to: {lockOn}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetLockOn)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.lockon_power = lockOn / 50f;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane lock-on set to: {lockOn}");
             }
 
             public static void SetLongRange(float range)
             {
-                if (range < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane long range: {range}");
-                    return;
-                }
+                    if (range < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane long range: {range}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.far_power = range / 46f;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane long range set to: {range}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetLongRange)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.far_power = range / 46f;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane long range set to: {range}");
             }
 
             public static void SetShortRange(float range)
             {
-                if (range < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane short range: {range}");
-                    return;
-                }
+                    if (range < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane short range: {range}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.near_power = 4f * (range / (55f * cane.near_shotgun_power) - 1f) + 1f;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane short range set to: {range} (near_power: {cane.near_power})");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetShortRange)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.near_power = 4f * (range / (55f * cane.near_shotgun_power) - 1f) + 1f;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane short range set to: {range} (near_power: {cane.near_power})");
             }
 
             public static void SetReach(float reach)
             {
-                if (reach < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane reach: {reach}");
-                    return;
-                }
+                    if (reach < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane reach: {reach}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.near_reach = reach / 50f;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane reach set to: {reach}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetReach)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.near_reach = reach / 50f;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane reach set to: {reach}");
             }
 
             public static void SetNearPower(float nearPower)
             {
-                if (nearPower < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane near power: {nearPower}");
-                    return;
+                    if (nearPower < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane near power: {nearPower}");
+                        return;
+                    }
+
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.near_power = nearPower;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane near power set to: {nearPower}");
                 }
-            
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetNearPower)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.near_power = nearPower;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane near power set to: {nearPower}");
             }
 
             public static void SetNearShotgunPower(float nearShotgunPower)
             {
-                if (nearShotgunPower < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane near shotgun power: {nearShotgunPower}");
-                    return;
-                }
+                    if (nearShotgunPower < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane near shotgun power: {nearShotgunPower}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.near_shotgun_power = nearShotgunPower;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane near shotgun power set to: {nearShotgunPower}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetNearShotgunPower)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.near_shotgun_power = nearShotgunPower;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane near shotgun power set to: {nearShotgunPower}");
             }
 
             public static void SetStability(float stability)
             {
-                if (stability < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane stability: {stability}");
-                    return;
-                }
+                    if (stability < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane stability: {stability}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.stability = stability;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane stability set to: {stability}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetStability)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.stability = stability;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane stability set to: {stability}");
             }
 
             public static void SetManaSplashRatio(float manaSplashRatio)
             {
-                if (manaSplashRatio < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane mana splash ratio: {manaSplashRatio}");
-                    return;
-                }
+                    if (manaSplashRatio < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane mana splash ratio: {manaSplashRatio}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.mana_splash_ratio = manaSplashRatio;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane mana splash ratio set to: {manaSplashRatio}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetManaSplashRatio)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.mana_splash_ratio = manaSplashRatio;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane mana splash ratio set to: {manaSplashRatio}");
             }
 
             public static void SetCastspeedOverhold(float castspeedOverhold)
             {
-                if (castspeedOverhold < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane castspeed overhold: {castspeedOverhold}");
-                    return;
-                }
+                    if (castspeedOverhold < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane castspeed overhold: {castspeedOverhold}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.castspeed_overhold = castspeedOverhold;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane castspeed overhold set to: {castspeedOverhold}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetCastspeedOverhold)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.castspeed_overhold = castspeedOverhold;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane castspeed overhold set to: {castspeedOverhold}");
             }
 
             public static void SetDrainAfterLock(float drainAfterLock)
             {
-                if (drainAfterLock < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane drain after lock: {drainAfterLock}");
-                    return;
-                }
+                    if (drainAfterLock < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane drain after lock: {drainAfterLock}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.drain_after_lock = drainAfterLock;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane drain after lock set to: {drainAfterLock}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetDrainAfterLock)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.drain_after_lock = drainAfterLock;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane drain after lock set to: {drainAfterLock}");
             }
 
             public static void SetCastspeed(float speed)
             {
-                if (speed < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane cast speed: {speed}");
-                    return;
-                }
+                    if (speed < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane cast speed: {speed}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.castspeed = speed;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane cast speed set to: {speed}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetCastspeed)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.castspeed = speed;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane cast speed set to: {speed}");
             }
 
             public static void SetMagicPrepareSpeed(float magicPrepareSpeed)
             {
-                if (magicPrepareSpeed < 0f)
+                try
                 {
-                    HLog.Debug($"Ignored invalid cane magic prepare speed: {magicPrepareSpeed}");
-                    return;
-                }
+                    if (magicPrepareSpeed < 0f)
+                    {
+                        HLog.Debug($"Ignored invalid cane magic prepare speed: {magicPrepareSpeed}");
+                        return;
+                    }
 
-                var skill = GetM2PrSkill();
-                if (skill == null)
+                    var skill = GetM2PrSkill();
+                    if (skill == null)
+                    {
+                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        return;
+                    }
+
+                    var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    cane.magic_prepare_speed = magicPrepareSpeed;
+                    skill.Field(EqCane).SetValue(cane);
+
+                    HLog.Debug($"Cane magic prepare speed set to: {magicPrepareSpeed}");
+                }
+                catch (Exception ex)
                 {
-                    HLog.Notice("Failed to find PR skill for setting cane swing speed.");
-                    return;
+                    HLog.Error($"Unexpected error in {nameof(SetMagicPrepareSpeed)}.", ex);
                 }
-
-                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
-                cane.magic_prepare_speed = magicPrepareSpeed;
-                skill.Field(EqCane).SetValue(cane);
-
-                HLog.Debug($"Cane magic prepare speed set to: {magicPrepareSpeed}");
             }
 
             public static Traverse GetM2PrSkill()

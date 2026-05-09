@@ -33,11 +33,19 @@ namespace BetterExperience.Patches
                 )]
             public static bool Prefix()
             {
-                if (!ConfigManager.EnableNoMpDamage.Value)
-                    return true;
+                try
+                {
+                    if (!ConfigManager.EnableNoMpDamage.Value)
+                        return true;
 
-                HLog.Debug($"{nameof(NoMpDamagePatch)} applied.");
-                return false;
+                    HLog.Debug($"{nameof(NoMpDamagePatch)} applied.");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(NoMpDamagePatch)}.", ex);
+                    return true;
+                }
             }
         }
     }

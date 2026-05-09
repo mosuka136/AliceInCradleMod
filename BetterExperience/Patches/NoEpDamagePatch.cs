@@ -1,6 +1,7 @@
 using BetterExperience.BConfigManager;
 using HarmonyLib;
 using nel;
+using System;
 
 namespace BetterExperience.Patches
 {
@@ -12,13 +13,21 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(EpManager), "applyEpDamage")]
             public static bool Prefix(ref bool __result)
             {
-                if (!ConfigManager.EnableNoEpDamage.Value)
+                try
+                {
+                    if (!ConfigManager.EnableNoEpDamage.Value)
+                        return true;
+
+                    __result = false;
+
+                    HLog.Debug($"{nameof(NoEpDamagePatch)} applied.");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(NoEpDamagePatch)}", ex);
                     return true;
-
-                __result = false;
-
-                HLog.Debug($"{nameof(NoEpDamagePatch)} applied.");
-                return false;
+                }
             }
         }
     }

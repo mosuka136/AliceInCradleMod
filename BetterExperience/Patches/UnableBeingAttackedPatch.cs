@@ -28,18 +28,26 @@ namespace BetterExperience.Patches
                     ArgumentType.Normal,
                     ArgumentType.Normal,
                     ArgumentType.Normal})]
-            static bool Prefix()
+            public static bool Prefix()
             {
-                if (ConfigManager.EnableBeingAttacked.Value)
-                    return true;
-
-                if (!_hasLoggedActivation)
+                try
                 {
-                    HLog.Debug("Player damage reception disabled.");
-                    _hasLoggedActivation = true;
-                }
+                    if (ConfigManager.EnableBeingAttacked.Value)
+                        return true;
 
-                return false;
+                    if (!_hasLoggedActivation)
+                    {
+                        HLog.Debug("Player damage reception disabled.");
+                        _hasLoggedActivation = true;
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(UnableBeingAttackedPatch)}", ex);
+                    return true;
+                }
             }
         }
     }

@@ -65,14 +65,28 @@ namespace BetterExperience.Patches
                 new ArgumentType[] { ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Out, ArgumentType.Normal })]
             public static void SummonerPlayerConstructorPostfix()
             {
-                StartBattle();
+                try
+                {
+                    StartBattle();
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(BattleStatisticsPatch)}", ex);
+                }
             }
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(EnemySummoner), nameof(EnemySummoner.close))]
             public static void EnemySummonerClosePrefix()
             {
-                EndBattle();
+                try
+                {
+                    EndBattle();
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(BattleStatisticsPatch)}", ex);
+                }
             }
 
             public static void StartBattle()
@@ -121,17 +135,24 @@ namespace BetterExperience.Patches
                     new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Normal })]
                 public static void ApplyDamagePrefix(NelAttackInfo Atk)
                 {
-                    var enemy = GetSource(Atk) as NelEnemy;
+                    try
+                    {
+                        var enemy = GetSource(Atk) as NelEnemy;
 
-                    if (enemy != null)
-                    {
-                        _objectAttackPlayer = enemy;
-                        HLog.Debug($"Player Injured by Enemy: {GetEnemyKey(enemy)}");
+                        if (enemy != null)
+                        {
+                            _objectAttackPlayer = enemy;
+                            HLog.Debug($"Player Injured by Enemy: {GetEnemyKey(enemy)}");
+                        }
+                        else
+                        {
+                            _objectAttackPlayer = null;
+                            HLog.Debug($"Player Injured by {GetSource(Atk)?.GetType().Name ?? "Unknown Source"}");
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        _objectAttackPlayer = null;
-                        HLog.Debug($"Player Injured by {GetSource(Atk)?.GetType().Name ?? "Unknown Source"}");
+                        HLog.Error($"Unexpected error in {nameof(PlayerInjuryCounterPatch)}", ex);
                     }
                 }
 
@@ -148,64 +169,71 @@ namespace BetterExperience.Patches
                 [HarmonyPatch(typeof(PR), nameof(PR.setDamageCounter))]
                 public static void SetDamageCounterPostfix(int delta_hp, int delta_mp)
                 {
-                    TotalPlayerInjuryHpCounter += -delta_hp;
-                    TotalPlayerInjuryMpCounter += -delta_mp;
-
-                    var enemy = _objectAttackPlayer as NelEnemy;
-
-                    if (enemy != null)
+                    try
                     {
-                        var key = GetEnemyKey(enemy);
+                        TotalPlayerInjuryHpCounter += -delta_hp;
+                        TotalPlayerInjuryMpCounter += -delta_mp;
 
-                        if (!PlayerInjuryHpCounter.ContainsKey(key))
-                            PlayerInjuryHpCounter[key] = 0;
-
-                        if (!PlayerInjuryMpCounter.ContainsKey(key))
-                            PlayerInjuryMpCounter[key] = 0;
-
-                        PlayerInjuryHpCounter[key] += -delta_hp;
-                        PlayerInjuryMpCounter[key] += -delta_mp;
-
-                        if (!EnemyDamageHpCounter.ContainsKey(key))
-                            EnemyDamageHpCounter[key] = 0;
-
-                        if (!EnemyDamageMpCounter.ContainsKey(key))
-                            EnemyDamageMpCounter[key] = 0;
-
-                        EnemyDamageHpCounter[key] += -delta_hp;
-                        EnemyDamageMpCounter[key] += -delta_mp;
-                    }
-
-                    if (IsInBattle)
-                    {
-                        TotalPlayerInjurySingleBattleHpCounter += -delta_hp;
-                        TotalPlayerInjurySingleBattleMpCounter += -delta_mp;
+                        var enemy = _objectAttackPlayer as NelEnemy;
 
                         if (enemy != null)
                         {
                             var key = GetEnemyKey(enemy);
 
-                            if (!PlayerInjurySingleBattleHpCounter.ContainsKey(key))
-                                PlayerInjurySingleBattleHpCounter[key] = 0;
+                            if (!PlayerInjuryHpCounter.ContainsKey(key))
+                                PlayerInjuryHpCounter[key] = 0;
 
-                            if (!PlayerInjurySingleBattleMpCounter.ContainsKey(key))
-                                PlayerInjurySingleBattleMpCounter[key] = 0;
+                            if (!PlayerInjuryMpCounter.ContainsKey(key))
+                                PlayerInjuryMpCounter[key] = 0;
 
-                            PlayerInjurySingleBattleHpCounter[key] += -delta_hp;
-                            PlayerInjurySingleBattleMpCounter[key] += -delta_mp;
+                            PlayerInjuryHpCounter[key] += -delta_hp;
+                            PlayerInjuryMpCounter[key] += -delta_mp;
 
-                            if (!EnemyDamageSingleBattleHpCounter.ContainsKey(key))
-                                EnemyDamageSingleBattleHpCounter[key] = 0;
+                            if (!EnemyDamageHpCounter.ContainsKey(key))
+                                EnemyDamageHpCounter[key] = 0;
 
-                            if (!EnemyDamageSingleBattleMpCounter.ContainsKey(key))
-                                EnemyDamageSingleBattleMpCounter[key] = 0;
+                            if (!EnemyDamageMpCounter.ContainsKey(key))
+                                EnemyDamageMpCounter[key] = 0;
 
-                            EnemyDamageSingleBattleHpCounter[key] += -delta_hp;
-                            EnemyDamageSingleBattleMpCounter[key] += -delta_mp;
+                            EnemyDamageHpCounter[key] += -delta_hp;
+                            EnemyDamageMpCounter[key] += -delta_mp;
                         }
-                    }
 
-                    HLog.Debug($"Player Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
+                        if (IsInBattle)
+                        {
+                            TotalPlayerInjurySingleBattleHpCounter += -delta_hp;
+                            TotalPlayerInjurySingleBattleMpCounter += -delta_mp;
+
+                            if (enemy != null)
+                            {
+                                var key = GetEnemyKey(enemy);
+
+                                if (!PlayerInjurySingleBattleHpCounter.ContainsKey(key))
+                                    PlayerInjurySingleBattleHpCounter[key] = 0;
+
+                                if (!PlayerInjurySingleBattleMpCounter.ContainsKey(key))
+                                    PlayerInjurySingleBattleMpCounter[key] = 0;
+
+                                PlayerInjurySingleBattleHpCounter[key] += -delta_hp;
+                                PlayerInjurySingleBattleMpCounter[key] += -delta_mp;
+
+                                if (!EnemyDamageSingleBattleHpCounter.ContainsKey(key))
+                                    EnemyDamageSingleBattleHpCounter[key] = 0;
+
+                                if (!EnemyDamageSingleBattleMpCounter.ContainsKey(key))
+                                    EnemyDamageSingleBattleMpCounter[key] = 0;
+
+                                EnemyDamageSingleBattleHpCounter[key] += -delta_hp;
+                                EnemyDamageSingleBattleMpCounter[key] += -delta_mp;
+                            }
+                        }
+
+                        HLog.Debug($"Player Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error($"Unexpected error in {nameof(PlayerInjuryCounterPatch)}", ex);
+                    }
                 }
             }
 
@@ -218,28 +246,35 @@ namespace BetterExperience.Patches
                     new ArgumentType[] { ArgumentType.Normal, ArgumentType.Ref, ArgumentType.Normal })]
                 public static void ApplyDamagePrefix(NelAttackInfo Atk)
                 {
-                    var source = GetSource(Atk);
-                    if (source == null)
+                    try
                     {
-                        _objectAttackEnemy = null;
-                        HLog.Debug($"Enemy Injured by Unknown Source");
-                        return;
-                    }
+                        var source = GetSource(Atk);
+                        if (source == null)
+                        {
+                            _objectAttackEnemy = null;
+                            HLog.Debug($"Enemy Injured by Unknown Source");
+                            return;
+                        }
 
-                    if (source is NelEnemy enemy)
-                    {
-                        _objectAttackEnemy = enemy;
-                        HLog.Debug($"Enemy Injured by Enemy: {GetEnemyKey(enemy)}");
+                        if (source is NelEnemy enemy)
+                        {
+                            _objectAttackEnemy = enemy;
+                            HLog.Debug($"Enemy Injured by Enemy: {GetEnemyKey(enemy)}");
+                        }
+                        else if (source is PR)
+                        {
+                            _objectAttackEnemy = source;
+                            HLog.Debug($"Enemy Injured by Player");
+                        }
+                        else
+                        {
+                            _objectAttackEnemy = null;
+                            HLog.Debug($"Enemy Injured by {source.GetType().Name}");
+                        }
                     }
-                    else if (source is PR)
+                    catch (Exception ex)
                     {
-                        _objectAttackEnemy = source;
-                        HLog.Debug($"Enemy Injured by Player");
-                    }
-                    else
-                    {
-                        _objectAttackEnemy = null;
-                        HLog.Debug($"Enemy Injured by {source.GetType().Name}");
+                        HLog.Error($"Unexpected error in {nameof(EnemyInjuryCounterPatch)}", ex);
                     }
                 }
 
@@ -256,98 +291,105 @@ namespace BetterExperience.Patches
                 [HarmonyPatch(typeof(NelEnemy), nameof(NelEnemy.setDamageCounter))]
                 public static void SetDamageCounterPostfix(NelEnemy __instance, int delta_hp, int delta_mp)
                 {
-                    TotalEnemyInjuryHpCounter += -delta_hp;
-                    TotalEnemyInjuryMpCounter += -delta_mp;
-
-                    var attackedKey = GetEnemyKey(__instance);
-
-                    if (!EnemyInjuryHpCounter.ContainsKey(attackedKey))
-                        EnemyInjuryHpCounter[attackedKey] = 0;
-
-                    if (!EnemyInjuryMpCounter.ContainsKey(attackedKey))
-                        EnemyInjuryMpCounter[attackedKey] = 0;
-
-                    EnemyInjuryHpCounter[attackedKey] += -delta_hp;
-                    EnemyInjuryMpCounter[attackedKey] += -delta_mp;
-
-                    if (_objectAttackEnemy is PR)
+                    try
                     {
-                        TotalPlayerDamageHpCounter += -delta_hp;
-                        TotalPlayerDamageMpCounter += -delta_mp;
+                        TotalEnemyInjuryHpCounter += -delta_hp;
+                        TotalEnemyInjuryMpCounter += -delta_mp;
 
-                        if (!PlayerDamageHpCounter.ContainsKey(attackedKey))
-                            PlayerDamageHpCounter[attackedKey] = 0;
+                        var attackedKey = GetEnemyKey(__instance);
 
-                        if (!PlayerDamageMpCounter.ContainsKey(attackedKey))
-                            PlayerDamageMpCounter[attackedKey] = 0;
+                        if (!EnemyInjuryHpCounter.ContainsKey(attackedKey))
+                            EnemyInjuryHpCounter[attackedKey] = 0;
 
-                        PlayerDamageHpCounter[attackedKey] += -delta_hp;
-                        PlayerDamageMpCounter[attackedKey] += -delta_mp;
-                    }
-                    else if (_objectAttackEnemy is NelEnemy enemy)
-                    {
-                        TotalEnemyDamageHpCounter += -delta_hp;
-                        TotalEnemyDamageMpCounter += -delta_mp;
+                        if (!EnemyInjuryMpCounter.ContainsKey(attackedKey))
+                            EnemyInjuryMpCounter[attackedKey] = 0;
 
-                        var attackingKey = GetEnemyKey(enemy);
-
-                        if (!EnemyDamageHpCounter.ContainsKey(attackingKey))
-                            EnemyDamageHpCounter[attackingKey] = 0;
-
-                        if (!EnemyDamageMpCounter.ContainsKey(attackingKey))
-                            EnemyDamageMpCounter[attackingKey] = 0;
-
-                        EnemyDamageHpCounter[attackingKey] += -delta_hp;
-                        EnemyDamageMpCounter[attackingKey] += -delta_mp;
-                    }
-
-                    if (IsInBattle)
-                    {
-                        TotalEnemyInjurySingleBattleHpCounter += -delta_hp;
-                        TotalEnemyInjurySingleBattleMpCounter += -delta_mp;
-
-                        if (!EnemyInjurySingleBattleHpCounter.ContainsKey(attackedKey))
-                            EnemyInjurySingleBattleHpCounter[attackedKey] = 0;
-
-                        if (!EnemyInjurySingleBattleMpCounter.ContainsKey(attackedKey))
-                            EnemyInjurySingleBattleMpCounter[attackedKey] = 0;
-
-                        EnemyInjurySingleBattleHpCounter[attackedKey] += -delta_hp;
-                        EnemyInjurySingleBattleMpCounter[attackedKey] += -delta_mp;
+                        EnemyInjuryHpCounter[attackedKey] += -delta_hp;
+                        EnemyInjuryMpCounter[attackedKey] += -delta_mp;
 
                         if (_objectAttackEnemy is PR)
                         {
-                            TotalPlayerDamageSingleBattleHpCounter += -delta_hp;
-                            TotalPlayerDamageSingleBattleMpCounter += -delta_mp;
+                            TotalPlayerDamageHpCounter += -delta_hp;
+                            TotalPlayerDamageMpCounter += -delta_mp;
 
-                            if (!PlayerDamageSingleBattleHpCounter.ContainsKey(attackedKey))
-                                PlayerDamageSingleBattleHpCounter[attackedKey] = 0;
+                            if (!PlayerDamageHpCounter.ContainsKey(attackedKey))
+                                PlayerDamageHpCounter[attackedKey] = 0;
 
-                            if (!PlayerDamageSingleBattleMpCounter.ContainsKey(attackedKey))
-                                PlayerDamageSingleBattleMpCounter[attackedKey] = 0;
+                            if (!PlayerDamageMpCounter.ContainsKey(attackedKey))
+                                PlayerDamageMpCounter[attackedKey] = 0;
 
-                            PlayerDamageSingleBattleHpCounter[attackedKey] += -delta_hp;
-                            PlayerDamageSingleBattleMpCounter[attackedKey] += -delta_mp;
+                            PlayerDamageHpCounter[attackedKey] += -delta_hp;
+                            PlayerDamageMpCounter[attackedKey] += -delta_mp;
                         }
                         else if (_objectAttackEnemy is NelEnemy enemy)
                         {
-                            TotalEnemyDamageSingleBattleHpCounter += -delta_hp;
-                            TotalEnemyDamageSingleBattleMpCounter += -delta_mp;
+                            TotalEnemyDamageHpCounter += -delta_hp;
+                            TotalEnemyDamageMpCounter += -delta_mp;
 
                             var attackingKey = GetEnemyKey(enemy);
 
-                            if (!EnemyDamageSingleBattleHpCounter.ContainsKey(attackingKey))
-                                EnemyDamageSingleBattleHpCounter[attackingKey] = 0;
+                            if (!EnemyDamageHpCounter.ContainsKey(attackingKey))
+                                EnemyDamageHpCounter[attackingKey] = 0;
 
-                            if (!EnemyDamageSingleBattleMpCounter.ContainsKey(attackingKey))
-                                EnemyDamageSingleBattleMpCounter[attackingKey] = 0;
+                            if (!EnemyDamageMpCounter.ContainsKey(attackingKey))
+                                EnemyDamageMpCounter[attackingKey] = 0;
 
-                            EnemyDamageSingleBattleHpCounter[attackingKey] += -delta_hp;
-                            EnemyDamageSingleBattleMpCounter[attackingKey] += -delta_mp;
+                            EnemyDamageHpCounter[attackingKey] += -delta_hp;
+                            EnemyDamageMpCounter[attackingKey] += -delta_mp;
                         }
-                    }
 
-                    HLog.Debug($"Enemy Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
+                        if (IsInBattle)
+                        {
+                            TotalEnemyInjurySingleBattleHpCounter += -delta_hp;
+                            TotalEnemyInjurySingleBattleMpCounter += -delta_mp;
+
+                            if (!EnemyInjurySingleBattleHpCounter.ContainsKey(attackedKey))
+                                EnemyInjurySingleBattleHpCounter[attackedKey] = 0;
+
+                            if (!EnemyInjurySingleBattleMpCounter.ContainsKey(attackedKey))
+                                EnemyInjurySingleBattleMpCounter[attackedKey] = 0;
+
+                            EnemyInjurySingleBattleHpCounter[attackedKey] += -delta_hp;
+                            EnemyInjurySingleBattleMpCounter[attackedKey] += -delta_mp;
+
+                            if (_objectAttackEnemy is PR)
+                            {
+                                TotalPlayerDamageSingleBattleHpCounter += -delta_hp;
+                                TotalPlayerDamageSingleBattleMpCounter += -delta_mp;
+
+                                if (!PlayerDamageSingleBattleHpCounter.ContainsKey(attackedKey))
+                                    PlayerDamageSingleBattleHpCounter[attackedKey] = 0;
+
+                                if (!PlayerDamageSingleBattleMpCounter.ContainsKey(attackedKey))
+                                    PlayerDamageSingleBattleMpCounter[attackedKey] = 0;
+
+                                PlayerDamageSingleBattleHpCounter[attackedKey] += -delta_hp;
+                                PlayerDamageSingleBattleMpCounter[attackedKey] += -delta_mp;
+                            }
+                            else if (_objectAttackEnemy is NelEnemy enemy)
+                            {
+                                TotalEnemyDamageSingleBattleHpCounter += -delta_hp;
+                                TotalEnemyDamageSingleBattleMpCounter += -delta_mp;
+
+                                var attackingKey = GetEnemyKey(enemy);
+
+                                if (!EnemyDamageSingleBattleHpCounter.ContainsKey(attackingKey))
+                                    EnemyDamageSingleBattleHpCounter[attackingKey] = 0;
+
+                                if (!EnemyDamageSingleBattleMpCounter.ContainsKey(attackingKey))
+                                    EnemyDamageSingleBattleMpCounter[attackingKey] = 0;
+
+                                EnemyDamageSingleBattleHpCounter[attackingKey] += -delta_hp;
+                                EnemyDamageSingleBattleMpCounter[attackingKey] += -delta_mp;
+                            }
+                        }
+
+                        HLog.Debug($"Enemy Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error($"Unexpected error in {nameof(EnemyInjuryCounterPatch)}", ex);
+                    }
                 }
             }
 
