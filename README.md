@@ -2,26 +2,27 @@
 
 [![GitHub all releases](https://img.shields.io/github/downloads/mosuka136/AliceInCradleMod/total)](https://github.com/mosuka136/AliceInCradleMod/releases) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/mosuka136/AliceInCradleMod)](https://github.com/mosuka136/AliceInCradleMod/releases) ![platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 
-English version: [README_EN.md](README_EN.md)
+中文 | [English](README_EN.md)
 
 ## 总体介绍
 
 `BetterExperience/更好的体验` 是一个基于 `BepInEx` 与 `Harmony` 的 `Alice In Cradle` Mod（模组）。
 
-该 Mod 通过 `Harmony` 补丁在游戏运行时修改逻辑，提供可配置的体验优化、数值调整、限制解除、便利功能、内置可视化配置界面，以及贴图替换能力。大部分功能都可以通过配置文件或游戏内配置界面按需开启或关闭。
+该 Mod 通过 `Harmony` 补丁在游戏运行时修改逻辑，提供可配置的体验优化、数值调整、限制解除、便利功能、内置可视化配置界面、战斗统计，以及贴图替换能力。大部分功能都可以通过配置文件或游戏内配置界面按需开启或关闭。
 
 ## 实现的功能
 
-- 基础控制：模组总开关、独立配置文件、内置配置界面、中英双语、配置热重载、日志输出等级控制
+- 基础控制：模组总开关、独立配置文件、内置配置界面、中英双语、配置热重载、调试模式、日志输出等级控制
 - 体验便利：一键刷新商店、改良存档点、随时访问仓库、改良钓鱼体验、调整转轮相关效果
 - 数值调整：HP/MP/EP、货币数量、最大饱食度、移动速度、掉落倍率、法杖属性、危险度等
 - 容量调整：背包容量、空瓶收纳槽数量、强化插槽数量、过充插槽数量等
-- 生存/战斗保护：无 HP/MP/EP 伤害、无地图伤害、免疫异常状态、无限护盾、不被攻击等
+- 生存/战斗保护与统计：无 HP/MP/EP 伤害、无地图伤害、免疫异常状态、无限护盾、不被攻击、战斗统计与伤害计数器等
 - 陷阱与环境：溺水、挤压伤害、跌倒、蓝条破碎、虫墙、雾视觉效果等可按配置启用或禁用
 - 限制解除：木偶商人生成限制、椅子菜单限制、宝箱限制、仓库区域限制等
 - 地图与天气：随时快速传送、移除特定区域黑暗效果、天气强制设置（旋风/雷暴/雾/干旱/浓雾/瘟疫）
 - 视觉相关：去除马赛克、贴图替换、敏感内容贴图开关、运行时刷新贴图
 - 热键相关：支持组合键、多个备选热键与手柄输入
+- 调试相关：debug开关
 
 ## 使用方法
 
