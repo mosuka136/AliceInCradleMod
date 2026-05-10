@@ -14,10 +14,10 @@ namespace BetterExperience
     public class PatchInfo
     {
         public const string BepInPluginId = "com.buele.betterexperience";
-        public const string BepInPluginVersion = "2.0.0";
+        public const string BepInPluginVersion = "2.1.0";
 
         public const string HarmonyPluginId = "com.buele.betterexperience";
-        public const string HarmonyPluginVersion = "2.0.0";
+        public const string HarmonyPluginVersion = "2.1.0";
 
         public const string LoggerName = "BetterExperience.log";
     }
