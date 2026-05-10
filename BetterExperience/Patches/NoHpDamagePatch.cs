@@ -1,5 +1,7 @@
 using BetterExperience.BConfigManager;
 using HarmonyLib;
+using m2d;
+using nel;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -11,7 +13,7 @@ namespace BetterExperience.Patches
         [HarmonyPatch]
         public class NoHpDamagePatch
         {
-            static IEnumerable<MethodBase> TargetMethods()
+            public static IEnumerable<MethodBase> TargetMethods()
             {
                 var m = AccessTools.Method(typeof(nel.PR), "applyHpDamage");
                 if (m == null)
@@ -23,8 +25,11 @@ namespace BetterExperience.Patches
                 yield return m;
             }
 
-            static bool Prefix()
+            public static bool Prefix(AttackInfo Atk)
             {
+                if (GetSource(Atk) is PR)
+                    return true;
+
                 try
                 {
                     if (!ConfigManager.EnableNoHpDamage.Value)
@@ -38,6 +43,26 @@ namespace BetterExperience.Patches
                     HLog.Error($"Unexpected error in {nameof(NoHpDamagePatch)}.", ex);
                     return true;
                 }
+            }
+
+            public static object GetSource(AttackInfo attack_info)
+            {
+                if (attack_info == null)
+                    return null;
+
+                if (attack_info is NelAttackInfo atk)
+                {
+                    if (atk.Caster != null)
+                        return atk.Caster;
+
+                    if (atk.PublishMagic?.Caster != null)
+                        return atk.PublishMagic.Caster;
+                }
+
+                if (attack_info.AttackFrom != null)
+                    return attack_info.AttackFrom;
+
+                return null;
             }
         }
     }
