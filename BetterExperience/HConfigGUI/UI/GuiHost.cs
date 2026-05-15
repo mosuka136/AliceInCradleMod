@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace BetterExperience.HConfigGUI.UI
 {
+    /// <summary>
+    /// 配置界面的 Unity 宿主组件。
+    /// 该组件在游戏启动后由 <see cref="GameBootManager"/> 创建，负责接收热键、驱动 ViewModel 更新并在 OnGUI 中绘制窗口。
+    /// </summary>
     [RegisterOnGameBoot]
     public class GuiHost : MonoBehaviour
     {
@@ -16,6 +20,7 @@ namespace BetterExperience.HConfigGUI.UI
 
         private Vector2 _scrollPosition = Vector2.zero;
         private bool _isVisible = false;
+        // 首次打开后如果用户拖动过窗口，则不再用“点击窗口外”自动隐藏，避免拖动释放时误判为失焦。
         private bool _hasDraggedWindowSinceOpen = false;
 
         private void Awake()
@@ -93,6 +98,10 @@ namespace BetterExperience.HConfigGUI.UI
             GUI.FocusControl(null);
         }
 
+        /// <summary>
+        /// 隐藏配置窗口并清理展开项/录制状态。
+        /// 热键录制中不会关闭窗口，以避免用户正在编辑的组合被静默丢弃。
+        /// </summary>
         public void Hide()
         {
             if (_viewModel.RecordingHotkey != null)
@@ -114,6 +123,9 @@ namespace BetterExperience.HConfigGUI.UI
             HLog.Debug("Config GUI hidden.");
         }
 
+        /// <summary>
+        /// 切换配置窗口可见性。
+        /// </summary>
         public void ToggleVisibility()
         {
             if (_isVisible)

@@ -7,6 +7,10 @@ using UnityEngine.InputSystem.LowLevel;
 
 namespace BetterExperience.HotkeyManager
 {
+    /// <summary>
+    /// 热键触发条件的统一接口。
+    /// 实现类封装键盘键、键盘修饰键或手柄按钮，使 <see cref="HotkeyChord"/> 可以用同一流程判断输入状态。
+    /// </summary>
     public interface IHotkeyTrigger
     {
         UnityProvider UnityService { get; }
@@ -17,6 +21,9 @@ namespace BetterExperience.HotkeyManager
         string ToString();
     }
 
+    /// <summary>
+    /// 单个键盘按键触发器。
+    /// </summary>
     public class KeyboardTrigger : IHotkeyTrigger
     {
         public UnityProvider UnityService { get; }
@@ -72,12 +79,22 @@ namespace BetterExperience.HotkeyManager
         }
     }
 
+    /// <summary>
+    /// 键盘修饰键触发器。
+    /// 支持左/右侧精确匹配，也支持不区分左右的 Ctrl、Shift、Alt 语义。
+    /// </summary>
     public class KeyboardModifierTrigger : IHotkeyTrigger
     {
         public UnityProvider UnityService { get; }
         public Key LeftKey { get; set; } = Key.None;
         public Key RightKey { get; set; } = Key.None;
+        /// <summary>
+        /// 为 <c>true</c> 时左右任意一侧按下都满足条件。
+        /// </summary>
         public bool IsAnySide { get; set; } = true;
+        /// <summary>
+        /// 当 <see cref="IsAnySide"/> 为 <c>false</c> 时，决定匹配左侧还是右侧按键。
+        /// </summary>
         public bool IsLeftSide { get; set; } = true;
 
         public static readonly List<string> CtrlStr = new List<string>() { "Ctrl", "Control" };
@@ -251,6 +268,10 @@ namespace BetterExperience.HotkeyManager
             return false;
         }
 
+        /// <summary>
+        /// 复制修饰键定义，不复制 Unity 输入服务引用。
+        /// 该方法用于静态模板向运行时实例传递左右键约定。
+        /// </summary>
         public void CopyTo(KeyboardModifierTrigger other)
         {
             other.LeftKey = LeftKey;
@@ -323,6 +344,10 @@ namespace BetterExperience.HotkeyManager
         }
     }
 
+    /// <summary>
+    /// 手柄按钮触发器。
+    /// 配置文本允许省略 <c>Gamepad</c> 前缀解析，但写出时始终带前缀，以避免和键盘键名混淆。
+    /// </summary>
     public class GamepadTrigger : IHotkeyTrigger
     {
         public UnityProvider UnityService { get; }

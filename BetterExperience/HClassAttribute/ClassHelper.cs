@@ -5,10 +5,23 @@ using System.Reflection;
 
 namespace BetterExperience.HClassAttribute
 {
+    /// <summary>
+    /// 基于特性的反射辅助工具。
+    /// 该类型集中处理配置 UI 元数据、游戏启动注册等反射查询，并缓存属性特性以减少每帧 GUI 查询成本。
+    /// </summary>
     public class ClassHelper
     {
+        // 属性特性按“类型 + 属性名 + 特性类型”缓存；未找到时也缓存 null，避免重复反射。
         private static ConcurrentDictionary<(Type classType, string propertyName, Type attributeType), Attribute> _attributeCache = new ConcurrentDictionary<(Type classType, string propertyName, Type attributeType), Attribute>();
 
+        /// <summary>
+        /// 获取指定属性上的特性。
+        /// </summary>
+        /// <typeparam name="TClass">声明属性的类型。</typeparam>
+        /// <typeparam name="TAttribute">要读取的特性类型。</typeparam>
+        /// <param name="propertyName">拥有指定特性的属性名。</param>
+        /// <returns>找到的特性；属性存在但未标记时返回 <c>null</c>。</returns>
+        /// <exception cref="ArgumentException">属性不存在时抛出。</exception>
         public static TAttribute GetAttribute<TClass, TAttribute>(string propertyName) where TAttribute : Attribute
         {
             var key = (typeof(TClass), propertyName, typeof(TAttribute));
@@ -26,6 +39,9 @@ namespace BetterExperience.HClassAttribute
             return attribute;
         }
 
+        /// <summary>
+        /// 获取程序集内标记了指定特性的类型。
+        /// </summary>
         public static Type[] GetClasses<TAttribute>(Assembly assembly) where TAttribute : Attribute
         {
             return assembly.GetTypes()
@@ -33,6 +49,9 @@ namespace BetterExperience.HClassAttribute
                 .ToArray();
         }
 
+        /// <summary>
+        /// 获取程序集内标记了指定特性的方法。
+        /// </summary>
         public static MethodInfo[] GetMethods<TAttribute>(Assembly assembly) where TAttribute : Attribute
         {
             return assembly.GetTypes()
@@ -41,6 +60,9 @@ namespace BetterExperience.HClassAttribute
                 .ToArray();
         }
 
+        /// <summary>
+        /// 读取配置属性上的滑条元数据。
+        /// </summary>
         public static (float Min, float Max, float Step)? GetSliderInfo<TClass>(string propertyName)
         {
             var sliderAttribute = GetAttribute<TClass, ConfigSliderAttribute>(propertyName);

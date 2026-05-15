@@ -6,18 +6,31 @@ using System.Linq;
 
 namespace BetterExperience.HotkeyManager
 {
+    /// <summary>
+    /// 表示一个可由多个按键组合触发的热键配置。
+    /// 配置文件格式使用逗号分隔多个组合，例如 <c>Ctrl+F1,GamepadStart</c>；任意一个组合在当前帧按下即视为触发。
+    /// </summary>
     public class Hotkey : IConfigEntryAdapter
     {
         private static readonly UnityProvider _defaultUnityService = new UnityProvider();
 
+        /// <summary>
+        /// 多个组合在配置文本中的分隔符。
+        /// </summary>
         public const char Separator = ',';
 
         public UnityProvider UnityService { get; }
 
+        /// <summary>
+        /// 可触发该热键的组合列表。列表为空时不会触发。
+        /// </summary>
         public List<HotkeyChord> Hotkeys { get; set; }
 
         public int Count => Hotkeys.Count;
 
+        /// <summary>
+        /// 临时禁用标记。GUI 录制热键时会把旧值标记为无效，避免录制过程中旧热键继续触发。
+        /// </summary>
         public bool Valid { get; set; } = true;
 
         public Hotkey()
@@ -74,6 +87,9 @@ namespace BetterExperience.HotkeyManager
             return false;
         }
 
+        /// <summary>
+        /// 添加一个热键组合；同一对象引用不会重复加入。
+        /// </summary>
         public void Add(HotkeyChord chord)
         {
             if (chord != null && !Hotkeys.Contains(chord))
@@ -91,6 +107,10 @@ namespace BetterExperience.HotkeyManager
             Hotkeys.RemoveAll(h => !h.IsValid || h == null);
         }
 
+        /// <summary>
+        /// 比较两个热键是否包含相同组合。
+        /// 组合顺序不参与比较，因此适合判断 GUI 编辑后的配置是否实际发生变化。
+        /// </summary>
         public bool HasSameHotkey(Hotkey other)
         {
             if (other == null)
@@ -105,6 +125,11 @@ namespace BetterExperience.HotkeyManager
             return thisChords.SequenceEqual(otherChords);
         }
 
+        /// <summary>
+        /// 从配置文本解析热键。
+        /// </summary>
+        /// <param name="text">逗号分隔的组合文本。</param>
+        /// <returns>解析是否成功；失败时当前列表可能已经被清空或部分填充。</returns>
         public bool TryParse(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
@@ -134,6 +159,9 @@ namespace BetterExperience.HotkeyManager
             return true;
         }
 
+        /// <summary>
+        /// 将热键编码为配置文件文本。
+        /// </summary>
         public override string ToString()
         {
             return string.Join(Separator.ToString(), Hotkeys.Select(h => h.ToString()).Where(s => !string.IsNullOrEmpty(s)));

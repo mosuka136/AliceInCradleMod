@@ -7,14 +7,25 @@ using UnityEngine;
 
 namespace BetterExperience.Patches.ReplaceTexture
 {
+    /// <summary>
+    /// 管理外部替换贴图的加载、缓存与替换。
+    /// 该类型只处理磁盘图片到 Unity <see cref="Texture2D"/>/<see cref="Sprite"/> 的运行时替换，不负责具体 Harmony 拦截点。
+    /// </summary>
     public static class TextureManager
     {
         private static string _imagePath;
         private static string _sensitiveImagePath;
         private static string[] _supportExtensions;
 
+        // 键使用不带扩展名的文件名，因此不同目录下同名图片会冲突并被跳过。
         private static readonly Dictionary<string, Texture2D> _imageInfos = new Dictionary<string, Texture2D>();
 
+        /// <summary>
+        /// 初始化贴图缓存。
+        /// </summary>
+        /// <param name="imagePath">普通替换贴图根目录。</param>
+        /// <param name="sensitiveImagePath">敏感贴图子目录，关闭敏感内容时会被排除。</param>
+        /// <param name="supportedExtensions">允许扫描的扩展名列表。</param>
         public static void Initialize(string imagePath, string sensitiveImagePath, string[] supportedExtensions)
         {
             try
@@ -36,6 +47,7 @@ namespace BetterExperience.Patches.ReplaceTexture
 
                 if (!ConfigManager.EnableSensitivities.Value)
                 {
+                    // 敏感内容开关关闭时，只排除敏感目录下的文件；普通目录中的同名文件仍可作为替换资源。
                     imageFiles = imageFiles.Where(f => !f.StartsWith(sensitiveImagePath, StringComparison.OrdinalIgnoreCase));
                 }
 
@@ -64,6 +76,9 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
         }
 
+        /// <summary>
+        /// 释放已缓存贴图并按上次初始化参数重新扫描磁盘。
+        /// </summary>
         public static void Reload()
         {
             DestroyAllTextures();
@@ -164,6 +179,13 @@ namespace BetterExperience.Patches.ReplaceTexture
             return texture;
         }
 
+        /// <summary>
+        /// 尝试把目标 Unity 对象替换为外部贴图或由外部贴图创建的 Sprite。
+        /// </summary>
+        /// <param name="name">替换资源名，对应缓存中的无扩展名文件名。</param>
+        /// <param name="type">原始资源声明类型。</param>
+        /// <param name="destination">待替换对象；成功时会被改写为新对象。</param>
+        /// <returns>是否完成替换。</returns>
         public static bool TryReplace(string name, Type type, ref UnityEngine.Object destination)
         {
             if (string.IsNullOrEmpty(name) || type == null || destination == null)
@@ -197,6 +219,10 @@ namespace BetterExperience.Patches.ReplaceTexture
             return false;
         }
 
+        /// <summary>
+        /// 将原贴图的采样和隐藏标志复制到替换贴图。
+        /// 这样可以让外部贴图尽量保持原资源在 Unity 中的显示行为。
+        /// </summary>
         public static void CopyTextureProperties(Texture source, Texture destination)
         {
             if (source == null || destination == null)

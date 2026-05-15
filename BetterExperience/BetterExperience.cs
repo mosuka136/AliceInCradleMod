@@ -12,6 +12,10 @@ using UnityEngine;
 
 namespace BetterExperience
 {
+    /// <summary>
+    /// 定义插件在 BepInEx、Harmony 和文件系统中的固定标识与目录约定。
+    /// 该类型只保存启动阶段和资源加载阶段共享的常量/路径，不负责创建目录或验证文件存在性。
+    /// </summary>
     public class PatchInfo
     {
         public const string BepInPluginId = "com.buele.betterexperience";
@@ -32,9 +36,17 @@ namespace BetterExperience
         public static readonly string[] ReplaceImageSupportedExtensions = { ".png", ".btep" };
     }
 
+    /// <summary>
+    /// BepInEx 插件入口，负责按启动顺序初始化配置、日志、贴图替换和 Harmony 补丁。
+    /// 该类只协调插件级生命周期，不承载具体补丁逻辑；具体行为由 <c>Patches</c> 下的 Harmony Patch 类实现。
+    /// Unity 生命周期方法由主线程调用，当前实现未设计为从后台线程重复初始化。
+    /// </summary>
     [BepInPlugin(PatchInfo.BepInPluginId, nameof(BetterExperience), PatchInfo.BepInPluginVersion)]
     public class BetterExperience : BaseUnityPlugin
     {
+        /// <summary>
+        /// 当前插件实例。该引用在 <c>Awake</c> 中赋值，供必须访问 Unity 组件上下文的模块使用。
+        /// </summary>
         public static BetterExperience Instance { get; private set; }
 
         private void Awake()
@@ -45,6 +57,7 @@ namespace BetterExperience
 
                 gameObject.hideFlags = HideFlags.HideAndDontSave;
 
+                // 配置必须先于日志和补丁读取，因为后续初始化会依赖开关、日志等级和资源路径设置。
                 ConfigManager.Initialize(PatchInfo.ConfigFilePath);
 
                 if (ConfigManager.EnableBetterExperience.Value)
@@ -67,6 +80,7 @@ namespace BetterExperience
 
                 TextureManager.Initialize(PatchInfo.ReplaceImagePath, PatchInfo.ReplaceSensitiveImagePath, PatchInfo.ReplaceImageSupportedExtensions);
 
+                // Harmony 注册失败时跳过单个补丁类，避免某个补丁因目标方法变更导致整个插件不可用。
                 var harmony = new Harmony(PatchInfo.HarmonyPluginId);
                 HLog.Debug($"Starting Harmony patch registration: {PatchInfo.HarmonyPluginId}");
                 SafePatchAll(harmony, typeof(BetterExperience).Assembly);
@@ -104,6 +118,12 @@ namespace BetterExperience
             }
         }
 
+        /// <summary>
+        /// 扫描程序集中的 Harmony Patch 类型并逐个注册。
+        /// 如果某个类型因为游戏版本差异或反射异常注册失败，只记录错误并继续处理其他补丁。
+        /// </summary>
+        /// <param name="harmony">用于注册补丁的 Harmony 实例，调用方负责保证其标识与插件一致。</param>
+        /// <param name="asm">需要扫描的程序集，通常为当前插件程序集。</param>
         public void SafePatchAll(Harmony harmony, Assembly asm)
         {
             int patchClassCount = 0;
@@ -129,6 +149,12 @@ namespace BetterExperience
             HLog.Debug($"Scanned and processed Harmony patch classes: {patchClassCount}");
         }
 
+        /// <summary>
+        /// 安全枚举程序集类型。
+        /// 当部分类型依赖缺失导致反射加载失败时，仍返回已经成功加载的类型，便于继续注册可用补丁。
+        /// </summary>
+        /// <param name="asm">要枚举类型的程序集。</param>
+        /// <returns>成功加载的类型集合；失败项会被过滤掉。</returns>
         public IEnumerable<Type> GetTypesSafe(Assembly asm)
         {
             try
@@ -142,6 +168,11 @@ namespace BetterExperience
             }
         }
 
+        /// <summary>
+        /// 输出当前 Harmony 实例实际注册的补丁统计信息。
+        /// 统计按 owner 过滤，只计入本插件标识下的 prefix、postfix、transpiler 和 finalizer。
+        /// </summary>
+        /// <param name="harmony">要检查的 Harmony 实例。</param>
         public void LogPatchesInfo(Harmony harmony)
         {
             string id = harmony.Id;

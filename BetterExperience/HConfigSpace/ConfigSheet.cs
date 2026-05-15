@@ -4,8 +4,15 @@ using System.Collections.Specialized;
 
 namespace BetterExperience.HConfigSpace
 {
+    /// <summary>
+    /// 运行时配置表集合。
+    /// 该模型保存已绑定的强类型配置表，面向业务代码和 GUI 使用；文件级结构由 <see cref="ConfigFileSheet"/> 维护。
+    /// </summary>
     public class ConfigSheet : IEnumerable<KeyValuePair<string, ConfigTable>>
     {
+        /// <summary>
+        /// 表集合，使用有序字典保持声明顺序，便于 GUI 和写出内容稳定。
+        /// </summary>
         public OrderedDictionary Sheet { get; private set; }
 
         public IEnumerable<string> Keys

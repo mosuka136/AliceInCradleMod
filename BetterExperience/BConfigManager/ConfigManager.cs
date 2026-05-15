@@ -4,12 +4,24 @@ using BetterExperience.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
+    /// <summary>
+    /// 插件配置项声明入口。
+    /// 该类把配置文件模型中的表/项绑定为静态强类型属性，供补丁、GUI 和输入处理直接读取。
+    /// 具体配置项按功能拆分到同名 partial 文件中，避免单个文件过长。
+    /// </summary>
     public partial class ConfigManager
     {
+        // 初始化和重载都会改写静态配置引用，需要串行化以避免 GUI 或输入回调读到中间状态。
         private static readonly object _configSyncRoot = new object();
 
+        /// <summary>
+        /// 当前配置文件管理器。
+        /// </summary>
         public static ConfigFileManager Config { get; private set; }
 
+        /// <summary>
+        /// 运行时配置表集合，供 GUI 构建配置页使用。
+        /// </summary>
         public static ConfigSheet Sheet => Config.Sheet;
 
         private ConfigManager()
@@ -29,6 +41,11 @@ namespace BetterExperience.BConfigManager
 
         private const string SectionGeneral = "General";
 
+        /// <summary>
+        /// 初始化全部配置表和配置项。
+        /// 调用会读取现有配置文件，补齐缺失项，并在完成绑定后保存一次规范化后的配置文件。
+        /// </summary>
+        /// <param name="configFilePath">配置文件路径。</param>
         public static void Initialize(string configFilePath)
         {
             lock (_configSyncRoot)
@@ -134,6 +151,9 @@ namespace BetterExperience.BConfigManager
             }
         }
 
+        /// <summary>
+        /// 从磁盘重新读取配置，并将已有静态配置项重新绑定到新文件项。
+        /// </summary>
         public static void ReloadConfig()
         {
             lock (_configSyncRoot)

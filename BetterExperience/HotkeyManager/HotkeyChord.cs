@@ -6,14 +6,30 @@ using UnityEngine.InputSystem;
 
 namespace BetterExperience.HotkeyManager
 {
+    /// <summary>
+    /// 表示一个完整按键组合，由若干修饰键和一个主键组成。
+    /// 键盘组合使用 <c>+</c> 分隔，最后一段必须是主键；手柄组合也复用同一格式。
+    /// </summary>
     public class HotkeyChord
     {
+        /// <summary>
+        /// 组合内部修饰键与主键的文本分隔符。
+        /// </summary>
         public const char Separator = '+';
 
         public UnityProvider UnityService { get; }
 
+        /// <summary>
+        /// 触发主键前必须保持按下的修饰键集合。
+        /// </summary>
         public List<IHotkeyTrigger> Modifiers { get; set; }
+        /// <summary>
+        /// 当前帧按下时触发该组合的主键。
+        /// </summary>
         public IHotkeyTrigger MainKey { get; set; }
+        /// <summary>
+        /// 是否具备可触发的主键。没有主键的组合仅作为 GUI 录制过程中的临时状态。
+        /// </summary>
         public bool IsValid => MainKey != null;
 
         public HotkeyChord(UnityProvider unityService)
@@ -40,6 +56,10 @@ namespace BetterExperience.HotkeyManager
             return MainKey.WasPressedThisFrame();
         }
 
+        /// <summary>
+        /// 添加键盘修饰键。
+        /// 如果左右两侧同类修饰键都被录入，会合并为不区分左右的修饰键，方便用户输入。
+        /// </summary>
         public void AddModifier(Key key)
         {
             if (!KeyboardModifierTrigger.IsModifierKey(key))
@@ -119,6 +139,7 @@ namespace BetterExperience.HotkeyManager
             var keyboardModifierTrigger = new KeyboardModifierTrigger(UnityService);
             var gamepadTrigger = new GamepadTrigger(UnityService);
 
+            // 先尝试键盘主键：键盘组合只允许键盘修饰键，避免混合输入设备产生不可预测的触发条件。
             if (keyboardTrigger.TryParse(parts.Last()))
             {
                 MainKey = keyboardTrigger;
@@ -138,6 +159,7 @@ namespace BetterExperience.HotkeyManager
                 return true;
             }
 
+            // 如果主键不是键盘键，则按手柄组合解析，前置段也必须是手柄按钮。
             if (!gamepadTrigger.TryParse(parts.Last()))
             {
                 HLog.Debug($"Failed to parse hotkey main key: {parts.Last()}");

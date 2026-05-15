@@ -5,12 +5,20 @@ using System.Collections.Generic;
 
 namespace BetterExperience.HConfigGUI.UI
 {
+    /// <summary>
+    /// 单个配置项渲染器接口。
+    /// 渲染器只负责 IMGUI 控件和临时 UI 状态，不直接操作配置文件。
+    /// </summary>
     public interface IEntryRenderer
     {
         ViewModel Context { get; }
         void Render(UiEntryModel entry);
     }
 
+    /// <summary>
+    /// 配置项渲染器基类，统一绘制标签、输入控件和重置按钮。
+    /// 派生类只需实现具体值类型的输入区域。
+    /// </summary>
     public abstract class BaseEntryRenderer : IEntryRenderer
     {
         public ViewModel Context { get; }
@@ -39,6 +47,9 @@ namespace BetterExperience.HConfigGUI.UI
         public abstract void RenderEntry(UiEntryModel entry);
     }
 
+    /// <summary>
+    /// 布尔配置项渲染器。
+    /// </summary>
     public class BoolRenderer : BaseEntryRenderer
     {
         public BoolRenderer(ViewModel context) : base(context) { }
@@ -60,6 +71,10 @@ namespace BetterExperience.HConfigGUI.UI
         }
     }
 
+    /// <summary>
+    /// 字符串配置项渲染器。
+    /// 文本输入使用延迟提交，避免每输入一个字符都立即写回配置。
+    /// </summary>
     public class StringRenderer : BaseEntryRenderer
     {
         public StringRenderer(ViewModel context) : base(context) { }
@@ -81,6 +96,10 @@ namespace BetterExperience.HConfigGUI.UI
         }
     }
 
+    /// <summary>
+    /// 数值配置项渲染器。
+    /// 输入框文本会保存在缓存中，只有能解析为目标数值类型时才延迟提交。
+    /// </summary>
     public class NumberRenderer : BaseEntryRenderer
     {
         public NumberRenderer(ViewModel context) : base(context) { }
@@ -119,6 +138,10 @@ namespace BetterExperience.HConfigGUI.UI
         }
     }
 
+    /// <summary>
+    /// 枚举配置项渲染器。
+    /// 不会显示被枚举辅助工具标记为不显示的值，并缓存映射关系以减少每帧反射/描述生成开销。
+    /// </summary>
     public class EnumRenderer : BaseEntryRenderer
     {
         private readonly Dictionary<UiEntryModel, (Array values, List<int> mapIndex, string[] names)> _cacheEnumInfo = new Dictionary<UiEntryModel, (Array values, List<int> mapIndex, string[] names)>();
@@ -188,6 +211,7 @@ namespace BetterExperience.HConfigGUI.UI
 
             int currentIndex = Array.IndexOf(values, value);
             currentIndex = mapIndexList.IndexOf(currentIndex);
+            // 当前值不在可显示枚举集合中时回退到第一个选项，避免 SelectionGrid 使用非法索引。
             currentIndex = currentIndex >= 0 ? currentIndex : 0;
 
             Context.UnityGuiService.BeginHorizontal();
@@ -209,6 +233,10 @@ namespace BetterExperience.HConfigGUI.UI
         }
     }
 
+    /// <summary>
+    /// 带滑条的数值配置项渲染器。
+    /// 滑条范围和步进来自配置项上的元数据，文本框仍允许用户精确输入可解析数值。
+    /// </summary>
     public class SliderRenderer : BaseEntryRenderer
     {
         public SliderRenderer(ViewModel context) : base(context) { }
@@ -242,6 +270,7 @@ namespace BetterExperience.HConfigGUI.UI
                 Context.StyleResourceInstance.SliderThumbStyle,
                 unityGuiService.ExpandWidth(true));
 
+            // 显示值会被夹在滑条范围内；如果用户未拖动滑条，应保留原始越界值，避免单纯绘制就改写配置。
             if (unityService.Approximately(displayValue, newSliderValue))
                 newSliderValue = value;
 
@@ -282,6 +311,10 @@ namespace BetterExperience.HConfigGUI.UI
         }
     }
 
+    /// <summary>
+    /// 热键配置项渲染器。
+    /// 编辑时先操作副本，用户点击应用后才写回实际配置，防止半录制状态影响游戏输入。
+    /// </summary>
     public class HotkeyRenderer : BaseEntryRenderer
     {
         public HotkeyRenderer(ViewModel context) : base(context) { }
@@ -325,6 +358,7 @@ namespace BetterExperience.HConfigGUI.UI
             Hotkey value;
             if (entry.CacheValue == null)
             {
+                // 编辑副本暂时标记为无效，只有应用后才允许参与触发判断。
                 value = new Hotkey(entry.Value as Hotkey, Context.UnityService) { Valid = false };
                 entry.CacheValue = value;
             }
@@ -350,6 +384,7 @@ namespace BetterExperience.HConfigGUI.UI
                     }
                     else
                     {
+                        // 录制期间禁用原热键，避免用于打开配置窗口的组合在编辑时继续触发。
                         (entry.Value as Hotkey).Valid = false;
                         hotkey.Clear();
                         Context.RecordingHotkey = hotkey;
@@ -386,6 +421,10 @@ namespace BetterExperience.HConfigGUI.UI
             unityGuiService.EndHorizontal();
         }
 
+        /// <summary>
+        /// 将正在编辑的热键副本提交到配置项。
+        /// 无效组合会先被移除，提交后恢复原配置项的触发状态。
+        /// </summary>
         public void ApplyHotkey()
         {
             var entry = Context.OpenedHotkeyEntry;
@@ -404,6 +443,9 @@ namespace BetterExperience.HConfigGUI.UI
         }
     }
 
+    /// <summary>
+    /// 配置项重置按钮渲染器。
+    /// </summary>
     public static class ResetButtonRenderer
     {
         public static void Render(ViewModel context, UiEntryModel entry)
@@ -422,6 +464,10 @@ namespace BetterExperience.HConfigGUI.UI
         }
     }
 
+    /// <summary>
+    /// 配置表渲染器。
+    /// 根据配置项值类型选择具体输入控件；不支持的类型会被跳过。
+    /// </summary>
     public class TableRenderer
     {
 
@@ -495,6 +541,9 @@ namespace BetterExperience.HConfigGUI.UI
         }
     }
 
+    /// <summary>
+    /// 配置页渲染器，按表顺序绘制整个配置模型。
+    /// </summary>
     public class SheetRenderer
     {
         public ViewModel Context { get; }
@@ -520,6 +569,10 @@ namespace BetterExperience.HConfigGUI.UI
         }
     }
 
+    /// <summary>
+    /// 短提示渲染器。
+    /// 提示在窗口底部显示，并在结束前按剩余时间淡出。
+    /// </summary>
     public class ToastRenderer
     {
         public ViewModel Context { get; }
@@ -561,6 +614,10 @@ namespace BetterExperience.HConfigGUI.UI
         }
     }
 
+    /// <summary>
+    /// IMGUI tooltip 渲染器。
+    /// tooltip 坐标使用窗口内鼠标位置，并被限制在当前配置窗口范围内。
+    /// </summary>
     public class TooltipRenderer
     {
         public ViewModel Context { get; }

@@ -4,6 +4,10 @@ using System.Collections;
 
 namespace BetterExperience.HConfigSpace
 {
+    /// <summary>
+    /// 运行时配置项的非泛型视图。
+    /// UI 层通过该接口读写配置值，而不需要知道具体的泛型类型。
+    /// </summary>
     public interface IConfigEntry
     {
         Translator Name { get; }
@@ -20,10 +24,19 @@ namespace BetterExperience.HConfigSpace
         void RebindEntry(ConfigFileEntry entry);
     }
 
+    /// <summary>
+    /// 一个强类型运行时配置项。
+    /// 它把文件层面的 <see cref="ConfigFileEntry"/> 与业务代码使用的 <typeparamref name="T"/> 值绑定起来，并在值变化时同步文件项文本与触发事件。
+    /// 该类不直接写文件；写回时机由 <see cref="ConfigFileManager"/> 订阅变化事件后决定。
+    /// </summary>
+    /// <typeparam name="T">配置项值类型。</typeparam>
     public class ConfigEntry<T> : IConfigEntry
     {
         private T _value;
 
+        /// <summary>
+        /// 当前配置值。赋值会编码到绑定的文件项，并触发 <see cref="OnValueChanged"/>。
+        /// </summary>
         public T Value
         {
             get => _value;
@@ -64,6 +77,9 @@ namespace BetterExperience.HConfigSpace
 
         public object BoxedDefaultValue => DefaultValue;
 
+        /// <summary>
+        /// 强类型值变化事件。只有新值与旧值不相等时才触发。
+        /// </summary>
         public event EventHandler<T> OnValueChanged;
         public event EventHandler OnValueChangedBase
         {
@@ -122,6 +138,11 @@ namespace BetterExperience.HConfigSpace
             RebindEntry(entry);
         }
 
+        /// <summary>
+        /// 将配置项重新绑定到另一个文件项，并从文件项的文本值解码当前值。
+        /// 常用于重新读取配置文件后保留已有 <see cref="ConfigEntry{T}"/> 引用。
+        /// </summary>
+        /// <param name="entry">新的文件项；为 <c>null</c> 时不做处理。</param>
         public void RebindEntry(ConfigFileEntry entry)
         {
             if (entry == null)
@@ -137,11 +158,19 @@ namespace BetterExperience.HConfigSpace
             Value = decodeResult.Value;
         }
 
+        /// <summary>
+        /// 比较两个配置值是否等价。
+        /// 集合类型会按元素顺序深度比较，以避免数组/List 在引用变化但内容未变时触发多余写入。
+        /// </summary>
         public static bool Equal(T a, T b)
         {
             return EqualBoxed(a, b);
         }
 
+        /// <summary>
+        /// 非泛型等值比较实现。
+        /// 当前只支持基础类型、字符串、枚举、数组和 IEnumerable；未知复杂对象按不相等处理。
+        /// </summary>
         public static bool EqualBoxed(object a, object b)
         {
             if (a == null && b == null)
@@ -216,6 +245,10 @@ namespace BetterExperience.HConfigSpace
         }
     }
 
+    /// <summary>
+    /// 通过非泛型事件暴露强类型配置值变化时使用的事件参数。
+    /// </summary>
+    /// <typeparam name="T">变化后的值类型。</typeparam>
     public class EntryValueChangedEventArgs<T> : EventArgs
     {
         public T Value { get; }

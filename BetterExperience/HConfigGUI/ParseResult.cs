@@ -3,10 +3,24 @@ using System.Collections.Generic;
 
 namespace BetterExperience.HConfigGUI
 {
+    /// <summary>
+    /// GUI 输入解析结果。
+    /// 失败结果携带字符串错误，便于直接用于日志或 UI 提示；它不承担配置文件解析错误分类。
+    /// </summary>
+    /// <typeparam name="T">解析成功后的值类型。</typeparam>
     public class ParseResult<T>
     {
+        /// <summary>
+        /// 解析成功时的值；失败时为默认值。
+        /// </summary>
         public T Value { get; }
+        /// <summary>
+        /// 是否解析成功。
+        /// </summary>
         public bool Success { get; }
+        /// <summary>
+        /// 失败说明集合；成功时为空集合。
+        /// </summary>
         public IReadOnlyList<string> Errors { get; }
 
         public ParseResult(T value, bool success, IReadOnlyList<string> errors)

@@ -5,8 +5,15 @@ using System.Text;
 
 namespace BetterExperience.HConfigSpace
 {
+    /// <summary>
+    /// 表示整个配置文件的内存模型。
+    /// 该类型按文件顺序保存多个配置表，负责整文件级别的编码/解码协调，不负责磁盘 IO。
+    /// </summary>
     public class ConfigFileSheet
     {
+        /// <summary>
+        /// 配置表集合，使用有序字典保持保存后的表顺序稳定。
+        /// </summary>
         public OrderedDictionary Sheet { get; private set; } = new OrderedDictionary();
 
         public ConfigFileResult<ConfigFileTable> AddTable(ConfigFileTable table)
@@ -72,6 +79,12 @@ namespace BetterExperience.HConfigSpace
             return result;
         }
 
+        /// <summary>
+        /// 从按行拆分后的配置内容解析整个配置模型。
+        /// </summary>
+        /// <param name="content">配置文件内容行。</param>
+        /// <param name="index">读取起点；返回时推进到已消费位置。</param>
+        /// <returns>配置文件模型。单个表解析失败时会收集错误并继续尝试后续内容。</returns>
         public static ConfigFileResult<ConfigFileSheet> DecodeSheet(string[] content, ref int index)
         {
             var model = new ConfigFileSheet();

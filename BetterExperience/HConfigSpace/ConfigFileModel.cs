@@ -8,13 +8,30 @@ using System.Text;
 
 namespace BetterExperience.HConfigSpace
 {
+    /// <summary>
+    /// 配置文件值的编码/解码工具。
+    /// 该类型定义了项目内部配置文本格式的基础规则：字符串带双引号并转义，集合使用方括号和逗号分隔，数字使用不随系统区域变化的格式。
+    /// 它只处理单个值及集合值，不解析表头、键名或注释。
+    /// </summary>
     public class ConfigFileModel
     {
+        /// <summary>
+        /// 将强类型值编码为配置文件中的文本表示。
+        /// </summary>
+        /// <typeparam name="T">待编码值的静态类型。</typeparam>
+        /// <param name="value">待编码值，当前格式不支持 <c>null</c>。</param>
+        /// <returns>编码结果；不支持的类型会返回失败结果。</returns>
         public static ConfigFileResult<string> Encode<T>(T value)
         {
             return Encode(value, typeof(T));
         }
 
+        /// <summary>
+        /// 按指定类型将对象编码为配置文本。
+        /// </summary>
+        /// <param name="value">待编码对象。</param>
+        /// <param name="type">用于选择编码规则的类型。</param>
+        /// <returns>编码后的字符串，或包含错误信息的失败结果。</returns>
         public static ConfigFileResult<string> Encode(object value, Type type)
         {
             if (value == null)
@@ -88,12 +105,19 @@ namespace BetterExperience.HConfigSpace
                     elements.Add(result.Value);
                 }
 
+                // 集合元素本身可能是带引号字符串或嵌套集合，因此分隔符只在解码阶段按状态机处理。
                 return ConfigFileResult<string>.Ok($"[{string.Join(",", elements)}]");
             }
 
             return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.UnsupportedType, "Unsupported type"));
         }
 
+        /// <summary>
+        /// 将配置文本解码为指定类型。
+        /// </summary>
+        /// <typeparam name="T">目标类型。</typeparam>
+        /// <param name="value">配置文件中的值文本。</param>
+        /// <returns>解码后的强类型值。</returns>
         public static ConfigFileResult<T> Decode<T>(string value)
         {
             var result = Decode(value, typeof(T));
@@ -106,6 +130,12 @@ namespace BetterExperience.HConfigSpace
             return ConfigFileResult<T>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Decoded value cannot be converted to {typeof(T).FullName}"));
         }
 
+        /// <summary>
+        /// 按运行时类型解码配置文本。
+        /// </summary>
+        /// <param name="value">配置文件中的值文本。</param>
+        /// <param name="type">目标类型。</param>
+        /// <returns>解码后的对象，或包含错误信息的失败结果。</returns>
         public static ConfigFileResult<object> Decode(string value, Type type)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -233,6 +263,11 @@ namespace BetterExperience.HConfigSpace
             return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.UnsupportedType, "Decoding not implemented"));
         }
 
+        /// <summary>
+        /// 获取集合类型的元素类型。
+        /// </summary>
+        /// <param name="collectionType">数组、<see cref="IEnumerable{T}"/> 或实现泛型 IEnumerable 的类型。</param>
+        /// <returns>元素类型；无法识别时返回 <c>null</c>。</returns>
         public static Type GetCollectionElementType(Type collectionType)
         {
             if (collectionType.IsArray)
@@ -247,6 +282,14 @@ namespace BetterExperience.HConfigSpace
             return enumerableType?.GetGenericArguments()[0];
         }
 
+        /// <summary>
+        /// 按配置格式编码字符串。
+        /// </summary>
+        /// <param name="value">待编码字符串。</param>
+        /// <param name="quote">是否用双引号包裹。</param>
+        /// <param name="trim">是否在编码前去掉首尾空白。</param>
+        /// <param name="escape">是否转义反斜杠、双引号和常见控制字符。</param>
+        /// <returns>编码后的字符串。</returns>
         public static string EncodeString(string value, bool quote = true, bool trim = false, bool escape = true)
         {
             if (trim)
@@ -258,6 +301,14 @@ namespace BetterExperience.HConfigSpace
             return value;
         }
 
+        /// <summary>
+        /// 按配置格式解码字符串。
+        /// </summary>
+        /// <param name="value">待解码文本。</param>
+        /// <param name="quote">是否要求文本以双引号包裹。</param>
+        /// <param name="trim">是否在解码前去掉首尾空白。</param>
+        /// <param name="escape">是否解析反斜杠转义。</param>
+        /// <returns>解码后的字符串。</returns>
         public static ConfigFileResult<string> DecodeString(string value, bool quote = true, bool trim = true, bool escape = true)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -286,6 +337,11 @@ namespace BetterExperience.HConfigSpace
             return ConfigFileResult<string>.Ok(value);
         }
 
+        /// <summary>
+        /// 将集合文本拆分为元素文本。
+        /// </summary>
+        /// <param name="value">形如 <c>[a,b]</c> 的集合文本。</param>
+        /// <returns>元素文本数组；引号未闭合、括号不平衡或存在空元素时返回失败。</returns>
         public static ConfigFileResult<string[]> SplitCollectionString(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -304,6 +360,7 @@ namespace BetterExperience.HConfigSpace
             bool inQuotes = false;
             int bracketDepth = 0;
 
+            // 不能直接用 Split(',')：字符串元素可能含有转义字符，集合元素也允许嵌套方括号。
             for (int i = 0; i < value.Length; i++)
             {
                 char c = value[i];
@@ -389,6 +446,14 @@ namespace BetterExperience.HConfigSpace
             return ConfigFileResult<string[]>.Ok(elements.ToArray());
         }
 
+        /// <summary>
+        /// 根据目标集合类型创建解码结果。
+        /// 支持数组、可由数组/List 构造的类型，以及有无参构造函数并提供兼容 <c>Add</c> 方法的集合类型。
+        /// </summary>
+        /// <param name="type">目标集合类型。</param>
+        /// <param name="elementType">集合元素类型。</param>
+        /// <param name="elements">已解码但尚未放入目标集合的元素。</param>
+        /// <returns>目标集合实例。</returns>
         public static ConfigFileResult<object> CreateCollectionResult(Type type, Type elementType, List<object> elements)
         {
             if (type == null)
@@ -431,6 +496,12 @@ namespace BetterExperience.HConfigSpace
             return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.UnsupportedType, $"Unsupported collection type: {type.FullName}"));
         }
 
+        /// <summary>
+        /// 校验集合元素是否能安全放入目标元素类型。
+        /// </summary>
+        /// <param name="elementType">集合声明的元素类型。</param>
+        /// <param name="elements">已解码元素。</param>
+        /// <returns>校验后的元素数组。</returns>
         public static ConfigFileResult<object[]> ValidateCollectionElements(Type elementType, List<object> elements)
         {
             var validatedElements = new object[elements.Count];
@@ -446,6 +517,13 @@ namespace BetterExperience.HConfigSpace
             return ConfigFileResult<object[]>.Ok(validatedElements);
         }
 
+        /// <summary>
+        /// 校验单个集合元素的赋值兼容性。
+        /// </summary>
+        /// <param name="elementType">集合声明的元素类型。</param>
+        /// <param name="element">待校验元素。</param>
+        /// <param name="index">元素在集合中的索引，用于错误定位。</param>
+        /// <returns>可放入集合的元素值。</returns>
         public static ConfigFileResult<object> ValidateCollectionElement(Type elementType, object element, int index)
         {
             if (element == null)
@@ -467,6 +545,12 @@ namespace BetterExperience.HConfigSpace
             return ConfigFileResult<object>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Element at index {index} is not assignable to {elementType.FullName}. Actual type: {element.GetType().FullName}"));
         }
 
+        /// <summary>
+        /// 使用反射创建指定元素类型的数组。
+        /// </summary>
+        /// <param name="elementType">数组元素类型。</param>
+        /// <param name="elements">数组元素。</param>
+        /// <returns>创建出的数组实例。</returns>
         public static ConfigFileResult<Array> CreateTypedArray(Type elementType, object[] elements)
         {
             try
@@ -483,6 +567,12 @@ namespace BetterExperience.HConfigSpace
             }
         }
 
+        /// <summary>
+        /// 创建辅助 <see cref="List{T}"/>，用于后续直接返回或作为构造函数参数。
+        /// </summary>
+        /// <param name="elementType">列表元素类型。</param>
+        /// <param name="elements">列表元素。</param>
+        /// <returns>填充完成的泛型列表。</returns>
         public static ConfigFileResult<IList> CreateTypedList(Type elementType, object[] elements)
         {
             var listType = typeof(List<>).MakeGenericType(elementType);
@@ -505,6 +595,14 @@ namespace BetterExperience.HConfigSpace
             }
         }
 
+        /// <summary>
+        /// 尝试通过单参数构造函数创建目标集合类型。
+        /// </summary>
+        /// <param name="type">目标集合类型。</param>
+        /// <param name="list">辅助列表参数。</param>
+        /// <param name="array">辅助数组参数。</param>
+        /// <param name="result">如果找到了可用构造函数，则返回成功或失败结果；未找到时为 <c>null</c>。</param>
+        /// <returns>是否找到了匹配的构造路径。</returns>
         public static bool TryCreateCollectionFromConstructor(Type type, IList list, Array array, out ConfigFileResult<object> result)
         {
             var constructors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
@@ -545,6 +643,14 @@ namespace BetterExperience.HConfigSpace
             return false;
         }
 
+        /// <summary>
+        /// 尝试通过无参构造函数和 <c>Add</c> 方法创建目标集合类型。
+        /// </summary>
+        /// <param name="type">目标集合类型。</param>
+        /// <param name="elementType">集合元素类型。</param>
+        /// <param name="elements">待添加元素。</param>
+        /// <param name="result">如果找到了创建路径，则返回成功或失败结果；未找到时为 <c>null</c>。</param>
+        /// <returns>是否找到了可执行的创建路径。</returns>
         public static bool TryCreateCollectionFromAddMethod(Type type, Type elementType, object[] elements, out ConfigFileResult<object> result)
         {
             var constructor = type.GetConstructor(Type.EmptyTypes);
@@ -595,6 +701,12 @@ namespace BetterExperience.HConfigSpace
             return true;
         }
 
+        /// <summary>
+        /// 查找可接受指定元素类型的公开实例 <c>Add</c> 方法。
+        /// </summary>
+        /// <param name="type">集合类型。</param>
+        /// <param name="elementType">集合元素类型。</param>
+        /// <returns>匹配的方法；不存在时返回 <c>null</c>。</returns>
         public static MethodInfo FindAddMethod(Type type, Type elementType)
         {
             var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
@@ -620,6 +732,12 @@ namespace BetterExperience.HConfigSpace
             return null;
         }
 
+        /// <summary>
+        /// 解析配置字符串中的转义序列。
+        /// 仅支持本配置格式写出的反斜杠、双引号、换行、回车和制表符转义。
+        /// </summary>
+        /// <param name="value">不含外层引号的字符串内容。</param>
+        /// <returns>解析后的字符串。</returns>
         public static ConfigFileResult<string> UnescapeString(string value)
         {
             var builder = new StringBuilder(value.Length);

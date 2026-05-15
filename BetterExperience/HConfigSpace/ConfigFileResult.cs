@@ -4,10 +4,24 @@ using System.Runtime.CompilerServices;
 
 namespace BetterExperience.HConfigSpace
 {
+    /// <summary>
+    /// 配置文件解析和编码流程使用的轻量结果类型。
+    /// 它允许调用方在不抛异常的情况下携带一个值和多个错误；只有严重的使用方式错误才由上层主动抛出异常。
+    /// </summary>
+    /// <typeparam name="T">成功结果中携带的值类型。</typeparam>
     public class ConfigFileResult<T>
     {
+        /// <summary>
+        /// 成功时的返回值；失败时为该类型默认值。
+        /// </summary>
         public T Value { get; private set; }
+        /// <summary>
+        /// 当前结果是否成功。
+        /// </summary>
         public bool Success { get; private set; }
+        /// <summary>
+        /// 失败原因集合；成功时为空集合而不是 <c>null</c>。
+        /// </summary>
         public IReadOnlyList<ConfigFileError> Errors { get; private set; }
 
         public ConfigFileResult()
@@ -103,10 +117,22 @@ namespace BetterExperience.HConfigSpace
         }
     }
 
+    /// <summary>
+    /// 配置文件处理中的单个错误。
+    /// </summary>
     public class ConfigFileError
     {
+        /// <summary>
+        /// 机器可判定的错误类型。
+        /// </summary>
         public ConfigFileErrorCode Code { get; private set; }
+        /// <summary>
+        /// 面向日志的错误说明。
+        /// </summary>
         public string Message { get; private set; }
+        /// <summary>
+        /// 创建错误对象的调用成员名，用于快速定位错误来源。
+        /// </summary>
         public string Caller { get; private set; }
 
         public ConfigFileError(ConfigFileErrorCode code, string message, [CallerMemberName]string caller = "")
@@ -127,6 +153,9 @@ namespace BetterExperience.HConfigSpace
         }
     }
 
+    /// <summary>
+    /// 配置文件解析/编码阶段可识别的错误类别。
+    /// </summary>
     public enum ConfigFileErrorCode
     {
         UnsupportedType,

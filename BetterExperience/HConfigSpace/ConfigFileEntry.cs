@@ -8,12 +8,25 @@ using static BetterExperience.HConfigSpace.ConfigFileModel;
 
 namespace BetterExperience.HConfigSpace
 {
+    /// <summary>
+    /// 表示配置文件中的一个键值项及其写出时附带的说明元数据。
+    /// 该类型只维护文件层面的字符串表示，强类型值的校验和运行时事件由 <see cref="ConfigEntry{T}"/> 负责。
+    /// </summary>
     public class ConfigFileEntry
     {
         private string _key;
 
+        /// <summary>
+        /// 写入配置文件的多语言名称注释；解析已有文件时当前不会从注释中恢复该值。
+        /// </summary>
         public Translator Name { get; set; }
+        /// <summary>
+        /// 写入配置文件的多语言说明注释；解析已有文件时当前不会从注释中恢复该值。
+        /// </summary>
         public Translator Description { get; set; }
+        /// <summary>
+        /// 配置项键名，只允许字母、数字和下划线，以避免与配置文件语法冲突。
+        /// </summary>
         public string Key
         {
             get => _key;
@@ -26,9 +39,21 @@ namespace BetterExperience.HConfigSpace
                     throw new ArgumentException($"Invalid key name: {value}. Key names must be non-empty and can only contain letters, digits, and underscores.");
             }
         }
+        /// <summary>
+        /// 配置文件中的值文本，已经按 <see cref="ConfigFileModel"/> 规则编码。
+        /// </summary>
         public string Value { get; set; }
+        /// <summary>
+        /// 默认值的编码文本，用作配置文件注释，不参与运行时回退逻辑。
+        /// </summary>
         public string DefaultValue { get; set; }
+        /// <summary>
+        /// 配置值类型的说明文本，用于帮助人工编辑配置文件。
+        /// </summary>
         public string ValueType { get; set; }
+        /// <summary>
+        /// 可接受值的说明文本，用于枚举类型。
+        /// </summary>
         public string AcceptableValues { get; set; }
 
         public ConfigFileResult<string> EncodeName()
@@ -91,6 +116,10 @@ namespace BetterExperience.HConfigSpace
             return $"{Key} = {Value}";
         }
 
+        /// <summary>
+        /// 将配置项编码为完整文件片段，包含可选注释和必需的键值行。
+        /// </summary>
+        /// <returns>可直接写入配置文件的文本片段。</returns>
         public ConfigFileResult<string> EncodeEntry()
         {
             var nameResult = EncodeName();
@@ -133,6 +162,12 @@ namespace BetterExperience.HConfigSpace
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// 将当前项的元数据复制到另一个文件项。
+        /// </summary>
+        /// <param name="target">目标配置项。</param>
+        /// <param name="overrideValue">是否连同当前值一起覆盖目标值；重载配置时通常应为 <c>false</c>，以保留用户编辑。</param>
+        /// <returns>目标存在且复制完成时返回 <c>true</c>。</returns>
         public bool CopyTo(ConfigFileEntry target, bool overrideValue)
         {
             if (target == null)
@@ -149,6 +184,9 @@ namespace BetterExperience.HConfigSpace
             return true;
         }
 
+        /// <summary>
+        /// 判断键名是否符合配置文件语法约束。
+        /// </summary>
         public static bool IsValidKeyName(string key)
         {
             return !string.IsNullOrWhiteSpace(key) && key.All(c => char.IsLetterOrDigit(c) || c == '_');
@@ -286,6 +324,11 @@ namespace BetterExperience.HConfigSpace
             return Decode<T>(value);
         }
 
+        /// <summary>
+        /// 解析单行键值对。
+        /// </summary>
+        /// <param name="content">形如 <c>Key = Value</c> 的配置行，值部分可包含额外的等号。</param>
+        /// <returns>键和值的原始字符串。</returns>
         public static ConfigFileResult<(string, string)> DecodeKeyValuePair(string content)
         {
             if (!IsKeyValuePair(content))
@@ -304,8 +347,15 @@ namespace BetterExperience.HConfigSpace
             return (key, value);
         }
 
+        /// <summary>
+        /// 从当前位置开始解析下一个配置项。
+        /// </summary>
+        /// <param name="content">按行拆分后的配置文件内容。</param>
+        /// <param name="index">读取起点；返回时会推进到已消费内容之后。</param>
+        /// <returns>解析出的文件项；到达结尾或遇到非法键值行时返回失败。</returns>
         public static ConfigFileResult<ConfigFileEntry> DecodeEntry(string[] content, ref int index)
         {
+            // 解析阶段只信任实际键值行；注释用于人工阅读，启动后会由运行时声明重新写入最新元数据。
             for (; index < content.Length; index++)
             {
                 var line = content[index];
