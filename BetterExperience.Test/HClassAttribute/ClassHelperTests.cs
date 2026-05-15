@@ -219,5 +219,176 @@ namespace BetterExperience.Test.HClassAttribute
                 ClassHelper.GetSliderInfo<TestClass>(propertyName));
             Assert.Contains("not found", exception.Message);
         }
+
+        [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+        private sealed class TestMarkerAttribute : Attribute
+        {
+        }
+
+        [TestMarker]
+        private class MarkedClassA
+        {
+        }
+
+        [TestMarker]
+        private class MarkedClassB
+        {
+        }
+
+        private class UnmarkedClass
+        {
+        }
+
+        [RegisterOnGameBoot]
+        private class RegisterOnGameBootMarkedClass
+        {
+        }
+
+        private class MethodAttributeContainer
+        {
+            [TestMarker]
+            public void MarkedPublicInstanceMethod()
+            {
+            }
+
+            [TestMarker]
+            private void MarkedPrivateInstanceMethod()
+            {
+            }
+
+            [TestMarker]
+            public static void MarkedPublicStaticMethod()
+            {
+            }
+
+            [TestMarker]
+            private static void MarkedPrivateStaticMethod()
+            {
+            }
+
+            public void UnmarkedMethod()
+            {
+            }
+        }
+
+        [Fact]
+        public void GetClasses_WhenAssemblyContainsMarkedClasses_ReturnsOnlyMarkedClasses()
+        {
+            // Arrange
+            var assembly = typeof(ClassHelperTests).Assembly;
+
+            // Act
+            var result = ClassHelper.GetClasses<TestMarkerAttribute>(assembly);
+
+            // Assert
+            Assert.Contains(typeof(MarkedClassA), result);
+            Assert.Contains(typeof(MarkedClassB), result);
+            Assert.DoesNotContain(typeof(UnmarkedClass), result);
+        }
+
+        [Fact]
+        public void GetClasses_WhenAssemblyHasNoClassesWithAttribute_ReturnsEmptyArray()
+        {
+            // Arrange
+            var assembly = typeof(string).Assembly;
+
+            // Act
+            var result = ClassHelper.GetClasses<RegisterOnGameBootAttribute>(assembly);
+
+            // Assert
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void GetMethods_WhenAssemblyContainsMarkedMethods_ReturnsMethodsWithAllSupportedBindingFlags()
+        {
+            // Arrange
+            var assembly = typeof(ClassHelperTests).Assembly;
+
+            // Act
+            var result = ClassHelper.GetMethods<TestMarkerAttribute>(assembly);
+
+            // Assert
+            Assert.Contains(result, method => method.DeclaringType == typeof(MethodAttributeContainer) && method.Name == nameof(MethodAttributeContainer.MarkedPublicInstanceMethod));
+            Assert.Contains(result, method => method.DeclaringType == typeof(MethodAttributeContainer) && method.Name == "MarkedPrivateInstanceMethod");
+            Assert.Contains(result, method => method.DeclaringType == typeof(MethodAttributeContainer) && method.Name == nameof(MethodAttributeContainer.MarkedPublicStaticMethod));
+            Assert.Contains(result, method => method.DeclaringType == typeof(MethodAttributeContainer) && method.Name == "MarkedPrivateStaticMethod");
+            Assert.DoesNotContain(result, method => method.DeclaringType == typeof(MethodAttributeContainer) && method.Name == nameof(MethodAttributeContainer.UnmarkedMethod));
+        }
+
+        [Fact]
+        public void GetMethods_WhenAssemblyHasNoMethodsWithAttribute_ReturnsEmptyArray()
+        {
+            // Arrange
+            var assembly = typeof(string).Assembly;
+
+            // Act
+            var result = ClassHelper.GetMethods<RegisterOnGameBootAttribute>(assembly);
+
+            // Assert
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void GetRegisterOnGameBootClasses_WhenAssemblyContainsMarkedClasses_ReturnsMarkedClasses()
+        {
+            // Arrange
+            var assembly = typeof(ClassHelperTests).Assembly;
+
+            // Act
+            var result = ClassHelper.GetRegisterOnGameBootClasses(assembly);
+
+            // Assert
+            Assert.Contains(result, type => type == typeof(RegisterOnGameBootMarkedClass));
+            Assert.DoesNotContain(result, type => type == typeof(UnmarkedClass));
+        }
+
+        private class InitializeOnGameBootMethodContainer
+        {
+            [InitializeOnGameBoot]
+            public void MarkedPublicInstanceMethod()
+            {
+            }
+
+            [InitializeOnGameBoot]
+            private static void MarkedPrivateStaticMethod()
+            {
+            }
+
+            public void UnmarkedMethod()
+            {
+            }
+        }
+
+        [Fact]
+        public void GetInitializeOnGameBootMethods_WhenAssemblyContainsMarkedMethods_ReturnsOnlyMarkedMethods()
+        {
+            // Arrange
+            var assembly = typeof(ClassHelperTests).Assembly;
+
+            // Act
+            var result = ClassHelper.GetInitializeOnGameBootMethods(assembly);
+
+            // Assert
+            Assert.Contains(result, method => method.DeclaringType == typeof(InitializeOnGameBootMethodContainer) && method.Name == nameof(InitializeOnGameBootMethodContainer.MarkedPublicInstanceMethod));
+            Assert.Contains(result, method => method.DeclaringType == typeof(InitializeOnGameBootMethodContainer) && method.Name == "MarkedPrivateStaticMethod");
+            Assert.DoesNotContain(result, method => method.DeclaringType == typeof(InitializeOnGameBootMethodContainer) && method.Name == nameof(InitializeOnGameBootMethodContainer.UnmarkedMethod));
+        }
+        [Fact]
+        public void GetInitializeOnGameBootMethods_WhenAssemblyHasNoMarkedMethods_ReturnsEmptyArray()
+        {
+            // Arrange
+            var assembly = typeof(string).Assembly;
+
+            // Act
+            var result = ClassHelper.GetInitializeOnGameBootMethods(assembly);
+
+            // Assert
+            Assert.Empty(result);
+        }
+
+
+
+
     }
 }

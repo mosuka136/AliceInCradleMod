@@ -273,5 +273,49 @@ namespace BetterExperience.Test.HEnumHelper
             Assert.IsType<DescriptionAttribute>(descAttr);
             Assert.IsType<DisplayEnumAttribute>(displayAttr);
         }
+
+        [Fact]
+        public void IsDisplay_WithTypeAndDisplayEnumAttributeFalse_ReturnsFalse()
+        {
+            // Arrange
+            var enumType = typeof(TestEnum);
+            Enum enumValue = TestEnum.Second;
+
+            // Act
+            var result = EnumHelper.IsDisplay(enumType, enumValue);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void IsDisplay_WithTypeAndDisplayEnumAttributeTrue_ReturnsTrue()
+        {
+            // Arrange
+            var enumType = typeof(TestEnum);
+            Enum enumValue = TestEnum.First;
+
+            // Act
+            var result = EnumHelper.IsDisplay(enumType, enumValue);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void IsDisplay_WithTypeAndNoDisplayEnumAttribute_ReturnsTrue()
+        {
+            // Arrange
+            var enumType = typeof(TestEnum);
+            Enum enumValue = TestEnum.Third;
+
+            // Act
+            var result = EnumHelper.IsDisplay(enumType, enumValue);
+
+            // Assert
+            Assert.True(result);
+        }
+
+
     }
 }

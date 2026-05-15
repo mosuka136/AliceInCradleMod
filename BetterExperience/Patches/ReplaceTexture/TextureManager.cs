@@ -1,4 +1,3 @@
-using BepInEx;
 using BetterExperience.BConfigManager;
 using System;
 using System.Collections.Generic;
@@ -8,47 +7,36 @@ using UnityEngine;
 
 namespace BetterExperience.Patches.ReplaceTexture
 {
-    public class TextureManager : IDisposable
+    public static class TextureManager
     {
-        private TextureManager()
-        {
+        private static string _imagePath;
+        private static string _sensitiveImagePath;
+        private static string[] _supportExtensions;
 
-        }
+        private static readonly Dictionary<string, Texture2D> _imageInfos = new Dictionary<string, Texture2D>();
 
-        static TextureManager()
-        {
-            Instance = new TextureManager();
-            Instance.Initialize();
-        }
-
-        static public TextureManager Instance { get; private set; }
-
-        public static readonly string RelativeImagePath = Path.Combine(nameof(BetterExperience), "ReplaceTexture");
-        public static readonly string RelativeSensitiveImagePath = Path.Combine(RelativeImagePath, "Sensitive");
-        public static readonly string ImagePath = Path.Combine(Paths.PluginPath, RelativeImagePath);
-        public static readonly string SensitiveImagePath = Path.Combine(Paths.PluginPath, RelativeSensitiveImagePath);
-        public static readonly string[] SupportedExtensions = { ".png", ".btep" };
-
-        private readonly Dictionary<string, Texture2D> _imageInfos = new Dictionary<string, Texture2D>();
-
-        public void Initialize()
+        public static void Initialize(string imagePath, string sensitiveImagePath, string[] supportedExtensions)
         {
             try
             {
+                _imagePath = imagePath;
+                _sensitiveImagePath = sensitiveImagePath;
+                _supportExtensions = supportedExtensions;
+
                 if (!ConfigManager.EnableReplaceTexture.Value)
                     return;
 
-                if (!Directory.Exists(ImagePath))
-                    Directory.CreateDirectory(ImagePath);
-                if (!Directory.Exists(SensitiveImagePath))
-                    Directory.CreateDirectory(SensitiveImagePath);
+                if (!Directory.Exists(imagePath))
+                    Directory.CreateDirectory(imagePath);
+                if (!Directory.Exists(sensitiveImagePath))
+                    Directory.CreateDirectory(sensitiveImagePath);
 
-                var imageFiles = Directory.GetFiles(ImagePath, "*.*", SearchOption.AllDirectories)
-                    .Where(f => SupportedExtensions.Any(s => f.EndsWith(s)));
+                var imageFiles = Directory.GetFiles(imagePath, "*.*", SearchOption.AllDirectories)
+                    .Where(f => supportedExtensions.Any(s => f.EndsWith(s)));
 
                 if (!ConfigManager.EnableSensitivities.Value)
                 {
-                    imageFiles = imageFiles.Where(f => !f.StartsWith(SensitiveImagePath, StringComparison.OrdinalIgnoreCase));
+                    imageFiles = imageFiles.Where(f => !f.StartsWith(sensitiveImagePath, StringComparison.OrdinalIgnoreCase));
                 }
 
                 foreach (var file in imageFiles)
@@ -67,7 +55,7 @@ namespace BetterExperience.Patches.ReplaceTexture
                     _imageInfos[fileWithoutExtension] = CreateTexture(file);
                     HLog.Info($"Loaded image: {fileWithoutExtension} from {file}");
                 }
-
+                
                 HLog.Info($"Initialized ImageManager with {_imageInfos.Count} images.");
             }
             catch (Exception ex)
@@ -76,13 +64,17 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
         }
 
-        public void Reload()
+        public static void Reload()
         {
             DestroyAllTextures();
-            Initialize();
+
+            if (!string.IsNullOrEmpty(_imagePath) && !string.IsNullOrEmpty(_sensitiveImagePath) && _supportExtensions != null)
+            {
+                Initialize(_imagePath, _sensitiveImagePath, _supportExtensions);
+            }
         }
 
-        private void DestroyAllTextures()
+        private static void DestroyAllTextures()
         {
             foreach (var texture in _imageInfos.Values)
             {
@@ -92,7 +84,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             _imageInfos.Clear();
         }
 
-        public Texture2D CreateTexture(string imageName)
+        public static Texture2D CreateTexture(string imageName)
         {
             if (string.IsNullOrEmpty(imageName))
                 return null;
@@ -122,7 +114,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
         }
 
-        private bool CheckFileValid(string filePath)
+        private static bool CheckFileValid(string filePath)
         {
             if (!File.Exists(filePath))
                 return false;
@@ -130,7 +122,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             try
             {
                 var extension = Path.GetExtension(filePath);
-                if (!SupportedExtensions.Contains(extension))
+                if (_supportExtensions == null || !_supportExtensions.Contains(extension))
                     return false;
 
                 using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -161,7 +153,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
         }
 
-        public Texture2D GetReplaceTexture(string textureName)
+        public static Texture2D GetReplaceTexture(string textureName)
         {
             if (string.IsNullOrEmpty(textureName))
                 return null;
@@ -172,7 +164,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             return texture;
         }
 
-        public bool TryReplace(string name, Type type, ref UnityEngine.Object destination)
+        public static bool TryReplace(string name, Type type, ref UnityEngine.Object destination)
         {
             if (string.IsNullOrEmpty(name) || type == null || destination == null)
                 return false;
@@ -205,7 +197,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             return false;
         }
 
-        public void CopyTextureProperties(Texture source, Texture destination)
+        public static void CopyTextureProperties(Texture source, Texture destination)
         {
             if (source == null || destination == null)
                 return;
@@ -219,11 +211,6 @@ namespace BetterExperience.Patches.ReplaceTexture
             destination.anisoLevel = source.anisoLevel;
             destination.mipMapBias = source.mipMapBias;
             destination.hideFlags = source.hideFlags;
-        }
-
-        public void Dispose()
-        {
-            DestroyAllTextures();
         }
     }
 }

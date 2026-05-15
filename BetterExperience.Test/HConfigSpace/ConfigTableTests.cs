@@ -237,5 +237,32 @@ namespace BetterExperience.Test.HConfigSpace
             Assert.Same(mockEntry.Object, first);
             Assert.False(hasSecond);
         }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_MultipleCallsReturnIndependentEnumerators()
+        {
+            // Arrange
+            var validKey = "Valid_Table";
+            var table = new ConfigFileTable("table", new Translator(string.Empty));
+            var configTable = new ConfigTable(validKey, table, new Translator("Name"), new Translator("Desc"));
+            var mockEntry1 = new Mock<IConfigEntry>();
+            var mockEntry2 = new Mock<IConfigEntry>();
+            configTable.Add(mockEntry1.Object);
+            configTable.Add(mockEntry2.Object);
+            var enumerable = (IEnumerable)configTable;
+
+            // Act
+            var firstEnumerator = enumerable.GetEnumerator();
+            var secondEnumerator = enumerable.GetEnumerator();
+            var firstHasItem = firstEnumerator.MoveNext();
+            var secondHasItem = secondEnumerator.MoveNext();
+
+            // Assert
+            Assert.True(firstHasItem);
+            Assert.True(secondHasItem);
+            Assert.Same(mockEntry1.Object, firstEnumerator.Current);
+            Assert.Same(mockEntry1.Object, secondEnumerator.Current);
+        }
+
     }
 }

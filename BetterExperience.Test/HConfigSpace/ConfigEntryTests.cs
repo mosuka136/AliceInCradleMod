@@ -610,6 +610,38 @@ namespace BetterExperience.Test.HConfigSpace
             // Assert
             Assert.False(result);
         }
+
+        [Fact]
+        public void OnValueChangedBase_WhenValueChanges_RaisesEventWithConvertedEventArgs()
+        {
+            // Arrange
+            var model = new ConfigFileEntry
+            {
+                Key = "TestKey",
+                Value = "42"
+            };
+            var entry = new ConfigEntry<int>("General", model, 0);
+            IConfigEntry iEntry = entry;
+            object actualSender = null;
+            EventArgs actualArgs = null;
+            var invokeCount = 0;
+
+            // Act
+            iEntry.OnValueChangedBase += (sender, args) =>
+            {
+                invokeCount++;
+                actualSender = sender;
+                actualArgs = args;
+            };
+            entry.Value = 100;
+
+            // Assert
+            Assert.Equal(1, invokeCount);
+            Assert.Same(entry, actualSender);
+            var changedArgs = Assert.IsType<EntryValueChangedEventArgs<int>>(actualArgs);
+            Assert.Equal(100, changedArgs.Value);
+        }
+
     }
 
     public class UnsupportedType

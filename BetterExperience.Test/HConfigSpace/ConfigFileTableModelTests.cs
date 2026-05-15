@@ -540,5 +540,74 @@ namespace BetterExperience.Test.HConfigSpace
             Assert.Equal("TestTable", result.Value.Key);
             Assert.NotEmpty(result.Errors);
         }
+
+        [Fact]
+        public void Constructor_WithWhitespaceTableKey_ThrowsArgumentException()
+        {
+            // Arrange
+            var whitespaceTableKey = "   ";
+            var description = new Translator("描述", "Description");
+
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentException>(() => new ConfigFileTable(whitespaceTableKey, description));
+            Assert.Contains("Invalid table name", exception.Message);
+            Assert.Equal("tableKey", exception.ParamName);
+        }
+
+        [Fact]
+        public void Constructor_WithNullDescription_SetsDescriptionToNull()
+        {
+            // Arrange
+            var tableKey = "ValidTable";
+
+            // Act
+            var model = new ConfigFileTable(tableKey, null);
+
+            // Assert
+            Assert.Equal(tableKey, model.Key);
+            Assert.Null(model.Description);
+        }
+
+        [Fact]
+        public void EncodeTable_WithNullNameAndNullDescription_ReturnsHeaderOnly()
+        {
+            // Arrange
+            var model = new ConfigFileTable("OnlyHeader", null);
+            model.Name = null;
+
+            // Act
+            var result = model.EncodeTable();
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Empty(result.Errors);
+            Assert.Equal("[OnlyHeader]", result.Value);
+        }
+
+        [Fact]
+        public void DecodeTable_WithTrailingInvalidEntry_AddsErrorAndReturnsParsedEntries()
+        {
+            // Arrange
+            var content = new[]
+            {
+                "[TestTable]",
+                "Key1 = Value1",
+                "InvalidEntry"
+            };
+            var index = 0;
+
+            // Act
+            var result = ConfigFileTable.DecodeTable(content, ref index);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal("TestTable", result.Value.Key);
+            Assert.True(result.Value.Table.Contains("Key1"));
+            Assert.Single(result.Errors);
+            Assert.Equal(ConfigFileErrorCode.InvalidKeyValuePair, result.Errors[0].Code);
+            Assert.Equal(content.Length, index);
+        }
+
+
     }
 }

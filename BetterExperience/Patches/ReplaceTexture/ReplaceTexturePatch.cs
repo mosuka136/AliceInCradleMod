@@ -45,7 +45,7 @@ namespace BetterExperience.Patches
                     {
                         RestoreOriginalTexture();
 
-                        TextureManager.Instance.Reload();
+                        TextureManager.Reload();
 
                         foreach (var texture in new List<BetobetoManager.SvTexture>(_spineTexture))
                         {
@@ -85,7 +85,7 @@ namespace BetterExperience.Patches
                         _spineTexture.Add(__instance);
 
                     var imageName = __instance.MtiImage0.Image.name;
-                    var image = TextureManager.Instance.GetReplaceTexture(imageName);
+                    var image = TextureManager.GetReplaceTexture(imageName);
                     if (image == null)
                     {
                         HLog.Debug("No replacement texture found for " + imageName);
@@ -135,7 +135,7 @@ namespace BetterExperience.Patches
                     return;
                 var name = split[1];
 
-                var texture = TextureManager.Instance.GetReplaceTexture(name);
+                var texture = TextureManager.GetReplaceTexture(name);
                 if (texture == null)
                     return;
 
@@ -149,7 +149,7 @@ namespace BetterExperience.Patches
                 if (!_originalPictureTexture.ContainsKey(mti))
                     _originalPictureTexture[mti] = image.Tx;
 
-                TextureManager.Instance.CopyTextureProperties(image.Tx, texture);
+                TextureManager.CopyTextureProperties(image.Tx, texture);
                 image.Tx = texture;
 
                 HLog.Info($"ReplaceTexture: {name}");
@@ -163,7 +163,7 @@ namespace BetterExperience.Patches
                 if (image == null)
                     return;
 
-                TextureManager.Instance.CopyTextureProperties(svTexture.MtiImage0.Image, image);
+                TextureManager.CopyTextureProperties(svTexture.MtiImage0.Image, image);
 
                 var Base = svTexture.getRendered();
                 BLIT.PasteTo(Base, image, Base.width * 0.5f, Base.height * 0.5f, 1f);

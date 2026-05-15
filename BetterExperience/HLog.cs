@@ -7,7 +7,7 @@ using System.Text;
 
 namespace BetterExperience
 {
-    public class HLog
+    public static class HLog
     {
         private static StreamWriter _writer;
         private static object _lock = new object();
@@ -18,11 +18,6 @@ namespace BetterExperience
         private static UnityProvider _unityProvider;
         private static BepInExLoggerProvider _bepLog = null;
         private static int _seq = 0;
-
-        private HLog()
-        {
-
-        }
 
         public static void Initialize(
             string loggerPath,

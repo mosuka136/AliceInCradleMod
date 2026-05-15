@@ -477,7 +477,7 @@ namespace BetterExperience.HConfigSpace
 
                 return ConfigFileResult<Array>.Ok(array);
             }
-            catch (Exception ex) when (ex is ArgumentException || ex is InvalidCastException)
+            catch (Exception ex) when (ex is ArgumentException || ex is InvalidCastException || ex is NotSupportedException)
             {
                 return ConfigFileResult<Array>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, $"Failed to create array for element type {elementType.FullName}. Error: {ex.Message}"));
             }

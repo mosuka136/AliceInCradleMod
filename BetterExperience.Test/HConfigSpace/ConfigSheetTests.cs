@@ -630,6 +630,81 @@ namespace BetterExperience.Test.HConfigSpace
             Assert.Same(mockTable, items[0].Value);
         }
 
+
+        [Fact]
+        public void Keys_WhenItemAddedAfterEnumerableCreated_IncludesAddedKey()
+        {
+            // Arrange
+            var configSheet = new ConfigSheet();
+            var firstTable = CreateMockConfigTable("key1");
+            var secondTable = CreateMockConfigTable("key2");
+            configSheet.Add("table1", firstTable);
+            var keys = configSheet.Keys;
+            configSheet.Add("table2", secondTable);
+
+            // Act
+            var result = keys.ToList();
+
+            // Assert
+            Assert.Equal(2, result.Count);
+            Assert.Equal("table1", result[0]);
+            Assert.Equal("table2", result[1]);
+        }
+
+        [Fact]
+        public void Values_WithNullValue_ReturnsNullElement()
+        {
+            // Arrange
+            var configSheet = new ConfigSheet();
+            configSheet.Add("table1", null);
+
+            // Act
+            var values = configSheet.Values.ToList();
+
+            // Assert
+            Assert.Single(values);
+            Assert.Null(values[0]);
+        }
+
+        [Fact]
+        public void Values_WhenItemAddedAfterEnumerableCreated_IncludesAddedValue()
+        {
+            // Arrange
+            var configSheet = new ConfigSheet();
+            var firstTable = CreateMockConfigTable("key1");
+            var secondTable = CreateMockConfigTable("key2");
+            configSheet.Add("table1", firstTable);
+            var values = configSheet.Values;
+            configSheet.Add("table2", secondTable);
+
+            // Act
+            var result = values.ToList();
+
+            // Assert
+            Assert.Equal(2, result.Count);
+            Assert.Same(firstTable, result[0]);
+            Assert.Same(secondTable, result[1]);
+        }
+
+        [Fact]
+        public void GetEnumerator_NonGeneric_WithNullValue_ReturnsEntryWithNullValue()
+        {
+            // Arrange
+            var configSheet = new ConfigSheet();
+            configSheet.Add("table1", null);
+
+            // Act
+            var enumerator = ((System.Collections.IEnumerable)configSheet).GetEnumerator();
+            var moved = enumerator.MoveNext();
+            var item = (System.Collections.Generic.KeyValuePair<string, ConfigTable>)enumerator.Current;
+
+            // Assert
+            Assert.True(moved);
+            Assert.Equal("table1", item.Key);
+            Assert.Null(item.Value);
+        }
+
+
         // -----------------------------------------------------------------------
         // Helper methods
         // -----------------------------------------------------------------------

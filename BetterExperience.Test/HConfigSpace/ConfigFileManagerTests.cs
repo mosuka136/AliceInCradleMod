@@ -351,5 +351,52 @@ namespace BetterExperience.Test.HConfigSpace
 
             Assert.NotNull(manager.FileSheet);
         }
+
+        [Fact]
+        public void Bind_WhenDefaultValueTypeUnsupported_ThrowsInvalidOperationException()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\n");
+            var manager = new ConfigFileManager(tempPath);
+            manager.CreateTable("TestTable", new Translator("测试表", "TestTable"));
+
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                manager.Bind<object>("TestTable", "UnsupportedKey", new object(), new Translator("键", "Key"), new Translator("描述", "Description")));
+
+            Assert.Contains("Failed to encode default value", exception.Message);
+            Assert.Contains("TestTable.UnsupportedKey", exception.Message);
+        }
+
+        [Fact]
+        public void CreateTable_WhenTableAlreadyExistsInSheet_DoesNotAddDuplicateTable()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[ExistingTable]\n");
+            var manager = new ConfigFileManager(tempPath);
+            var tableName = new Translator("表名", "TableName");
+
+            manager.CreateTable("ExistingTable", tableName);
+            manager.CreateTable("ExistingTable", tableName);
+
+            Assert.True(manager.Sheet.Contains("ExistingTable"));
+            Assert.Equal(1, manager.Sheet.Count);
+        }
+
+        [Fact]
+        public void Bind_WhenBoundEntryValueChangesAndSaveOnConfigSetIsTrue_WritesUpdatedFile()
+        {
+            var tempPath = CreateTempConfigPath();
+            File.WriteAllText(tempPath, "[TestTable]\nTestKey = \"OriginalValue\"\n");
+            var manager = new ConfigFileManager(tempPath);
+            manager.CreateTable("TestTable", new Translator("测试表", "TestTable"));
+            var entry = manager.Bind<string>("TestTable", "TestKey", "DefaultValue", new Translator("测试键", "TestKey"), new Translator("描述", "Description"));
+
+            entry.Value = "UpdatedValue";
+            var content = File.ReadAllText(tempPath);
+
+            Assert.Contains("TestKey = \"UpdatedValue\"", content);
+        }
+
+
     }
 }

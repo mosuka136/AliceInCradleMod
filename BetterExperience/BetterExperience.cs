@@ -1,6 +1,7 @@
 using BepInEx;
 using BetterExperience.BConfigManager;
 using BetterExperience.HProvider;
+using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,16 @@ namespace BetterExperience
         public const string HarmonyPluginId = "com.buele.betterexperience";
         public const string HarmonyPluginVersion = "2.1.0";
 
+        public static readonly string PluginPath = Path.Combine(Paths.PluginPath, nameof(BetterExperience));
+
+        public static readonly string ConfigFilePath = Path.Combine(PluginPath, $"{nameof(BetterExperience)}.cfg");
+
+        public static readonly string LoggerPath = Path.Combine(PluginPath, "logs");
         public const string LoggerName = "BetterExperience.log";
+
+        public static readonly string ReplaceImagePath = Path.Combine(PluginPath, "ReplaceTexture");
+        public static readonly string ReplaceSensitiveImagePath = Path.Combine(ReplaceImagePath, "Sensitive");
+        public static readonly string[] ReplaceImageSupportedExtensions = { ".png", ".btep" };
     }
 
     [BepInPlugin(PatchInfo.BepInPluginId, nameof(BetterExperience), PatchInfo.BepInPluginVersion)]
@@ -35,7 +45,7 @@ namespace BetterExperience
 
                 gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-                ConfigManager.Initialize(Path.Combine(Paths.PluginPath, nameof(BetterExperience), $"{nameof(BetterExperience)}.cfg"));
+                ConfigManager.Initialize(PatchInfo.ConfigFilePath);
 
                 if (ConfigManager.EnableBetterExperience.Value)
                     Logger.LogWarning($"{nameof(BetterExperience)} Enabled!");
@@ -46,7 +56,7 @@ namespace BetterExperience
                 }
 
                 HLog.Initialize(
-                    Path.Combine(Paths.PluginPath, nameof(BetterExperience), "logs"),
+                    PatchInfo.LoggerPath,
                     PatchInfo.LoggerName,
                     new UnityProvider(),
                     new BepInExLoggerProvider(Logger),
@@ -54,6 +64,8 @@ namespace BetterExperience
                     ConfigManager.BepInExLogLevel.Value);
 
                 HLog.Info($"{nameof(BetterExperience)} startup initialized. Version={PatchInfo.BepInPluginVersion}");
+
+                TextureManager.Initialize(PatchInfo.ReplaceImagePath, PatchInfo.ReplaceSensitiveImagePath, PatchInfo.ReplaceImageSupportedExtensions);
 
                 var harmony = new Harmony(PatchInfo.HarmonyPluginId);
                 HLog.Debug($"Starting Harmony patch registration: {PatchInfo.HarmonyPluginId}");
@@ -172,7 +184,6 @@ namespace BetterExperience
             HLog.Debug($"Total transpilers: {transpilerCount}");
             HLog.Debug($"Total finalizers: {finalizerCount}");
             HLog.Info($"Total patch methods: {prefixCount + postfixCount + transpilerCount + finalizerCount}");
-            HLog.WriteLine();
         }
     }
 }

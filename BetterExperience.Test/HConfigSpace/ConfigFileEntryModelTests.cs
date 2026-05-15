@@ -1025,6 +1025,291 @@ namespace BetterExperience.Test.HConfigSpace
             Assert.Equal("value2", result.Value.Value);
         }
 
+
+        [Fact]
+        public void Key_WithInvalidValue_ThrowsArgumentException()
+        {
+            // Arrange
+            var model = new ConfigFileEntry();
+
+            // Act
+            var exception = Assert.Throws<ArgumentException>(() => model.Key = "Invalid Key!");
+
+            // Assert
+            Assert.Contains("Invalid key name: Invalid Key!", exception.Message);
+        }
+
+
+        [Fact]
+        public void Key_WithValidValue_SetsProperty()
+        {
+            // Arrange
+            var model = new ConfigFileEntry();
+
+            // Act
+            model.Key = "Valid_Key_1";
+
+            // Assert
+            Assert.Equal("Valid_Key_1", model.Key);
+        }
+
+        [Fact]
+        public void EncodeName_WithEmptyTranslation_SkipsEmptyValue()
+        {
+            // Arrange
+            var model = new ConfigFileEntry
+            {
+                Name = new Translator(chinese: string.Empty, english: "DisplayName")
+            };
+
+            // Act
+            var result = model.EncodeName();
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal("# Name: DisplayName", result.Value);
+        }
+
+        [Fact]
+        public void EncodeKeyValuePair_WithMissingKey_ReturnsInvalidKeyNameFailure()
+        {
+            // Arrange
+            var model = new ConfigFileEntry
+            {
+                Value = "42"
+            };
+
+            // Act
+            var result = model.EncodeKeyValuePair();
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains(result.Errors, error => error.Code == ConfigFileErrorCode.InvalidKeyName);
+            Assert.Contains("Invalid key name", result.Errors[0].Message);
+        }
+
+        [Fact]
+        public void EncodeEntry_WithValidMetadata_ReturnsCombinedContent()
+        {
+            // Arrange
+            var model = new ConfigFileEntry
+            {
+                Name = new Translator(chinese: "名称", english: "Name"),
+                Description = new Translator(chinese: "描述", english: "Description"),
+                Key = "TestKey",
+                DefaultValue = "10",
+                ValueType = "Int32",
+                AcceptableValues = "1, 2, 3",
+                Value = "42"
+            };
+
+            // Act
+            var result = model.EncodeEntry();
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal("# Name: 名称, Name\n## 描述\n## Description\n# Value Type: Int32\n# Acceptable Values: 1, 2, 3\n# Default Value: 10\nTestKey = 42", result.Value.Replace("\r\n", "\n"));
+        }
+
+        [Fact]
+        public void EncodeEntry_WithMissingKey_ReturnsInvalidKeyNameFailure()
+        {
+            // Arrange
+            var model = new ConfigFileEntry
+            {
+                Value = "42"
+            };
+
+            // Act
+            var result = model.EncodeEntry();
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains(result.Errors, error => error.Code == ConfigFileErrorCode.InvalidKeyName);
+        }
+
+        [Fact]
+        public void CopyTo_WithNullTarget_ReturnsFalse()
+        {
+            // Arrange
+            var model = new ConfigFileEntry
+            {
+                Key = "TestKey",
+                Value = "42"
+            };
+
+            // Act
+            var result = model.CopyTo(null, overrideValue: true);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void CopyTo_WithOverrideValueTrue_CopiesAllPropertiesIncludingValue()
+        {
+            // Arrange
+            var name = new Translator(chinese: "名称", english: "Name");
+            var description = new Translator(chinese: "描述", english: "Description");
+            var source = new ConfigFileEntry
+            {
+                Name = name,
+                Description = description,
+                Key = "TestKey",
+                DefaultValue = "10",
+                ValueType = "Int32",
+                AcceptableValues = "1, 2, 3",
+                Value = "42"
+            };
+            var target = new ConfigFileEntry
+            {
+                Key = "OtherKey",
+                Value = "100"
+            };
+
+            // Act
+            var result = source.CopyTo(target, overrideValue: true);
+
+            // Assert
+            Assert.True(result);
+            Assert.Same(name, target.Name);
+            Assert.Same(description, target.Description);
+            Assert.Equal("TestKey", target.Key);
+            Assert.Equal("10", target.DefaultValue);
+            Assert.Equal("Int32", target.ValueType);
+            Assert.Equal("1, 2, 3", target.AcceptableValues);
+            Assert.Equal("42", target.Value);
+        }
+
+        [Fact]
+        public void EncodeValue_WithStringValue_ReturnsEncodedString()
+        {
+            // Arrange
+            var value = "hello world";
+
+            // Act
+            var result = ConfigFileEntry.EncodeValue(value);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal("\"hello world\"", result.Value);
+        }
+
+
+        [Fact]
+        public void EncodeValue_WithNullString_ReturnsFailure()
+        {
+            // Arrange
+            string value = null;
+
+            // Act
+            var result = ConfigFileEntry.EncodeValue(value);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains(result.Errors, error => error.Code == ConfigFileErrorCode.InvalidValue);
+        }
+
+        [Fact]
+        public void EncodeValueType_GenericMethod_WithUnsupportedType_ReturnsFailure()
+        {
+            // Arrange & Act
+            var result = ConfigFileEntry.EncodeValueType<ConfigFileEntryModelTests>();
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains(result.Errors, error => error.Code == ConfigFileErrorCode.UnsupportedType);
+        }
+
+        [Fact]
+        public void CreateEntry_WithValueEncodingFailure_ReturnsFailure()
+        {
+            // Arrange
+            var key = "AdapterValueFailure";
+            var value = new TestAdapterEncodeFailure();
+            var defaultValue = new TestAdapterEncodeFailure();
+            var name = new Translator("名称", "Name");
+            var description = new Translator("描述", "Description");
+
+            // Act
+            var result = ConfigFileEntry.CreateEntry(key, value, defaultValue, name, description);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains(result.Errors, error => error.Code == ConfigFileErrorCode.InvalidValue);
+        }
+
+        [Fact]
+        public void CreateEntry_WithDefaultValueEncodingFailure_ReturnsFailure()
+        {
+            // Arrange
+            var key = "AdapterDefaultFailure";
+            IConfigEntryAdapter value = new TestAdapterWithSuccess();
+            IConfigEntryAdapter defaultValue = new TestAdapterEncodeFailure();
+            var name = new Translator("名称", "Name");
+            var description = new Translator("描述", "Description");
+
+            // Act
+            var result = ConfigFileEntry.CreateEntry(key, value, defaultValue, name, description);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains(result.Errors, error => error.Code == ConfigFileErrorCode.InvalidValue);
+        }
+
+        [Fact]
+        public void CreateEntry_WithValueTypeEncodingFailure_ReturnsFailure()
+        {
+            // Arrange
+            var key = "AdapterTypeFailure";
+            var value = new TestAdapterWithFailure();
+            var defaultValue = new TestAdapterWithFailure();
+            var name = new Translator("名称", "Name");
+            var description = new Translator("描述", "Description");
+
+            // Act
+            var result = ConfigFileEntry.CreateEntry(key, value, defaultValue, name, description);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Contains(result.Errors, error => error.Code == ConfigFileErrorCode.InvalidType);
+        }
+
+        [Fact]
+        public void CreateEntry_WithValidStringParameters_SetsEncodedValues()
+        {
+            // Arrange
+            var key = "EncodedString";
+            var value = "current";
+            var defaultValue = "fallback";
+            var name = new Translator("名称", "Name");
+            var description = new Translator("描述", "Description");
+
+            // Act
+            var result = ConfigFileEntry.CreateEntry(key, value, defaultValue, name, description);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal("\"current\"", result.Value.Value);
+            Assert.Equal("\"fallback\"", result.Value.DefaultValue);
+            Assert.Equal("String", result.Value.ValueType);
+        }
+
+        [Fact]
+        public void DecodeValue_WithEnumValue_ReturnsDecodedEnum()
+        {
+            // Arrange
+            var value = "Value2";
+
+            // Act
+            var result = ConfigFileEntry.DecodeValue<TestEnum>(value);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal(TestEnum.Value2, result.Value);
+        }
+
+
         private class TestAdapterWithSuccess : IConfigEntryAdapter
         {
             public ConfigFileResult<string> Encode()
@@ -1067,6 +1352,25 @@ namespace BetterExperience.Test.HConfigSpace
                 return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidType, "Test failure"));
             }
         }
+
+        private class TestAdapterEncodeFailure : IConfigEntryAdapter
+        {
+            public ConfigFileResult<string> Encode()
+            {
+                return ConfigFileResult<string>.Fail(new ConfigFileError(ConfigFileErrorCode.InvalidValue, "Encode failed"));
+            }
+
+            public ConfigFileResult<object> Decode(string content)
+            {
+                return new object();
+            }
+
+            public ConfigFileResult<string> EncodeValueType()
+            {
+                return "AdapterType";
+            }
+        }
+
 
         private class TestAdapterThatThrows : IConfigEntryAdapter
         {
