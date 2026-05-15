@@ -104,7 +104,7 @@ namespace BetterExperience.HotkeyManager
 
         public void RemoveInvalidHotkey()
         {
-            Hotkeys.RemoveAll(h => !h.IsValid || h == null);
+            Hotkeys.RemoveAll(h => h == null || !h.IsValid);
         }
 
         /// <summary>
