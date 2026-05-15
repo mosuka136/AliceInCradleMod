@@ -68,13 +68,13 @@ namespace BetterExperience
                     return;
                 }
 
-                HLog.Initialize(
-                    PatchInfo.LoggerPath,
-                    PatchInfo.LoggerName,
-                    new UnityProvider(),
-                    new BepInExLoggerProvider(Logger),
-                    ConfigManager.HLogLevel.Value,
-                    ConfigManager.BepInExLogLevel.Value);
+                HLog.EnableLog = ConfigManager.EnableHLog.Value;
+                HLog.HLogLevel = ConfigManager.HLogLevel.Value;
+                HLog.BepInExLogLevel = ConfigManager.BepInExLogLevel.Value;
+                ConfigManager.EnableHLog.OnValueChanged += (s, e) => HLog.EnableLog = ConfigManager.EnableHLog.Value;
+                ConfigManager.HLogLevel.OnValueChanged += (s, e) => HLog.HLogLevel = ConfigManager.HLogLevel.Value;
+                ConfigManager.BepInExLogLevel.OnValueChanged += (s, e) => HLog.BepInExLogLevel = ConfigManager.BepInExLogLevel.Value;
+                HLog.Initialize(PatchInfo.LoggerPath, PatchInfo.LoggerName, new UnityProvider(), new BepInExLoggerProvider(Logger));
 
                 HLog.Info($"{nameof(BetterExperience)} startup initialized. Version={PatchInfo.BepInPluginVersion}");
 

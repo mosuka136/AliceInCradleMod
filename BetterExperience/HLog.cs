@@ -17,12 +17,13 @@ namespace BetterExperience
         // 文件写入需要串行化；Unity 主线程之外的补丁也可能调用日志。
         private static readonly object _lock = new object();
 
-        private static LogLevel _logLevel;
-        private static LogLevel _bepInExLogLevel;
-
         private static UnityProvider _unityProvider;
         private static BepInExLoggerProvider _bepLog = null;
         private static int _seq = 0;
+
+        public static bool EnableLog { get; set; } = true;
+        public static LogLevel HLogLevel { get; set; } = LogLevel.Info;
+        public static LogLevel BepInExLogLevel { get; set; } = LogLevel.Warning;
 
         /// <summary>
         /// 初始化日志输出。
@@ -38,16 +39,12 @@ namespace BetterExperience
             string loggerPath,
             string loggerName,
             UnityProvider unity,
-            BepInExLoggerProvider bepLog = null,
-            LogLevel logLevel = LogLevel.Info,
-            LogLevel bepInExLogLevel = LogLevel.Warning)
+            BepInExLoggerProvider bepLog = null)
         {
             _unityProvider = unity;
             _bepLog = bepLog;
-            _logLevel = logLevel;
-            _bepInExLogLevel = bepInExLogLevel;
 
-            if (ConfigManager.EnableHarmonyLog == null || !ConfigManager.EnableHarmonyLog.Value)
+            if (!EnableLog)
                 return;
 
             if (!Directory.Exists(loggerPath))
@@ -64,7 +61,10 @@ namespace BetterExperience
                 _writer.WriteLine($"{new string('-', 50)}LOG-START-{DateTime.Now}{new string('-', 50)}");
             }
 
-            _unityProvider.UnityQuitting += Shutdown;
+            if (_unityProvider != null)
+            {
+                _unityProvider.UnityQuitting += Shutdown;
+            }
         }
 
         public static void Debug(string msg,
@@ -92,7 +92,7 @@ namespace BetterExperience
             [CallerLineNumber] int line = 0) => Write(LogLevel.Error, msg, ex, member, file, line);
         public static void WriteLine()
         {
-            if (ConfigManager.EnableHarmonyLog == null || !ConfigManager.EnableHarmonyLog.Value)
+            if (!EnableLog)
                 return;
 
             if (_writer == null)
@@ -118,7 +118,7 @@ namespace BetterExperience
         {
             try
             {
-                if (ConfigManager.EnableHarmonyLog == null || !ConfigManager.EnableHarmonyLog.Value)
+                if (!EnableLog)
                     return;
 
                 if (_writer == null)
@@ -156,11 +156,11 @@ namespace BetterExperience
 
                 lock (_lock)
                 {
-                    if (logLevel >= _logLevel)
+                    if (logLevel >= HLogLevel)
                         _writer.WriteLine(final);
                 }
 
-                if (logLevel >= _bepInExLogLevel)
+                if (logLevel >= BepInExLogLevel)
                 {
                     AdditionalLog(logLevel, final);
                 }
@@ -175,7 +175,7 @@ namespace BetterExperience
         {
             if (_bepLog == null)
             {
-                _unityProvider.DebugLog(msg);
+                _unityProvider?.DebugLog(msg);
             }
             else
             {

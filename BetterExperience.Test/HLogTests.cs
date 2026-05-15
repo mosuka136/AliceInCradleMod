@@ -83,7 +83,7 @@ namespace BetterExperience.Test
             // Arrange
             InitializeConfig(true);
             var logDirectory = CreateMissingDirectoryPath();
-            HLog.Initialize(logDirectory, "notice.log", new UnityProvider(), null, HLogLevel.Debug, HLogLevel.Debug);
+            HLog.Initialize(logDirectory, "notice.log", new UnityProvider(), null);
 
             // Act
             var exception = Record.Exception(() => HLog.Notice("notice message"));
@@ -168,7 +168,7 @@ namespace BetterExperience.Test
             // Arrange
             InitializeConfig(true);
             var logDirectory = CreateMissingDirectoryPath();
-            HLog.Initialize(logDirectory, "write.log", new UnityProvider(), null, HLogLevel.Debug, HLogLevel.Debug);
+            HLog.Initialize(logDirectory, "write.log", new UnityProvider(), null);
 
             // Act
             var exception = Record.Exception(() => HLog.Write(HLogLevel.Warning, "write message", new InvalidOperationException("boom"), "WriteCaller", @"C:\temp\caller.cs", 123));
@@ -296,7 +296,10 @@ namespace BetterExperience.Test
             HLog.Shutdown();
             var configPath = CreateTempFilePath("cfg");
             ConfigManager.Initialize(configPath);
-            ConfigManager.EnableHarmonyLog.Value = enableHarmonyLog;
+            ConfigManager.EnableHLog.Value = enableHarmonyLog;
+            HLog.EnableLog = ConfigManager.EnableHLog.Value;
+            HLog.HLogLevel = ConfigManager.HLogLevel.Value;
+            HLog.BepInExLogLevel = ConfigManager.BepInExLogLevel.Value;
         }
 
         private string CreateMissingDirectoryPath()
