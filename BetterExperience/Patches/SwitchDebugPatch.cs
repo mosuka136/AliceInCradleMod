@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 在游戏基础工具初始化时同步调试标记。
+        /// 只操作游戏全局调试开关，不影响插件自身日志等级。
+        /// </summary>
         [HarmonyPatch]
         public class SwitchDebugPatch
         {

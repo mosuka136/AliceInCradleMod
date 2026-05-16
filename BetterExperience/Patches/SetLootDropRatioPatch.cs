@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 修改敌人掉落战利品概率倍率。
+        /// 配置为 -1 时不接管，0 时禁用掉落，大于 0 时通过调整游戏内部 dropratio1000 影响原判定。
+        /// </summary>
         [HarmonyPatch]
         public class SetLootDropRatioPatch
         {

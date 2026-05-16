@@ -8,6 +8,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 设置危险度。
+        /// 配置值小于 0 时视为不覆盖；应用后会调用游戏 UI 更新方法刷新显示。
+        /// </summary>
         [HarmonyPatch]
         public class SetDangerLevelPatch
         {

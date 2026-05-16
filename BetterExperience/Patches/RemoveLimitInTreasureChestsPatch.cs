@@ -10,6 +10,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 移除宝箱转轮效果中的 99 个物品数量上限。
+        /// 该补丁使用 transpiler 精确替换限制计数的 IL 片段，目标模式找不到时会保留原指令。
+        /// </summary>
         [HarmonyPatch(typeof(ReelExecuter), "applyEffectToIK")]
         public class RemoveLimitInTreasureChestsPatch
         {

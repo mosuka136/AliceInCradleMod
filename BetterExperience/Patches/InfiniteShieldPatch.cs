@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 在护盾可防御判定前修复护盾状态，实现持续可用。
+        /// 该补丁不跳过原方法，只在原判定前调用游戏自带的恢复逻辑。
+        /// </summary>
         [HarmonyPatch]
         public class InfiniteShieldPatch
         {

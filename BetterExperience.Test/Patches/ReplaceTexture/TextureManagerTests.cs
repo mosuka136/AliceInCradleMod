@@ -23,7 +23,7 @@ namespace BetterExperience.Test
         {
             var configPath = CreateTempFilePath("cfg");
             ConfigManager.Initialize(configPath);
-            ConfigManager.EnableHarmonyLog.Value = false;
+            ConfigManager.EnableHLog.Value = false;
             ResetTextureManagerState();
         }
 

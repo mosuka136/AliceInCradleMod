@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 覆盖转轮速度衰减参数。
+        /// 只接受 0 到 1 的配置值，超出范围时交给游戏原逻辑处理。
+        /// </summary>
         [HarmonyPatch]
         public class SetReelSpeedPatch
         {

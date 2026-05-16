@@ -6,6 +6,7 @@ namespace BetterExperience.BConfigManager
 {
     public partial class ConfigManager
     {
+        // 玩家配置同时包含即时开关和“读档后预加载”项。Set* 数值中的 -1 约定为保持游戏当前值。
         public static ConfigEntry<bool> EnableBeingAttacked { get; private set; }
         public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
         public static ConfigEntry<bool> EnableNoMpDamage { get; private set; }
@@ -77,6 +78,9 @@ namespace BetterExperience.BConfigManager
 
         private const string SectionPlayer = "Player";
 
+        /// <summary>
+        /// 初始化玩家相关配置，包括伤害开关、异常状态免疫、背包/槽位和基础属性预加载设置。
+        /// </summary>
         public static void InitializePlayerStatus()
         {
             Config.CreateTable(SectionPlayer, new Translator(chinese: "玩家", english: "Player"));

@@ -9,6 +9,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 设置玩家 HP、MP、EP 及最大 HP/MP。
+        /// 当前实现直接改写玩家实例私有字段，并调用游戏刷新方法同步 UI 或派生状态。
+        /// </summary>
         [HarmonyPatch]
         public class SetHpMpEpPatch
         {
@@ -182,7 +186,8 @@ namespace BetterExperience.Patches
                     }
 
                     prTraverse.Field("ep").SetValue(ep);
-                    pr.EpCon.fineCounter(); // 刷新EP显示
+                    // EP 显示不随字段写入自动刷新，需要通知原游戏计数器重算。
+                    pr.EpCon.fineCounter();
 
                     HLog.Debug($"Player EP set to {ep}");
                 }
@@ -217,6 +222,7 @@ namespace BetterExperience.Patches
                     }
 
                     prTraverse.Field("maxhp").SetValue(maxHp);
+                    // 最大 HP 变化会影响异常状态相关派生值，先让游戏检查状态再刷新当前 HP。
                     pr.Ser.checkSer();
                     pr.cureHp(0);
 

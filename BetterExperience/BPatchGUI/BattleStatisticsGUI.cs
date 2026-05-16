@@ -9,6 +9,10 @@ using static BetterExperience.Patches.HPatches;
 
 namespace BetterExperience.BPatchGUI
 {
+    /// <summary>
+    /// 战斗统计悬浮窗口。
+    /// 该组件只读取 <see cref="BattleStatisticsPatch"/> 收集到的计数并绘制 IMGUI，不负责统计数据的采集或清零。
+    /// </summary>
     [RegisterOnGameBoot]
     public class BattleStatisticsGUI : MonoBehaviour
     {
@@ -164,6 +168,7 @@ namespace BetterExperience.BPatchGUI
             if (!_isExpanded)
                 return;
 
+            // 展开视图需要同时显示 HP 与 MP 维度，两个字典可能只在其中一个维度存在该敌人。
             var enemyKeys = new SortedSet<(ENEMYID, ENATTR)>(hpByEnemy.Keys);
             enemyKeys.UnionWith(mpByEnemy.Keys);
 

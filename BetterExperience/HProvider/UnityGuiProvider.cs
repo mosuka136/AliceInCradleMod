@@ -2,6 +2,10 @@ using UnityEngine;
 
 namespace BetterExperience.HProvider
 {
+    /// <summary>
+    /// Unity IMGUI/GUILayout 的适配层。
+    /// 配置界面通过该类型访问 GUI API，主要目的是把渲染代码与 Unity 静态 API 隔开，并统一空样式回退策略。
+    /// </summary>
     public class UnityGuiProvider
     {
         public string Tooltip => GUI.tooltip;
@@ -22,6 +26,9 @@ namespace BetterExperience.HProvider
             return false;
         }
 
+        /// <summary>
+        /// 可选的默认样式。当前未在构造函数中初始化，调用方不应依赖它。
+        /// </summary>
         public GUIStyle Style { get; }
 
         public Vector2 CalcSize(GUIContent content)

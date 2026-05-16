@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 通过热键触发全部商店刷新。
+        /// 该补丁不挂接游戏方法，而是在游戏启动后订阅全局帧更新轮询热键。
+        /// </summary>
         public class FlushStorePatch
         {
             private static bool _initialized = false;

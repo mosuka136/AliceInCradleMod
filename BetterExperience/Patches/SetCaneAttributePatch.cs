@@ -9,9 +9,14 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 设置当前玩家法杖的显示属性或内部属性。
+        /// 部分方法接收的是面板显示值，需要按游戏显示公式反推到 <see cref="PrCaneEquip"/> 内部字段。
+        /// </summary>
         [HarmonyPatch]
         public class SetCaneAttributePatch
         {
+            // PR.Skill 中当前装备法杖字段名，游戏类未公开强类型访问器时通过 Harmony Traverse 读写。
             private const string EqCane = "EqCane";
 
             private static bool _initialized = false;
@@ -146,6 +151,7 @@ namespace BetterExperience.Patches
                     }
 
                     var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    // Cast Speed 面板值由 castspeed、magic_prepare_speed 和 castspeed_overhold 共同决定。
                     cane.castspeed = speed / (50f * (0.33f * (cane.magic_prepare_speed - 1f) + 1f) * (0.25f * (cane.castspeed_overhold - 1f) + 1f));
                     skill.Field(EqCane).SetValue(cane);
 
@@ -204,6 +210,7 @@ namespace BetterExperience.Patches
                     }
 
                     var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    // Efficiency 显示值是 mp_use_ratio 的分段函数，这里按原公式反解。
                     if (efficiency == 0f)
                         cane.mp_use_ratio = 12f;
                     else if (efficiency <= 65f)
@@ -240,6 +247,7 @@ namespace BetterExperience.Patches
                     }
 
                     var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    // Retention 面板值还依赖其他法杖内部属性，因此只改写 stability 分量。
                     cane.stability = retention / (55f * cane.mana_splash_ratio * (0.75f * (cane.castspeed_overhold - 1f) + 1f) * (0.5f * (cane.drain_after_lock - 1f) + 1f));
                     skill.Field(EqCane).SetValue(cane);
 
@@ -327,6 +335,7 @@ namespace BetterExperience.Patches
                     }
 
                     var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    // Short Range 由 near_power 与 near_shotgun_power 共同决定，保持 shotgun 分量不变。
                     cane.near_power = 4f * (range / (55f * cane.near_shotgun_power) - 1f) + 1f;
                     skill.Field(EqCane).SetValue(cane);
 

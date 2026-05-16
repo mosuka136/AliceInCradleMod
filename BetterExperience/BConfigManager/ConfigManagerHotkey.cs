@@ -7,6 +7,7 @@ namespace BetterExperience.BConfigManager
 {
     public partial class ConfigManager
     {
+        // 热键配置使用 Hotkey 自定义适配器序列化，默认 UnityProvider 实例在初始化时统一创建。
         public static ConfigEntry<Hotkey> ConfigUIHotkey { get; private set; }
         public static ConfigEntry<Hotkey> ReloadConfigHotkey { get; private set; }
         public static ConfigEntry<Hotkey> FlushAllStoreHotkey { get; private set; }
@@ -14,6 +15,10 @@ namespace BetterExperience.BConfigManager
 
         private const string SectionHotkey = "Hotkey";
 
+        /// <summary>
+        /// 初始化全局热键配置。
+        /// 配置表说明记录了热键文本协议，避免用户手写配置时误把键盘和手柄输入混用到同一组合。
+        /// </summary>
         public static void InitializeHotkey()
         {
             Config.CreateTable(

@@ -2,6 +2,10 @@ using BetterExperience.HTranslatorSpace;
 
 namespace BetterExperience.HConfigGUI.UI
 {
+    /// <summary>
+    /// 配置 GUI 的固定文案资源。
+    /// 文案以 <see cref="Translator"/> 保存，实际显示语言由运行时全局语言设置决定。
+    /// </summary>
     public static class TranslatorResource
     {
         public static readonly Translator Title = new Translator("更好的体验模组配置", "BetterExperience Mod Configurations");

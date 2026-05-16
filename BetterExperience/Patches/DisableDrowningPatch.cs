@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 关闭溺水效果时重置缺氧和水中计时字段。
+        /// 这里使用 Postfix 是为了让游戏原逻辑先更新周边状态，再覆盖会造成伤害的累计值。
+        /// </summary>
         [HarmonyPatch]
         public class DisableDrowningPatch
         {

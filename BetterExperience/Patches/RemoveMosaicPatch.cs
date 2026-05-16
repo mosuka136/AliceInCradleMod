@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 关闭马赛克绘制。
+        /// 配置关闭时在绘制函数后覆盖返回值，避免原绘制结果继续生效。
+        /// </summary>
         [HarmonyPatch(typeof(MosaicShower), "FnDrawMosaic")]
         public class RemoveMosaicPatch
         {

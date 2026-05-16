@@ -8,6 +8,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 设置或锁定货币数量。
+        /// 预加载只在读档后写入一次；锁定模式通过拦截 Add/Reduce 阻止游戏修改数量。
+        /// </summary>
         [HarmonyPatch]
         public class SetCurrencyCountPatch
         {
@@ -120,6 +124,7 @@ namespace BetterExperience.Patches
                 if (!isEnabled)
                     return true;
 
+                // 负数表示只冻结当前数量，不主动把货币改成配置值。
                 if (count < 0)
                     return false;
 

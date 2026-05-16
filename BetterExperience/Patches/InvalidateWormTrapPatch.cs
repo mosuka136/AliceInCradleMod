@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 关闭虫墙覆盖判定。
+        /// 配置关闭虫墙时直接返回 false 并跳过原方法，避免后续逻辑继续按被覆盖处理玩家。
+        /// </summary>
         [HarmonyPatch]
         public class InvalidateWormTrapPatch
         {

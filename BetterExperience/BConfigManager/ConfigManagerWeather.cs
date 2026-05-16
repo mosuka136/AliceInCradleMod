@@ -5,6 +5,7 @@ namespace BetterExperience.BConfigManager
 {
     public partial class ConfigManager
     {
+        // 天气配置会与游戏当前天气双向同步，SetWeatherPatch 写回配置时会抑制递归应用。
         public static ConfigEntry<bool> EnableVisualImpactOfFog { get; private set; }
         public static ConfigEntry<bool> SetWeatherWind { get; private set; }
         public static ConfigEntry<bool> SetWeatherThunder { get; private set; }
@@ -15,6 +16,9 @@ namespace BetterExperience.BConfigManager
 
         private const string SectionWeather = "Weather";
 
+        /// <summary>
+        /// 初始化天气可视效果和具体天气开关配置。
+        /// </summary>
         public static void InitializeWeather()
         {
             Config.CreateTable(SectionWeather, new Translator(chinese: "天气", english: "Weather"));

@@ -8,10 +8,15 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 允许木偶商人在相关击败标记未满足时仍然启用。
+        /// 补丁会临时改写全局剧情计数以通过游戏检查，并在保存前恢复原值，避免把临时状态写入存档。
+        /// </summary>
         [HarmonyPatch]
         public class RemoveLimitInPuppetNpcDefeatedPatch
         {
             private const string PUP_KILL = "PUP_KILL";
+            // 保存用户真实的 PUP_KILL 值；_isChanging 防止本补丁自己的临时写入覆盖缓存。
             private static uint _pup_kill;
             private static bool _isInitialized = false;
             private static bool _isChanging = false;

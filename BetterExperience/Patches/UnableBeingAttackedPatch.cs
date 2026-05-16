@@ -8,6 +8,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 阻止玩家进入受击伤害处理。
+        /// 该补丁位于 M2PrADmg.applyDamage 入口，比单独拦截 HP/MP/EP 更早，适合关闭敌人攻击造成的整套受击流程。
+        /// </summary>
         [HarmonyPatch]
         public class UnableBeingAttackedPatch
         {

@@ -8,10 +8,15 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 设置过充插槽数量。
+        /// 游戏刷新插槽时会读取贵重品数量，补丁只在刷新调用期间临时覆盖对应物品计数。
+        /// </summary>
         [HarmonyPatch]
         public class SetOverChargeSlotCountPatch
         {
             private static bool _initialized = false;
+            // 仅在主动调用 fineSlots 期间拦截 ItemStorage.getCount，避免影响其他物品计数。
             private static bool _isChanging = false;
             private static bool _hasLoggedOverrideForCurrentApply = false;
 
@@ -68,7 +73,8 @@ namespace BetterExperience.Patches
 
                     _isChanging = true;
                     _hasLoggedOverrideForCurrentApply = false;
-                    oc.fineSlots(); // fineSlots方法会调用ItemStorage.getCount方法
+                    // fineSlots 会读取 oc_slot 数量，下面的 Harmony Prefix 只在此窗口期返回配置值。
+                    oc.fineSlots();
                     _isChanging = false;
                 }
                 catch (Exception ex)

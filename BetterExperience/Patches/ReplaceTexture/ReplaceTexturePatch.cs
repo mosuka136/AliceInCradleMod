@@ -12,11 +12,16 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 在游戏贴图加载/清理路径上替换外部图片资源。
+        /// 该补丁分别处理普通 MTI 图片和 Spine 渲染贴图，并缓存原始贴图以支持热键刷新时恢复。
+        /// </summary>
         [HarmonyPatch]
         public class ReplaceTexturePatch
         {
             private static bool _initialized = false;
 
+            // Spine 贴图需要在 cleanExecute 后重新贴图；普通图片需要保留 MTIOneImage 到原始 Texture 的映射。
             private static readonly List<BetobetoManager.SvTexture> _spineTexture = new List<BetobetoManager.SvTexture>();
             private static readonly Dictionary<string, MTIOneImage> _pictureTexture = new Dictionary<string, MTIOneImage>();
             private static readonly Dictionary<MTIOneImage, Texture> _originalPictureTexture = new Dictionary<MTIOneImage, Texture>();
@@ -43,6 +48,7 @@ namespace BetterExperience.Patches
                 {
                     try
                     {
+                        // 刷新时先恢复原资源，再重新加载外部图片，避免把已替换贴图当作下一轮的“原图”。
                         RestoreOriginalTexture();
 
                         TextureManager.Reload();
@@ -133,6 +139,7 @@ namespace BetterExperience.Patches
                 var split = asset_key.Split('/');
                 if (split.Length < 2)
                     return;
+                // 游戏资源键通常形如 "目录/图片名"，替换文件只使用图片名匹配。
                 var name = split[1];
 
                 var texture = TextureManager.GetReplaceTexture(name);

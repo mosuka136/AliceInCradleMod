@@ -2,6 +2,10 @@ using UnityEngine;
 
 namespace BetterExperience.HConfigGUI.UI
 {
+    /// <summary>
+    /// 配置界面的 IMGUI 样式工厂。
+    /// 样式按需创建并缓存，避免在每帧 OnGUI 中重复分配 GUIStyle 和纹理对象。
+    /// </summary>
     public class StyleResource
     {
         private readonly ViewModel _context;
@@ -81,6 +85,7 @@ namespace BetterExperience.HConfigGUI.UI
         private Texture2D CreateSolidTexture(Color color)
         {
             var texture = new Texture2D(1, 1);
+            // 样式背景纹理只服务于运行时 GUI，不应随场景保存或显示在层级中。
             texture.hideFlags = HideFlags.HideAndDontSave;
             texture.SetPixel(0, 0, color);
             texture.Apply();

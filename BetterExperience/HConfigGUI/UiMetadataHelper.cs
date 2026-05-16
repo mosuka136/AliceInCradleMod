@@ -4,6 +4,10 @@ using BetterExperience.HConfigSpace;
 
 namespace BetterExperience.HConfigGUI
 {
+    /// <summary>
+    /// 从配置声明中提取 GUI 元数据。
+    /// 通过 <see cref="ConfigSliderAttribute"/> 把数值配置项映射为滑条控件。
+    /// </summary>
     public static class UiMetadataHelper
     {
         public static IUiMetadata GetMetadata(IConfigEntry entry)

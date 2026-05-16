@@ -5,12 +5,15 @@ namespace BetterExperience.BConfigManager
 {
     public partial class ConfigManager
     {
-        public static ConfigEntry<bool> EnableHarmonyLog { get; private set; }
+        public static ConfigEntry<bool> EnableHLog { get; private set; }
         public static ConfigEntry<HLog.LogLevel> HLogLevel { get; private set; }
         public static ConfigEntry<HLog.LogLevel> BepInExLogLevel { get; private set; }
 
         private const string SectionLog = "Log";
 
+        /// <summary>
+        /// 初始化插件独立日志和 BepInEx 日志同步等级配置。
+        /// </summary>
         public static void InitializeLog()
         {
             Config.CreateTable(
@@ -29,9 +32,9 @@ namespace BetterExperience.BConfigManager
                              "If the log level is set to Error, it will only log error messages."
                 )
             );
-            EnableHarmonyLog = Config.Bind(
+            EnableHLog = Config.Bind(
                 SectionLog,
-                nameof(EnableHarmonyLog),
+                nameof(EnableHLog),
                 true,
                 new Translator(chinese: "启用日志", english: "Enable Log"),
                 new Translator(

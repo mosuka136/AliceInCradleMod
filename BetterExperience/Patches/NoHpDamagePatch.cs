@@ -10,9 +10,16 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 阻止非玩家来源造成 HP 伤害。
+        /// 玩家自身来源会放行，避免破坏对敌人造成伤害的逻辑。
+        /// </summary>
         [HarmonyPatch]
         public class NoHpDamagePatch
         {
+            /// <summary>
+            /// 使用反射查找目标方法，以便目标签名在引用信息不完整时仍能安全失败。
+            /// </summary>
             public static IEnumerable<MethodBase> TargetMethods()
             {
                 var m = AccessTools.Method(typeof(nel.PR), "applyHpDamage");

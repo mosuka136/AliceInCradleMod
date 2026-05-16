@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 阻止 EP 伤害或增长路径。
+        /// 配置开启时设置原方法返回值为 false 并跳过原逻辑。
+        /// </summary>
         [HarmonyPatch]
         public class NoEpDamagePatch
         {

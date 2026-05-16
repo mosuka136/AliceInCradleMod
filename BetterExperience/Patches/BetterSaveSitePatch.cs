@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 放宽当前地图和玩家状态对保存行为的限制。
+        /// 两个 Prefix 都通过设置返回值并跳过原方法实现，因此只在配置开启时接管判定。
+        /// </summary>
         [HarmonyPatch]
         public class BetterSaveSitePatch
         {

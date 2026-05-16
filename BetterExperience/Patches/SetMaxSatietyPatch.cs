@@ -8,10 +8,15 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 设置玩家最大饱食度。
+        /// 首次应用时缓存原值；如果读档后预加载关闭，则尝试恢复缓存的原始最大饱食度。
+        /// </summary>
         [HarmonyPatch]
         public class SetMaxSatietyPatch
         {
             private static bool _initialized = false;
+            // -1 表示尚未捕获过游戏原始最大饱食度。
             private static int _maxSatiety = -1;
 
             [InitializeOnGameBoot]

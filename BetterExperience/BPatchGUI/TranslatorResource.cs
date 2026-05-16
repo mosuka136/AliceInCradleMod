@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 namespace BetterExperience.BPatchGUI
 {
+    /// <summary>
+    /// 战斗统计窗口的文本资源和敌人名称映射。
+    /// 未登记的敌人或属性会回退到游戏枚举名，避免新版本新增内容导致显示失败。
+    /// </summary>
     public static class TranslatorResource
     {
         public readonly static Translator BattleStatisticsTitle = new Translator("战斗统计", "Battle Statistics");
@@ -100,6 +104,7 @@ namespace BetterExperience.BPatchGUI
 
         public static string GetEnemyName(ENEMYID enemyId)
         {
+            // 污染体标记与基础敌人 ID 共用同一个枚举值，需要先剥离标记再查表。
             var isContaminated = (enemyId & ENEMYID._OVERDRIVE_FLAG) != 0;
             var baseEnemyId = enemyId & ~ENEMYID._OVERDRIVE_FLAG;
 
@@ -113,6 +118,7 @@ namespace BetterExperience.BPatchGUI
 
         public static string GetEnemyAttributeName(ENATTR attribute)
         {
+            // __OPTIONAL 是游戏内部附加位，统计展示只关心主要属性组合。
             attribute &= ~ENATTR.__OPTIONAL;
 
             if (attribute == ENATTR.NORMAL)

@@ -9,11 +9,16 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 阻止玩家获得指定异常状态。
+        /// 读取存档时会临时放行，避免已有存档状态因加载流程被误过滤。
+        /// </summary>
         [HarmonyPatch]
         public class ImmuneAbnormalitiesPatch
         {
             private static bool _isLoading = false;
 
+            // 分项免疫开关映射到游戏 SER 枚举，便于 Add 前缀统一判断。
             private static readonly IDictionary<SER, Func<bool>> ImmuneAbnormalityConfigMap = new Dictionary<SER, Func<bool>>
             {
                 { SER.MP_REDUCE, () => ConfigManager.EnableImmuneAbnormalityMpReduce.Value },

@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 阻止 MP 槽破裂。
+        /// 配置关闭破裂时清空破裂计数和破裂槽数组，并跳过原伤害逻辑。
+        /// </summary>
         [HarmonyPatch]
         public class RemoveMpBreakPatch
         {

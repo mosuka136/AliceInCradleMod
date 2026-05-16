@@ -6,6 +6,7 @@ namespace BetterExperience.BConfigManager
 {
     public partial class ConfigManager
     {
+        // 地图配置主要影响地图交互限制和环境伤害；SetDangerLevel 使用 -1 表示不覆盖当前危险度。
         public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
         public static ConfigEntry<bool> EnableFastTravelAnywhere { get; private set; }
@@ -19,6 +20,9 @@ namespace BetterExperience.BConfigManager
 
         private const string SectionMap = "Map";
 
+        /// <summary>
+        /// 初始化地图、陷阱、快速传送和危险度相关配置。
+        /// </summary>
         public static void InitializeMapTrap()
         {
             Config.CreateTable(SectionMap, new Translator(chinese: "地图", english: "Map"));

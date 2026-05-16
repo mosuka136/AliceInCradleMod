@@ -11,6 +11,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+         /// <summary>
+         /// 放宽长椅菜单命令的安全区域和可用性限制。
+         /// 排尿选项保留原限制，因为该选项会影响正常坐下椅子的流程。
+         /// </summary>
          [HarmonyPatch]
          public class RemoveLimitInBenchMenuPatch
          {
@@ -59,7 +63,9 @@ namespace BetterExperience.Patches
                 }
             }
         }
-
+        /// <summary>
+        /// 刷新长椠菜单按钮状态，解除已经被 UI 锁定的按钮。
+        /// </summary>
         [HarmonyPatch]
         public class RemoveLimitInBenchMenuButtonPatch
         {

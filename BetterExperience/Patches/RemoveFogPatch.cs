@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 移除天气雾效的绘制对象。
+        /// 通过 WeatherItem 构造后销毁 DrM，保留天气本身但去掉遮挡视野的视觉影响。
+        /// </summary>
         [HarmonyPatch]
         public class RemoveFogPatch
         {

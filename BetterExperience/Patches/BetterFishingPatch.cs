@@ -7,9 +7,14 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 调整钓鱼标记参数，使目标切换和移动更宽容。
+        /// 该补丁直接修改游戏传入的鱼标记参数结构，不改变钓鱼流程本身。
+        /// </summary>
         [HarmonyPatch]
         public class BetterFishingPatch
         {
+            // 保持每个 min/max 区间宽度不变，只整体移动区间，避免破坏游戏后续对区间差值的假设。
             private const float IncreaseRatio = 1.6f;
             private const float DecreaseRatio = 0.8f;
 

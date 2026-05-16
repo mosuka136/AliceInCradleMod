@@ -10,9 +10,14 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 放宽快速传送的地图和长椅限制。
+        /// 游戏仍需要至少缓存过一次长椅对象，补丁会复用最近一次靠近长椅时取得的 BenchChip。
+        /// </summary>
         [HarmonyPatch]
         public class RemoveFastTravelLimitPatch
         {
+            // 远离长椅打开地图时游戏菜单仍需要一个 BenchChip，本字段保存最近一次正常获取到的对象。
             private static NelChipBench _cachedBenchChip;
 
             [HarmonyPatch]

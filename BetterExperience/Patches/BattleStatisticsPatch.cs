@@ -11,9 +11,14 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 收集战斗中的 HP/MP 伤害统计。
+        /// 该补丁只做内存计数，不写配置或存档；GUI 层通过这些公开计数器展示当前战斗和累计统计。
+        /// </summary>
         [HarmonyPatch]
         public class BattleStatisticsPatch
         {
+            // key 使用敌人 ID 和属性组合。污染体标记会保留，展示层再决定如何格式化名称。
             public static Dictionary<(ENEMYID, ENATTR), int> PlayerInjuryHpCounter { get; private set; } = new Dictionary<(ENEMYID, ENATTR), int>();
             public static Dictionary<(ENEMYID, ENATTR), int> PlayerDamageHpCounter { get; private set; } = new Dictionary<(ENEMYID, ENATTR), int>();
             public static Dictionary<(ENEMYID, ENATTR), int> EnemyInjuryHpCounter { get; private set; } = new Dictionary<(ENEMYID, ENATTR), int>();
@@ -54,6 +59,7 @@ namespace BetterExperience.Patches
             public static float BattleStartTime { get; private set; } = 0f;
             public static float BattleEndTime { get; private set; } = 0f;
 
+            // applyDamage Prefix 记录攻击来源，setDamageCounter Postfix 读取实际伤害；结束后必须清空，避免跨次伤害串源。
             private static object _objectAttackEnemy = null;
             private static object _objectAttackPlayer = null;
 
@@ -93,6 +99,7 @@ namespace BetterExperience.Patches
             {
                 if (!IsInBattle)
                 {
+                    // 单场统计只在进入新战斗时清空，累计统计保留到进程结束。
                     TotalPlayerDamageSingleBattleHpCounter = 0;
                     TotalPlayerDamageSingleBattleMpCounter = 0;
                     TotalPlayerInjurySingleBattleHpCounter = 0;
@@ -412,6 +419,7 @@ namespace BetterExperience.Patches
 
             private static (ENEMYID, ENATTR) GetEnemyKey(NelEnemy enemy)
             {
+                // overdrive 使用敌人 ID 的高位标记；属性中的 __OPTIONAL 位不参与展示统计。
                 var enemyId = enemy.id & ~ENEMYID._OVERDRIVE_FLAG;
                 if (enemy.isOverDrive())
                     enemyId |= ENEMYID._OVERDRIVE_FLAG;

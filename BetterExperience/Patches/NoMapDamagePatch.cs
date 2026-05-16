@@ -8,6 +8,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 关闭地图环境伤害。
+        /// 返回 null 攻击信息并跳过原方法，使地刺、荆棘、电击等地图来源不再生成有效伤害。
+        /// </summary>
         [HarmonyPatch]
         public class NoMapDamagePatch
         {

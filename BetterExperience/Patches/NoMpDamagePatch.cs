@@ -8,6 +8,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 阻止玩家 MP 伤害。
+        /// 目标方法含有 out/ref 参数，补丁通过显式签名匹配，配置开启时跳过原方法。
+        /// </summary>
         [HarmonyPatch]
         public class NoMpDamagePatch
         {

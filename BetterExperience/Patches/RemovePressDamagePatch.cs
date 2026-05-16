@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 关闭玩家受到挤压伤害的入口。
+        /// 只在配置关闭挤压伤害时跳过原方法，避免影响其他伤害路径。
+        /// </summary>
         [HarmonyPatch]
         public class RemovePressDamagePatch
         {

@@ -8,10 +8,15 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 设置背包行数上限。
+        /// 保存前会临时恢复为游戏可由贵重品推导出的容量，保存后再应用配置容量，避免把运行时扩容直接固化到存档。
+        /// </summary>
         [HarmonyPatch]
         public class SetBackpackCapacityPatch
         {
             private static bool _initialized = false;
+            // 保存前记录当前运行时容量，保存完成后用于恢复配置效果。
             private static int _currentCapacity = -1;
 
             [InitializeOnGameBoot]
@@ -124,6 +129,7 @@ namespace BetterExperience.Patches
                     count = Math.Max(count, 0);
 
                     _currentCapacity = inventory.row_max;
+                    // 原游戏背包基础容量为 12，workbench_capacity 记录额外容量。
                     inventory.row_max = count + 12;
                     HLog.Debug($"Recovered backpack capacity for save operation. TemporaryCapacity={inventory.row_max}, CurrentCapacity={_currentCapacity}");
                 }

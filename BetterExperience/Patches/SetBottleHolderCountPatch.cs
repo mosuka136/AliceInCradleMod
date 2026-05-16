@@ -9,10 +9,15 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 设置空瓶收纳槽位数量。
+        /// 和背包容量类似，保存前恢复到游戏贵重品记录对应的数量，保存后再恢复运行时配置值。
+        /// </summary>
         [HarmonyPatch]
         public class SetBottleHolderCountPatch
         {
             private static bool _initialized = false;
+            // 保存期间暂存运行时配置数量，保存完成后恢复。
             private static int _originalBottleHolderCount = -1;
 
             [InitializeOnGameBoot]

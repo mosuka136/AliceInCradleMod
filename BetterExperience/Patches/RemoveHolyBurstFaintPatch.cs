@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 关闭圣光爆发后的昏厥概率。
+        /// 配置关闭该机制时直接返回 0 概率并跳过原计算。
+        /// </summary>
         [HarmonyPatch]
         public class RemoveHolyBurstFaintPatch
         {

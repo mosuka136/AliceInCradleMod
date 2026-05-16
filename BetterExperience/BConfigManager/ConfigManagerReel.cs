@@ -6,6 +6,7 @@ namespace BetterExperience.BConfigManager
 {
     public partial class ConfigManager
     {
+        // 转轮速度配置中 -1 表示保留游戏默认速度。
         public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
         [ConfigSlider(-0.2f, 1f, 0.01f)]
@@ -13,6 +14,9 @@ namespace BetterExperience.BConfigManager
 
         private const string SectionReel = "Reel";
 
+        /// <summary>
+        /// 初始化转轮效果、宝箱数量上限和转轮速度配置。
+        /// </summary>
         public static void InitializeReel()
         {
             Config.CreateTable(SectionReel, new Translator(chinese: "转轮", english: "Reel"));

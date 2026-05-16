@@ -5,12 +5,16 @@ namespace BetterExperience.BConfigManager
 {
     public partial class ConfigManager
     {
+        // 贴图配置影响资源加载阶段；替换贴图开关关闭时不会扫描外部图片目录。
         public static ConfigEntry<bool> EnableMosaic { get; private set; }
         public static ConfigEntry<bool> EnableReplaceTexture { get; private set; }
         public static ConfigEntry<bool> EnableSensitivities { get; private set; }
 
         private const string SectionTexture = "Texture";
 
+        /// <summary>
+        /// 初始化马赛克和外部贴图替换相关配置。
+        /// </summary>
         public static void InitializeTexture()
         {
             Config.CreateTable(SectionTexture, new Translator(chinese: "贴图", english: "Texture"));

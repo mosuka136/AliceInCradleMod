@@ -6,6 +6,7 @@ namespace BetterExperience.BConfigManager
 {
     public partial class ConfigManager
     {
+        // 货币可在读档时加载或在游戏中设置或锁定， -1 表示不修改货币值。
         public static ConfigEntry<bool> EnablePreloadCurrencyGoldCount { get; private set; }
         public static ConfigEntry<bool> EnablePreloadCurrencyCraftsCount { get; private set; }
         public static ConfigEntry<bool> EnablePreloadCurrencyJuiceCount { get; private set; }
@@ -21,6 +22,9 @@ namespace BetterExperience.BConfigManager
 
         private const string SectionCurrency = "Currency";
 
+        /// <summary>
+        /// 初始化货币数量预加载和锁定配置。
+        /// </summary>
         public static void InitializeCurrency()
         {
             Config.CreateTable(SectionCurrency, new Translator(chinese: "货币", english: "Currency"));

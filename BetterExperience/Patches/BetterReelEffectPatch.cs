@@ -10,9 +10,14 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 在转轮效果生效前选择同类效果中更优先的结果。
+        /// 补丁通过重写 <c>content_id_dec</c> 指向排序后的首个效果，不修改转轮内容数组本身。
+        /// </summary>
         [HarmonyPatch(typeof(ReelExecuter), "applyEffectToIK")]
         public class BetterReelEffectPatch
         {
+            // 每个数组按“优先采用”的顺序排列；未列入的效果保留原顺序并排在后面。
             private readonly static string[] _grade = new string[]
                 {
                     ReelExecuter.EFFECT.GRADE4.ToString(),
@@ -119,8 +124,8 @@ namespace BetterExperience.Patches
             }
 
             /// <summary>
-            /// 按 customOrder 指定的顺序排序。
-            /// 不在 customOrder 中的字符串放到最后，保持原顺序。
+            /// 按指定优先级对转轮效果文本排序。
+            /// 不在自定义顺序中的值会放到最后，并保持它们在原数组中的相对顺序。
             /// </summary>
             public static string[] SortByCustomOrder(
                 string[] input,

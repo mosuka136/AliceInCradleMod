@@ -6,6 +6,7 @@ namespace BetterExperience.BConfigManager
 {
     public partial class ConfigManager
     {
+        // 法杖配置同时暴露面板显示属性和内部原始属性；所有 SetCane* 使用 -1 表示不覆盖当前装备值。
         public static ConfigEntry<bool> EnablePreloadCaneSwingSpeed { get; private set; }
         public static ConfigEntry<bool> EnablePreloadCaneCastSpeed { get; private set; }
         public static ConfigEntry<bool> EnablePreloadCaneBalance { get; private set; }
@@ -60,6 +61,10 @@ namespace BetterExperience.BConfigManager
 
         private const string SectionCane = "Cane";
 
+        /// <summary>
+        /// 初始化法杖属性配置。
+        /// 表说明中保留了面板显示值到内部字段的换算公式，补丁写入时需要依赖这些公式反推原始属性。
+        /// </summary>
         public static void InitializeCane()
         {
             Config.CreateTable(

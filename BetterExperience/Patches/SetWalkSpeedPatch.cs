@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 按倍率调整玩家移动速度。
+        /// move_aim_ex 为 0 时视作无移动输入，补丁不修改结果，避免待机状态出现非零速度。
+        /// </summary>
         [HarmonyPatch]
         public class SetWalkSpeedPatch
         {

@@ -3,11 +3,24 @@ using System.Collections.Generic;
 
 namespace BetterExperience.HTranslatorSpace
 {
+    /// <summary>
+    /// 简单的双语文本容器。
+    /// 该类型用于配置文件注释和 GUI 文案；它只按当前默认语言返回中文或英文，不负责资源文件加载或运行时本地化回退链。
+    /// </summary>
     public class Translator : IEnumerable<string>
     {
+        /// <summary>
+        /// 当实例语言设置为 <see cref="LanguageType.Default"/> 时使用的全局语言。
+        /// </summary>
         public static LanguageType DefaultLanguage { get; set; } = LanguageType.English;
 
+        /// <summary>
+        /// 当前实例的语言选择。Default 表示跟随 <see cref="DefaultLanguage"/>。
+        /// </summary>
         public LanguageType LanguageType { get; set; } = LanguageType.Default;
+        /// <summary>
+        /// 按当前语言解析后的文本。
+        /// </summary>
         public string Default
         {
             get

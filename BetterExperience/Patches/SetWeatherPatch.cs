@@ -9,10 +9,15 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 双向同步配置中的天气开关和游戏当前天气。
+        /// 用户改配置时修改 NightController；游戏刷新或读档后再把真实天气写回配置，避免 UI 显示过期状态。
+        /// </summary>
         [HarmonyPatch]
         public class SetWeatherPatch
         {
             private static bool _initialized = false;
+            // 写回配置时防止 OnValueChanged 再次调用 SetWeather 造成递归。
             private static bool _isApplying = false;
 
             [InitializeOnGameBoot]
@@ -120,6 +125,7 @@ namespace BetterExperience.Patches
                         var conflict = newWeatherItem.get_conflict();
                         if (conflict != 0)
                         {
+                            // 新天气可能与现有天气互斥，必须同步移除 WeatherItem 和 cur_weather 位标记。
                             var conflictWeather = new List<WeatherItem>();
                             foreach (var weatherItem in weatherItemList)
                             {

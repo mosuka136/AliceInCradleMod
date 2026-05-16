@@ -8,10 +8,15 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 设置强化插槽数量。
+        /// 游戏刷新插槽时会读取贵重品数量，补丁只在刷新调用期间临时覆盖对应物品计数。
+        /// </summary>
         [HarmonyPatch]
         public class SetEnhancerSlotCountPatch
         {
             private static bool _initialized = false;
+            // 仅在主动调用 fineEnhancerStorage 期间拦截 ItemStorage.getCount，避免影响其他物品计数。
             private static bool _isChanging = false;
             private static bool _hasLoggedOverrideForCurrentApply = false;
 
@@ -81,7 +86,7 @@ namespace BetterExperience.Patches
                     HLog.Debug($"Refresh enhancer slots. TargetCount={ConfigManager.SetEnhancerSlotCount.Value}");
                     _isChanging = true;
                     _hasLoggedOverrideForCurrentApply = false;
-                    // ENHA.fineEnhancerStorage方法会调用ItemStorage.getCount方法
+                    // fineEnhancerStorage 会读取 enhancer_slot 数量，下面的 Harmony 前缀只在此窗口期返回配置值。
                     ENHA.fineEnhancerStorage(sp, se);
                     _isChanging = false;
                 }

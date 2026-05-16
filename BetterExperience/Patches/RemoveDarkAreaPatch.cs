@@ -7,6 +7,10 @@ namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
+        /// <summary>
+        /// 在黑暗区域中扩大玩家光源。
+        /// 补丁只在游戏判定当前地图为黑暗区域时覆盖灯光尺寸和颜色，避免影响普通地图照明。
+        /// </summary>
         [HarmonyPatch]
         public class RemoveDarkAreaPatch
         {

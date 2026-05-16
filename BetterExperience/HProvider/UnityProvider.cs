@@ -5,6 +5,10 @@ using UnityEngine.SceneManagement;
 
 namespace BetterExperience.HProvider
 {
+    /// <summary>
+    /// Unity API 访问适配器。
+    /// 该类型集中封装时间、输入、场景和少量数学函数，便于非 MonoBehaviour 代码访问 Unity 状态，也让 GUI/热键逻辑更容易隔离。
+    /// </summary>
     public class UnityProvider
     {
         public float DeltaTime => Time.deltaTime;
@@ -15,6 +19,9 @@ namespace BetterExperience.HProvider
         public Keyboard KeyboardCurrent => Keyboard.current;
         public Gamepad GamepadCurrent => Gamepad.current;
 
+        /// <summary>
+        /// 当前 IMGUI 事件中的鼠标位置。只能在 OnGUI 调用链内可靠使用。
+        /// </summary>
         public Vector2 CurrentMousePosition => Event.current.mousePosition;
 
         public event Action UnityQuitting
