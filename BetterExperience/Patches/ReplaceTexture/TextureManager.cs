@@ -43,7 +43,7 @@ namespace BetterExperience.Patches.ReplaceTexture
                     Directory.CreateDirectory(sensitiveImagePath);
 
                 var imageFiles = Directory.GetFiles(imagePath, "*.*", SearchOption.AllDirectories)
-                    .Where(f => supportedExtensions.Any(s => f.EndsWith(s)));
+                    .Where(f => supportedExtensions.Any(s => f.EndsWith(s, StringComparison.OrdinalIgnoreCase)));
 
                 if (!ConfigManager.EnableSensitivities.Value)
                 {
