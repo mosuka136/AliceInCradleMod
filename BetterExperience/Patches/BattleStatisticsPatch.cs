@@ -178,6 +178,9 @@ namespace BetterExperience.Patches
                 {
                     try
                     {
+                        delta_hp = Math.Min(delta_hp, 0); // 只统计伤害，治疗不计入统计。
+                        delta_mp = Math.Min(delta_mp, 0);
+
                         TotalPlayerInjuryHpCounter += -delta_hp;
                         TotalPlayerInjuryMpCounter += -delta_mp;
 
@@ -300,6 +303,9 @@ namespace BetterExperience.Patches
                 {
                     try
                     {
+                        delta_hp = Math.Min(delta_hp, 0); // 只统计伤害，治疗不计入统计。
+                        delta_mp = Math.Min(delta_mp, 0);
+
                         TotalEnemyInjuryHpCounter += -delta_hp;
                         TotalEnemyInjuryMpCounter += -delta_mp;
 
