@@ -64,7 +64,10 @@ namespace BetterExperience.Patches.ReplaceTexture
                         continue;
                     }
 
-                    _imageInfos[fileWithoutExtension] = CreateTexture(file);
+                    var image = CreateTexture(file);
+                    if (image == null)
+                        continue;
+                    _imageInfos[fileWithoutExtension] = image;
                     HLog.Info($"Loaded image: {fileWithoutExtension} from {file}");
                 }
                 
@@ -105,7 +108,10 @@ namespace BetterExperience.Patches.ReplaceTexture
                 return null;
 
             if (!CheckFileValid(imageName))
+            {
+                HLog.Warn($"Invalid image file: {imageName}.");
                 return null;
+            }
 
             try
             {
@@ -118,7 +124,7 @@ namespace BetterExperience.Patches.ReplaceTexture
                 }
                 else
                 {
-                    HLog.Error($"Failed to load image as Texture: {imageName}");
+                    HLog.Warn($"Failed to load image as Texture: {imageName}");
                     return null;
                 }
             }
@@ -137,7 +143,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             try
             {
                 var extension = Path.GetExtension(filePath);
-                if (_supportExtensions == null || !_supportExtensions.Contains(extension))
+                if (_supportExtensions == null || !_supportExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
                     return false;
 
                 using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
