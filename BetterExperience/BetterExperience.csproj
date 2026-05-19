@@ -41,7 +41,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029f\BepInEx\plugins\BetterExperience\</OutputPath>
+    <OutputPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\BepInEx\plugins\BetterExperience\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

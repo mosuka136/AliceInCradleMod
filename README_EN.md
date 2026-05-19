@@ -13,7 +13,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 
 ## Implemented Features
 
-- Core controls: mod master switch, standalone config file, built-in config UI, Chinese/English localization, config hot reload, debug mode, log level control
+- Core controls: mod master switch, standalone config file, built-in config UI, Chinese/English localization, config hot reload, log level control
 - QoL features: one-key shop refresh, improved save points, access warehouse anywhere, improved fishing, reel-related adjustments
 - Stat tweaks: HP/MP/EP, currency amount, max satiety, movement speed, drop multiplier, cane attributes, danger level, etc.
 - Capacity tweaks: backpack capacity, empty bottle holder slots, enhancer slot count, overcharge slot count, etc.
@@ -52,6 +52,23 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 
 - `Alice In Cradle`: `ver029j2`
 - `BepInEx`: `v5.4.23.5`
+
+## Texture Replacement Usage
+
+### Steps
+
+1. Use `AssetStudioGUI.exe` to export the texture you want to replace.
+2. Edit the texture as needed, then save it as a PNG-format file with a `.png` or `.btep` extension.
+3. Open `BepInEx/plugins/BetterExperience/ReplaceTexture/`.
+4. Copy replacement textures into that directory; sensitive textures can be placed in the `Sensitive/` subdirectory; the filename without extension must match the original resource name.
+5. Launch the game, press `F1` to open the built-in config UI, and enable `Enable Replace Texture`; if you want to load sensitive textures, make sure `Enable Sensitivities` is also enabled.
+6. Restart the game, or press `Ctrl+T` during gameplay to reload textures and apply the replacement.
+
+### Quick Troubleshooting
+
+- No visible change after replacement: check the directory, filename, file format, and config toggles, then inspect the loading logs in `BepInEx/plugins/BetterExperience/logs/`.
+- Duplicate texture name not loaded: only one file with the same name is loaded across directories; duplicates are skipped and recorded in the log.
+- Broken body or limb layout after replacement: this usually means the game version changed the texture layout. Re-export the texture from the current game version, adjust the mask or alignment in an image editor, and save it again.
 
 ## License
 
