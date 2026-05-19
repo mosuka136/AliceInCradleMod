@@ -73,7 +73,7 @@ namespace BetterExperience.BConfigManager
                 true,
                 new Translator(chinese: "启用地图伤害", english: "Enable Map Damage"),
                 new Translator(
-                    chinese: "启用地图伤害，包括地刺，荆棘，电击，酸液。禁用后将不再受到以上伤害",
+                    chinese: "启用地图伤害，包括地刺、荆棘、电击、酸液。禁用后将不再受到以上伤害。",
                     english: "Enable map damage, including spikes, thorns, electric shock, and acid. Disabling will prevent taking the above damage."
                 )
                 );

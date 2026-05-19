@@ -72,26 +72,26 @@ namespace BetterExperience.BConfigManager
                 new Translator(chinese: "法杖", english: "Cane"),
                 new Translator(
                     chinese: "法杖属性配置说明：\n" +
-                             "1) 所有 SetCane* 项设为 -1 表示保持当前值。\n" +
-                             "2) 取值范围：\n" +
-                             "   - 魔力消耗效率 (SetCaneEfficiency)：0-169\n" +
+                             "1） 所有 SetCane* 项设为 -1 表示保持当前值。\n" +
+                             "2） 取值范围：\n" +
+                             "   - 魔力消耗效率（SetCaneEfficiency）：0-169\n" +
                              "   - 无对应中文命名的属性：>= 0\n" +
                              "   - 其余法杖属性：0-255\n" +
                              "\n" +
                              "面板显示属性计算公式：\n" +
-                             "- 近战攻击速度 (Swing Speed): 50 * near_punch_speed\n" +
-                             "- 近战攻击距离 (Reach): 50 * near_reach\n" +
-                             "- 近战威力 (Short Range): 55 * (0.25 * near_power + 0.75) * near_shotgun_power\n" +
-                             "- 射击威力 (Long Range): 46 * far_power\n" +
-                             "- 锁定性能 (Lock-On): 50 * lockon_power\n" +
-                             "- 魔力稳定性 (Retention): 55 * stability * mana_splash_ratio * (0.75 * castspeed_overhold + 0.25) * (0.5 * drain_after_lock + 0.5)\n" +
-                             "- 魔力消耗效率 (Efficiency): mp_use_ratio < 1 ? (169 - 104 * mp_use_ratio) : 65 / (mp_use_ratio * mp_use_ratio)\n" +
-                             "- 魔力亲和性 (Balance): 60 * neutral\n" +
-                             "- 咏唱速度 (Cast Speed): 50 * castspeed * (0.33 * magic_prepare_speed + 0.67) * (0.25 * castspeed_overhold + 0.75)\n" +
+                             "- 近战攻击速度（Swing Speed）：50 * near_punch_speed\n" +
+                             "- 近战攻击距离（Reach）：50 * near_reach\n" +
+                             "- 近战威力（Short Range）：55 * (0.25 * near_power + 0.75) * near_shotgun_power\n" +
+                             "- 射击威力（Long Range）：46 * far_power\n" +
+                             "- 锁定性能（Lock-On）：50 * lockon_power\n" +
+                             "- 魔力稳定性（Retention）：55 * stability * mana_splash_ratio * (0.75 * castspeed_overhold + 0.25) * (0.5 * drain_after_lock + 0.5)\n" +
+                             "- 魔力消耗效率（Efficiency）：mp_use_ratio < 1 ? (169 - 104 * mp_use_ratio) : 65 / (mp_use_ratio * mp_use_ratio)\n" +
+                             "- 魔力亲和性（Balance）：60 * neutral\n" +
+                             "- 咏唱速度（Cast Speed）：50 * castspeed * (0.33 * magic_prepare_speed + 0.67) * (0.25 * castspeed_overhold + 0.75)\n" +
                              "\n" +
                              "无中文命名映射的内部属性：\n" +
-                             "- SetCaneNearPower, SetCaneNearShotgunPower, SetCaneStability, SetCaneManaSplashRatio\n" +
-                             "- SetCaneCastspeedOverhold, SetCaneDrainAfterLock, SetCaneCastspeed, SetCaneMagicPrepareSpeed",
+                             "- SetCaneNearPower、SetCaneNearShotgunPower、SetCaneStability、SetCaneManaSplashRatio\n" +
+                             "- SetCaneCastspeedOverhold、SetCaneDrainAfterLock、SetCaneCastspeed、SetCaneMagicPrepareSpeed",
                     english: "Cane config notes:\n" +
                              "1) All SetCane* values use -1 to keep current value.\n" +
                              "2) Value range:\n" +

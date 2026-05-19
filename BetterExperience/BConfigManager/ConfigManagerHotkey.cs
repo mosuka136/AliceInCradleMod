@@ -26,11 +26,11 @@ namespace BetterExperience.BConfigManager
                 new Translator(chinese: "热键", english: "Hotkey"),
                 new Translator(
                     chinese: "热键写法说明：\n" +
-                             "1) 单键：F / F1 / Space / Tab\n" +
-                             "2) 键盘组合键：修饰键在前，主键在最后，例如 Ctrl+Shift+F\n" +
-                             "3) 手柄组合键：手柄按键用 + 连接，例如 GamepadStart+GamepadA\n" +
-                             "4) 备选热键：Ctrl+F, GamepadStart+GamepadA（用逗号分隔）\n" +
-                             "5) 同一组组合键不能混用键盘和手柄，例如 Ctrl+GamepadA 不支持\n" +
+                             "1） 单键：F / F1 / Space / Tab\n" +
+                             "2） 键盘组合键：修饰键在前，主键在最后，例如 Ctrl+Shift+F\n" +
+                             "3） 手柄组合键：手柄按键用 + 连接，例如 GamepadStart+GamepadA\n" +
+                             "4） 备选热键：Ctrl+F, GamepadStart+GamepadA（用逗号分隔）\n" +
+                             "5） 同一组组合键不能混用键盘和手柄，例如 Ctrl+GamepadA 不支持\n" +
                              "\n" +
                              "键盘修饰键：\n" +
                              "- Ctrl（或 Control）/ Shift / Alt\n" +

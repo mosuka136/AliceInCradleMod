@@ -62,7 +62,7 @@ namespace BetterExperience.BConfigManager
                     true,
                     new Translator(chinese: "启用更好的体验", english: "Enable BetterExperience"),
                     new Translator(
-                        chinese: "启用更好的体验模组,必须在游戏启动前设置。",
+                        chinese: "启用更好的体验模组，必须在游戏启动前设置。",
                         english: "Enable Better Experience mod, must be set before launching the game."
                     )
                     );
@@ -89,7 +89,7 @@ namespace BetterExperience.BConfigManager
                     false,
                     new Translator(chinese: "启用移除椅子菜单限制", english: "Enable Remove Limit In Bench Menu"),
                     new Translator(
-                        chinese: "启用移除玩家在某些情况下椅子菜单中的某些选项不可用的限制,必须在游戏启动前设置。",
+                        chinese: "启用移除玩家在某些情况下椅子菜单中的某些选项不可用的限制，必须在游戏启动前设置。",
                         english: "Enable the restriction that certain options in the chair menu are unavailable for players under specific circumstances, must be set before launching the game."
                     )
                     );
@@ -119,7 +119,7 @@ namespace BetterExperience.BConfigManager
                     false,
                     new Translator(chinese: "启用调试模式", english: "Enable Debug Mode"),
                     new Translator(
-                        chinese: "启用调试模式,必须在游戏启动前设置。",
+                        chinese: "启用调试模式，必须在游戏启动前设置。",
                         english: "Enable debug mode, must be set before launching the game."
                     )
                     );
@@ -129,7 +129,7 @@ namespace BetterExperience.BConfigManager
                     -1f,
                     new Translator(chinese: "设置战利品掉落倍率", english: "Set Loot Drop Ratio"),
                     new Translator(
-                        chinese: "设置战利品掉落倍率。默认值为 -1，表示不改变。设置为 0 禁用掉落，设置为 n(n >= 1) 为 n 倍掉落。",
+                        chinese: "设置战利品掉落倍率。默认值为 -1，表示不改变。设置为 0 禁用掉落，设置为 n（n >= 1）为 n 倍掉落。",
                         english: "Set loot drop ratio. Default value is -1, which means no change. Set it to 0 to disable loot drop. Set it to n(n >= 1) to multiply loot drop by n."
                     )
                     );

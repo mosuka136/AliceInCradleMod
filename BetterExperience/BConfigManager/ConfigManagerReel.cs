@@ -37,8 +37,8 @@ namespace BetterExperience.BConfigManager
                 false,
                 new Translator(chinese: "启用移除宝箱数量上限", english: "Enable Remove Limit In Treasure Chests"),
                 new Translator(
-                    chinese: "启用移除宝箱99物品数量上限。",
-                    english: "Enable removal of the 99-item limit in treasure chests."
+                    chinese: "启用移除宝箱99物品数量上限，必须在游戏启动前设置。",
+                    english: "Enable removal of the 99-item limit in treasure chests, must be set before launching the game."
                 )
                 );
             SetReelSpeed = Config.Bind(

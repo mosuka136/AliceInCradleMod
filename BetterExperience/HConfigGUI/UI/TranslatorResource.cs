@@ -12,8 +12,8 @@ namespace BetterExperience.HConfigGUI.UI
         public static readonly Translator On = new Translator("开启", "On");
         public static readonly Translator Off = new Translator("关闭", "Off");
         public static readonly Translator Reset = new Translator("重置", "Reset");
-        public static readonly Translator Changed = new Translator("已修改: ", "Changed: ");
-        public static readonly Translator ResetDone = new Translator("已重置: ", "Reset: ");
+        public static readonly Translator Changed = new Translator("已修改：", "Changed: ");
+        public static readonly Translator ResetDone = new Translator("已重置：", "Reset: ");
         public static readonly Translator Record = new Translator("录制", "Record");
         public static readonly Translator Apply = new Translator("应用", "Apply");
         public static readonly Translator Add = new Translator("增加", "Add");
