@@ -57,6 +57,7 @@ namespace BetterExperience.HConfigSpace
 
                 Entry.Value = valueResult.Value;
                 OnValueChanged?.Invoke(this, _value);
+                OnValueChangedBase?.Invoke(this, new EntryValueChangedEventArgs<T>(_value));
             }
         }
 
@@ -81,11 +82,11 @@ namespace BetterExperience.HConfigSpace
         /// 强类型值变化事件。只有新值与旧值不相等时才触发。
         /// </summary>
         public event EventHandler<T> OnValueChanged;
-        public event EventHandler OnValueChangedBase
-        {
-            add => OnValueChanged += (s, e) => value?.Invoke(s, new EntryValueChangedEventArgs<T>(e));
-            remove => OnValueChanged -= (s, e) => value?.Invoke(s, new EntryValueChangedEventArgs<T>(e));
-        }
+
+        /// <summary>
+        /// 非泛型值变化事件，参数为 <see cref="EntryValueChangedEventArgs{T}"/> 包装的强类型新值。
+        /// </summary>
+        public event EventHandler OnValueChangedBase;
 
         public ConfigEntry()
         {
