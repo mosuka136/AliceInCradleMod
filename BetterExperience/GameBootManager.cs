@@ -1,6 +1,8 @@
 using BetterExperience.HClassAttribute;
 using HarmonyLib;
 using System;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -50,19 +52,7 @@ namespace BetterExperience
                     foreach (var method in methods)
                     {
                         registeredMethodCount++;
-                        HLog.Debug($"Register game boot initializer: {method.DeclaringType.FullName}.{method.Name}");
-                        OnGameBoot += () =>
-                        {
-                            try
-                            {
-                                HLog.Debug($"Invoke game boot initializer: {method.DeclaringType.FullName}.{method.Name}");
-                                method.Invoke(null, null);
-                            }
-                            catch (Exception ex)
-                            {
-                                HLog.Error($"Failed to invoke game boot initializer: {method.DeclaringType.FullName}.{method.Name}", ex);
-                            }
-                        };
+                        RegisterMethodOnGameBoot(method);
                     }
 
                     HLog.Info($"Game boot registration completed. Components={registeredComponentCount}, Initializers={registeredMethodCount}");
@@ -76,13 +66,16 @@ namespace BetterExperience
                     if (_initialized)
                         return;
 
-                    try
+                    foreach (var handler in OnGameBoot.GetInvocationList().Cast<Action>())
                     {
-                        OnGameBoot?.Invoke();
-                    }
-                    catch (Exception ex)
-                    {
-                        HLog.Error("An error occurred while invoking OnGameBoot event.", ex);
+                        try
+                        {
+                            handler?.Invoke();
+                        }
+                        catch (Exception ex)
+                        {
+                            HLog.Error("An error occurred while invoking OnGameBoot event.", ex);
+                        }
                     }
 
                     _initialized = true;
@@ -119,7 +112,34 @@ namespace BetterExperience
                 catch (Exception ex)
                 {
                     HLog.Error($"Failed to create game boot component: {type.FullName}", ex);
-                    throw;
+                }
+            };
+        }
+
+        /// <summary>
+        /// 将一个静态方法注册为游戏启动后执行的初始化逻辑。非法方法只记录警告，不抛出异常。
+        /// </summary>
+        /// <param name="method">必须为无参数且返回 <see cref="void"/> 的静态方法。</param>
+        public static void RegisterMethodOnGameBoot(MethodInfo method)
+        {
+            if (method == null)
+            {
+                HLog.Notice("Cannot register a null method for game boot.");
+                return;
+            }
+
+            var methodName = $"{method.DeclaringType.FullName}.{method.Name}";
+            HLog.Debug($"Register game boot method: {methodName}");
+            OnGameBoot += () =>
+            {
+                try
+                {
+                    HLog.Debug($"Invoke game boot method: {methodName}");
+                    method.Invoke(null, null);
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Failed to invoke game boot method: {methodName}", ex);
                 }
             };
         }
