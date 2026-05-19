@@ -152,7 +152,13 @@ namespace BetterExperience.Patches
 
                     var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
                     // Cast Speed 面板值由 castspeed、magic_prepare_speed 和 castspeed_overhold 共同决定。
-                    cane.castspeed = speed / (50f * (0.33f * (cane.magic_prepare_speed - 1f) + 1f) * (0.25f * (cane.castspeed_overhold - 1f) + 1f));
+                    var dividend = 50f * (0.33f * (cane.magic_prepare_speed - 1f) + 1f) * (0.25f * (cane.castspeed_overhold - 1f) + 1f);
+                    if (dividend == 0f)
+                    {
+                        HLog.Notice($"Calculated dividend for cast speed is zero, cannot set cast speed. (magic_prepare_speed: {cane.magic_prepare_speed}, castspeed_overhold: {cane.castspeed_overhold})");
+                        return;
+                    }
+                    cane.castspeed = speed / dividend;
                     skill.Field(EqCane).SetValue(cane);
 
                     HLog.Debug($"Cane cast speed set to: {cane.castspeed})");
@@ -247,8 +253,14 @@ namespace BetterExperience.Patches
                     }
 
                     var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                    var dividend = 55f * cane.mana_splash_ratio * (0.75f * (cane.castspeed_overhold - 1f) + 1f) * (0.5f * (cane.drain_after_lock - 1f) + 1f);
+                    if (dividend == 0f)
+                    {
+                        HLog.Notice($"Calculated dividend for cane retention is zero, cannot set retention. (mana_splash_ratio: {cane.mana_splash_ratio}, castspeed_overhold: {cane.castspeed_overhold}, drain_after_lock: {cane.drain_after_lock})");
+                        return;
+                    }
                     // Retention 面板值还依赖其他法杖内部属性，因此只改写 stability 分量。
-                    cane.stability = retention / (55f * cane.mana_splash_ratio * (0.75f * (cane.castspeed_overhold - 1f) + 1f) * (0.5f * (cane.drain_after_lock - 1f) + 1f));
+                    cane.stability = retention / dividend;
                     skill.Field(EqCane).SetValue(cane);
 
                     HLog.Debug($"Cane retention set to: {retention} (stability: {cane.stability})");
@@ -336,7 +348,13 @@ namespace BetterExperience.Patches
 
                     var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
                     // Short Range 由 near_power 与 near_shotgun_power 共同决定，保持 shotgun 分量不变。
-                    cane.near_power = 4f * (range / (55f * cane.near_shotgun_power) - 1f) + 1f;
+                    var dividend = 55f * cane.near_shotgun_power;
+                    if (dividend == 0f)
+                    {
+                        HLog.Notice($"Calculated dividend for cane short range is zero, cannot set short range. (near_shotgun_power: {cane.near_shotgun_power})");
+                        return;
+                    }
+                    cane.near_power = 4f * (range / dividend - 1f) + 1f;
                     skill.Field(EqCane).SetValue(cane);
 
                     HLog.Debug($"Cane short range set to: {range} (near_power: {cane.near_power})");
