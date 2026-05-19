@@ -187,7 +187,7 @@ namespace BetterExperience.Patches
                 {
                     var image = Traverse.Create(texture.Key).Field<MImage>("LImage_").Value;
                     if (image == null)
-                        return;
+                        continue;
 
                     image.Tx = texture.Value;
                 }
