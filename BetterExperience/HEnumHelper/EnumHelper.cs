@@ -24,8 +24,7 @@ namespace BetterExperience.HEnumHelper
             return _enumValues.GetOrAdd(key, k =>
             {
                 var fieldInfo = k.enumType.GetField(k.enumName);
-                var attribute = fieldInfo.GetCustomAttributes(typeof(TAttribute), false) as TAttribute[];
-                return attribute != null && attribute.Length > 0 ? attribute[0] : null;
+                return fieldInfo?.GetCustomAttributes(typeof(TAttribute), false) is TAttribute[] attribute && attribute.Length > 0 ? attribute[0] : null;
             }) as TAttribute;
         }
 
