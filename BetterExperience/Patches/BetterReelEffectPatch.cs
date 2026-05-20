@@ -62,7 +62,7 @@ namespace BetterExperience.Patches
                     }
 
                     var content = Traverse.Create(Reel).Field("Acontent").GetValue<string[]>();
-                    if (content == null || __instance.IKRow == null ||
+                    if (content == null || __instance.IKRow == null || content.Length == 0 ||
                         !FEnum<ReelExecuter.EFFECT>.TryParse(content[Reel.content_id_dec % content.Length], out var ik))
                     {
                         HLog.Notice("content is null or __instance.IKRow is null or cannot parse effect from content.");
