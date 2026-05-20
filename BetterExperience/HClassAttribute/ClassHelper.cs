@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -44,9 +45,22 @@ namespace BetterExperience.HClassAttribute
         /// </summary>
         public static Type[] GetClasses<TAttribute>(Assembly assembly) where TAttribute : Attribute
         {
-            return assembly.GetTypes()
-                .Where(t => t.GetCustomAttributes(typeof(TAttribute), false).Length > 0)
-                .ToArray();
+            var result = new List<Type>();
+
+            foreach (var type in GetTypeSafe(assembly))
+            {
+                try
+                {
+                    if (type.GetCustomAttributes(typeof(TAttribute), false).Length > 0)
+                        result.Add(type);
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Failed to get attributes from type '{type.FullName}'.", ex);
+                }
+            }
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -54,10 +68,55 @@ namespace BetterExperience.HClassAttribute
         /// </summary>
         public static MethodInfo[] GetMethods<TAttribute>(Assembly assembly) where TAttribute : Attribute
         {
-            return assembly.GetTypes()
-                .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
-                .Where(m => m.GetCustomAttributes(typeof(TAttribute), false).Length > 0)
-                .ToArray();
+            var result = new List<MethodInfo>();
+
+            foreach (var type in GetTypeSafe(assembly))
+            {
+                MethodInfo[] methods;
+
+                try
+                {
+                    methods = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Failed to get methods from type '{type.FullName}'.", ex);
+                    continue;
+                }
+
+                foreach (var method in methods)
+                {
+                    try
+                    {
+                        if (method.GetCustomAttributes(typeof(TAttribute), false).Length > 0)
+                            result.Add(method);
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error($"Failed to get attributes from method '{method.Name}' in type '{type.FullName}'.", ex);
+                    }
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        public static Type[] GetTypeSafe(Assembly assembly)
+        {
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                HLog.Error($"Failed to load some types from assembly '{assembly.FullName}'. Loaded {ex.Types.Length} types, {ex.LoaderExceptions.Length} loader exceptions.", ex);
+                return ex.Types.Where(t => t != null).ToArray();
+            }
+            catch (Exception ex)
+            {
+                HLog.Error($"Failed to load types from assembly '{assembly.FullName}'.", ex);
+                return Array.Empty<Type>();
+            }
         }
 
         /// <summary>

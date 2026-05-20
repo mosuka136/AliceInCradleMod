@@ -31,7 +31,7 @@ namespace BetterExperience
             [HarmonyPatch(typeof(COOK), nameof(COOK.createBinary))]
             public static void SaveGamePrefix()
             {
-                HLog.Info("Detected game saving activation.");
+                HLog.Debug("Detected game saving activation.");
 
                 foreach (var handler in (OnSavingActivated?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action>())
                 {
@@ -50,7 +50,7 @@ namespace BetterExperience
             [HarmonyPatch(typeof(SVD), nameof(SVD.saveBinary))]
             public static void SaveGamePostfix()
             {
-                HLog.Info("Detected game saving completion.");
+                HLog.Debug("Detected game saving completion.");
 
                 foreach (var handler in (OnSavingCompleted?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action>())
                 {
