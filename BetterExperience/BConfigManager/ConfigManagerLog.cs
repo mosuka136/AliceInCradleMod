@@ -48,8 +48,8 @@ namespace BetterExperience.BConfigManager
                 HLog.LogLevel.Info,
                 new Translator(chinese: "日志等级", english: "Log Level"),
                 new Translator(
-                    chinese: "日志等级。默认值为 Warning。",
-                    english: "The log level. Default is Warning."
+                    chinese: "日志等级。默认值为 Info。",
+                    english: "The log level. Default is Info."
                 )
                 );
             BepInExLogLevel = Config.Bind(

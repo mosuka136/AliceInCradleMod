@@ -1,4 +1,3 @@
-using BetterExperience.BConfigManager;
 using BetterExperience.HProvider;
 using System;
 using System.IO;
@@ -47,23 +46,30 @@ namespace BetterExperience
             if (!EnableLog)
                 return;
 
-            if (!Directory.Exists(loggerPath))
+            try
             {
-                Directory.CreateDirectory(loggerPath);
+                if (!Directory.Exists(loggerPath))
+                {
+                    Directory.CreateDirectory(loggerPath);
+                }
+
+                lock (_lock)
+                {
+                    var fullPath = Path.Combine(loggerPath, $"{Path.GetFileNameWithoutExtension(loggerName)}-{DateTime.Now:yyyy-MM-dd-HH}.log");
+                    var fs = new FileStream(fullPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                    _writer = new StreamWriter(fs, Encoding.UTF8) { AutoFlush = true };
+
+                    _writer.WriteLine($"{new string('-', 50)}LOG-START-{DateTime.Now}{new string('-', 50)}");
+                }
+
+                if (_unityProvider != null)
+                {
+                    _unityProvider.UnityQuitting += Shutdown;
+                }
             }
-
-            lock (_lock)
+            catch
             {
-                var fullPath = Path.Combine(loggerPath, $"{Path.GetFileNameWithoutExtension(loggerName)}-{DateTime.Now:yyyy-MM-dd-HH}.log");
-                var fs = new FileStream(fullPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-                _writer = new StreamWriter(fs, Encoding.UTF8) { AutoFlush = true };
 
-                _writer.WriteLine($"{new string('-', 50)}LOG-START-{DateTime.Now}{new string('-', 50)}");
-            }
-
-            if (_unityProvider != null)
-            {
-                _unityProvider.UnityQuitting += Shutdown;
             }
         }
 
@@ -104,7 +110,10 @@ namespace BetterExperience
                 {
                     _writer.WriteLine();
                 }
-                catch { }
+                catch
+                {
+
+                }
             }
         }
 
@@ -116,14 +125,14 @@ namespace BetterExperience
             string file,
             int line)
         {
+            if (!EnableLog)
+                return;
+
+            if (_writer == null)
+                return;
+
             try
             {
-                if (!EnableLog)
-                    return;
-
-                if (_writer == null)
-                    return;
-
                 var sb = new StringBuilder(256);
 
                 int id = System.Threading.Interlocked.Increment(ref _seq);
@@ -165,7 +174,10 @@ namespace BetterExperience
                     AdditionalLog(logLevel, final);
                 }
             }
-            catch { }
+            catch
+            {
+
+            }
         }
 
         /// <summary>
@@ -173,30 +185,37 @@ namespace BetterExperience
         /// </summary>
         public static void AdditionalLog(LogLevel level, string msg)
         {
-            if (_bepLog == null)
+            try
             {
-                _unityProvider?.DebugLog(msg);
-            }
-            else
-            {
-                switch (level)
+                if (_bepLog == null)
                 {
-                    case LogLevel.Error:
-                        _bepLog.LogError(msg);
-                        break;
-                    case LogLevel.Warning:
-                        _bepLog.LogWarning(msg);
-                        break;
-                    case LogLevel.Info:
-                        _bepLog.LogInfo(msg);
-                        break;
-                    case LogLevel.Debug:
-                        _bepLog.LogDebug(msg);
-                        break;
-                    default:
-                        _bepLog.LogInfo(msg);
-                        break;
+                    _unityProvider?.DebugLog(msg);
                 }
+                else
+                {
+                    switch (level)
+                    {
+                        case LogLevel.Error:
+                            _bepLog.LogError(msg);
+                            break;
+                        case LogLevel.Warning:
+                            _bepLog.LogWarning(msg);
+                            break;
+                        case LogLevel.Info:
+                            _bepLog.LogInfo(msg);
+                            break;
+                        case LogLevel.Debug:
+                            _bepLog.LogDebug(msg);
+                            break;
+                        default:
+                            _bepLog.LogInfo(msg);
+                            break;
+                    }
+                }
+            }
+            catch
+            {
+
             }
         }
 
@@ -218,7 +237,10 @@ namespace BetterExperience
                     return scene;
                 }
             }
-            catch { return "?"; }
+            catch
+            {
+                return "?";
+            }
         }
 
         /// <summary>
