@@ -66,7 +66,7 @@ namespace BetterExperience
                     if (_initialized)
                         return;
 
-                    foreach (var handler in OnGameBoot.GetInvocationList().Cast<Action>())
+                    foreach (var handler in (OnGameBoot?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action>())
                     {
                         try
                         {

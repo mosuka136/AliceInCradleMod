@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Runtime.Loader;
 using UnityEngine;
 
 namespace BetterExperience.Test
@@ -11,19 +10,18 @@ namespace BetterExperience.Test
         {
             // Arrange
             var invocationCount = 0;
+            using var scope = GameBootManagerStateScope.Create();
+            Action handler = () => invocationCount++;
 
-            using (var proxy = IsolatedGameBootManagerProxy.Create())
-            {
-                proxy.AddOnGameBootHandler(() => invocationCount++);
-                proxy.RegisterComponentOnGameBoot(typeof(string));
+            GameBootManager.OnGameBoot += handler;
+            GameBootManager.RegisterComponentOnGameBoot(typeof(string));
 
-                // Act
-                var exception = Record.Exception(() => proxy.Postfix());
+            // Act
+            var exception = Record.Exception(GameBootManager.LoadScenePatch.Postfix);
 
-                // Assert
-                Assert.Null(exception);
-                Assert.Equal(1, invocationCount);
-            }
+            // Assert
+            Assert.Null(exception);
+            Assert.Equal(1, invocationCount);
         }
 
         [Fact]
@@ -31,149 +29,95 @@ namespace BetterExperience.Test
         {
             // Arrange
             var invocationCount = 0;
+            using var scope = GameBootManagerStateScope.Create();
+            Action handler = () => invocationCount++;
 
-            using (var proxy = IsolatedGameBootManagerProxy.Create())
-            {
-                proxy.AddOnGameBootHandler(() => invocationCount++);
-                proxy.RegisterComponentOnGameBoot(typeof(AbstractTestComponent));
+            GameBootManager.OnGameBoot += handler;
+            GameBootManager.RegisterComponentOnGameBoot(typeof(AbstractTestComponent));
 
-                // Act
-                var exception = Record.Exception(() => proxy.Postfix());
+            // Act
+            var exception = Record.Exception(GameBootManager.LoadScenePatch.Postfix);
 
-                // Assert
-                Assert.Null(exception);
-                Assert.Equal(1, invocationCount);
-            }
+            // Assert
+            Assert.Null(exception);
+            Assert.Equal(1, invocationCount);
         }
 
         [Fact]
-        public void LoadScenePatch_PrefixAndPostfix_CalledTwiceInvokesCustomHandlerOnlyOnce()
+        public void LoadScenePatch_Postfix_CalledTwiceInvokesCustomHandlerOnlyOnce()
         {
             // Arrange
             var invocationCount = 0;
+            using var scope = GameBootManagerStateScope.Create();
+            Action handler = () => invocationCount++;
 
-            using (var proxy = IsolatedGameBootManagerProxy.Create())
+            GameBootManager.OnGameBoot += handler;
+
+            // Act
+            var exception = Record.Exception(() =>
             {
-                proxy.AddOnGameBootHandler(() => invocationCount++);
+                GameBootManager.LoadScenePatch.Postfix();
+                GameBootManager.LoadScenePatch.Postfix();
+            });
 
-                // Act
-                var exception = Record.Exception(() =>
-                {
-                    proxy.Prefix();
-                    proxy.Postfix();
-                    proxy.Prefix();
-                    proxy.Postfix();
-                });
-
-                // Assert
-                Assert.Null(exception);
-                Assert.Equal(1, invocationCount);
-            }
+            // Assert
+            Assert.Null(exception);
+            Assert.Equal(1, invocationCount);
         }
 
         private abstract class AbstractTestComponent : MonoBehaviour
         {
         }
 
-        private sealed class IsolatedGameBootManagerProxy : IDisposable
+        private sealed class GameBootManagerStateScope : IDisposable
         {
-            private readonly IsolatedAssemblyContext _context;
-            private readonly EventInfo _onGameBootEvent;
-            private readonly MethodInfo _registerComponentOnGameBootMethod;
-            private readonly MethodInfo _prefixMethod;
-            private readonly MethodInfo _postfixMethod;
+            private static readonly FieldInfo InitializedField = GetRequiredField("_initialized");
+            private static readonly FieldInfo OnGameBootField = GetRequiredField("OnGameBoot");
 
-            private IsolatedGameBootManagerProxy(
-                IsolatedAssemblyContext context,
-                EventInfo onGameBootEvent,
-                MethodInfo registerComponentOnGameBootMethod,
-                MethodInfo prefixMethod,
-                MethodInfo postfixMethod)
+            private readonly bool _originalEnableLog;
+            private readonly bool _originalInitialized;
+            private readonly Action _originalOnGameBoot;
+
+            private GameBootManagerStateScope(
+                bool originalEnableLog,
+                bool originalInitialized,
+                Action originalOnGameBoot)
             {
-                _context = context;
-                _onGameBootEvent = onGameBootEvent;
-                _registerComponentOnGameBootMethod = registerComponentOnGameBootMethod;
-                _prefixMethod = prefixMethod;
-                _postfixMethod = postfixMethod;
+                _originalEnableLog = originalEnableLog;
+                _originalInitialized = originalInitialized;
+                _originalOnGameBoot = originalOnGameBoot;
             }
 
-            public static IsolatedGameBootManagerProxy Create()
+            public static GameBootManagerStateScope Create()
             {
-                var assemblyPath = typeof(GameBootManager).Assembly.Location;
-                var context = new IsolatedAssemblyContext(assemblyPath);
-                var assembly = context.LoadFromAssemblyPath(assemblyPath);
-                var gameBootManagerType = assembly.GetType("BetterExperience.GameBootManager", throwOnError: true);
-                var loadScenePatchType = gameBootManagerType.GetNestedType("LoadScenePatch", BindingFlags.Public);
-                var onGameBootEvent = gameBootManagerType.GetEvent("OnGameBoot", BindingFlags.Public | BindingFlags.Static);
-                var registerComponentOnGameBootMethod = gameBootManagerType.GetMethod("RegisterComponentOnGameBoot", BindingFlags.Public | BindingFlags.Static);
-                var prefixMethod = loadScenePatchType.GetMethod("Prefix", BindingFlags.Public | BindingFlags.Static);
-                var postfixMethod = loadScenePatchType.GetMethod("Postfix", BindingFlags.Public | BindingFlags.Static);
+                var scope = new GameBootManagerStateScope(
+                    HLog.EnableLog,
+                    (bool)InitializedField.GetValue(null),
+                    (Action)OnGameBootField.GetValue(null));
 
-                return new IsolatedGameBootManagerProxy(
-                    context,
-                    onGameBootEvent,
-                    registerComponentOnGameBootMethod,
-                    prefixMethod,
-                    postfixMethod);
-            }
+                HLog.EnableLog = false;
+                InitializedField.SetValue(null, false);
+                OnGameBootField.SetValue(null, null);
 
-            public void AddOnGameBootHandler(Action handler)
-            {
-                _onGameBootEvent.AddEventHandler(null, handler);
-            }
-
-            public void RegisterComponentOnGameBoot(Type type)
-            {
-                _registerComponentOnGameBootMethod.Invoke(null, new object[] { type });
-            }
-
-            public void Prefix()
-            {
-                _prefixMethod.Invoke(null, null);
-            }
-
-            public void Postfix()
-            {
-                _postfixMethod.Invoke(null, null);
+                return scope;
             }
 
             public void Dispose()
             {
-                _context.Unload();
-            }
-        }
-
-        private sealed class IsolatedAssemblyContext : AssemblyLoadContext
-        {
-            private readonly string _assemblyDirectory;
-            private readonly string _targetAssemblyName;
-
-            public IsolatedAssemblyContext(string assemblyPath)
-                : base(true)
-            {
-                _assemblyDirectory = Path.GetDirectoryName(assemblyPath);
-                _targetAssemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
+                OnGameBootField.SetValue(null, _originalOnGameBoot);
+                InitializedField.SetValue(null, _originalInitialized);
+                HLog.EnableLog = _originalEnableLog;
             }
 
-            protected override Assembly Load(AssemblyName assemblyName)
+            private static FieldInfo GetRequiredField(string fieldName)
             {
-                if (!string.Equals(assemblyName.Name, _targetAssemblyName, StringComparison.Ordinal))
+                var field = typeof(GameBootManager).GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Static);
+                if (field == null)
                 {
-                    var sharedAssembly = AssemblyLoadContext.Default.Assemblies.FirstOrDefault(
-                        a => string.Equals(a.GetName().Name, assemblyName.Name, StringComparison.Ordinal));
-                    if (sharedAssembly != null)
-                    {
-                        return sharedAssembly;
-                    }
+                    throw new InvalidOperationException($"Field '{fieldName}' was not found on {typeof(GameBootManager).FullName}.");
                 }
 
-                var candidatePath = Path.Combine(_assemblyDirectory, assemblyName.Name + ".dll");
-                if (File.Exists(candidatePath))
-                {
-                    return LoadFromAssemblyPath(candidatePath);
-                }
-
-                return null;
+                return field;
             }
         }
     }
