@@ -85,7 +85,9 @@ namespace BetterExperience.HConfigSpace
         /// <returns>编码与写入是否成功；失败时记录日志并返回 <c>false</c>。</returns>
         public bool Write()
         {
-            var tmpFilePath = FilePath + ".tmp";
+            var directoryPath = string.Empty;
+            var tmpFilePath = string.Empty;
+
             try
             {
                 var encodeResult = FileSheet.EncodeSheet();
@@ -96,16 +98,19 @@ namespace BetterExperience.HConfigSpace
                     return false;
                 }
 
-                var directoryPath = Path.GetDirectoryName(FilePath);
+                directoryPath = Path.GetDirectoryName(FilePath);
                 if (!string.IsNullOrWhiteSpace(directoryPath) && !Directory.Exists(directoryPath))
                     Directory.CreateDirectory(directoryPath);
+
+                tmpFilePath = Path.Combine(directoryPath ?? string.Empty, $"{Path.GetFileName(FilePath)}.{Guid.NewGuid():N}.tmp");
+                var backupFilePath = FilePath + ".bak";
 
                 File.WriteAllText(tmpFilePath, encodeResult.Value);
 
                 if (File.Exists(FilePath))
-                    File.Delete(FilePath);
-
-                File.Move(tmpFilePath, FilePath);
+                    File.Replace(tmpFilePath, FilePath, backupFilePath, true);
+                else
+                    File.Move(tmpFilePath, FilePath);
 
                 return true;
             }
@@ -113,6 +118,18 @@ namespace BetterExperience.HConfigSpace
             {
                 HLog.Error($"Failed to write config file: {FilePath}.", ex);
                 return false;
+            }
+            finally
+            {
+                try
+                {
+                    if (File.Exists(tmpFilePath))
+                        File.Delete(tmpFilePath);
+                }
+                catch
+                {
+
+                }
             }
         }
 
