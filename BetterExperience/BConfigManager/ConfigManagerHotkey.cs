@@ -44,7 +44,7 @@ namespace BetterExperience.BConfigManager
                              "- GamepadDpadUp / GamepadDpadDown / GamepadDpadLeft / GamepadDpadRight\n" +
                              "- GamepadLS / GamepadRS\n" +
                              "- 也接受别名：South / East / West / North、Cross / Circle / Square / Triangle、Select / LeftShoulder / RightShoulder / LeftStick / RightStick\n" +
-                             "- Gamepad 前缀可省略，例如 A 与 GamepadA 等价\n" +
+                             "- 为避免与键盘键名冲突，建议手柄按键始终写成带 Gamepad 前缀的形式，例如 GamepadA\n" +
                              "\n" +
                              "示例：\n" +
                              "- Ctrl+F\n" +
@@ -70,7 +70,7 @@ namespace BetterExperience.BConfigManager
                              "- GamepadDpadUp / GamepadDpadDown / GamepadDpadLeft / GamepadDpadRight\n" +
                              "- GamepadLS / GamepadRS\n" +
                              "- Also accepts aliases: South / East / West / North, Cross / Circle / Square / Triangle, Select / LeftShoulder / RightShoulder / LeftStick / RightStick\n" +
-                             "- The Gamepad prefix is optional, e.g. A and GamepadA are equivalent\n" +
+                             "- To avoid conflicts with keyboard key names, gamepad buttons should be written with the Gamepad prefix, e.g. GamepadA\n" +
                              "\n" +
                              "Examples:\n" +
                              "- Ctrl+F\n" +
