@@ -97,7 +97,10 @@ namespace BetterExperience.HConfigGUI
             foreach (var entry in entriesToUpdate)
             {
                 if (entry.CacheValue == null)
+                {
+                    _entryDelayApplyTime.Remove(entry);
                     continue;
+                }
 
                 entry.Value = entry.CacheValue;
                 _entryDelayApplyTime.Remove(entry);
