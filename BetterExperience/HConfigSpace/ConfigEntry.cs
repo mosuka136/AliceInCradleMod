@@ -56,8 +56,16 @@ namespace BetterExperience.HConfigSpace
                 _value = value;
 
                 Entry.Value = valueResult.Value;
-                OnValueChanged?.Invoke(this, _value);
-                OnValueChangedBase?.Invoke(this, new EntryValueChangedEventArgs<T>(_value));
+
+                try
+                {
+                    OnValueChanged?.Invoke(this, _value);
+                    OnValueChangedBase?.Invoke(this, new EntryValueChangedEventArgs<T>(_value));
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Exception in value changed event for key: {Key}, value: {value}.", ex);
+                }
             }
         }
 
