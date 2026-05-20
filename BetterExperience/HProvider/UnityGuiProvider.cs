@@ -21,26 +21,6 @@ namespace BetterExperience.HProvider
             set => GUI.color = value;
         }
 
-        public bool Contains(Vector2 point)
-        {
-            return false;
-        }
-
-        /// <summary>
-        /// 可选的默认样式。当前未在构造函数中初始化，调用方不应依赖它。
-        /// </summary>
-        public GUIStyle Style { get; }
-
-        public Vector2 CalcSize(GUIContent content)
-        {
-            return Style.CalcSize(content);
-        }
-
-        public float CalcHeight(GUIContent content, float width)
-        {
-            return Style.CalcHeight(content, width);
-        }
-
         public void BeginArea(Rect screenRect)
         {
             GUILayout.BeginArea(screenRect);
