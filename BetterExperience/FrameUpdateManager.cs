@@ -1,5 +1,6 @@
 using BetterExperience.HClassAttribute;
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace BetterExperience
@@ -28,13 +29,16 @@ namespace BetterExperience
 
             private void Update()
             {
-                try
+                foreach (var handler in (OnFrameUpdate?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action>())
                 {
-                    OnFrameUpdate?.Invoke();
-                }
-                catch (Exception ex)
-                {
-                    HLog.Error("An error occurred while invoking OnFrameUpdate event.", ex);
+                    try
+                    {
+                        handler?.Invoke();
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error("An error occurred while invoking OnFrameUpdate event.", ex);
+                    }
                 }
             }
         }

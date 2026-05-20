@@ -1,6 +1,7 @@
 using HarmonyLib;
 using nel;
 using System;
+using System.Linq;
 
 namespace BetterExperience
 {
@@ -32,13 +33,16 @@ namespace BetterExperience
             {
                 HLog.Info("Detected game saving activation.");
 
-                try
+                foreach (var handler in (OnSavingActivated?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action>())
                 {
-                    OnSavingActivated?.Invoke();
-                }
-                catch (Exception ex)
-                {
-                    HLog.Error("An error occurred while invoking OnSavingActivated event.", ex);
+                    try
+                    {
+                        handler?.Invoke();
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error("An error occurred while invoking OnSavingActivated event.", ex);
+                    }
                 }
             }
 
@@ -48,13 +52,16 @@ namespace BetterExperience
             {
                 HLog.Info("Detected game saving completion.");
 
-                try
+                foreach (var handler in (OnSavingCompleted?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action>())
                 {
-                    OnSavingCompleted?.Invoke();
-                }
-                catch (Exception ex)
-                {
-                    HLog.Error("An error occurred while invoking OnSavingCompleted event.", ex);
+                    try
+                    {
+                        handler?.Invoke();
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error("An error occurred while invoking OnSavingCompleted event.", ex);
+                    }
                 }
             }
         }

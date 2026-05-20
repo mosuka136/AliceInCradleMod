@@ -1,6 +1,7 @@
 using evt;
 using HarmonyLib;
 using System;
+using System.Linq;
 
 namespace BetterExperience
 {
@@ -30,13 +31,16 @@ namespace BetterExperience
 
                 HLog.Info("Detected game save/load completion event.");
 
-                try
+                foreach (var handler in (OnGameSaveLoadCompleted?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action>())
                 {
-                    OnGameSaveLoadCompleted?.Invoke();
-                }
-                catch (Exception ex)
-                {
-                    HLog.Error("An error occurred while invoking OnGameSaveLoadCompleted event.", ex);
+                    try
+                    {
+                        handler?.Invoke();
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error("An error occurred while invoking OnGameSaveLoadCompleted event.", ex);
+                    }
                 }
             }
         }
