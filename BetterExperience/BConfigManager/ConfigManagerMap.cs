@@ -43,8 +43,8 @@ namespace BetterExperience.BConfigManager
                 false,
                 new Translator(chinese: "启用移除木偶商人限制", english: "Enable Remove Limit In Puppet NPC Defeated"),
                 new Translator(
-                    chinese: "启用移除木偶商人在复仇战未完成前无法生成的限制。",
-                    english: "Enable the restriction that prevents the Puppet Merchant from spawning before the revenge quest is completed."
+                    chinese: "移除木偶商人在复仇战未完成前无法生成的限制。",
+                    english: "Remove the restriction that prevents the Puppet Merchant from spawning before the revenge quest is completed."
                 )
                 );
             EnableFastTravelAnywhere = Config.Bind(

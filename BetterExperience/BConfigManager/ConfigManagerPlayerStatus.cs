@@ -162,7 +162,7 @@ namespace BetterExperience.BConfigManager
                 new Translator(chinese: "启用挤压伤害", english: "Enable Press Damage"),
                 new Translator(
                     chinese: "启用挤压伤害。关闭后，玩家将不会受到挤压伤害。",
-                    english: "Enable falling to ground. When disabled, players will not fall to the ground."
+                    english: "Enable press damage. When disabled, players will not take press damage."
                 )
                 );
             EnableFallingToGround = Config.Bind(
