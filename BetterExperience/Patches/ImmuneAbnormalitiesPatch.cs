@@ -16,7 +16,8 @@ namespace BetterExperience.Patches
         [HarmonyPatch]
         public class ImmuneAbnormalitiesPatch
         {
-            private static bool _isLoading = false;
+            private static int _loadingDepth = 0;
+            private static bool IsLoading => _loadingDepth > 0;
 
             // 分项免疫开关映射到游戏 SER 枚举，便于 Add 前缀统一判断。
             private static readonly IDictionary<SER, Func<bool>> ImmuneAbnormalityConfigMap = new Dictionary<SER, Func<bool>>
@@ -56,7 +57,7 @@ namespace BetterExperience.Patches
             {
                 try
                 {
-                    if (!_isLoading && (ConfigManager.EnableImmuneAbnormalities.Value || (ImmuneAbnormalityConfigMap.TryGetValue(ser, out var isEnabled) && isEnabled())))
+                    if (!IsLoading && (ConfigManager.EnableImmuneAbnormalities.Value || (ImmuneAbnormalityConfigMap.TryGetValue(ser, out var isEnabled) && isEnabled())))
                     {
                         HLog.Debug($"{nameof(ImmuneAbnormalitiesPatch)} applied for {ser}.");
                         return false;
@@ -74,14 +75,15 @@ namespace BetterExperience.Patches
             [HarmonyPatch(typeof(M2Ser), nameof(M2Ser.readBinaryFrom))]
             public static void ReadBinaryFromPrefix()
             {
-                _isLoading = true;
+                _loadingDepth++;
             }
 
-            [HarmonyPostfix]
+            [HarmonyFinalizer]
             [HarmonyPatch(typeof(M2Ser), nameof(M2Ser.readBinaryFrom))]
-            public static void ReadBinaryFromPostfix()
+            public static void ReadBinaryFromFinalizer()
             {
-                _isLoading = false;
+                if (_loadingDepth > 0)
+                    _loadingDepth--;
             }
         }
     }
