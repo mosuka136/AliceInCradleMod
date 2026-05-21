@@ -89,7 +89,8 @@ namespace BetterExperience
             }
             catch (Exception ex)
             {
-                HLog.Error("Failed to patch", ex);
+                Logger.LogError($"Failed to patch!\n{ex}");
+                HLog.Error("Failed to patch!", ex);
             }
         }
 
@@ -103,6 +104,9 @@ namespace BetterExperience
 
         private void DealInputReloadConfig()
         {
+            if (ConfigManager.ReloadConfigHotkey == null)
+                return;
+
             if (ConfigManager.ReloadConfigHotkey.Value.WasPressedThisFrame())
             {
                 try

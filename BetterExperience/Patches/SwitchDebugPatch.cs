@@ -14,25 +14,32 @@ namespace BetterExperience.Patches
         [HarmonyPatch]
         public class SwitchDebugPatch
         {
+            private static readonly Traverse<bool> DebugAnnounceField = Traverse.Create(typeof(X)).Field<bool>("DEBUGANNOUNCE");
+            private static readonly Traverse<bool> DebugTimestampField = Traverse.Create(typeof(X)).Field<bool>("DEBUGTIMESTAMP");
+
             [HarmonyPrefix]
             [HarmonyPatch(typeof(X), nameof(X.init1))]
             public static void Prefix()
             {
+                if (DebugAnnounceField == null || DebugTimestampField == null)
+                {
+                    HLog.Error($"Failed to access debug fields in {nameof(SwitchDebugPatch)}.");
+                    return;
+                }
+
                 try
                 {
                     if (ConfigManager.EnableDebugMode.Value)
                     {
-                        X.DEBUGANNOUNCE = true;
-                        X.DEBUGTIMESTAMP = true;
+                        DebugAnnounceField.Value = true;
+                        DebugTimestampField.Value = true;
                     }
                     else
                     {
-                        X.DEBUGTIMESTAMP = false;
+                        DebugTimestampField.Value = false;
                     }
 
-                    HLog.Debug(ConfigManager.EnableDebugMode.Value
-                        ? "Debug mode enabled."
-                        : "Debug mode disabled.");
+                    HLog.Debug(ConfigManager.EnableDebugMode.Value ? "Debug mode enabled." : "Debug mode disabled.");
                 }
                 catch (Exception ex)
                 {
