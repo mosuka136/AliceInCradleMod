@@ -119,8 +119,7 @@ namespace BetterExperience.Patches
                     if (!ConfigManager.EnableReplaceTexture.Value)
                         return;
 
-                    if (!_pictureTexture.ContainsKey(asset_key))
-                        _pictureTexture[asset_key] = __result;
+                    _pictureTexture[asset_key] = __result;
 
                     HLog.Debug($"Try replace texture for {asset_key}.");
                     TryReplace(__result, asset_key);
@@ -180,7 +179,14 @@ namespace BetterExperience.Patches
             {
                 foreach (var texture in _originalSpineTexture)
                 {
-                    TryReplace(texture.Key, texture.Value);
+                    try
+                    {
+                        TryReplace(texture.Key, texture.Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        HLog.Error($"Error restoring original spine texture for {texture.Key.MtiImage0.Image.name}", ex);
+                    }
                 }
 
                 foreach (var texture in _originalPictureTexture)
