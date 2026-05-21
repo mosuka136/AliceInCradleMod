@@ -1,5 +1,6 @@
 using BetterExperience.BConfigManager;
 using HarmonyLib;
+using m2d;
 using nel;
 using nel.gm;
 using System;
@@ -12,7 +13,7 @@ namespace BetterExperience.Patches
     {
         /// <summary>
         /// 放宽快速传送的地图和长椅限制。
-        /// 游戏仍需要至少缓存过一次长椅对象，补丁会复用最近一次靠近长椅时取得的 BenchChip。
+        /// 游戏仍需要至少缓存过一次长椅对象，补丁会复用最近一次创建的 BenchChip。
         /// </summary>
         [HarmonyPatch]
         public class RemoveFastTravelLimitPatch
@@ -23,7 +24,7 @@ namespace BetterExperience.Patches
             [HarmonyPatch]
             public class RemoveFastTravelMapLimitPatch
             {
-                private static IEnumerable<MethodBase> TargetMethods()
+                public static IEnumerable<MethodBase> TargetMethods()
                 {
                     var type = AccessTools.TypeByName("nel.gm.UiGMCMap");
                     if (type == null)
@@ -113,19 +114,14 @@ namespace BetterExperience.Patches
             public class GetBenchChipPatch
             {
                 [HarmonyPostfix]
-                [HarmonyPatch(typeof(PR), nameof(PR.getNearBench))]
-                public static void Postfix(ref NelChipBench __result)
+                [HarmonyPatch(typeof(NelChipBench), MethodType.Constructor)]
+                [HarmonyPatch(new Type[] { typeof(M2MapLayer), typeof(int), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(M2ChipImage) })]
+                public static void Postfix(NelChipBench __instance)
                 {
                     try
                     {
-                        if (!ConfigManager.EnableFastTravelAnywhere.Value)
-                            return;
-
-                        if (__result != null)
-                        {
-                            _cachedBenchChip = __result;
-                            HLog.Debug($"{nameof(GetBenchChipPatch)} applied. Cached bench chip updated: {__result.GetType().FullName}");
-                        }
+                        _cachedBenchChip = __instance;
+                        HLog.Debug($"Cached bench chip updated: {__instance.GetType().FullName}");
                     }
                     catch (Exception ex)
                     {

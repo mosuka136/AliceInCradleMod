@@ -56,8 +56,8 @@ namespace BetterExperience.BConfigManager
                     false,
                     new Translator(chinese: "启用随时快速传送", english: "Enable Fast Travel Anywhere"),
                     new Translator(
-                        chinese: "启用随时快速传送。它将允许玩家在地图上的任何地方快速传送。使用前至少要进行一次正常传送。",
-                        english: "Enable fast travel anywhere. It will allow players to fast travel anywhere on the map. At least one normal transmission must be performed before use."
+                        chinese: "启用随时快速传送。它将允许玩家在地图上的任何地方快速传送。",
+                        english: "Enable fast travel anywhere. It will allow players to fast travel anywhere on the map."
                     )
                     );
                 EnableWormTrap = Config.Bind(

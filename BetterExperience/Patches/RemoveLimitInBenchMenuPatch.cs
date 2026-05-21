@@ -18,7 +18,7 @@ namespace BetterExperience.Patches
          [HarmonyPatch]
          public class RemoveLimitInBenchMenuPatch
          {
-            static IEnumerable<MethodBase> TargetMethods()
+            public static IEnumerable<MethodBase> TargetMethods()
             {
                 var t = typeof(UiBenchMenu).GetNestedType("BenchCmd", BindingFlags.NonPublic);
                 if (t == null)
@@ -39,7 +39,7 @@ namespace BetterExperience.Patches
                     HLog.Error("Failed to find constructor for UiBenchMenu.BenchCmd");
             }
 
-            static void Prefix(string _key, ref Func<PR, bool> _FnCanUse, bool _can_set_auto, ref bool _only_in_safearea)
+            public static void Prefix(string _key, ref Func<PR, bool> _FnCanUse, bool _can_set_auto, ref bool _only_in_safearea)
             {
                 try
                 {
