@@ -1,5 +1,6 @@
 using BetterExperience.BConfigManager;
 using BetterExperience.HClassAttribute;
+using HarmonyLib;
 using nel;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,12 @@ namespace BetterExperience.BPatchGUI
 
         private void Awake()
         {
+            if (AccessTools.TypeByName("nel.ENATTR") == null)
+            {
+                HLog.Error("BattleStatisticsGUI requires nel.ENATTR type, but it was not found.");
+                Destroy(this);
+            }
+
             _windowRect = new Rect(Screen.width - _windowMargin, (Screen.height - _collapsedHeight) / 2f, _collapsedWidth, _collapsedHeight);
             ClampWindowToScreen();
         }

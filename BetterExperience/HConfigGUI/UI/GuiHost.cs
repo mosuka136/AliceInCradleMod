@@ -25,16 +25,24 @@ namespace BetterExperience.HConfigGUI.UI
 
         private void Awake()
         {
-            _viewModel = new ViewModel();
-            _sheetRenderer = new SheetRenderer(_viewModel);
-            _toastRenderer = new ToastRenderer(_viewModel);
-            _tooltipRenderer = new TooltipRenderer(_viewModel);
+            try
+            {
+                _viewModel = new ViewModel();
+                _sheetRenderer = new SheetRenderer(_viewModel);
+                _toastRenderer = new ToastRenderer(_viewModel);
+                _tooltipRenderer = new TooltipRenderer(_viewModel);
 
-            float width = Screen.width * 0.3f;
-            float height = Screen.height * 0.8f;
-            _viewModel.WindowRect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
+                float width = Screen.width * 0.3f;
+                float height = Screen.height * 0.8f;
+                _viewModel.WindowRect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
 
-            HLog.Debug($"Config GUI host created. WindowId={WindowID}");
+                HLog.Debug($"Config GUI host created. WindowId={WindowID}");
+            }
+            catch (Exception ex)
+            {
+                HLog.Error("Failed to create Config GUI host.", ex);
+                Destroy(this);
+            }
         }
 
         private void Update()

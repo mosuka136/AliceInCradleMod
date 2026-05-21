@@ -35,6 +35,11 @@ namespace BetterExperience
                     {
                         handler?.Invoke();
                     }
+                    catch (MissingMethodException)
+                    {
+                        OnFrameUpdate -= handler;
+                        HLog.Warn($"Removed invalid OnFrameUpdate handler: {handler.Method.DeclaringType?.FullName}.{handler.Method.Name}");
+                    }
                     catch (Exception ex)
                     {
                         HLog.Error("An error occurred while invoking OnFrameUpdate event.", ex);

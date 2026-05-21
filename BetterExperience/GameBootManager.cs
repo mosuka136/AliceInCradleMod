@@ -32,6 +32,7 @@ namespace BetterExperience
         [HarmonyPatch(typeof(SceneManager), "Internal_SceneLoaded")]
         public class LoadScenePatch
         {
+            [HarmonyPrefix]
             public static void Prefix()
             {
                 lock (_lock)
@@ -59,6 +60,7 @@ namespace BetterExperience
                 }
             }
 
+            [HarmonyPostfix]
             public static void Postfix()
             {
                 lock (_lock)
