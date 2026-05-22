@@ -126,6 +126,7 @@ namespace BetterExperience.HConfigGUI.UI
             _viewModel.OpenedEnumEntry = null;
             _viewModel.OpenedHotkeyEntry = null;
             _viewModel.RecordingHotkey = null;
+            _viewModel.IsUserInteracting = false;
             _hasDraggedWindowSinceOpen = false;
 
             HLog.Debug("Config GUI hidden.");

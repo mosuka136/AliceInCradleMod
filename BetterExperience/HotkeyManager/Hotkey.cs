@@ -56,20 +56,13 @@ namespace BetterExperience.HotkeyManager
         public Hotkey(Hotkey hotkey, UnityProvider unityService)
         {
             UnityService = unityService;
-            Hotkeys = hotkey.Hotkeys.Select(h => new HotkeyChord(UnityService, h.MainKey, h.Modifiers.ToArray())).ToList();
+            Hotkeys = hotkey.Hotkeys.Select(h => h.Clone() as HotkeyChord).ToList();
         }
 
         public Hotkey(UnityProvider unityService, params HotkeyChord[] hotkeys)
         {
             UnityService = unityService;
             Hotkeys = hotkeys.ToList();
-        }
-
-        public Hotkey(UnityProvider unityService, IHotkeyTrigger main, params IHotkeyTrigger[] modifiers)
-        {
-            UnityService = unityService;
-            var chord = new HotkeyChord(UnityService, main, modifiers);
-            Hotkeys = new List<HotkeyChord> { chord };
         }
 
         public bool WasPressedThisFrame()
@@ -128,34 +121,37 @@ namespace BetterExperience.HotkeyManager
         /// <summary>
         /// 从配置文本解析热键。
         /// </summary>
-        /// <param name="text">逗号分隔的组合文本。</param>
-        /// <returns>解析是否成功；失败时当前列表可能已经被清空或部分填充。</returns>
+        /// <param name="text"><see cref="Separator"/> 分隔的组合文本。</param>
+        /// <returns>解析是否成功。</returns>
         public bool TryParse(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
             {
-                HLog.Debug("Failed to parse hotkey: input is empty.");
+                HLog.Warn("Failed to parse hotkey: input is empty.");
                 return false;
             }
 
-            Hotkeys.Clear();
-
+            var newHotkeys = new List<HotkeyChord>();
             var chordStrings = text.Split(Separator);
             foreach (var ch in chordStrings)
             {
                 var chordStr = ch.Trim();
                 if (string.IsNullOrWhiteSpace(chordStr))
                     continue;
-
-                var chord = new HotkeyChord(UnityService);
-                if (!chord.TryParse(chordStr))
+                
+                var chordResult = HotkeyChord.TryParse(chordStr, UnityService);
+                if (!chordResult.Success)
                 {
-                    HLog.Debug($"Failed to parse hotkey chord: {chordStr}");
+                    foreach (var error in chordResult.Errors)
+                    {
+                        HLog.Warn($"Failed to parse hotkey chord '{chordStr}': {error}");
+                    }
                     return false;
                 }
-                Hotkeys.Add(chord);
+                newHotkeys.Add(chordResult.Value);
             }
 
+            Hotkeys = newHotkeys;
             return true;
         }
 

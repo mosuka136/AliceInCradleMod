@@ -397,6 +397,7 @@ namespace BetterExperience.HConfigGUI.UI
                         if (Context.RecordingHotkey == hotkey)
                         {
                             Context.RecordingHotkey = null;
+                            Context.IsUserInteracting = false;
                         }
                         needRemoveHotkey = hotkey;
                     }
@@ -440,6 +441,8 @@ namespace BetterExperience.HConfigGUI.UI
             }
             entry.CacheValue = null;
             (entry.Value as Hotkey).Valid = true;
+
+            Context.IsUserInteracting = false;
         }
     }
 

@@ -45,6 +45,10 @@ namespace BetterExperience.HConfigGUI
         /// 当前正在录制的单个热键组合。非空时关闭窗口会被阻止，以免丢失录制状态。
         /// </summary>
         public HotkeyChord RecordingHotkey { get; set; }
+        /// <summary>
+        /// 用户是否正在与热键录制交互。这个状态用于区分用户是正在按键等待录制，还是已经松开按键结束录制。
+        /// </summary>
+        public bool IsUserInteracting { get; set; }
         public Hotkey ConfigUIHotkey { get; set; }
         public string ToastMessage { get; set; }
         public float ToastEndTime { get; set; }
@@ -110,7 +114,8 @@ namespace BetterExperience.HConfigGUI
 
         /// <summary>
         /// 在热键录制模式下捕获下一次输入。
-        /// 手柄按钮会被优先记录为主键；键盘修饰键会持续累加，普通键按下后结束本次主键捕获。
+        /// 输入可以是任意组合的键盘主键、键盘修饰键和游戏手柄按钮，但不支持跨设备组合（例如同时按下键盘和手柄的按钮）。
+        /// 捕获到输入后会写入 <see cref="RecordingHotkey"/> 的 <see cref="HotkeyChord.Chord"/> 属性。
         /// </summary>
         public void RecordHotkey()
         {
@@ -118,19 +123,24 @@ namespace BetterExperience.HConfigGUI
             if (recordingHotkey == null)
                 return;
 
-            if (recordingHotkey.Modifiers == null)
-                recordingHotkey.Modifiers = new List<IHotkeyTrigger>();
+            var isAnyKeyPressed = false;
+
+            var gamepadChord = new GamepadChord(recordingHotkey.UnityService);
+            var keyboardChord = new KeyboardChord(recordingHotkey.UnityService);
 
             var gamepad = UnityService.GamepadCurrent;
             if (gamepad != null)
             {
                 foreach (GamepadButton button in Enum.GetValues(typeof(GamepadButton)))
                 {
-                    var gamepadButtonControl = gamepad[button];
-                    if (gamepadButtonControl != null && gamepadButtonControl.wasPressedThisFrame)
+                    var controller = gamepad[button];
+                    if (controller == null)
+                        continue;
+
+                    if (controller.wasPressedThisFrame || controller.isPressed)
                     {
-                        recordingHotkey.MainKey = new GamepadTrigger(button, UnityService);
-                        return;
+                        isAnyKeyPressed = true;
+                        gamepadChord.AddButton(button);
                     }
                 }
             }
@@ -139,26 +149,53 @@ namespace BetterExperience.HConfigGUI
             if (keyboard == null)
                 return;
 
-            if (recordingHotkey.MainKey == null)
-                recordingHotkey.ClearModifiers();
-
             foreach (var key in keyboard.allKeys)
             {
                 if (key == null)
                     continue;
 
-                if (key.isPressed && KeyboardModifierTrigger.IsModifierKey(key.keyCode))
+                if (key.isPressed)
                 {
-                    recordingHotkey.AddModifier(key.keyCode);
-                    continue;
+                    isAnyKeyPressed = true;
+                    if (KeyboardModifierTrigger.IsModifierKey(key.keyCode))
+                    {
+                        keyboardChord.AddModifier(key.keyCode);
+                        continue;
+                    }
                 }
 
                 if (key.wasPressedThisFrame)
                 {
-                    recordingHotkey.MainKey = new KeyboardTrigger(key.keyCode, UnityService);
-                    return;
+                    keyboardChord.SetMainKey(key.keyCode);
+                    isAnyKeyPressed = true;
                 }
             }
+
+            if (!IsUserInteracting && isAnyKeyPressed)
+            {
+                if (gamepadChord.IsValid)
+                    recordingHotkey.Chord = gamepadChord;
+                else
+                    recordingHotkey.Chord = keyboardChord;
+
+                IsUserInteracting = true;
+                return;
+            }
+            else if (IsUserInteracting && !isAnyKeyPressed)
+            {
+                if (!recordingHotkey.IsValid)
+                    recordingHotkey.Chord = null;
+
+                IsUserInteracting = false;
+                return;
+            }
+
+            if (keyboardChord.IsValid || (!recordingHotkey.IsValid && keyboardChord.HasAnyKey))
+                recordingHotkey.Chord = keyboardChord;
+            else if (gamepadChord.IsValid && gamepadChord.Count >= (recordingHotkey.Chord as GamepadChord)?.Count)
+                recordingHotkey.Chord = gamepadChord;
+
+            IsUserInteracting = isAnyKeyPressed;
         }
 
         /// <summary>

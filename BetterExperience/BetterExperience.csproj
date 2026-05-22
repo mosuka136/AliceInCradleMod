@@ -73,6 +73,7 @@
     <Compile Include="GameBootManager.cs" />
     <Compile Include="HClassAttribute\InitialzeOnGameBootAttribute.cs" />
     <Compile Include="HClassAttribute\RegisterOnGameBootAttribute.cs" />
+    <Compile Include="HotkeyManager\HotkeyResult.cs" />
     <Compile Include="HProvider\BepInExLoggerProvider.cs" />
     <Compile Include="HProvider\UnityGuiProvider.cs" />
     <Compile Include="HProvider\UnityProvider.cs" />

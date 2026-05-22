@@ -17,8 +17,8 @@ namespace BetterExperience.HotkeyManager
 
         bool IsPressed();
         bool WasPressedThisFrame();
-        bool TryParse(string token);
         string ToString();
+        IHotkeyTrigger Clone();
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool IsPressed()
         {
-            var kb = UnityService.KeyboardCurrent;
+            var kb = UnityService?.KeyboardCurrent;
             if (kb == null)
                 return false;
             return kb[Key].isPressed;
@@ -50,25 +50,28 @@ namespace BetterExperience.HotkeyManager
 
         public bool WasPressedThisFrame()
         {
-            var kb = UnityService.KeyboardCurrent;
+            var kb = UnityService?.KeyboardCurrent;
             if (kb == null)
                 return false;
             return kb[Key].wasPressedThisFrame;
         }
 
-        public bool TryParse(string token)
+        public static HotkeyResult<KeyboardTrigger> TryParse(string token, UnityProvider unityService)
         {
             if (string.IsNullOrWhiteSpace(token))
-                return false;
+                return HotkeyResult<KeyboardTrigger>.Fail("Token is null or whitespace.");
 
             token = token.Trim();
 
             if (Enum.TryParse<Key>(token, true, out var key))
             {
-                Key = key;
-                return true;
+                if (key == Key.None)
+                    return HotkeyResult<KeyboardTrigger>.Fail("Parsed key is None.");
+
+                return new KeyboardTrigger(key, unityService);
             }
-            return false;
+
+            return HotkeyResult<KeyboardTrigger>.Fail($"Failed to parse token '{token}' as a Key.");
         }
 
         public override string ToString()
@@ -76,6 +79,11 @@ namespace BetterExperience.HotkeyManager
             if (Key == Key.None)
                 return string.Empty;
             return Key.ToString();
+        }
+
+        public IHotkeyTrigger Clone()
+        {
+            return new KeyboardTrigger(Key, UnityService);
         }
     }
 
@@ -120,32 +128,32 @@ namespace BetterExperience.HotkeyManager
         {
             if (key == Key.LeftCtrl)
             {
-                Ctrl.CopyTo(this);
+                Ctrl.CopyModifiersTo(this);
                 IsLeftSide = true;
             }
             else if (key == Key.RightCtrl)
             {
-                Ctrl.CopyTo(this);
+                Ctrl.CopyModifiersTo(this);
                 IsLeftSide = false;
             }
             else if (key == Key.LeftShift)
             {
-                Shift.CopyTo(this);
+                Shift.CopyModifiersTo(this);
                 IsLeftSide = true;
             }
             else if (key == Key.RightShift)
             {
-                Shift.CopyTo(this);
+                Shift.CopyModifiersTo(this);
                 IsLeftSide = false;
             }
             else if (key == Key.LeftAlt)
             {
-                Alt.CopyTo(this);
+                Alt.CopyModifiersTo(this);
                 IsLeftSide = true;
             }
             else if (key == Key.RightAlt)
             {
-                Alt.CopyTo(this);
+                Alt.CopyModifiersTo(this);
                 IsLeftSide = false;
             }
             else
@@ -170,7 +178,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool IsPressed()
         {
-            var kb = UnityService.KeyboardCurrent;
+            var kb = UnityService?.KeyboardCurrent;
             if (kb == null)
                 return false;
 
@@ -182,7 +190,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool WasPressedThisFrame()
         {
-            var kb = UnityService.KeyboardCurrent;
+            var kb = UnityService?.KeyboardCurrent;
             if (kb == null)
                 return false;
 
@@ -192,87 +200,89 @@ namespace BetterExperience.HotkeyManager
             return IsLeftSide ? kb[LeftKey].wasPressedThisFrame : kb[RightKey].wasPressedThisFrame;
         }
 
-        public bool TryParse(string token)
+        public static HotkeyResult<KeyboardModifierTrigger> TryParse(string token, UnityProvider unityService)
         {
             if (string.IsNullOrWhiteSpace(token))
-                return false;
+                return HotkeyResult<KeyboardModifierTrigger>.Fail("Token is null or whitespace.");
 
             token = token.Trim();
 
+            var result = new KeyboardModifierTrigger(unityService);
+
             if (EqualsL(token, CtrlStr))
             {
-                Ctrl.CopyTo(this);
-                return true;
+                Ctrl.CopyModifiersTo(result);
+                return result;
             }
 
             if (EqualsL(token, ShiftStr))
             {
-                Shift.CopyTo(this);
-                return true;
+                Shift.CopyModifiersTo(result);
+                return result;
             }
 
             if (EqualsL(token, AltStr))
             {
-                Alt.CopyTo(this);
-                return true;
+                Alt.CopyModifiersTo(result);
+                return result;
             }
 
             if (EqualsL(token, LCtrlStr))
             {
-                Ctrl.CopyTo(this);
-                IsAnySide = false;
-                IsLeftSide = true;
-                return true;
+                Ctrl.CopyModifiersTo(result);
+                result.IsAnySide = false;
+                result.IsLeftSide = true;
+                return result;
             }
 
             if (EqualsL(token, RCtrlStr))
             {
-                Ctrl.CopyTo(this);
-                IsAnySide = false;
-                IsLeftSide = false;
-                return true;
+                Ctrl.CopyModifiersTo(result);
+                result.IsAnySide = false;
+                result.IsLeftSide = false;
+                return result;
             }
 
             if (EqualsL(token, LShiftStr))
             {
-                Shift.CopyTo(this);
-                IsAnySide = false;
-                IsLeftSide = true;
-                return true;
+                Shift.CopyModifiersTo(result);
+                result.IsAnySide = false;
+                result.IsLeftSide = true;
+                return result;
             }
 
             if (EqualsL(token, RShiftStr))
             {
-                Shift.CopyTo(this);
-                IsAnySide = false;
-                IsLeftSide = false;
-                return true;
+                Shift.CopyModifiersTo(result);
+                result.IsAnySide = false;
+                result.IsLeftSide = false;
+                return result;
             }
 
             if (EqualsL(token, LAltStr))
             {
-                Alt.CopyTo(this);
-                IsAnySide = false;
-                IsLeftSide = true;
-                return true;
+                Alt.CopyModifiersTo(result);
+                result.IsAnySide = false;
+                result.IsLeftSide = true;
+                return result;
             }
 
             if (EqualsL(token, RAltStr))
             {
-                Alt.CopyTo(this);
-                IsAnySide = false;
-                IsLeftSide = false;
-                return true;
+                Alt.CopyModifiersTo(result);
+                result.IsAnySide = false;
+                result.IsLeftSide = false;
+                return result;
             }
 
-            return false;
+            return HotkeyResult<KeyboardModifierTrigger>.Fail("Unrecognized token.");
         }
 
         /// <summary>
         /// 复制修饰键定义，不复制 Unity 输入服务引用。
         /// 该方法用于静态模板向运行时实例传递左右键约定。
         /// </summary>
-        public void CopyTo(KeyboardModifierTrigger other)
+        public void CopyModifiersTo(KeyboardModifierTrigger other)
         {
             other.LeftKey = LeftKey;
             other.RightKey = RightKey;
@@ -342,6 +352,11 @@ namespace BetterExperience.HotkeyManager
         {
             return key == Key.LeftCtrl || key == Key.RightCtrl || key == Key.LeftShift || key == Key.RightShift || key == Key.LeftAlt || key == Key.RightAlt;
         }
+
+        public IHotkeyTrigger Clone()
+        {
+            return new KeyboardModifierTrigger(LeftKey, RightKey, IsAnySide, IsLeftSide, UnityService);
+        }
     }
 
     /// <summary>
@@ -383,7 +398,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool IsPressed()
         {
-            var gp = UnityService.GamepadCurrent;
+            var gp = UnityService?.GamepadCurrent;
             if (gp == null)
                 return false;
             return gp[Button].isPressed;
@@ -391,47 +406,49 @@ namespace BetterExperience.HotkeyManager
 
         public bool WasPressedThisFrame()
         {
-            var gp = UnityService.GamepadCurrent;
+            var gp = UnityService?.GamepadCurrent;
             if (gp == null)
                 return false;
             return gp[Button].wasPressedThisFrame;
         }
 
-        public bool TryParse(string token)
+        public static HotkeyResult<GamepadTrigger> TryParse(string token, UnityProvider unityProvider)
         {
             if (string.IsNullOrWhiteSpace(token))
-                return false;
+                return HotkeyResult<GamepadTrigger>.Fail("Token is null or whitespace.");
 
             string s = token.Trim();
             if (s.StartsWith(Prefix, StringComparison.OrdinalIgnoreCase))
                 s = s.Substring(Prefix.Length);
 
-            if (EqualsL(s, SouthStr)) { Button = GamepadButton.South; return true; }
-            if (EqualsL(s, EastStr)) { Button = GamepadButton.East; return true; }
-            if (EqualsL(s, WestStr)) { Button = GamepadButton.West; return true; }
-            if (EqualsL(s, NorthStr)) { Button = GamepadButton.North; return true; }
+            var result = new GamepadTrigger(unityProvider);
 
-            if (EqualsL(s, LeftShoulderStr)) { Button = GamepadButton.LeftShoulder; return true; }
-            if (EqualsL(s, RightShoulderStr)) { Button = GamepadButton.RightShoulder; return true; }
+            if (EqualsL(s, SouthStr)) { result.Button = GamepadButton.South; return result; }
+            if (EqualsL(s, EastStr)) { result.Button = GamepadButton.East; return result; }
+            if (EqualsL(s, WestStr)) { result.Button = GamepadButton.West; return result; }
+            if (EqualsL(s, NorthStr)) { result.Button = GamepadButton.North; return result; }
 
-            if (EqualsL(s, SelectStr)) { Button = GamepadButton.Select; return true; }
-            if (EqualsL(s, StartStr)) { Button = GamepadButton.Start; return true; }
+            if (EqualsL(s, LeftShoulderStr)) { result.Button = GamepadButton.LeftShoulder; return result; }
+            if (EqualsL(s, RightShoulderStr)) { result.Button = GamepadButton.RightShoulder; return result; }
 
-            if (EqualsL(s, LeftStickStr)) { Button = GamepadButton.LeftStick; return true; }
-            if (EqualsL(s, RightStickStr)) { Button = GamepadButton.RightStick; return true; }
+            if (EqualsL(s, SelectStr)) { result.Button = GamepadButton.Select; return result; }
+            if (EqualsL(s, StartStr)) { result.Button = GamepadButton.Start; return result; }
 
-            if (EqualsL(s, DpadUpStr)) { Button = GamepadButton.DpadUp; return true; }
-            if (EqualsL(s, DpadDownStr)) { Button = GamepadButton.DpadDown; return true; }
-            if (EqualsL(s, DpadLeftStr)) { Button = GamepadButton.DpadLeft; return true; }
-            if (EqualsL(s, DpadRightStr)) { Button = GamepadButton.DpadRight; return true; }
+            if (EqualsL(s, LeftStickStr)) { result.Button = GamepadButton.LeftStick; return result; }
+            if (EqualsL(s, RightStickStr)) { result.Button = GamepadButton.RightStick; return result; }
+
+            if (EqualsL(s, DpadUpStr)) { result.Button = GamepadButton.DpadUp; return result; }
+            if (EqualsL(s, DpadDownStr)) { result.Button = GamepadButton.DpadDown; return result; }
+            if (EqualsL(s, DpadLeftStr)) { result.Button = GamepadButton.DpadLeft; return result; }
+            if (EqualsL(s, DpadRightStr)) { result.Button = GamepadButton.DpadRight; return result; }
 
             if (Enum.TryParse<GamepadButton>(s, true, out var parsed))
             {
-                Button = parsed;
-                return true;
+                result.Button = parsed;
+                return result;
             }
 
-            return false;
+            return HotkeyResult<GamepadTrigger>.Fail("Failed to parse token.");
         }
 
         public static bool EqualsL(string entry, List<string> list)
@@ -464,6 +481,11 @@ namespace BetterExperience.HotkeyManager
                 case GamepadButton.DpadRight: return Prefix + DpadRightStr.FirstOrDefault();
                 default: return Prefix + Button.ToString();
             }
+        }
+
+        public IHotkeyTrigger Clone()
+        {
+            return new GamepadTrigger(Button, UnityService);
         }
     }
 }
