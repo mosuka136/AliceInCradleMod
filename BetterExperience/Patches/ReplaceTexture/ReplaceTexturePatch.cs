@@ -41,10 +41,10 @@ namespace BetterExperience.Patches
 
             public static void Update()
             {
-                if (!ConfigManager.EnableReplaceTexture.Value)
+                if (ConfigManager.EnableReplaceTexture?.Value != true)
                     return;
 
-                if (ConfigManager.FlushTextureHotkey.Value.WasPressedThisFrame())
+                if (ConfigManager.FlushTextureHotkey?.Value?.WasPressedThisFrame() == true)
                 {
                     try
                     {

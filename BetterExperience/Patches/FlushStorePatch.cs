@@ -28,10 +28,10 @@ namespace BetterExperience.Patches
 
             public static void Update()
             {
-                if (!ConfigManager.EnableFlushAllStore.Value)
+                if (ConfigManager.EnableFlushAllStore?.Value != true)
                     return;
 
-                if (ConfigManager.FlushAllStoreHotkey.Value.WasPressedThisFrame())
+                if (ConfigManager.FlushAllStoreHotkey?.Value?.WasPressedThisFrame() == true)
                 {
                     try
                     {
