@@ -225,5 +225,111 @@ namespace BetterExperience.Test.HotkeyManager
             Assert.False(result.Success);
             Assert.NotEmpty(result.Errors);
         }
+
+        [Fact]
+        public void Constructor_WithUnityProvider_UsesProvidedUnityServiceAndInitializesEmptyHotkeysList()
+        {
+            var unityService = new UnityProvider();
+
+            var hotkey = new Hotkey(unityService);
+
+            Assert.Same(unityService, hotkey.UnityService);
+            Assert.NotNull(hotkey.Hotkeys);
+            Assert.Empty(hotkey.Hotkeys);
+        }
+
+        [Theory]
+        [InlineData(null, "Invalid hotkey string: ")]
+        [InlineData("", "Invalid hotkey string: ")]
+        [InlineData("   ", "Invalid hotkey string:    ")]
+        public void Constructor_WithHotkeyStringAndUnityProvider_EmptyOrWhitespaceStringThrowsArgumentException(string hotkeyText, string expectedMessage)
+        {
+            var unityService = new UnityProvider();
+
+            var exception = Assert.Throws<ArgumentException>(() => new Hotkey(hotkeyText, unityService));
+
+            Assert.Equal(expectedMessage, exception.Message);
+        }
+
+        [Fact]
+        public void Constructor_WithSourceHotkeyAndUnityProvider_UsesProvidedUnityService()
+        {
+            var sourceUnityService = new UnityProvider();
+            var targetUnityService = new UnityProvider();
+            var source = new Hotkey("Ctrl+A", sourceUnityService);
+
+            var cloned = new Hotkey(source, targetUnityService);
+
+            Assert.Same(targetUnityService, cloned.UnityService);
+            Assert.Single(cloned.Hotkeys);
+        }
+
+        [Fact]
+        public void Constructor_WithSourceHotkeyAndUnityProvider_ChangingSourceDoesNotAffectClone()
+        {
+            var source = new Hotkey("Ctrl+A", new UnityProvider());
+            var cloned = new Hotkey(source, new UnityProvider());
+
+            source.Hotkeys[0].Clear();
+
+            Assert.Equal("Ctrl+A", cloned.ToString());
+            Assert.Empty(source.ToString());
+        }
+
+        [Fact]
+        public void Constructor_WithUnityProviderAndHotkeys_UsesProvidedUnityServiceAndCopiesHotkeyReferencesIntoNewList()
+        {
+            var unityService = new UnityProvider();
+            var firstChord = HotkeyChord.TryParse("Ctrl+A", unityService).Value;
+            var secondChord = HotkeyChord.TryParse("Shift+B", unityService).Value;
+
+            var hotkey = new Hotkey(unityService, firstChord, secondChord);
+
+            Assert.Same(unityService, hotkey.UnityService);
+            Assert.Equal(2, hotkey.Hotkeys.Count);
+            Assert.Same(firstChord, hotkey.Hotkeys[0]);
+            Assert.Same(secondChord, hotkey.Hotkeys[1]);
+        }
+
+        [Fact]
+        public void Constructor_WithUnityProviderAndNoHotkeys_InitializesEmptyHotkeysList()
+        {
+            var unityService = new UnityProvider();
+
+            var hotkey = new Hotkey(unityService, new HotkeyChord[0]);
+
+            Assert.Same(unityService, hotkey.UnityService);
+            Assert.NotNull(hotkey.Hotkeys);
+            Assert.Empty(hotkey.Hotkeys);
+        }
+
+
+        [Fact]
+        public void Add_NewChord_AddsChordToHotkeys()
+        {
+            var unityService = new UnityProvider();
+            var chord = HotkeyChord.TryParse("Ctrl+A", unityService).Value;
+            var hotkey = new Hotkey(unityService);
+
+            hotkey.Add(chord);
+
+            Assert.Single(hotkey.Hotkeys);
+            Assert.Same(chord, hotkey.Hotkeys[0]);
+        }
+
+        [Fact]
+        public void Remove_ExistingChord_RemovesChordFromHotkeys()
+        {
+            var unityService = new UnityProvider();
+            var chord = HotkeyChord.TryParse("Ctrl+A", unityService).Value;
+            var hotkey = new Hotkey(unityService, chord);
+
+            hotkey.Remove(chord);
+
+            Assert.Empty(hotkey.Hotkeys);
+        }
+
+
+
     }
 }
