@@ -145,13 +145,14 @@ namespace BetterExperience.Test.HConfigGUI
         {
             // Arrange
             var viewModel = new ViewModel();
-            viewModel.RecordingHotkey = new HotkeyChord(viewModel.UnityService);
+            var chord = new HotkeyChord(viewModel.UnityService);
+            viewModel.RecordingHotkey = chord;
 
             // Act
             viewModel.Update(0.1f);
 
-            // Assert - If RecordingHotkey is not null, RecordHotkey should process it
-            Assert.NotNull(viewModel.RecordingHotkey.Modifiers);
+            // Assert
+            Assert.Same(chord, viewModel.RecordingHotkey);
         }
 
         // -----------------------------------------------------------------------
@@ -279,22 +280,6 @@ namespace BetterExperience.Test.HConfigGUI
 
             // Assert - No exception should be thrown
             Assert.Null(viewModel.RecordingHotkey);
-        }
-
-        [Fact]
-        public void RecordHotkey_WhenModifiersIsNull_InitializesModifiers()
-        {
-            // Arrange
-            var viewModel = new ViewModel();
-            var chord = new HotkeyChord(viewModel.UnityService);
-            chord.Modifiers = null;
-            viewModel.RecordingHotkey = chord;
-
-            // Act
-            viewModel.RecordHotkey();
-
-            // Assert
-            Assert.NotNull(viewModel.RecordingHotkey.Modifiers);
         }
 
         [Fact]

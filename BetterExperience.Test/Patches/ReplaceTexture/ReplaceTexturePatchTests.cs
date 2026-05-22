@@ -300,9 +300,10 @@ namespace BetterExperience.Test
 
         private static Hotkey CreateHotkey(bool wasPressedThisFrame)
         {
-            var trigger = new Mock<IHotkeyTrigger>();
-            trigger.Setup(x => x.WasPressedThisFrame()).Returns(wasPressedThisFrame);
-            return new Hotkey(new UnityProvider(), trigger.Object);
+            var unityService = new UnityProvider();
+            var chord = new Mock<IHotkeyChord>();
+            chord.Setup(x => x.WasPressedThisFrame()).Returns(wasPressedThisFrame);
+            return new Hotkey(unityService, new HotkeyChord(chord.Object, unityService));
         }
 
         private void InitializeConfig()
