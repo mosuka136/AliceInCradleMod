@@ -91,30 +91,6 @@ namespace BetterExperience
 
         private void Update()
         {
-            if (!ConfigManager.EnableBetterExperience.Value)
-                return;
-
-            DealInputReloadConfig();
-        }
-
-        private void DealInputReloadConfig()
-        {
-            if (ConfigManager.ReloadConfigHotkey == null)
-                return;
-
-            if (ConfigManager.ReloadConfigHotkey.Value.WasPressedThisFrame())
-            {
-                try
-                {
-                    ConfigManager.ReloadConfig();
-                    Logger.LogInfo("Reloaded config!");
-                    HLog.Info("Reloaded config.");
-                }
-                catch (Exception ex)
-                {
-                    HLog.Error($"Unexpected error in {name}.", ex);
-                }
-            }
         }
 
         public void InitializeLog()

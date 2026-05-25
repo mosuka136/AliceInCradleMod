@@ -156,6 +156,8 @@ namespace BetterExperience.BConfigManager
                 Config.SaveOnConfigSet = true;
                 Config.Save();
 
+                FrameUpdateManager.OnFrameUpdate += ReloadConfigOnUserOrder;
+
                 HLog.Info($"Config manager initialized: {configFilePath}");
             }
         }
@@ -169,6 +171,24 @@ namespace BetterExperience.BConfigManager
             {
                 Config.Reload();
                 HLog.Info("Config file reloaded.");
+            }
+        }
+
+        /// <summary>
+        /// 如果用户按下了指定的热键，则重新加载配置文件。
+        /// </summary>
+        public static void ReloadConfigOnUserOrder()
+        {
+            if (ReloadConfigHotkey?.Value?.WasPressedThisFrame() == true)
+            {
+                try
+                {
+                    ReloadConfig();
+                }
+                catch (Exception ex)
+                {
+                    HLog.Error($"Unexpected error in {nameof(ReloadConfigOnUserOrder)}.", ex);
+                }
             }
         }
     }

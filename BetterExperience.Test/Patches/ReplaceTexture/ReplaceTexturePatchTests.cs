@@ -38,7 +38,7 @@ namespace BetterExperience.Test
             var handler = (MulticastDelegate)GetStaticFieldValue(typeof(FrameUpdateManager), nameof(FrameUpdateManager.OnFrameUpdate));
 
             Assert.NotNull(handler);
-            Assert.Single(handler.GetInvocationList());
+            Assert.Single(handler.GetInvocationList().Where(static action => action.Method == typeof(HPatches.ReplaceTexturePatch).GetMethod(nameof(HPatches.ReplaceTexturePatch.Update), BindingFlags.Static | BindingFlags.Public)));
         }
 
         [Fact]
