@@ -20,10 +20,10 @@ namespace BetterExperience
     public class PatchInfo
     {
         public const string BepInPluginId = "com.buele.betterexperience";
-        public const string BepInPluginVersion = "2.1.0";
+        public const string BepInPluginVersion = "2.1.1";
 
         public const string HarmonyPluginId = "com.buele.betterexperience";
-        public const string HarmonyPluginVersion = "2.1.0";
+        public const string HarmonyPluginVersion = "2.1.1";
 
         public static readonly string PluginPath = Path.Combine(Paths.PluginPath, nameof(BetterExperience));
 
