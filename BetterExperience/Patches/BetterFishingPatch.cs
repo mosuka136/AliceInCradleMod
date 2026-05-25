@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HLogSpace;
 using HarmonyLib;
 using nel.mgm.fis;
 using System;

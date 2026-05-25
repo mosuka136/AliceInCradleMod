@@ -1,5 +1,6 @@
 using BetterExperience.HClassAttribute;
 using BetterExperience.HConfigSpace;
+using BetterExperience.HLogSpace;
 using BetterExperience.HTranslatorSpace;
 using System;
 

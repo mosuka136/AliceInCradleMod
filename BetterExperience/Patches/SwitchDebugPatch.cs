@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HLogSpace;
 using HarmonyLib;
 using System;
 using XX;

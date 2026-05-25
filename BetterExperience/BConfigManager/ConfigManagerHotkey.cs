@@ -3,6 +3,7 @@ using BetterExperience.HConfigSpace;
 using BetterExperience.HotkeyManager;
 using BetterExperience.HTranslatorSpace;
 using System;
+using BetterExperience.HLogSpace;
 
 namespace BetterExperience.BConfigManager
 {

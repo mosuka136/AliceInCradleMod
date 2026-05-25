@@ -1,5 +1,6 @@
 using BetterExperience.BConfigManager;
 using BetterExperience.HClassAttribute;
+using BetterExperience.HLogSpace;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using nel;

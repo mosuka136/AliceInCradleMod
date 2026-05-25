@@ -1,4 +1,5 @@
 using BetterExperience.HClassAttribute;
+using BetterExperience.HLogSpace;
 using HarmonyLib;
 using System;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace BetterExperience
     {
         // SceneManager 的内部回调可能在启动期间被多次触发，使用锁和标记保证注册与执行只发生一次。
         private static bool _initialized = false;
-        private static object _lock = new object();
+        private static readonly object _lock = new object();
 
         /// <summary>
         /// 游戏启动阶段的一次性回调集合。

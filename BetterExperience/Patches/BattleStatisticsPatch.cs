@@ -1,3 +1,4 @@
+using BetterExperience.HLogSpace;
 using HarmonyLib;
 using m2d;
 using nel;

@@ -1,5 +1,6 @@
 using BetterExperience.BConfigManager;
 using BetterExperience.HClassAttribute;
+using BetterExperience.HLogSpace;
 using HarmonyLib;
 using nel;
 using System;

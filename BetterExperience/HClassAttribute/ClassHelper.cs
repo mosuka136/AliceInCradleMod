@@ -1,3 +1,4 @@
+using BetterExperience.HLogSpace;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

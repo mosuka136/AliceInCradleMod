@@ -1,4 +1,5 @@
 using BetterExperience.BConfigManager;
+using BetterExperience.HLogSpace;
 using System;
 using System.Collections.Generic;
 using System.IO;

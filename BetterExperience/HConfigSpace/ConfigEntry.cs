@@ -1,3 +1,4 @@
+using BetterExperience.HLogSpace;
 using BetterExperience.HTranslatorSpace;
 using System;
 using System.Collections;

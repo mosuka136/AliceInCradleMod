@@ -1,4 +1,5 @@
 using BepInEx.Logging;
+using BetterExperience.HLogSpace;
 
 namespace BetterExperience.HProvider
 {

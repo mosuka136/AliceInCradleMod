@@ -1,4 +1,5 @@
 using BetterExperience.HClassAttribute;
+using BetterExperience.HLogSpace;
 using System;
 using UnityEngine;
 

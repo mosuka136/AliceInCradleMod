@@ -1,5 +1,6 @@
 using BepInEx;
 using BetterExperience.BConfigManager;
+using BetterExperience.HLogSpace;
 using BetterExperience.HProvider;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
@@ -68,13 +69,7 @@ namespace BetterExperience
                     return;
                 }
 
-                HLog.EnableLog = ConfigManager.EnableHLog.Value;
-                HLog.HLogLevel = ConfigManager.HLogLevel.Value;
-                HLog.BepInExLogLevel = ConfigManager.BepInExLogLevel.Value;
-                ConfigManager.EnableHLog.OnValueChanged += (s, e) => HLog.EnableLog = ConfigManager.EnableHLog.Value;
-                ConfigManager.HLogLevel.OnValueChanged += (s, e) => HLog.HLogLevel = ConfigManager.HLogLevel.Value;
-                ConfigManager.BepInExLogLevel.OnValueChanged += (s, e) => HLog.BepInExLogLevel = ConfigManager.BepInExLogLevel.Value;
-                HLog.Initialize(PatchInfo.LoggerPath, PatchInfo.LoggerName, new UnityProvider(), new BepInExLoggerProvider(Logger));
+                InitializeLog();
 
                 HLog.Info($"{nameof(BetterExperience)} startup initialized. Version={PatchInfo.BepInPluginVersion}");
 
@@ -94,7 +89,7 @@ namespace BetterExperience
             }
         }
 
-        void Update()
+        private void Update()
         {
             if (!ConfigManager.EnableBetterExperience.Value)
                 return;
@@ -120,6 +115,21 @@ namespace BetterExperience
                     HLog.Error($"Unexpected error in {name}.", ex);
                 }
             }
+        }
+
+        public void InitializeLog()
+        {
+            var unityProvider = new UnityProvider();
+
+            HLog.EnableLog = ConfigManager.EnableHLog.Value;
+            ConfigManager.EnableHLog.OnValueChanged += (s, e) => HLog.EnableLog = ConfigManager.EnableHLog.Value;
+            ConfigManager.HLogLevel.OnValueChanged += (s, e) => HLog.HLogLevel = ConfigManager.HLogLevel.Value;
+            HLog.Initialize(PatchInfo.LoggerPath, PatchInfo.LoggerName, ConfigManager.HLogLevel.Value, unityProvider);
+
+            ConfigManager.BepInExLogLevel.OnValueChanged += (s, e) => BepInExHLog.LogLevel = ConfigManager.BepInExLogLevel.Value;
+            BepInExHLog.Initialize(ConfigManager.BepInExLogLevel.Value, unityProvider, new BepInExLoggerProvider(Logger));
+
+            HLog.OnLogAdd += BepInExHLog.Log;
         }
 
         /// <summary>

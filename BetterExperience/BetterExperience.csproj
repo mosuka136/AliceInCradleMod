@@ -71,8 +71,11 @@
     <Compile Include="BPatchGUI\BattleStatisticsGUI.cs" />
     <Compile Include="BPatchGUI\TranslatorResource.cs" />
     <Compile Include="GameBootManager.cs" />
+    <Compile Include="GameQuitManager.cs" />
     <Compile Include="HClassAttribute\InitialzeOnGameBootAttribute.cs" />
     <Compile Include="HClassAttribute\RegisterOnGameBootAttribute.cs" />
+    <Compile Include="HLogSpace\BepInExHLog.cs" />
+    <Compile Include="HLogSpace\LogEntry.cs" />
     <Compile Include="HotkeyManager\HotkeyResult.cs" />
     <Compile Include="HProvider\BepInExLoggerProvider.cs" />
     <Compile Include="HProvider\UnityGuiProvider.cs" />
@@ -127,7 +130,7 @@
     <Compile Include="Patches\SetBackpackCapacityPatch.cs" />
     <Compile Include="BConfigManager\ConfigManager.cs" />
     <Compile Include="Patches\FlushStorePatch.cs" />
-    <Compile Include="HLog.cs" />
+    <Compile Include="HLogSpace\HLog.cs" />
     <Compile Include="Patches\InfiniteShieldPatch.cs" />
     <Compile Include="Patches\NoHpDamagePatch.cs" />
     <Compile Include="Patches\NoMapDamagePatch.cs" />
