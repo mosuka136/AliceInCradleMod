@@ -45,17 +45,10 @@ namespace BetterExperience
     [BepInPlugin(PatchInfo.BepInPluginId, nameof(BetterExperience), PatchInfo.BepInPluginVersion)]
     public class BetterExperience : BaseUnityPlugin
     {
-        /// <summary>
-        /// 当前插件实例。该引用在 <c>Awake</c> 中赋值，供必须访问 Unity 组件上下文的模块使用。
-        /// </summary>
-        public static BetterExperience Instance { get; private set; }
-
         private void Awake()
         {
             try
             {
-                Instance = this;
-
                 gameObject.hideFlags = HideFlags.HideAndDontSave;
 
                 // 配置必须先于日志和补丁读取，因为后续初始化会依赖开关、日志等级和资源路径设置。
@@ -78,7 +71,7 @@ namespace BetterExperience
                 // Harmony 注册失败时跳过单个补丁类，避免某个补丁因目标方法变更导致整个插件不可用。
                 var harmony = new Harmony(PatchInfo.HarmonyPluginId);
                 HLog.Debug($"Starting Harmony patch registration: {PatchInfo.HarmonyPluginId}");
-                SafePatchAll(harmony, typeof(BetterExperience).Assembly);
+                PatchAll(harmony, typeof(BetterExperience).Assembly);
                 LogPatchesInfo(harmony);
                 HLog.Info("Harmony patch registration completed.");
             }
@@ -114,48 +107,40 @@ namespace BetterExperience
         /// </summary>
         /// <param name="harmony">用于注册补丁的 Harmony 实例，调用方负责保证其标识与插件一致。</param>
         /// <param name="asm">需要扫描的程序集，通常为当前插件程序集。</param>
-        public void SafePatchAll(Harmony harmony, Assembly asm)
+        public void PatchAll(Harmony harmony, Assembly asm)
         {
             int patchClassCount = 0;
 
-            foreach (var t in GetTypesSafe(asm))
+            Type[] types;
+            try
+            {
+                types = asm.GetTypes();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                HLog.Warn($"ReflectionTypeLoadException occurred while getting assembly types: {asm.FullName}");
+                types = e.Types.Where(t => t != null).ToArray();
+            }
+
+            foreach (var t in types)
             {
                 if (t == null)
                     continue;
 
                 try
                 {
-                    if (!t.GetCustomAttributes(true).Any(a => a.GetType().Name.StartsWith("HarmonyPatch")))
+                    if (!t.GetCustomAttributes(true).Any(a => a.GetType().Name.StartsWith(nameof(HarmonyPatch))))
                         continue;
                     harmony.CreateClassProcessor(t).Patch();
                     patchClassCount++;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error("Skip patch class: " + t.FullName, ex);
+                    HLog.Error($"Skip patch class: {t.FullName}", ex);
                 }
             }
 
             HLog.Debug($"Scanned and processed Harmony patch classes: {patchClassCount}");
-        }
-
-        /// <summary>
-        /// 安全枚举程序集类型。
-        /// 当部分类型依赖缺失导致反射加载失败时，仍返回已经成功加载的类型，便于继续注册可用补丁。
-        /// </summary>
-        /// <param name="asm">要枚举类型的程序集。</param>
-        /// <returns>成功加载的类型集合；失败项会被过滤掉。</returns>
-        public IEnumerable<Type> GetTypesSafe(Assembly asm)
-        {
-            try
-            {
-                return asm.GetTypes();
-            }
-            catch (ReflectionTypeLoadException e)
-            {
-                HLog.Warn($"ReflectionTypeLoadException occurred while enumerating assembly types: {asm.FullName}");
-                return e.Types.Where(t => t != null);
-            }
         }
 
         /// <summary>
@@ -176,7 +161,8 @@ namespace BetterExperience
             foreach (var original in harmony.GetPatchedMethods())
             {
                 var info = Harmony.GetPatchInfo(original);
-                if (info == null) continue;
+                if (info == null)
+                    continue;
 
                 patchedMethodCount++;
                 HLog.Debug($"Original: {original.DeclaringType.FullName}.{original.Name}");
@@ -188,13 +174,16 @@ namespace BetterExperience
 
                 void CountList(IList<Patch> patches, ref int count)
                 {
-                    if (patches == null) return;
-                    for (int i = 0; i < patches.Count; i++)
+                    if (patches == null)
+                        return;
+
+                    foreach (var p in patches)
                     {
-                        var p = patches[i];
-                        if (p.owner != id) continue;
+                        if (p.owner != id)
+                            continue;
+
                         count++;
-                        HLog.Debug($"  {p.PatchMethod.DeclaringType.FullName}.{p.PatchMethod.Name} ({p.PatchMethod.MetadataToken:X8})");
+                        HLog.Debug($"    {p.PatchMethod.DeclaringType.FullName}.{p.PatchMethod.Name} ({p.PatchMethod.MetadataToken:X8})");
                     }
                 }
             }
