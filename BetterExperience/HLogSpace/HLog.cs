@@ -121,8 +121,8 @@ namespace BetterExperience.HLogSpace
                 int id = Interlocked.Increment(ref _seq);
                 string time = DateTime.Now.ToString("HH:mm:ss.fff");
                 int threadId = Thread.CurrentThread.ManagedThreadId;
-                int frame = UnityProvider.FrameCount;
-                string scene = UnityProvider.ActiveScene.name;
+                int frame = UnityProvider?.FrameCount ?? 0;
+                string scene = UnityProvider?.ActiveScene.name;
                 scene = string.IsNullOrEmpty(scene) ? "?" : scene;
 
                 var entry = new LogEntry(id, time, threadId, frame, scene, logLevel, msg, file, line, member, ex);
