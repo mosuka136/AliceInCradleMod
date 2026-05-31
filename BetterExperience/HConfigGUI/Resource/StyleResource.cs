@@ -1,6 +1,8 @@
+using BetterExperience.HProvider;
+using System;
 using UnityEngine;
 
-namespace BetterExperience.HConfigGUI.UI
+namespace BetterExperience.HConfigGUI.Resource
 {
     /// <summary>
     /// 配置界面的 IMGUI 样式工厂。
@@ -8,28 +10,68 @@ namespace BetterExperience.HConfigGUI.UI
     /// </summary>
     public class StyleResource
     {
-        private readonly ViewModel _context;
+        public UnityGuiProvider UnityGui { get; }
 
-        public StyleResource(ViewModel context)
+        public StyleResource(UnityGuiProvider unityGui)
         {
-            _context = context;
+            UnityGui = unityGui;
         }
 
+        private GUIStyle _popupTitleStyle;
+        private GUIStyle _sidebarEntryStyle;
+        private GUIStyle _sidebarSelectedEntryStyle;
         private GUIStyle _tableTitleStyle;
         private GUIStyle _tooltipStyle;
+        private GUIStyle _recordingHotkeyLabelStyle;
         private GUIStyle _sliderStyle;
         private GUIStyle _sliderThumbStyle;
         private GUIStyle _toastStyle;
 
+        public GUIStyle PopupTitleStyle => _popupTitleStyle ?? (_popupTitleStyle = CreatePopupTitleStyle());
+        public GUIStyle SidebarEntryStyle => _sidebarEntryStyle ?? (_sidebarEntryStyle = CreateSidebarEntryStyle());
+        public GUIStyle SidebarSelectedEntryStyle => _sidebarSelectedEntryStyle ?? (_sidebarSelectedEntryStyle = CreateSidebarSelectedEntryStyle());
         public GUIStyle TableTitleStyle => _tableTitleStyle ?? (_tableTitleStyle = CreateTableTitleStyle());
         public GUIStyle TooltipStyle => _tooltipStyle ?? (_tooltipStyle = CreateTooltipStyle());
+        public GUIStyle RecordingHotkeyLabelStyle => _recordingHotkeyLabelStyle ?? (_recordingHotkeyLabelStyle = CreateRecordingHotkeyLabelStyle());
         public GUIStyle SliderStyle => _sliderStyle ?? (_sliderStyle = CreateSliderStyle());
         public GUIStyle SliderThumbStyle => _sliderThumbStyle ?? (_sliderThumbStyle = CreateSliderThumbStyle());
         public GUIStyle ToastStyle => _toastStyle ?? (_toastStyle = CreateToastStyle());
 
+        private GUIStyle CreatePopupTitleStyle()
+        {
+            return new GUIStyle(UnityGui.LabelStyle)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold,
+                fontSize = 14
+            };
+        }
+
+        private GUIStyle CreateSidebarEntryStyle()
+        {
+            return new GUIStyle(UnityGui.ButtonStyle)
+            {
+                fontStyle = FontStyle.Normal,
+                fontSize = 14,
+                alignment = TextAnchor.MiddleCenter,
+                fixedHeight = 40f,
+            };
+        }
+
+        private GUIStyle CreateSidebarSelectedEntryStyle()
+        {
+            return new GUIStyle(UnityGui.ButtonStyle)
+            {
+                fontStyle = FontStyle.Bold,
+                fontSize = 15,
+                alignment = TextAnchor.MiddleCenter,
+                fixedHeight = 40f,
+            };
+        }
+
         private GUIStyle CreateTableTitleStyle()
         {
-            return new GUIStyle(_context.UnityGuiService.LabelStyle)
+            return new GUIStyle(UnityGui.LabelStyle)
             {
                 alignment = TextAnchor.MiddleCenter,
                 fontStyle = FontStyle.Bold,
@@ -39,7 +81,7 @@ namespace BetterExperience.HConfigGUI.UI
 
         private GUIStyle CreateTooltipStyle()
         {
-            var style = new GUIStyle(_context.UnityGuiService.BoxStyle)
+            var style = new GUIStyle(UnityGui.BoxStyle)
             {
                 wordWrap = true,
                 alignment = TextAnchor.MiddleCenter,
@@ -50,9 +92,19 @@ namespace BetterExperience.HConfigGUI.UI
             return style;
         }
 
+        private GUIStyle CreateRecordingHotkeyLabelStyle()
+        {
+            return new GUIStyle(UnityGui.LabelStyle)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.BoldAndItalic,
+                fontSize = 22,
+            };
+        }
+
         private GUIStyle CreateSliderStyle()
         {
-            var baseStyle = _context.UnityGuiService.HorizontalSliderStyle;
+            var baseStyle = UnityGui.HorizontalSliderStyle;
             return new GUIStyle(baseStyle)
             {
                 margin = new RectOffset(baseStyle.margin.left, baseStyle.margin.right, 6, 6),
@@ -62,7 +114,7 @@ namespace BetterExperience.HConfigGUI.UI
 
         private GUIStyle CreateSliderThumbStyle()
         {
-            return new GUIStyle(_context.UnityGuiService.HorizontalSliderThumbStyle)
+            return new GUIStyle(UnityGui.HorizontalSliderThumbStyle)
             {
                 margin = new RectOffset(0, 0, 2, 0),
                 fixedWidth = 17f,
@@ -72,7 +124,7 @@ namespace BetterExperience.HConfigGUI.UI
 
         private GUIStyle CreateToastStyle()
         {
-            var style = new GUIStyle(_context.UnityGuiService.BoxStyle)
+            var style = new GUIStyle(UnityGui.BoxStyle)
             {
                 alignment = TextAnchor.MiddleCenter,
                 padding = new RectOffset(10, 10, 6, 6)

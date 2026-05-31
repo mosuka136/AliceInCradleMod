@@ -20,6 +20,11 @@ namespace BetterExperience.HotkeyManager
         /// </summary>
         public const char Separator = ',';
 
+        /// <summary>
+        /// 全局禁用标记。设置为 <c>false</c> 后所有热键实例都不会触发。
+        /// </summary>
+        public static bool GlobalValid { get; set; } = true;
+
         public UnityProvider UnityService { get; }
 
         /// <summary>
@@ -68,7 +73,7 @@ namespace BetterExperience.HotkeyManager
 
         public bool WasPressedThisFrame()
         {
-            if (!Valid)
+            if (!Valid || !GlobalValid)
                 return false;
 
             foreach (var ch in Hotkeys)
@@ -162,6 +167,11 @@ namespace BetterExperience.HotkeyManager
         public override string ToString()
         {
             return string.Join(Separator.ToString(), Hotkeys.Select(h => h.ToString()).Where(s => !string.IsNullOrEmpty(s)));
+        }
+
+        public Hotkey Clone()
+        {
+            return new Hotkey(this, UnityService);
         }
 
         public ConfigFileResult<string> Encode()

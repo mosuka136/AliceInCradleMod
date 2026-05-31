@@ -1,3 +1,5 @@
+using System;
+using System.Reflection.Emit;
 using UnityEngine;
 
 namespace BetterExperience.HProvider
@@ -19,6 +21,11 @@ namespace BetterExperience.HProvider
         {
             get => GUI.color;
             set => GUI.color = value;
+        }
+
+        public Rect ModalWindow(int id, Rect clientRect, GUI.WindowFunction func, string title, GUIStyle style)
+        {
+            return GUI.ModalWindow(id, clientRect, func, title, style ?? GUIStyle.none);
         }
 
         public void BeginArea(Rect screenRect)
@@ -51,9 +58,14 @@ namespace BetterExperience.HProvider
             GUILayout.EndScrollView();
         }
 
+        public void BeginVertical()
+        {
+            GUILayout.BeginVertical();
+        }
+
         public void BeginVertical(GUIStyle style, params GUILayoutOption[] options)
         {
-            GUILayout.BeginVertical(style != null ? style : GUIStyle.none, options);
+            GUILayout.BeginVertical(style ?? GUIStyle.none, options);
         }
 
         public void EndVertical()
@@ -66,19 +78,34 @@ namespace BetterExperience.HProvider
             GUILayout.Space(pixels);
         }
 
+        public void FlexibleSpace()
+        {
+            GUILayout.FlexibleSpace();
+        }
+
+        public void Label(string text, params GUILayoutOption[] options)
+        {
+            GUILayout.Label(text, options);
+        }
+
         public void Label(GUIContent content, params GUILayoutOption[] options)
         {
             GUILayout.Label(content, options);
         }
 
+        public void Label(string text, GUIStyle style, params GUILayoutOption[] options)
+        {
+            GUILayout.Label(text, style ?? GUIStyle.none, options);
+        }
+
         public void Label(GUIContent content, GUIStyle style, params GUILayoutOption[] options)
         {
-            GUILayout.Label(content, style != null ? style : GUIStyle.none, options);
+            GUILayout.Label(content, style ?? GUIStyle.none, options);
         }
 
         public void Label(Rect position, GUIContent content, GUIStyle style)
         {
-            GUI.Label(position, content, style);
+            GUI.Label(position, content, style ?? GUIStyle.none);
         }
 
         public bool Toggle(bool value, string text, params GUILayoutOption[] options)
@@ -96,14 +123,24 @@ namespace BetterExperience.HProvider
             return GUILayout.Button(text, options);
         }
 
+        public bool Button(string text, GUIStyle style, params GUILayoutOption[] options)
+        {
+            return GUILayout.Button(text, style ?? GUIStyle.none, options);
+        }
+
         public float HorizontalSlider(float value, float leftValue, float rightValue, GUIStyle slider, GUIStyle thumb, params GUILayoutOption[] options)
         {
-            return GUILayout.HorizontalSlider(value, leftValue, rightValue, slider != null ? slider : GUIStyle.none, thumb != null ? thumb : GUIStyle.none, options);
+            return GUILayout.HorizontalSlider(value, leftValue, rightValue, slider ?? GUIStyle.none, thumb ?? GUIStyle.none, options);
         }
 
         public int SelectionGrid(int selected, string[] texts, int xCount, params GUILayoutOption[] options)
         {
             return GUILayout.SelectionGrid(selected, texts, xCount, options);
+        }
+
+        public void Box(Rect position, string text)
+        {
+            GUI.Box(position, text);
         }
 
         public GUILayoutOption Width(float width)

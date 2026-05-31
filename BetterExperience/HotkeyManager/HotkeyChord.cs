@@ -377,9 +377,6 @@ namespace BetterExperience.HotkeyManager
             var keyboardResult = KeyboardChord.TryParse(chordStr, unityService);
             var gamepadResult = GamepadChord.TryParse(chordStr, unityService);
 
-            if (keyboardResult.Success && gamepadResult.Success)
-                return HotkeyResult<HotkeyChord>.Fail("Failed to parse hotkey chord: input can be parsed as both keyboard and gamepad chord, which is ambiguous.");
-
             if (keyboardResult.Success)
                 return new HotkeyChord(keyboardResult.Value, unityService);
 

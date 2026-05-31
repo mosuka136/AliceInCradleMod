@@ -1,6 +1,5 @@
 using BetterExperience.HConfigSpace;
 using BetterExperience.HConfigGUI;
-using BetterExperience.HConfigGUI.UI;
 using BetterExperience.HotkeyManager;
 using BetterExperience.HProvider;
 using BetterExperience.HTranslatorSpace;
