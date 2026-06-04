@@ -11,9 +11,9 @@ namespace BetterExperience.HConfigGUI.Editor.ValueEditor
         private readonly Dictionary<IEntryBinding, (Array values, List<int> mapIndex, string[] names)> _cacheEnumInfo =
             new Dictionary<IEntryBinding, (Array values, List<int> mapIndex, string[] names)>();
 
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityGuiProvider UnityGui { get; }
 
-        public EnumEditor(UnityGuiProvider unityGui)
+        public EnumEditor(IUnityGuiProvider unityGui)
         {
             UnityGui = unityGui;
         }

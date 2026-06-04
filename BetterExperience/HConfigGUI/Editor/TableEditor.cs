@@ -7,8 +7,8 @@ namespace BetterExperience.HConfigGUI.Editor
 {
     public class TableEditor
     {
-        public UnityProvider UnityService { get; }
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityProvider UnityService { get; }
+        public IUnityGuiProvider UnityGui { get; }
         public StyleResource StyleProvider { get; }
 
         public ValueEditorRegistry EditorRegistry { get; }
@@ -16,7 +16,7 @@ namespace BetterExperience.HConfigGUI.Editor
         public EntryChangeSink ChangeSink { get; }
         public EntryEditor EntryRenderer { get; }
 
-        public TableEditor(UnityProvider unityService, UnityGuiProvider unityGui, GuiStateStore guiStateStore, StyleResource styleProvider)
+        public TableEditor(IUnityProvider unityService, IUnityGuiProvider unityGui, GuiStateStore guiStateStore, StyleResource styleProvider)
         {
             UnityService = unityService;
             UnityGui = unityGui;

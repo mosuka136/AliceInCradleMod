@@ -5,7 +5,7 @@ namespace BetterExperience.HConfigGUI.Editor.ValueEditor
 {
     public class UnsupportedEditor : IValueEditor
     {
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityGuiProvider UnityGui { get; }
 
         public static UnsupportedEditor Instance = new UnsupportedEditor();
 

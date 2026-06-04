@@ -6,10 +6,10 @@ namespace BetterExperience.HConfigGUI.Editor.ValueEditor
 {
     public class SliderEditor : NumberEditor, IValueEditor
     {
-        public UnityProvider UnityService { get; }
+        public IUnityProvider UnityService { get; }
         public StyleResource StyleProvider { get; }
 
-        public SliderEditor(UnityGuiProvider unityGui, UnityProvider unityService, StyleResource styleProvider)
+        public SliderEditor(IUnityGuiProvider unityGui, IUnityProvider unityService, StyleResource styleProvider)
             : base(unityGui)
         {
             UnityService = unityService;

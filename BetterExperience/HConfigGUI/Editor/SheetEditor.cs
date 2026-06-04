@@ -7,8 +7,8 @@ namespace BetterExperience.HConfigGUI.Editor
 {
     public class SheetEditor
     {
-        public UnityProvider UnityService { get; }
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityProvider UnityService { get; }
+        public IUnityGuiProvider UnityGui { get; }
         public GuiStateStore GuiStateStore { get; }
         public StyleResource StyleProvider { get; }
 
@@ -17,7 +17,7 @@ namespace BetterExperience.HConfigGUI.Editor
         private Vector2 _sidebarScrollPosition = Vector2.zero;
         private Vector2 _contentScrollPosition = Vector2.zero;
 
-        public SheetEditor(UnityProvider unityService, UnityGuiProvider unityGui, GuiStateStore guiStateStore, StyleResource styleProvider)
+        public SheetEditor(IUnityProvider unityService, IUnityGuiProvider unityGui, GuiStateStore guiStateStore, StyleResource styleProvider)
         {
             UnityService = unityService;
             UnityGui = unityGui;

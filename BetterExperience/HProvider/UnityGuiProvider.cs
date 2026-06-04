@@ -1,5 +1,3 @@
-using System;
-using System.Reflection.Emit;
 using UnityEngine;
 
 namespace BetterExperience.HProvider
@@ -8,7 +6,7 @@ namespace BetterExperience.HProvider
     /// Unity IMGUI/GUILayout 的适配层。
     /// 配置界面通过该类型访问 GUI API，主要目的是把渲染代码与 Unity 静态 API 隔开，并统一空样式回退策略。
     /// </summary>
-    public class UnityGuiProvider
+    public class UnityGuiProvider : IUnityGuiProvider
     {
         public string Tooltip => GUI.tooltip;
         public GUIStyle LabelStyle => GUI.skin.label;
@@ -22,6 +20,8 @@ namespace BetterExperience.HProvider
             get => GUI.color;
             set => GUI.color = value;
         }
+        public float ScreenWidth => Screen.width;
+        public float ScreenHeight => Screen.height;
 
         public Rect ModalWindow(int id, Rect clientRect, GUI.WindowFunction func, string title, GUIStyle style)
         {

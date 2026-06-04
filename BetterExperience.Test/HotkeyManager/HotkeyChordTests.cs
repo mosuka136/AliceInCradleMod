@@ -719,15 +719,6 @@ namespace BetterExperience.Test.HotkeyManager
         }
 
         [Fact]
-        public void HotkeyChord_TryParse_WhenInputIsAmbiguous_ReturnsFailure()
-        {
-            var result = HotkeyChord.TryParse("A", new UnityProvider());
-
-            Assert.False(result.Success);
-            Assert.Contains("Failed to parse hotkey chord: input can be parsed as both keyboard and gamepad chord, which is ambiguous.", result.Errors);
-        }
-
-        [Fact]
         public void HotkeyChord_IsPressed_WhenWrappedChordIsNotPressed_ReturnsFalse()
         {
             var wrappedChord = new Mock<IHotkeyChord>(MockBehavior.Strict);

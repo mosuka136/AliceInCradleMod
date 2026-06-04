@@ -102,6 +102,8 @@
     <Compile Include="HotkeyManager\HotkeyEditState.cs" />
     <Compile Include="HotkeyManager\HotkeyResult.cs" />
     <Compile Include="HProvider\BepInExLoggerProvider.cs" />
+    <Compile Include="HProvider\IUnityGuiProvider.cs" />
+    <Compile Include="HProvider\IUnityProvider.cs" />
     <Compile Include="HProvider\UnityGuiProvider.cs" />
     <Compile Include="HProvider\UnityProvider.cs" />
     <Compile Include="HClassAttribute\ClassHelper.cs" />

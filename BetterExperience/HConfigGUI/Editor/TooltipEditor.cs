@@ -6,11 +6,11 @@ namespace BetterExperience.HConfigGUI.Editor
 {
     public class TooltipEditor
     {
-        public UnityProvider UnityService { get; }
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityProvider UnityService { get; }
+        public IUnityGuiProvider UnityGui { get; }
         public StyleResource StyleProvider { get; }
 
-        public TooltipEditor(UnityProvider unityService, UnityGuiProvider unityGui, StyleResource styleProvider)
+        public TooltipEditor(IUnityProvider unityService, IUnityGuiProvider unityGui, StyleResource styleProvider)
         {
             UnityService = unityService;
             UnityGui = unityGui;

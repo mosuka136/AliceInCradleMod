@@ -1,44 +1,54 @@
-using BetterExperience.HConfigSpace;
+using BetterExperience.BConfigManager;
 using BetterExperience.HConfigGUI;
+using BetterExperience.HConfigSpace;
 using Moq;
+using Xunit;
 
-namespace BetterExperience.Test.HConfigGUI
+namespace BetterExperience.Test
 {
     public class UiMetadataHelperTests
     {
         [Fact]
-        public void GetMetadata_WithNullEntry_ReturnsNull()
+        public void GetMetadata_WhenEntryIsNull_ReturnsNull()
         {
+            // Act
             var result = UiMetadataHelper.GetMetadata(null);
 
+            // Assert
             Assert.Null(result);
         }
 
         [Fact]
-        public void GetMetadata_WithEntryWithSliderInfo_ReturnsUiSliderMetadata()
+        public void GetMetadata_WhenEntryKeyHasSliderAttribute_ReturnsSliderMetadata()
         {
-            var mockEntry = new Mock<IConfigEntry>();
-            mockEntry.Setup(e => e.Key).Returns("SetLootDropRatio");
+            // Arrange
+            var entryMock = new Mock<IConfigEntry>(MockBehavior.Strict);
+            entryMock.SetupGet(x => x.Key).Returns(nameof(ConfigManager.SetLootDropRatio));
 
-            var result = UiMetadataHelper.GetMetadata(mockEntry.Object);
+            // Act
+            var result = UiMetadataHelper.GetMetadata(entryMock.Object);
 
-            Assert.NotNull(result);
-            Assert.IsType<UiSliderMetadata>(result);
-            var sliderMetadata = (UiSliderMetadata)result;
-            Assert.Equal(-1f, sliderMetadata.Min);
-            Assert.Equal(20f, sliderMetadata.Max);
-            Assert.Equal(0.1f, sliderMetadata.Step);
+            // Assert
+            var metadata = Assert.IsType<UiSliderMetadata>(result);
+            Assert.Equal(-1f, metadata.Min);
+            Assert.Equal(20f, metadata.Max);
+            Assert.Equal(0.1f, metadata.Step);
+            entryMock.VerifyGet(x => x.Key, Times.Once);
         }
 
         [Fact]
-        public void GetMetadata_WithEntryWithoutSliderInfo_ReturnsNull()
+        public void GetMetadata_WhenEntryKeyDoesNotHaveSliderAttribute_ReturnsNull()
         {
-            var mockEntry = new Mock<IConfigEntry>();
-            mockEntry.Setup(e => e.Key).Returns("EnableBetterFishing");
+            // Arrange
+            var entryMock = new Mock<IConfigEntry>(MockBehavior.Strict);
+            entryMock.SetupGet(x => x.Key).Returns(nameof(ConfigManager.EnableDebugMode));
 
-            var result = UiMetadataHelper.GetMetadata(mockEntry.Object);
+            // Act
+            var result = UiMetadataHelper.GetMetadata(entryMock.Object);
 
+            // Assert
             Assert.Null(result);
+            entryMock.VerifyGet(x => x.Key, Times.Once);
         }
     }
 }

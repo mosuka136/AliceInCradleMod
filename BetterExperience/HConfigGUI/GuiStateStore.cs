@@ -44,6 +44,9 @@ namespace BetterExperience.HConfigGUI
 
         public void DeleteText(IEntryBinding entry)
         {
+            if (string.IsNullOrEmpty(entry?.Key))
+                return;
+
             var textState = _textState.Where(kv => kv.Key.StartsWith(entry.Key)).Select(kv => kv.Key).ToList();
             foreach (var key in textState)
             {
@@ -72,6 +75,9 @@ namespace BetterExperience.HConfigGUI
 
         public void DeleteBool(IEntryBinding entry)
         {
+            if (string.IsNullOrEmpty(entry?.Key))
+                return;
+
             var boolState = _boolState.Where(kv => kv.Key.StartsWith(entry.Key)).Select(kv => kv.Key).ToList();
             foreach (var key in boolState)
             {
@@ -100,6 +106,9 @@ namespace BetterExperience.HConfigGUI
 
         public void DeleteInt(IEntryBinding entry)
         {
+            if (string.IsNullOrEmpty(entry?.Key))
+                return;
+
             var intState = _intState.Where(kv => kv.Key.StartsWith(entry.Key)).Select(kv => kv.Key).ToList();
             foreach (var key in intState)
             {
@@ -128,6 +137,9 @@ namespace BetterExperience.HConfigGUI
 
         public void DeleteFloat(IEntryBinding entry)
         {
+            if (string.IsNullOrEmpty(entry?.Key))
+                return;
+
             var floatState = _floatState.Where(kv => kv.Key.StartsWith(entry.Key)).Select(kv => kv.Key).ToList();
             foreach (var key in floatState)
             {

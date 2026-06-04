@@ -9,10 +9,10 @@ namespace BetterExperience.HConfigGUI.Editor.ValueEditor
     public class HotkeyEditor : IValueEditor
     {
         public HotkeyEditSession Session { get; }
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityGuiProvider UnityGui { get; }
         public StyleResource StyleProvider { get; }
 
-        public HotkeyEditor(UnityGuiProvider unityGui, StyleResource styleProvider)
+        public HotkeyEditor(IUnityGuiProvider unityGui, StyleResource styleProvider)
         {
             Session = new HotkeyEditSession();
             UnityGui = unityGui;

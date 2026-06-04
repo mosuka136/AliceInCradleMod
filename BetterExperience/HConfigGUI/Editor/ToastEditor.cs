@@ -6,8 +6,8 @@ namespace BetterExperience.HConfigGUI.Editor
 {
     public class ToastEditor
     {
-        public UnityProvider UnityService { get; }
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityProvider UnityService { get; }
+        public IUnityGuiProvider UnityGui { get; }
         public StyleResource StyleProvider { get; }
 
         public string Message { get; set; }
@@ -15,7 +15,7 @@ namespace BetterExperience.HConfigGUI.Editor
         public float FadeDuration { get; set; } = 0.5f;
         public float EndTime { get; set; }
 
-        public ToastEditor(UnityProvider unityService, UnityGuiProvider unityGui, StyleResource styleProvider)
+        public ToastEditor(IUnityProvider unityService, IUnityGuiProvider unityGui, StyleResource styleProvider)
         {
             UnityService = unityService;
             UnityGui = unityGui;

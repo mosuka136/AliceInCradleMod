@@ -6,9 +6,9 @@ namespace BetterExperience.HConfigGUI.Editor.ValueEditor
 {
     public class BooleanEditor : IValueEditor
     {
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityGuiProvider UnityGui { get; }
 
-        public BooleanEditor(UnityGuiProvider unityGui)
+        public BooleanEditor(IUnityGuiProvider unityGui)
         {
             UnityGui = unityGui;
         }

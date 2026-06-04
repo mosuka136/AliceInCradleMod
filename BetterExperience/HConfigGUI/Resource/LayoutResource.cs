@@ -11,9 +11,9 @@ namespace BetterExperience.HConfigGUI.Resource
     /// </summary>
     public class LayoutResource
     {
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityGuiProvider UnityGui { get; }
 
-        public LayoutResource(UnityGuiProvider unityGui)
+        public LayoutResource(IUnityGuiProvider unityGui)
         {
             UnityGui = unityGui;
         }

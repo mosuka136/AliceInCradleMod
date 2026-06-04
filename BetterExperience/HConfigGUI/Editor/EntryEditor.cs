@@ -11,9 +11,9 @@ namespace BetterExperience.HConfigGUI.Editor
         public EntryChangeSink ChangeSink { get; }
 
         public float RearBlankWidth => UnityGui.ButtonStyle.CalcSize(UnityGui.GetContent(TranslatorResource.Reset)).x;
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityGuiProvider UnityGui { get; }
 
-        public EntryEditor(ValueEditorRegistry registry, GuiStateStore state, EntryChangeSink changeSink, UnityGuiProvider unity)
+        public EntryEditor(ValueEditorRegistry registry, GuiStateStore state, EntryChangeSink changeSink, IUnityGuiProvider unity)
         {
             Registry = registry;
             State = state;

@@ -7,9 +7,9 @@ namespace BetterExperience.HConfigGUI.Editor.ValueEditor
     {
         public float DelayApplyDuration { get; set; } = 0.5f;
 
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityGuiProvider UnityGui { get; }
 
-        public StringEditor(UnityGuiProvider unityGui)
+        public StringEditor(IUnityGuiProvider unityGui)
         {
             UnityGui = unityGui;
         }

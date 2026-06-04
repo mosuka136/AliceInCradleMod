@@ -9,7 +9,7 @@ namespace BetterExperience.HProvider
     /// Unity API 访问适配器。
     /// 该类型集中封装时间、输入、场景和少量数学函数，便于非 MonoBehaviour 代码访问 Unity 状态，也让 GUI/热键逻辑更容易隔离。
     /// </summary>
-    public class UnityProvider
+    public class UnityProvider : IUnityProvider
     {
         public float DeltaTime => Time.deltaTime;
         public float UnscaledDeltaTime => Time.unscaledDeltaTime;

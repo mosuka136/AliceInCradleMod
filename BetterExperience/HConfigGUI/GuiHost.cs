@@ -27,8 +27,8 @@ namespace BetterExperience.HConfigGUI
         public TooltipEditor TooltipEditor { get; private set; }
         public PopupEditor PopupEditor { get; private set; }
 
-        public UnityProvider UnityService { get; private set; }
-        public UnityGuiProvider UnityGui { get; private set; }
+        public IUnityProvider UnityService { get; private set; }
+        public IUnityGuiProvider UnityGui { get; private set; }
         public GuiStateStore GuiStateStore { get; private set; }
         public StyleResource StyleProvider { get; private set; }
         public LayoutResource LayoutProvider { get; private set; }
@@ -72,9 +72,9 @@ namespace BetterExperience.HConfigGUI
                 GuiPipe.OnEntryValueChanged += e => ToastEditor.SetToast(TranslatorResource.Changed + e.Name);
                 GuiPipe.OnEntryValueReset += e => ToastEditor.SetToast(TranslatorResource.ResetDone + e.Name);
 
-                float width = Screen.width * 0.35f;
-                float height = Screen.height * 0.7f;
-                WindowRect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
+                float width = UnityGui.ScreenWidth * 0.35f;
+                float height = UnityGui.ScreenHeight * 0.7f;
+                WindowRect = new Rect((UnityGui.ScreenWidth - width) / 2f, (UnityGui.ScreenHeight - height) / 2f, width, height);
 
                 HLog.Debug($"Config GUI host created. WindowId={WindowID}");
             }

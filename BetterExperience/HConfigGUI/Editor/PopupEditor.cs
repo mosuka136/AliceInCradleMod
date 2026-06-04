@@ -11,7 +11,7 @@ namespace BetterExperience.HConfigGUI.Editor
         public readonly int PopupID = Guid.NewGuid().GetHashCode();
 
         public Rect PopupRect { get; private set; }
-        public UnityGuiProvider UnityGui { get; }
+        public IUnityGuiProvider UnityGui { get; }
         public StyleResource StyleProvider { get; }
         public GuiStateStore GuiStateStore { get; }
 
@@ -19,15 +19,15 @@ namespace BetterExperience.HConfigGUI.Editor
         public Action DrawContentAction { get; set; }
         public Action ClosePopupAction { get; set; }
 
-        public PopupEditor(UnityGuiProvider unityGui, StyleResource styleProvider, GuiStateStore guiStateStore)
+        public PopupEditor(IUnityGuiProvider unityGui, StyleResource styleProvider, GuiStateStore guiStateStore)
         {
             UnityGui = unityGui;
             StyleProvider = styleProvider;
             GuiStateStore = guiStateStore;
 
-            float width = Screen.width * 0.25f;
-            float height = Screen.height * 0.15f;
-            PopupRect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
+            float width = UnityGui.ScreenWidth * 0.25f;
+            float height = UnityGui.ScreenHeight * 0.15f;
+            PopupRect = new Rect((UnityGui.ScreenWidth - width) / 2f, (UnityGui.ScreenHeight - height) / 2f, width, height);
         }
 
         public void DrawPopup(Translator title, Action drawContentAction, Action closePopupAction)
@@ -38,7 +38,7 @@ namespace BetterExperience.HConfigGUI.Editor
 
             var color = UnityGui.Color;
             UnityGui.Color = new Color(0f, 0f, 0f, 0.55f);
-            UnityGui.Box(new Rect(0f, 0f, Screen.width, Screen.height), string.Empty);
+            UnityGui.Box(new Rect(0f, 0f, UnityGui.ScreenWidth, UnityGui.ScreenHeight), string.Empty);
             UnityGui.Color = color;
 
             PopupRect = UnityGui.ModalWindow(PopupID, PopupRect, DrawPopupWindow, string.Empty, UnityGui.BoxStyle);
