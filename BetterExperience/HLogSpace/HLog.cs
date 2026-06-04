@@ -51,13 +51,13 @@ namespace BetterExperience.HLogSpace
             _initialized = true;
 
             if (EnableLog)
-                InintializeWriter();
+                InitializeWriter();
         }
 
         /// <summary>
         /// 初始化日志写入器，可重复调用，重复调用会关闭之前的写入器并创建新的写入器。
         /// </summary>
-        public static void InintializeWriter()
+        public static void InitializeWriter()
         {
             try
             {
@@ -144,7 +144,7 @@ namespace BetterExperience.HLogSpace
                 return;
 
             if (EnableLog && _writer == null)
-                InintializeWriter();
+                InitializeWriter();
 
             try
             {

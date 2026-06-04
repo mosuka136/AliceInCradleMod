@@ -82,7 +82,7 @@ namespace BetterExperience.Test
                 var contentAfterInitialize = ReadAllTextShared(logFilePath);
                 Assert.Contains("LOG-START", contentAfterInitialize);
 
-                HLog.InintializeWriter();
+                HLog.InitializeWriter();
                 GameQuitManager.Dispose();
 
                 var contentAfterDispose = ReadAllTextShared(logFilePath);
@@ -137,8 +137,8 @@ namespace BetterExperience.Test
             try
             {
                 // Act
-                HLog.InintializeWriter();
-                HLog.InintializeWriter();
+                HLog.InitializeWriter();
+                HLog.InitializeWriter();
                 HLog.DisposeWriter();
 
                 // Assert
@@ -165,7 +165,7 @@ namespace BetterExperience.Test
             HLog.EnableLog = false;
             HLog.Initialize(logDirectory, "disabled.log", LogLevel.Debug, new UnityProvider());
             HLog.EnableLog = true;
-            HLog.InintializeWriter();
+            HLog.InitializeWriter();
             var logFilePath = GetSingleLogFilePath(logDirectory);
             HLog.DisposeWriter();
             var contentBefore = ReadAllTextShared(logFilePath);
@@ -198,7 +198,7 @@ namespace BetterExperience.Test
             HLog.LogFileName = "invalid.log";
 
             // Act
-            var exception = Record.Exception(HLog.InintializeWriter);
+            var exception = Record.Exception(HLog.InitializeWriter);
 
             // Assert
             Assert.Null(exception);
@@ -266,7 +266,7 @@ namespace BetterExperience.Test
 
             ConfigureLogger(logDirectory, "dispose.log", LogLevel.Debug, true);
             HLog.DisposeWriter();
-            HLog.InintializeWriter();
+            HLog.InitializeWriter();
 
             try
             {
@@ -296,7 +296,7 @@ namespace BetterExperience.Test
 
             ConfigureLogger(logDirectory, "dispose-throw.log", LogLevel.Debug, true);
             HLog.DisposeWriter();
-            HLog.InintializeWriter();
+            HLog.InitializeWriter();
 
             var tasks = Enumerable.Range(0, 16)
                 .Select(_ => System.Threading.Tasks.Task.Run(() =>
