@@ -15,8 +15,13 @@ namespace BetterExperience.HLogSpace
     /// </summary>
     public static class HLog
     {
+        private static readonly TimeSpan WriteInterval = TimeSpan.FromSeconds(1.5);
+        private static readonly TimeSpan LongestDuration = TimeSpan.FromSeconds(5);
+
         private static bool _initialized = false;
         private static int _seq = 0;
+        private static Timer _timer;
+        private static LogEntry _lastLog;
         private static StreamWriter _writer;
         private static readonly object _lock = new object();
         private static readonly ConcurrentQueue<LogEntry> _logEntries = new ConcurrentQueue<LogEntry>();
@@ -47,7 +52,7 @@ namespace BetterExperience.HLogSpace
             if (_initialized)
                 return;
 
-            GameQuitManager.OnGameQuit += DisposeWriter;
+            GameQuitManager.OnGameQuit += Dispose;
             _initialized = true;
 
             if (EnableLog)
@@ -66,6 +71,8 @@ namespace BetterExperience.HLogSpace
                     if (_writer != null)
                         DisposeWriter();
 
+                    _timer?.Dispose();
+
                     if (!Directory.Exists(LogDirectory))
                         Directory.CreateDirectory(LogDirectory);
 
@@ -74,6 +81,8 @@ namespace BetterExperience.HLogSpace
                     _writer = new StreamWriter(fs, Encoding.UTF8) { AutoFlush = true };
 
                     _writer.WriteLine($"{new string('-', 50)}LOG-START-{DateTime.Now}{new string('-', 50)}");
+
+                    _timer = new Timer(s => FlushQueue(), null, WriteInterval, WriteInterval);
                 }
             }
             catch
@@ -84,26 +93,27 @@ namespace BetterExperience.HLogSpace
         public static void Debug(string msg,
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
-            [CallerLineNumber] int line = 0) => Write(LogLevel.Debug, msg, null, member, file, line);
+            [CallerLineNumber] int line = 0) => WriteQueue(LogLevel.Debug, msg, null, member, file, line);
 
         public static void Info(string msg,
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
-            [CallerLineNumber] int line = 0) => Write(LogLevel.Info, msg, null, member, file, line);
+            [CallerLineNumber] int line = 0) => WriteQueue(LogLevel.Info, msg, null, member, file, line);
 
         public static void Notice(string msg,
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
-            [CallerLineNumber] int line = 0) => Write(LogLevel.Notice, msg, null, member, file, line);
+            [CallerLineNumber] int line = 0) => WriteQueue(LogLevel.Notice, msg, null, member, file, line);
 
         public static void Warn(string msg,
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
-            [CallerLineNumber] int line = 0) => Write(LogLevel.Warning, msg, null, member, file, line);
+            [CallerLineNumber] int line = 0) => WriteQueue(LogLevel.Warning, msg, null, member, file, line);
+ 
         public static void Error(string msg, Exception ex = null,
             [CallerMemberName] string member = "",
             [CallerFilePath] string file = "",
-            [CallerLineNumber] int line = 0) => Write(LogLevel.Error, msg, ex, member, file, line);
+            [CallerLineNumber] int line = 0) => WriteQueue(LogLevel.Error, msg, ex, member, file, line);
 
         /// <summary>
         /// 该方法将日志写入队列，然后调用<see cref="FlushQueue"/>写入日志同时触发日志添加事件。
@@ -114,25 +124,44 @@ namespace BetterExperience.HLogSpace
         /// <param name="member">调用该方法的成员名称，可为 <c>null</c>。</param>
         /// <param name="file">调用该方法的文件路径，可为 <c>null</c>。</param>
         /// <param name="line">调用该方法的行号。</param>
-        public static void Write(LogLevel logLevel, string msg, Exception ex, string member, string file, int line)
+        public static void WriteQueue(LogLevel logLevel, string msg, Exception ex, string member, string file, int line)
         {
             try
             {
                 int id = Interlocked.Increment(ref _seq);
-                string time = DateTime.Now.ToString("HH:mm:ss.fff");
+                DateTime timestamp = DateTime.Now;
                 int threadId = Thread.CurrentThread.ManagedThreadId;
                 int frame = UnityProvider?.FrameCount ?? 0;
                 string scene = UnityProvider?.ActiveScene.name;
                 scene = string.IsNullOrEmpty(scene) ? "?" : scene;
 
-                var entry = new LogEntry(id, time, threadId, frame, scene, logLevel, msg, file, line, member, ex);
-                _logEntries.Enqueue(entry);
+                var entry = new LogEntry(id, timestamp, threadId, frame, scene, logLevel, msg, file, line, member, ex);
 
-                FlushQueue();
+                if (entry.Equals(_lastLog))
+                {
+                    _lastLog.UpdateRepeat(timestamp);
+                }
+                else
+                {
+                    if (_lastLog?.IsRepeated == true)
+                        _logEntries.Enqueue(_lastLog);
+                    _logEntries.Enqueue(entry);
+                    _lastLog = entry;
+                    FlushQueue();
+                }
             }
             catch
             {
             }
+        }
+
+        public static void WriteLog(LogEntry entry)
+        {
+            if (!EnableLog || entry == null)
+                return;
+            if (entry.Level >= HLogLevel)
+                _writer?.WriteLine(entry.ToString());
+            InvokeOnLogAdd(entry);
         }
 
         /// <summary>
@@ -153,15 +182,15 @@ namespace BetterExperience.HLogSpace
                     while (!_logEntries.IsEmpty)
                     {
                         if (_logEntries.TryDequeue(out var entry))
-                        {
-                            if (!EnableLog)
-                                continue;
+                            WriteLog(entry);
+                    }
 
-                            if (entry.Level >= HLogLevel)
-                                _writer?.WriteLine(entry.ToString());
-
-                            InvokeOnLogAdd(entry);
-                        }
+                    if (_lastLog?.IsRepeated == true &&
+                        (DateTime.Now - _lastLog.LastRepeatTime >= WriteInterval ||
+                        _lastLog.LastRepeatTime - _lastLog.Timestamp >= LongestDuration))
+                    {
+                        WriteLog(_lastLog);
+                        _lastLog = null;
                     }
                 }
             }
@@ -185,6 +214,18 @@ namespace BetterExperience.HLogSpace
         }
 
         /// <summary>
+        /// 释放日志资源，关闭文件写入器和定时器。
+        /// </summary>
+        public static void Dispose()
+        {
+            DisposeWriter();
+            _timer?.Dispose();
+            _timer = null;
+            GameQuitManager.OnGameQuit -= Dispose;
+            _initialized = false;
+        }
+
+        /// <summary>
         /// 关闭文件日志写入器。
         /// 该方法可重复调用，Unity 退出事件和异常清理路径都可以安全使用。
         /// </summary>
@@ -197,6 +238,13 @@ namespace BetterExperience.HLogSpace
             {
                 lock (_lock)
                 {
+                    FlushQueue();
+                    if (_lastLog?.IsRepeated == true)
+                    {
+                        WriteLog(_lastLog);
+                        _lastLog = null;
+                    }
+
                     _writer.WriteLine($"{new string('-', 50)}LOG-END-{DateTime.Now}{new string('-', 50)}");
                     _writer.WriteLine();
                     _writer.WriteLine();

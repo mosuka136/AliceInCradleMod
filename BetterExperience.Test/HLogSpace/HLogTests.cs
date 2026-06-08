@@ -34,7 +34,7 @@ namespace BetterExperience.Test
             try
             {
                 // Act
-                var exception = Record.Exception(() => HLog.Write(
+                var exception = Record.Exception(() => HLog.WriteQueue(
                     LogLevel.Info,
                     "queued-before-init",
                     null,
@@ -175,7 +175,7 @@ namespace BetterExperience.Test
             try
             {
                 // Act
-                HLog.Write(LogLevel.Error, "disabled-message", null, "DisabledMember", "disabled.cs", 55);
+                HLog.WriteQueue(LogLevel.Error, "disabled-message", null, "DisabledMember", "disabled.cs", 55);
 
                 // Assert
                 Assert.False(eventRaised);
