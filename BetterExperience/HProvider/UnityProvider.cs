@@ -61,5 +61,15 @@ namespace BetterExperience.HProvider
         {
             return a > b ? a : b;
         }
+
+        public void ClipboardCopy(string text)
+        {
+            GUIUtility.systemCopyBuffer = text;
+        }
+
+        public string ClipboardPaste()
+        {
+            return GUIUtility.systemCopyBuffer;
+        }
     }
 }

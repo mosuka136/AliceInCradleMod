@@ -11,6 +11,7 @@ namespace BetterExperience.BConfigManager
     {
         // 热键配置使用 Hotkey 自定义适配器序列化，默认 UnityProvider 实例在初始化时统一创建。
         public static ConfigEntry<Hotkey> ConfigUIHotkey { get; private set; }
+        public static ConfigEntry<Hotkey> LogUIHotkey { get; private set; }
         public static ConfigEntry<Hotkey> ReloadConfigHotkey { get; private set; }
         public static ConfigEntry<Hotkey> FlushAllStoreHotkey { get; private set; }
         public static ConfigEntry<Hotkey> FlushTextureHotkey { get; private set; }
@@ -94,6 +95,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "打开配置界面的热键。默认是 F1。",
                         english: "The hotkey to open config UI. Default is F1."
+                    )
+                    );
+                LogUIHotkey = Config.Bind(
+                    SectionHotkey,
+                    nameof(LogUIHotkey),
+                    new Hotkey("F2", unityService),
+                    new Translator(chinese: "日志界面热键", english: "Log UI Hotkey"),
+                    new Translator(
+                        chinese: "打开日志界面的热键。默认是 F2。",
+                        english: "The hotkey to open log UI. Default is F2."
                     )
                     );
                 ReloadConfigHotkey = Config.Bind(

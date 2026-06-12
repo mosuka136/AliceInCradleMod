@@ -18,8 +18,8 @@ namespace BetterExperience.HLogSpace
         public int Line { get; }
         public string Member { get; }
         public Exception Exception { get; }
-        public DateTime LastRepeatTime { get; private set; }
-        public int RepeatCount { get; private set; }
+        public DateTime LastRepeatTime { get; set; }
+        public int RepeatCount { get; set; }
         public bool IsRepeated => RepeatCount > 1;
 
         public LogEntry(int id, DateTime timestamp, int threadId, int frame, string scene, LogLevel level, string message, string file, int line, string member, Exception exception)

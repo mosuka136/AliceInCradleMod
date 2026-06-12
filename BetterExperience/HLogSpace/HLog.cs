@@ -1,6 +1,7 @@
 using BetterExperience.HProvider;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -15,6 +16,8 @@ namespace BetterExperience.HLogSpace
     /// </summary>
     public static class HLog
     {
+        public const int MaxEarlyLogs = 200;
+
         private static readonly TimeSpan WriteInterval = TimeSpan.FromSeconds(1.5);
         private static readonly TimeSpan LongestDuration = TimeSpan.FromSeconds(5);
 
@@ -26,12 +29,14 @@ namespace BetterExperience.HLogSpace
         private static readonly object _lock = new object();
         private static readonly ConcurrentQueue<LogEntry> _logEntries = new ConcurrentQueue<LogEntry>();
 
+        public static event Action<LogEntry> OnLog;
         public static event Action<LogEntry> OnLogAdd;
 
         public static bool EnableLog { get; set; } = true;
         public static string LogDirectory { get; set; }
         public static string LogFileName { get; set; }
         public static LogLevel HLogLevel { get; set; } = LogLevel.Info;
+        public static List<LogEntry> EarlyLogs { get; } = new List<LogEntry>();
         public static UnityProvider UnityProvider { get; set; }
 
         /// <summary>
@@ -137,6 +142,15 @@ namespace BetterExperience.HLogSpace
 
                 var entry = new LogEntry(id, timestamp, threadId, frame, scene, logLevel, msg, file, line, member, ex);
 
+                if (EarlyLogs.Count < MaxEarlyLogs)
+                    EarlyLogs.Add(entry);
+
+                foreach (var handler in (OnLog?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action<LogEntry>>())
+                {
+                    try { handler?.Invoke(entry); }
+                    catch { }
+                }
+
                 if (entry.Equals(_lastLog))
                 {
                     _lastLog.UpdateRepeat(timestamp);
@@ -159,9 +173,17 @@ namespace BetterExperience.HLogSpace
         {
             if (!EnableLog || entry == null)
                 return;
-            if (entry.Level >= HLogLevel)
-                _writer?.WriteLine(entry.ToString());
-            InvokeOnLogAdd(entry);
+
+            if (entry.Level < HLogLevel)
+                return;
+
+            _writer?.WriteLine(entry.ToString());
+
+            foreach (var handler in (OnLogAdd?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action<LogEntry>>())
+            {
+                try { handler?.Invoke(entry); }
+                catch { }
+            }
         }
 
         /// <summary>
@@ -196,20 +218,6 @@ namespace BetterExperience.HLogSpace
             }
             catch
             {
-            }
-        }
-
-        public static void InvokeOnLogAdd(LogEntry entry)
-        {
-            foreach (var handler in (OnLogAdd?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action<LogEntry>>())
-            {
-                try
-                {
-                    handler?.Invoke(entry);
-                }
-                catch
-                {
-                }
             }
         }
 

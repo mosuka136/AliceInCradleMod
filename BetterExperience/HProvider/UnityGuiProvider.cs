@@ -10,6 +10,7 @@ namespace BetterExperience.HProvider
     {
         public string Tooltip => GUI.tooltip;
         public GUIStyle LabelStyle => GUI.skin.label;
+        public GUIStyle ToggleStyle => GUI.skin.toggle;
         public GUIStyle ButtonStyle => GUI.skin.button;
         public GUIStyle TextFieldStyle => GUI.skin.textField;
         public GUIStyle HorizontalSliderStyle => GUI.skin.horizontalSlider;
@@ -41,6 +42,11 @@ namespace BetterExperience.HProvider
         public void BeginHorizontal(params GUILayoutOption[] options)
         {
             GUILayout.BeginHorizontal(options);
+        }
+
+        public void BeginHorizontal(GUIStyle style, params GUILayoutOption[] options)
+        {
+            GUILayout.BeginHorizontal(style ?? GUIStyle.none, options);
         }
 
         public void EndHorizontal()
@@ -111,6 +117,11 @@ namespace BetterExperience.HProvider
         public bool Toggle(bool value, string text, params GUILayoutOption[] options)
         {
             return GUILayout.Toggle(value, text, options);
+        }
+
+        public bool Toggle(bool value, string text, GUIStyle style, params GUILayoutOption[] options)
+        {
+            return GUILayout.Toggle(value, text, style ?? GUIStyle.none, options);
         }
 
         public string TextField(string text, params GUILayoutOption[] options)

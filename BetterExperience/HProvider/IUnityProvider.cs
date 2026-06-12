@@ -27,5 +27,7 @@ namespace BetterExperience.HProvider
         float Round(float value);
         float Min(float a, float b);
         float Max(float a, float b);
+        void ClipboardCopy(string text);
+        string ClipboardPaste();
     }
 }

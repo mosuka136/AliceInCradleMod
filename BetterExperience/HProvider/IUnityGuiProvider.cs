@@ -6,6 +6,7 @@ namespace BetterExperience.HProvider
     {
         string Tooltip { get; }
         GUIStyle LabelStyle { get; }
+        GUIStyle ToggleStyle { get; }
         GUIStyle ButtonStyle { get; }
         GUIStyle TextFieldStyle { get; }
         GUIStyle HorizontalSliderStyle { get; }
@@ -19,6 +20,7 @@ namespace BetterExperience.HProvider
         void BeginArea(Rect screenRect);
         void EndArea();
         void BeginHorizontal(params GUILayoutOption[] options);
+        void BeginHorizontal(GUIStyle style, params GUILayoutOption[] options);
         void EndHorizontal();
         Vector2 BeginScrollView(Vector2 scrollPosition, params GUILayoutOption[] options);
         void EndScrollView();
@@ -33,6 +35,7 @@ namespace BetterExperience.HProvider
         void Label(GUIContent content, GUIStyle style, params GUILayoutOption[] options);
         void Label(Rect position, GUIContent content, GUIStyle style);
         bool Toggle(bool value, string text, params GUILayoutOption[] options);
+        bool Toggle(bool value, string text, GUIStyle style, params GUILayoutOption[] options);
         string TextField(string text, params GUILayoutOption[] options);
         bool Button(string text, params GUILayoutOption[] options);
         bool Button(string text, GUIStyle style, params GUILayoutOption[] options);

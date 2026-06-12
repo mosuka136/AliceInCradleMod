@@ -97,6 +97,14 @@
     <Compile Include="HConfigGUI\Editor\ValueEditor\StringEditor.cs" />
     <Compile Include="HConfigGUI\Editor\ValueEditor\UnsupportedEditor.cs" />
     <Compile Include="HConfigGUI\Editor\ValueEditorRegistry.cs" />
+    <Compile Include="HLogGUI\EntryBinding.cs" />
+    <Compile Include="HLogGUI\EntryContentType.cs" />
+    <Compile Include="HLogGUI\EntryEditor.cs" />
+    <Compile Include="HLogGUI\EntryListBinding.cs" />
+    <Compile Include="HLogGUI\GuiHost.cs" />
+    <Compile Include="HLogGUI\ListEditor.cs" />
+    <Compile Include="HLogGUI\Resource\StyleResource.cs" />
+    <Compile Include="HLogGUI\Resource\TranslatorResource.cs" />
     <Compile Include="HLogSpace\BepInExHLog.cs" />
     <Compile Include="HLogSpace\LogEntry.cs" />
     <Compile Include="HotkeyManager\HotkeyEditState.cs" />
