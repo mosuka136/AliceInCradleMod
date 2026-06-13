@@ -1,16 +1,12 @@
 using BetterExperience.HLogSpace;
 using BetterExperience.HProvider;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine.SceneManagement;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 using static BetterExperience.HLogSpace.HLog;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HLogSpace
 {
     [TestCaseOrderer("BetterExperience.Test.HLogTests+AlphabeticalOrderer", "BetterExperience.Test")]
     public class HLogTests
@@ -99,12 +95,15 @@ namespace BetterExperience.Test
         public void Initialize_03_WhenAlreadyInitialized_UpdatesConfigurationWithoutCreatingNewWriter()
         {
             // Arrange
+            var initialLogDirectory = CreateLogDirectory();
             var newLogDirectory = CreateLogDirectory();
             var newLogFileName = "reconfigure.log";
             var unityProvider = new UnityProvider();
 
+            HLog.Dispose();
+            HLog.EnableLog = false;
+            HLog.Initialize(initialLogDirectory, "initial.log", LogLevel.Debug, new UnityProvider());
             HLog.EnableLog = true;
-            HLog.DisposeWriter();
 
             try
             {
@@ -120,7 +119,8 @@ namespace BetterExperience.Test
             }
             finally
             {
-                HLog.DisposeWriter();
+                HLog.Dispose();
+                DeleteDirectoryIfExists(initialLogDirectory);
                 DeleteDirectoryIfExists(newLogDirectory);
             }
         }
@@ -205,21 +205,23 @@ namespace BetterExperience.Test
         }
 
         [Fact]
-        public void InvokeOnLogAdd_10_WhenAHandlerThrows_ContinuesInvokingRemainingHandlers()
+        public void WriteLog_10_WhenAHandlerThrows_ContinuesInvokingRemainingHandlers()
         {
             // Arrange
-            var entry = new LogEntry(1, "12:34:56.789", 2, 3, "SceneX", LogLevel.Info, "message", "file.cs", 10, "Member", null);
+            var entry = new LogEntry(1, new DateTime(2026, 6, 13, 12, 34, 56, 789), 2, 3, "SceneX", LogLevel.Info, "message", "file.cs", 10, "Member", null);
             var entries = new List<LogEntry>();
             Action<LogEntry> throwingHandler = _ => throw new InvalidOperationException("boom");
             Action<LogEntry> recordingHandler = loggedEntry => entries.Add(loggedEntry);
 
+            HLog.EnableLog = true;
+            HLog.HLogLevel = LogLevel.Debug;
             HLog.OnLogAdd += throwingHandler;
             HLog.OnLogAdd += recordingHandler;
 
             try
             {
                 // Act
-                var exception = Record.Exception(() => HLog.InvokeOnLogAdd(entry));
+                var exception = Record.Exception(() => HLog.WriteLog(entry));
 
                 // Assert
                 Assert.Null(exception);
@@ -233,13 +235,15 @@ namespace BetterExperience.Test
         }
 
         [Fact]
-        public void InvokeOnLogAdd_11_WhenThereAreNoHandlers_DoesNotThrow()
+        public void WriteLog_11_WhenThereAreNoHandlers_DoesNotThrow()
         {
             // Arrange
-            var entry = new LogEntry(2, "12:34:56.789", 2, 3, "SceneY", LogLevel.Warning, "message", "file.cs", 20, "Member", null);
+            var entry = new LogEntry(2, new DateTime(2026, 6, 13, 12, 34, 56, 789), 2, 3, "SceneY", LogLevel.Warning, "message", "file.cs", 20, "Member", null);
+            HLog.EnableLog = true;
+            HLog.HLogLevel = LogLevel.Debug;
 
             // Act
-            var exception = Record.Exception(() => HLog.InvokeOnLogAdd(entry));
+            var exception = Record.Exception(() => HLog.WriteLog(entry));
 
             // Assert
             Assert.Null(exception);
@@ -388,7 +392,7 @@ namespace BetterExperience.Test
                 lock (SyncRoot)
                 {
                     var harmony = new Harmony($"BetterExperience.Test.HLogTests.{Guid.NewGuid():N}");
-                    var original = typeof(global::BetterExperience.HProvider.UnityProvider)
+                    var original = typeof(UnityProvider)
                         .GetProperty(nameof(global::BetterExperience.HProvider.UnityProvider.ActiveScene))
                         ?.GetMethod;
                     var prefixMethod = typeof(ActiveSceneNamePatchScope).GetMethod(nameof(ActiveScenePrefix));

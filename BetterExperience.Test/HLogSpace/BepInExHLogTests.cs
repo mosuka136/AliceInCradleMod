@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
 using BetterExperience.HLogSpace;
 using BetterExperience.HProvider;
-using UnityEngine;
-using Xunit;
 using BepInExLogEventArgs = BepInEx.Logging.LogEventArgs;
 using BepInExLogLevel = BepInEx.Logging.LogLevel;
 using BepInExManualLogSource = BepInEx.Logging.ManualLogSource;
-using static BetterExperience.HLogSpace.HLog;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HLogSpace
 {
     public class BepInExHLogTests : IDisposable
     {
@@ -124,7 +119,7 @@ namespace BetterExperience.Test
 
         private static LogEntry CreateLogEntry(HLog.LogLevel level, string message)
         {
-            return new LogEntry(1, "12:34:56.789", 2, 3, "Scene", level, message, "File.cs", 4, "Member", null);
+            return new LogEntry(1, new DateTime(2026, 6, 13, 12, 34, 56, 789), 2, 3, "Scene", level, message, "File.cs", 4, "Member", null);
         }
     }
 }

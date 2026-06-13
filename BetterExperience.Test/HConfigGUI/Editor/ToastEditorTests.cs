@@ -1,12 +1,11 @@
-using BetterExperience.HConfigGUI.Editor;
 using BetterExperience.HConfigGUI.Resource;
+using BetterExperience.HGuiSpace;
 using BetterExperience.HProvider;
 using Moq;
 using System.Security;
 using UnityEngine;
-using Xunit;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Editor
 {
     public class ToastEditorTests
     {
@@ -117,10 +116,10 @@ namespace BetterExperience.Test
             };
 
             // Act
-            var exception = Assert.Throws<SecurityException>(() => editor.DrawToast(new Rect(0f, 0f, 150f, 50f)));
+            var exception = Record.Exception(() => editor.DrawToast(new Rect(0f, 0f, 150f, 50f)));
 
             // Assert
-            Assert.NotNull(exception);
+            Assert.IsType<SecurityException>(exception);
             Assert.Equal(message, editor.Message);
             unityServiceMock.VerifyGet(x => x.RealtimeSinceStartup, Times.Once);
             unityGuiMock.VerifyGet(x => x.Color, Times.Once);

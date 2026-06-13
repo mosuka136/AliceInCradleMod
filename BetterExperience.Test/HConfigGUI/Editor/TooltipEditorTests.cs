@@ -1,10 +1,10 @@
-using BetterExperience.HConfigGUI.Editor;
 using BetterExperience.HConfigGUI.Resource;
+using BetterExperience.HGuiSpace;
 using BetterExperience.HProvider;
 using Moq;
 using UnityEngine;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Editor
 {
     public class TooltipEditorTests
     {
