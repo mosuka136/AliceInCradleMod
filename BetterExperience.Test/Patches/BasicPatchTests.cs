@@ -2,8 +2,11 @@ using BetterExperience.BConfigManager;
 using BetterExperience.HConfigSpace;
 using BetterExperience.HTranslatorSpace;
 using BetterExperience.Patches;
+using HarmonyLib;
 using m2d;
+using nel;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
 namespace BetterExperience.Test.Patches
@@ -326,6 +329,115 @@ namespace BetterExperience.Test.Patches
 
             // Assert
             Assert.Equal(expectedShouldRunOriginal, shouldRunOriginal);
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(true, true)]
+        public void RemoveFastTravelMapLimitPostfix_WithConfig_ControlsFastTravelResult(
+            bool enableFastTravelAnywhere,
+            bool expectedResult)
+        {
+            // Arrange
+            SetConfigEntry(nameof(ConfigManager.EnableFastTravelAnywhere), enableFastTravelAnywhere);
+            var resultValue = false;
+
+            // Act
+            HPatches.RemoveFastTravelLimitPatch.RemoveFastTravelMapLimitPatch.Postfix(null, ref resultValue);
+
+            // Assert
+            Assert.Equal(expectedResult, resultValue);
+        }
+
+        [Fact]
+        public void RemoveLimitInBenchMenuPrefix_WhenConfigDisabled_LeavesArgumentsUnchanged()
+        {
+            // Arrange
+            SetConfigEntry(nameof(ConfigManager.EnableRemoveLimitInBenchMenu), false);
+            Func<PR, bool> canUse = pr => false;
+            var originalCanUse = canUse;
+            var onlyInSafeArea = true;
+
+            // Act
+            HPatches.RemoveLimitInBenchMenuPatch.Prefix("sleep", ref canUse, false, ref onlyInSafeArea);
+
+            // Assert
+            Assert.Same(originalCanUse, canUse);
+            Assert.True(onlyInSafeArea);
+            Assert.False(canUse(null));
+        }
+
+        [Fact]
+        public void RemoveLimitInBenchMenuPrefix_WhenEnabledForNonPeeCommand_AllowsUseOutsideSafeArea()
+        {
+            // Arrange
+            SetConfigEntry(nameof(ConfigManager.EnableRemoveLimitInBenchMenu), true);
+            Func<PR, bool> canUse = pr => false;
+            var onlyInSafeArea = true;
+
+            // Act
+            HPatches.RemoveLimitInBenchMenuPatch.Prefix("sleep", ref canUse, false, ref onlyInSafeArea);
+
+            // Assert
+            Assert.False(onlyInSafeArea);
+            Assert.True(canUse(null));
+        }
+
+        [Fact]
+        public void RemoveLimitInBenchMenuPrefix_WhenEnabledForPeeCommand_LeavesArgumentsUnchanged()
+        {
+            // Arrange
+            SetConfigEntry(nameof(ConfigManager.EnableRemoveLimitInBenchMenu), true);
+            Func<PR, bool> canUse = pr => false;
+            var originalCanUse = canUse;
+            var onlyInSafeArea = true;
+
+            // Act
+            HPatches.RemoveLimitInBenchMenuPatch.Prefix("pee", ref canUse, false, ref onlyInSafeArea);
+
+            // Assert
+            Assert.Same(originalCanUse, canUse);
+            Assert.True(onlyInSafeArea);
+            Assert.False(canUse(null));
+        }
+
+        [Theory]
+        [InlineData(false, WanderingManager.TYPE.PUP, false)]
+        [InlineData(true, WanderingManager.TYPE.PUP, true)]
+        [InlineData(true, WanderingManager.TYPE.NIG, false)]
+        public void IsWNpcEnablePostfix_WithConfigAndType_OnlyForcesPuppetNpcEnabled(
+            bool enableRemoveLimit,
+            WanderingManager.TYPE type,
+            bool expectedResult)
+        {
+            // Arrange
+            SetConfigEntry(nameof(ConfigManager.EnableRemoveLimitInPuppetNpcDefeated), enableRemoveLimit);
+            var resultValue = false;
+
+            // Act
+            HPatches.RemoveLimitInPuppetNpcDefeatedPatch.IsWNpcEnablePostfix(type, ref resultValue);
+
+            // Assert
+            Assert.Equal(expectedResult, resultValue);
+        }
+
+        [Fact]
+        public void RemoveLimitInTreasureChestsTranspiler_WhenConfigDisabled_ReturnsOriginalInstructionSequence()
+        {
+            // Arrange
+            SetConfigEntry(nameof(ConfigManager.EnableRemoveLimitInTreasureChests), false);
+            var instructions = new List<CodeInstruction>
+            {
+                new CodeInstruction(OpCodes.Nop),
+                new CodeInstruction(OpCodes.Ret)
+            };
+
+            // Act
+            var result = HPatches.RemoveLimitInTreasureChestsPatch.Transpiler(instructions);
+
+            // Assert
+            Assert.Same(instructions, result);
+            Assert.Equal(instructions, result);
         }
 
         public void Dispose()
