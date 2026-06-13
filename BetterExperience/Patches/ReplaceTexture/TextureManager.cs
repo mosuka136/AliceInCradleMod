@@ -93,7 +93,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
         }
 
-        private static void DestroyAllTextures()
+        public static void DestroyAllTextures()
         {
             foreach (var texture in _imageInfos.Values)
             {
@@ -136,7 +136,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
         }
 
-        private static bool CheckFileValid(string filePath)
+        public static bool CheckFileValid(string filePath)
         {
             if (!File.Exists(filePath))
                 return false;
