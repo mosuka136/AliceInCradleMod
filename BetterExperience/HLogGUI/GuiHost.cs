@@ -5,6 +5,7 @@ using BetterExperience.HLogGUI.Resource;
 using BetterExperience.HLogSpace;
 using BetterExperience.HotkeyManager;
 using BetterExperience.HProvider;
+using BetterExperience.HTranslatorSpace;
 using System;
 using UnityEngine;
 
@@ -35,7 +36,7 @@ namespace BetterExperience.HLogGUI
             {
                 LogUIHotkey = ConfigManager.LogUIHotkey.Value;
                 ConfigManager.LogUIHotkey.OnValueChanged += (s, e) => LogUIHotkey = e;
-                ConfigManager.SetLanguage.OnValueChanged += (s, e) => ListEditor.IsColumnWidthDirty = true;
+                Translator.OnDefaultLanguageChanged += (s, e) => ListEditor.IsColumnWidthDirty = true;
 
                 UnityGui = new UnityGuiProvider();
                 UnityService = new UnityProvider();

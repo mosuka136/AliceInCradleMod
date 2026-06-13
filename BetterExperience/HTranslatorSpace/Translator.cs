@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BetterExperience.HTranslatorSpace
 {
@@ -9,10 +11,28 @@ namespace BetterExperience.HTranslatorSpace
     /// </summary>
     public class Translator : IEnumerable<string>
     {
+        public static event EventHandler<LanguageType> OnDefaultLanguageChanged;
+
+        private static LanguageType _defaultLanguage = LanguageType.English;
         /// <summary>
         /// 当实例语言设置为 <see cref="LanguageType.Default"/> 时使用的全局语言。
         /// </summary>
-        public static LanguageType DefaultLanguage { get; set; } = LanguageType.English;
+        public static LanguageType DefaultLanguage
+        {
+            get => _defaultLanguage;
+            set
+            {
+                if (_defaultLanguage != value)
+                {
+                    _defaultLanguage = value;
+                    foreach (var handler in (OnDefaultLanguageChanged?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<EventHandler<LanguageType>>())
+                    {
+                        try { handler?.Invoke(null, value); }
+                        catch { }
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// 当前实例的语言选择。Default 表示跟随 <see cref="DefaultLanguage"/>。

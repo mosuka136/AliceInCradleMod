@@ -50,9 +50,8 @@ namespace BetterExperience.HConfigGUI
                 ConfigManager.ConfigUIHotkey.OnValueChanged += (s, e) => ConfigUIHotkey = e;
 
                 Translator.DefaultLanguage = ConfigManager.SetLanguage.Value;
-                ConfigManager.SetLanguage.OnValueChanged += (s, e) =>
+                Translator.OnDefaultLanguageChanged += (s, e) =>
                 {
-                    Translator.DefaultLanguage = e;
                     EntryLabelWidth = -1f;
                     TableButtonWidth = -1f;
                 };

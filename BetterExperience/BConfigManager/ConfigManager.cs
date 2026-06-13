@@ -137,6 +137,9 @@ namespace BetterExperience.BConfigManager
                             english: "Set loot drop ratio. Default value is -1, which means no change. Set it to 0 to disable loot drop. Set it to n(n >= 1) to multiply loot drop by n."
                         )
                         );
+
+                    SetLanguage.OnValueChanged += (s, e) => Translator.DefaultLanguage = e;
+                    Translator.DefaultLanguage = SetLanguage.Value;
                 }
                 catch (Exception ex)
                 {
