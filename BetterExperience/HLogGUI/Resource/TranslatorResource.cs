@@ -20,5 +20,6 @@ namespace BetterExperience.HLogGUI.Resource
         public static readonly Translator RepeatCountTopBar = new Translator("重复次数", "Repeat Count");
         public static readonly Translator MiscMenu = new Translator("杂项", "Misc");
         public static readonly Translator CopyLog = new Translator("复制日志", "Copy Log");
+        public static readonly Translator Copied = new Translator("已复制：", "Copied:");
     }
 }

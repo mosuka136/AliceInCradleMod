@@ -1,5 +1,6 @@
 using BetterExperience.BConfigManager;
 using BetterExperience.HClassAttribute;
+using BetterExperience.HGuiSpace;
 using BetterExperience.HLogGUI.Resource;
 using BetterExperience.HLogSpace;
 using BetterExperience.HotkeyManager;
@@ -14,6 +15,8 @@ namespace BetterExperience.HLogGUI
     {
         public readonly int WindowID = Guid.NewGuid().GetHashCode();
 
+        public ToastEditor ToastEditor { get; private set; }
+        public TooltipEditor TooltipEditor { get; private set; }
         public IUnityProvider UnityService { get; private set; }
         public IUnityGuiProvider UnityGui { get; private set; }
         public StyleResource StyleProvider { get; private set; }
@@ -37,8 +40,10 @@ namespace BetterExperience.HLogGUI
                 UnityGui = new UnityGuiProvider();
                 UnityService = new UnityProvider();
                 StyleProvider = new StyleResource(UnityGui);
+                ToastEditor = new ToastEditor(UnityService, UnityGui, StyleProvider);
+                TooltipEditor = new TooltipEditor(UnityService, UnityGui, StyleProvider);
                 EntryList = new EntryListBinding();
-                ListEditor = new ListEditor(UnityGui, UnityService, StyleProvider);
+                ListEditor = new ListEditor(UnityGui, UnityService, StyleProvider, ToastEditor);
 
                 foreach (var log in HLog.EarlyLogs)
                     EntryList.AddEntry(new EntryBinding(log));
@@ -103,6 +108,8 @@ namespace BetterExperience.HLogGUI
             ListEditor.Render(EntryList);
             UnityGui.EndArea();
 
+            ToastEditor.DrawToast(WindowRect);
+            TooltipEditor.DrawTooltip(WindowRect);
             GUI.DragWindow();
         }
 

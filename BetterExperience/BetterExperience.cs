@@ -45,7 +45,7 @@ namespace BetterExperience
     [BepInPlugin(PatchInfo.BepInPluginId, nameof(BetterExperience), PatchInfo.BepInPluginVersion)]
     public class BetterExperience : BaseUnityPlugin
     {
-        private void Awake()
+        public void Awake()
         {
             try
             {
@@ -82,7 +82,7 @@ namespace BetterExperience
             }
         }
 
-        private void Update()
+        public void Update()
         {
         }
 

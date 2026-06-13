@@ -1,3 +1,4 @@
+using BetterExperience.HGuiSpace;
 using BetterExperience.HLogGUI.Resource;
 using BetterExperience.HProvider;
 using BetterExperience.HTranslatorSpace;
@@ -5,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static BetterExperience.HLogSpace.HLog;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BetterExperience.HLogGUI
 {
@@ -21,16 +21,18 @@ namespace BetterExperience.HLogGUI
         public Dictionary<EntryContentType, ColumnEditor> ColumnEditorList { get; private set; }
         public EntryEditor EntryEditor { get; }
 
+        public ToastEditor ToastEditor { get; }
         public IUnityGuiProvider UnityGui { get; }
         public IUnityProvider UnityService { get; }
         public StyleResource StyleProvider { get; }
 
-        public ListEditor(IUnityGuiProvider unityGui, IUnityProvider unityService, StyleResource styleProvider)
+        public ListEditor(IUnityGuiProvider unityGui, IUnityProvider unityService, StyleResource styleProvider, ToastEditor toastEditor)
         {
             UnityGui = unityGui;
             UnityService = unityService;
             StyleProvider = styleProvider;
-            EntryEditor = new EntryEditor(unityGui, unityService, styleProvider);
+            ToastEditor = toastEditor;
+            EntryEditor = new EntryEditor(unityGui, unityService, toastEditor);
         }
 
         public class ColumnEditor
@@ -273,7 +275,10 @@ namespace BetterExperience.HLogGUI
             if (!IsLogLevelHigherOrEqual(entry.Level, Level))
                 return;
             if (UnityGui.Button(TranslatorResource.CopyLog, StyleProvider.MiscButtonStyle, UnityGui.ExpandWidth(true)))
+            {
                 UnityService.ClipboardCopy(entry.ToString());
+                ToastEditor.SetToast($"{TranslatorResource.Copied} Log{entry.Id}");
+            }
         }
 
         public void RenderColumnVisibilityMenu()

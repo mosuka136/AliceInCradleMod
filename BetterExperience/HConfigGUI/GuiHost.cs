@@ -3,6 +3,7 @@ using BetterExperience.HClassAttribute;
 using BetterExperience.HConfigGUI.Bindings;
 using BetterExperience.HConfigGUI.Editor;
 using BetterExperience.HConfigGUI.Resource;
+using BetterExperience.HGuiSpace;
 using BetterExperience.HLogSpace;
 using BetterExperience.HotkeyManager;
 using BetterExperience.HProvider;
@@ -41,7 +42,7 @@ namespace BetterExperience.HConfigGUI
         public Rect WindowRect { get; set; }
         public Hotkey ConfigUIHotkey { get; private set; }
 
-        private void Awake()
+        public void Awake()
         {
             try
             {
@@ -85,7 +86,7 @@ namespace BetterExperience.HConfigGUI
             }
         }
 
-        private void Update()
+        public void Update()
         {
             if (ConfigUIHotkey?.WasPressedThisFrame() == true)
             {
@@ -96,7 +97,7 @@ namespace BetterExperience.HConfigGUI
             SheetEditor.Update(UnityService.UnscaledDeltaTime);
         }
 
-        private void OnGUI()
+        public void OnGUI()
         {
             if (!IsVisible)
                 return;
@@ -128,7 +129,7 @@ namespace BetterExperience.HConfigGUI
             TryAutoHideOnFocusLost();
         }
 
-        private void DrawWindow(int id)
+        public void DrawWindow(int id)
         {
             UnityGui.BeginArea(new Rect(10f, 30f, WindowRect.width - 20f, WindowRect.height - 40f));
             SheetEditor.DrawSheet(Sheet);
@@ -139,7 +140,7 @@ namespace BetterExperience.HConfigGUI
             GUI.DragWindow();
         }
 
-        private void TryAutoHideOnFocusLost()
+        public void TryAutoHideOnFocusLost()
         {
             if (HasDraggedWindowSinceOpen)
                 return;

@@ -1,9 +1,10 @@
+using BetterExperience.HGuiSpace;
 using BetterExperience.HProvider;
 using UnityEngine;
 
 namespace BetterExperience.HLogGUI.Resource
 {
-    public class StyleResource
+    public class StyleResource : IStyleResource
     {
         public IUnityGuiProvider UnityGui { get; }
 
@@ -28,6 +29,8 @@ namespace BetterExperience.HLogGUI.Resource
         private GUIStyle _lastRepeatTimeButtonStyle;
         private GUIStyle _repeatCountButtonStyle;
         private GUIStyle _miscButtonStyle;
+        private GUIStyle _toastStyle;
+        private GUIStyle _tooltipStyle;
 
         public GUIStyle ColumnVisibilityToggleStyle => _columnVisibilityToggleStyle ?? (_columnVisibilityToggleStyle = CreateColumnVisibilityToggleStyle());
         public GUIStyle ColumnLogLevelToggleStyle => _columnLogLevelToggleStyle ?? (_columnLogLevelToggleStyle = CreateColumnLogLevelToggleStyle());
@@ -45,6 +48,8 @@ namespace BetterExperience.HLogGUI.Resource
         public GUIStyle LastRepeatTimeButtonStyle => _lastRepeatTimeButtonStyle ?? (_lastRepeatTimeButtonStyle = CreateLastRepeatTimeButtonStyle());
         public GUIStyle RepeatCountButtonStyle => _repeatCountButtonStyle ?? (_repeatCountButtonStyle = CreateRepeatCountButtonStyle());
         public GUIStyle MiscButtonStyle => _miscButtonStyle ?? (_miscButtonStyle = CreateMiscButtonStyle());
+        public GUIStyle ToastStyle => _toastStyle ?? (_toastStyle = CreateToastStyle());
+        public GUIStyle TooltipStyle => _tooltipStyle ?? (_tooltipStyle = CreateTooltipStyle());
 
         public GUIStyle CreateColumnVisibilityToggleStyle()
         {
@@ -150,6 +155,41 @@ namespace BetterExperience.HLogGUI.Resource
             style.hover.textColor = textColor;
             style.active.textColor = textColor;
             style.focused.textColor = textColor;
+            return style;
+        }
+
+        private Texture2D CreateSolidTexture(Color color)
+        {
+            var texture = new Texture2D(1, 1);
+            // 样式背景纹理只服务于运行时 GUI，不应随场景保存或显示在层级中。
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            texture.SetPixel(0, 0, color);
+            texture.Apply();
+            return texture;
+        }
+
+        private GUIStyle CreateToastStyle()
+        {
+            var style = new GUIStyle(UnityGui.BoxStyle)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                padding = new RectOffset(10, 10, 6, 6)
+            };
+            style.normal.background = CreateSolidTexture(new Color(0f, 0.3f, 0.25f, 1f));
+            style.normal.textColor = Color.white;
+            return style;
+        }
+
+        private GUIStyle CreateTooltipStyle()
+        {
+            var style = new GUIStyle(UnityGui.BoxStyle)
+            {
+                wordWrap = true,
+                alignment = TextAnchor.MiddleCenter,
+                padding = new RectOffset(6, 6, 4, 4)
+            };
+            style.normal.background = CreateSolidTexture(new Color(0.15f, 0.15f, 0.15f, 0.95f));
+            style.normal.textColor = Color.white;
             return style;
         }
     }

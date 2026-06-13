@@ -1,21 +1,20 @@
-using BetterExperience.HConfigGUI.Resource;
 using BetterExperience.HProvider;
 using UnityEngine;
 
-namespace BetterExperience.HConfigGUI.Editor
+namespace BetterExperience.HGuiSpace
 {
     public class ToastEditor
     {
         public IUnityProvider UnityService { get; }
         public IUnityGuiProvider UnityGui { get; }
-        public StyleResource StyleProvider { get; }
+        public IStyleResource StyleProvider { get; }
 
         public string Message { get; set; }
         public float Duration { get; set; } = 2f;
         public float FadeDuration { get; set; } = 0.5f;
         public float EndTime { get; set; }
 
-        public ToastEditor(IUnityProvider unityService, IUnityGuiProvider unityGui, StyleResource styleProvider)
+        public ToastEditor(IUnityProvider unityService, IUnityGuiProvider unityGui, IStyleResource styleProvider)
         {
             UnityService = unityService;
             UnityGui = unityGui;

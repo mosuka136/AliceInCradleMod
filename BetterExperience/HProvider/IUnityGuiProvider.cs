@@ -38,6 +38,7 @@ namespace BetterExperience.HProvider
         bool Toggle(bool value, string text, GUIStyle style, params GUILayoutOption[] options);
         string TextField(string text, params GUILayoutOption[] options);
         bool Button(string text, params GUILayoutOption[] options);
+        bool Button(GUIContent content, GUIStyle style, params GUILayoutOption[] options);
         bool Button(string text, GUIStyle style, params GUILayoutOption[] options);
         float HorizontalSlider(float value, float leftValue, float rightValue, GUIStyle slider, GUIStyle thumb, params GUILayoutOption[] options);
         int SelectionGrid(int selected, string[] texts, int xCount, params GUILayoutOption[] options);

@@ -134,6 +134,11 @@ namespace BetterExperience.HProvider
             return GUILayout.Button(text, options);
         }
 
+        public bool Button(GUIContent content, GUIStyle style, params GUILayoutOption[] options)
+        {
+            return GUILayout.Button(content, style ?? GUIStyle.none, options);
+        }
+
         public bool Button(string text, GUIStyle style, params GUILayoutOption[] options)
         {
             return GUILayout.Button(text, style ?? GUIStyle.none, options);

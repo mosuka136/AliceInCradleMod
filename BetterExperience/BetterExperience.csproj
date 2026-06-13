@@ -41,7 +41,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\BepInEx\plugins\BetterExperience\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -86,8 +86,9 @@
     <Compile Include="HConfigGUI\Editor\HotkeyEditSession.cs" />
     <Compile Include="HConfigGUI\Editor\SheetEditor.cs" />
     <Compile Include="HConfigGUI\Editor\TableEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\ToastEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\TooltipEditor.cs" />
+    <Compile Include="HGuiSpace\IStyleResource.cs" />
+    <Compile Include="HGuiSpace\ToastEditor.cs" />
+    <Compile Include="HGuiSpace\TooltipEditor.cs" />
     <Compile Include="HConfigGUI\Editor\ValueEditor\BooleanEditor.cs" />
     <Compile Include="HConfigGUI\Editor\ValueEditor\EnumEditor.cs" />
     <Compile Include="HConfigGUI\Editor\ValueEditor\HotkeyEditor.cs" />

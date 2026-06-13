@@ -1,6 +1,8 @@
+using BetterExperience.HGuiSpace;
 using BetterExperience.HLogGUI.Resource;
 using BetterExperience.HProvider;
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace BetterExperience.HLogGUI
@@ -9,11 +11,13 @@ namespace BetterExperience.HLogGUI
     {
         public IUnityGuiProvider UnityGui { get; }
         public IUnityProvider UnityService { get; }
+        public ToastEditor ToastEditor { get; }
 
-        public EntryEditor(IUnityGuiProvider unityGui, IUnityProvider unityService, StyleResource styleProvider)
+        public EntryEditor(IUnityGuiProvider unityGui, IUnityProvider unityService, ToastEditor toastEditor)
         {
             UnityGui = unityGui;
             UnityService = unityService;
+            ToastEditor = toastEditor;
         }
 
         public void Render(string text, GUIStyle style, float width)
@@ -24,9 +28,15 @@ namespace BetterExperience.HLogGUI
             UnityGui.BeginHorizontal();
 
             var splitText = text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            splitText = splitText.Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
             var showText = splitText.Length > 0 ? splitText[0] : " ";
-            if (UnityGui.Button(showText, style, UnityGui.Width(width)))
+
+            var content = splitText.Length > 1 ? UnityGui.GetContent(showText, text) : UnityGui.GetContent(showText);
+            if (UnityGui.Button(content, style, UnityGui.Width(width)))
+            {
                 UnityService.ClipboardCopy(text);
+                ToastEditor.SetToast(TranslatorResource.Copied + showText);
+            }
 
             UnityGui.EndHorizontal();
         }
