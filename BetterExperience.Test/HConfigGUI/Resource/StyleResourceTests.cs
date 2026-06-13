@@ -3,7 +3,7 @@ using BetterExperience.HProvider;
 using Moq;
 using System.Security;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Resource
 {
     public class StyleResourceTests
     {

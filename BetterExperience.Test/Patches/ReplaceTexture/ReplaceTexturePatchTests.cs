@@ -11,7 +11,7 @@ using UnityEngine;
 using XX;
 using SvTexture = nel.BetobetoManager.SvTexture;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.Patches.ReplaceTexture
 {
     public class ReplaceTexturePatchTests : IDisposable
     {

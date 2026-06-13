@@ -10,7 +10,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Editor.ValueEditor
 {
     public class HotkeyEditorTests
     {

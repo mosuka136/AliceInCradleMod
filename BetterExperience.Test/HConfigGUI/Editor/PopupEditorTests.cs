@@ -6,7 +6,7 @@ using BetterExperience.HTranslatorSpace;
 using Moq;
 using UnityEngine;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Editor
 {
     public class PopupEditorTests
     {

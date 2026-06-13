@@ -8,7 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using UnityEngine;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Resource
 {
     public class LayoutResourceTests
     {

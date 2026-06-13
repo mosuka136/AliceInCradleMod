@@ -7,7 +7,7 @@ using Moq;
 using System;
 using UnityEngine;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Editor.ValueEditor
 {
     public class SliderEditorTests
     {

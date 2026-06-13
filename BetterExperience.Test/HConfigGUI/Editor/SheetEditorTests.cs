@@ -5,7 +5,7 @@ using BetterExperience.HProvider;
 using Moq;
 using Xunit;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Editor
 {
     public class SheetEditorTests
     {

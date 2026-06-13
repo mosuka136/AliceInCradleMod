@@ -3,7 +3,7 @@ using BetterExperience.HConfigGUI.Editor;
 using BetterExperience.HConfigGUI.Editor.ValueEditor;
 using Moq;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Editor
 {
     public class ValueEditorRegistryTests
     {

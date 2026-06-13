@@ -5,7 +5,7 @@ using BetterExperience.HConfigGUI.Editor.ValueEditor;
 using BetterExperience.HProvider;
 using Moq;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Editor
 {
     public class EntryEditorTests
     {

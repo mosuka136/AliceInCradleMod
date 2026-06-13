@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Editor.ValueEditor
 {
     public class NumberEditorTests
     {

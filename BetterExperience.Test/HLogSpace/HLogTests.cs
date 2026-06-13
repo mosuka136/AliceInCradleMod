@@ -8,7 +8,7 @@ using static BetterExperience.HLogSpace.HLog;
 
 namespace BetterExperience.Test.HLogSpace
 {
-    [TestCaseOrderer("BetterExperience.Test.HLogTests+AlphabeticalOrderer", "BetterExperience.Test")]
+    [TestCaseOrderer("BetterExperience.Test.HLogSpace.HLogTests+AlphabeticalOrderer", "BetterExperience.Test")]
     public class HLogTests
     {
         [Fact]
@@ -126,7 +126,7 @@ namespace BetterExperience.Test.HLogSpace
         }
 
         [Fact]
-        public void InintializeWriter_04_WhenCalledTwice_DisposesExistingWriterAndAppendsLifecycleMarkers()
+        public void InitializeWriter_04_WhenCalledTwice_DisposesExistingWriterAndAppendsLifecycleMarkers()
         {
             // Arrange
             var logDirectory = CreateLogDirectory();
@@ -191,7 +191,7 @@ namespace BetterExperience.Test.HLogSpace
         }
 
         [Fact]
-        public void InintializeWriter_09_WhenPathIsInvalid_SwallowsException()
+        public void InitializeWriter_09_WhenPathIsInvalid_SwallowsException()
         {
             // Arrange
             HLog.LogDirectory = "bad\0path";
@@ -391,7 +391,7 @@ namespace BetterExperience.Test.HLogSpace
             {
                 lock (SyncRoot)
                 {
-                    var harmony = new Harmony($"BetterExperience.Test.HLogTests.{Guid.NewGuid():N}");
+                    var harmony = new Harmony($"BetterExperience.Test.HLogSpace.HLogTests.{Guid.NewGuid():N}");
                     var original = typeof(UnityProvider)
                         .GetProperty(nameof(global::BetterExperience.HProvider.UnityProvider.ActiveScene))
                         ?.GetMethod;

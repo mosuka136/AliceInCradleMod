@@ -4,7 +4,7 @@ using BetterExperience.HTranslatorSpace;
 using Moq;
 using System;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Bindings
 {
     public class EntryBindingTests
     {

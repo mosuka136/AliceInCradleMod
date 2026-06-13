@@ -1,7 +1,7 @@
 using BetterExperience.HConfigSpace;
 using System.Collections;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigSpace
 {
     public class ConfigFileModelTests
     {
@@ -778,7 +778,7 @@ namespace BetterExperience.Test
             Assert.False(result.Success);
             var error = Assert.Single(result.Errors);
             Assert.Equal(ConfigFileErrorCode.InvalidValue, error.Code);
-            Assert.Equal("Failed to construct collection type BetterExperience.Test.ConfigFileModelTests+ThrowingConstructorCollection. Error: ctor boom", error.Message);
+            Assert.Equal("Failed to construct collection type BetterExperience.Test.HConfigSpace.ConfigFileModelTests+ThrowingConstructorCollection. Error: ctor boom", error.Message);
         }
 
         [Fact]
@@ -810,7 +810,7 @@ namespace BetterExperience.Test
             Assert.False(result.Success);
             var error = Assert.Single(result.Errors);
             Assert.Equal(ConfigFileErrorCode.InvalidValue, error.Code);
-            Assert.Equal("Failed to add element at index 1 to collection type BetterExperience.Test.ConfigFileModelTests+ThrowingAddCollection. Error: add boom", error.Message);
+            Assert.Equal("Failed to add element at index 1 to collection type BetterExperience.Test.HConfigSpace.ConfigFileModelTests+ThrowingAddCollection. Error: add boom", error.Message);
         }
 
         [Fact]
@@ -826,7 +826,7 @@ namespace BetterExperience.Test
             Assert.False(result.Success);
             var error = Assert.Single(result.Errors);
             Assert.Equal(ConfigFileErrorCode.UnsupportedType, error.Code);
-            Assert.Equal("Unsupported collection type: BetterExperience.Test.ConfigFileModelTests+UnsupportedCustomCollection", error.Message);
+            Assert.Equal("Unsupported collection type: BetterExperience.Test.HConfigSpace.ConfigFileModelTests+UnsupportedCustomCollection", error.Message);
         }
 
         [Fact]
@@ -1073,7 +1073,7 @@ namespace BetterExperience.Test
             Assert.False(result.Success);
             var error = Assert.Single(result.Errors);
             Assert.Equal(ConfigFileErrorCode.InvalidValue, error.Code);
-            Assert.Equal("Failed to construct collection type BetterExperience.Test.ConfigFileModelTests+ThrowingConstructorCollection. Error: ctor boom", error.Message);
+            Assert.Equal("Failed to construct collection type BetterExperience.Test.HConfigSpace.ConfigFileModelTests+ThrowingConstructorCollection. Error: ctor boom", error.Message);
         }
 
         [Fact]
@@ -1091,7 +1091,7 @@ namespace BetterExperience.Test
             Assert.False(result.Success);
             var error = Assert.Single(result.Errors);
             Assert.Equal(ConfigFileErrorCode.InvalidValue, error.Code);
-            Assert.StartsWith("Failed to construct collection type BetterExperience.Test.ConfigFileModelTests+AbstractConstructorCollection. Error:", error.Message);
+            Assert.StartsWith("Failed to construct collection type BetterExperience.Test.HConfigSpace.ConfigFileModelTests+AbstractConstructorCollection. Error:", error.Message);
         }
 
         [Fact]
@@ -1136,7 +1136,7 @@ namespace BetterExperience.Test
             Assert.False(result.Success);
             var error = Assert.Single(result.Errors);
             Assert.Equal(ConfigFileErrorCode.InvalidValue, error.Code);
-            Assert.Equal("Failed to create collection type BetterExperience.Test.ConfigFileModelTests+ThrowingParameterlessAddCollection. Error: create boom", error.Message);
+            Assert.Equal("Failed to create collection type BetterExperience.Test.HConfigSpace.ConfigFileModelTests+ThrowingParameterlessAddCollection. Error: create boom", error.Message);
         }
 
         [Fact]
@@ -1153,7 +1153,7 @@ namespace BetterExperience.Test
             Assert.False(result.Success);
             var error = Assert.Single(result.Errors);
             Assert.Equal(ConfigFileErrorCode.InvalidValue, error.Code);
-            Assert.StartsWith("Failed to create collection type BetterExperience.Test.ConfigFileModelTests+AbstractAddCollection. Error:", error.Message);
+            Assert.StartsWith("Failed to create collection type BetterExperience.Test.HConfigSpace.ConfigFileModelTests+AbstractAddCollection. Error:", error.Message);
         }
 
         [Fact]
@@ -1187,7 +1187,7 @@ namespace BetterExperience.Test
             Assert.False(result.Success);
             var error = Assert.Single(result.Errors);
             Assert.Equal(ConfigFileErrorCode.InvalidValue, error.Code);
-            Assert.StartsWith("Failed to add element at index 1 to collection type BetterExperience.Test.ConfigFileModelTests+AddOnlyCollection. Error:", error.Message);
+            Assert.StartsWith("Failed to add element at index 1 to collection type BetterExperience.Test.HConfigSpace.ConfigFileModelTests+AddOnlyCollection. Error:", error.Message);
         }
 
         [Fact]
@@ -1204,7 +1204,7 @@ namespace BetterExperience.Test
             Assert.False(result.Success);
             var error = Assert.Single(result.Errors);
             Assert.Equal(ConfigFileErrorCode.InvalidValue, error.Code);
-            Assert.Equal("Failed to add element at index 1 to collection type BetterExperience.Test.ConfigFileModelTests+ThrowingAddCollection. Error: add boom", error.Message);
+            Assert.Equal("Failed to add element at index 1 to collection type BetterExperience.Test.HConfigSpace.ConfigFileModelTests+ThrowingAddCollection. Error: add boom", error.Message);
         }
 
         [Fact]

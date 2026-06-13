@@ -96,7 +96,10 @@ namespace BetterExperience.Test.HConfigSpace
             // Act
             entry.RebindEntry(null);
 
-            // Assert - no exception thrown
+            // Assert
+            Assert.Same(model, entry.Entry);
+            Assert.Equal(42, entry.Value);
+            Assert.Equal("42", entry.Entry.Value);
         }
 
         [Fact]
@@ -231,13 +234,25 @@ namespace BetterExperience.Test.HConfigSpace
             };
             var entry = new ConfigEntry<int>("General", model, 0);
             IConfigEntry iEntry = entry;
-            EventHandler handler = (s, e) => { };
+            var invocationCount = 0;
+            object actualSender = null;
+            EventArgs actualArgs = null;
+            EventHandler handler = (sender, args) =>
+            {
+                invocationCount++;
+                actualSender = sender;
+                actualArgs = args;
+            };
 
             // Act
             iEntry.OnValueChangedBase += handler;
             entry.Value = 100;
 
-            // Assert - no exception thrown, event chain is established
+            // Assert
+            Assert.Equal(1, invocationCount);
+            Assert.Same(entry, actualSender);
+            var valueChangedArgs = Assert.IsType<EntryValueChangedEventArgs<int>>(actualArgs);
+            Assert.Equal(100, valueChangedArgs.Value);
         }
 
         [Fact]
@@ -251,14 +266,17 @@ namespace BetterExperience.Test.HConfigSpace
             };
             var entry = new ConfigEntry<int>("General", model, 0);
             IConfigEntry iEntry = entry;
-            EventHandler handler = (s, e) => { };
+            var invocationCount = 0;
+            EventHandler handler = (sender, args) => invocationCount++;
 
             // Act
             iEntry.OnValueChangedBase += handler;
             iEntry.OnValueChangedBase -= handler;
             entry.Value = 100;
 
-            // Assert - no exception thrown
+            // Assert
+            Assert.Equal(0, invocationCount);
+            Assert.Equal(100, entry.Value);
         }
 
         [Fact]
@@ -268,7 +286,11 @@ namespace BetterExperience.Test.HConfigSpace
             var entry = new ConfigEntry<int>();
 
             // Assert
-            Assert.NotNull(entry);
+            Assert.Equal(typeof(int), entry.ValueType);
+            Assert.Equal(default, entry.Value);
+            Assert.Equal(default, entry.DefaultValue);
+            Assert.Null(entry.TableName);
+            Assert.Null(entry.Entry);
         }
 
         [Fact]

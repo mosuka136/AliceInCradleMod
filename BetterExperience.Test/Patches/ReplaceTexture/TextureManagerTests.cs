@@ -6,7 +6,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.Patches.ReplaceTexture
 {
     public class TextureManagerTests : IDisposable
     {

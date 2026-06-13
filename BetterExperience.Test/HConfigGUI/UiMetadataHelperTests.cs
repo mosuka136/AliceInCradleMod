@@ -4,7 +4,7 @@ using BetterExperience.HConfigSpace;
 using Moq;
 using Xunit;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI
 {
     public class UiMetadataHelperTests
     {

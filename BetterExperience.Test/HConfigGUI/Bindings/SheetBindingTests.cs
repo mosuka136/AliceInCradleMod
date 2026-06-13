@@ -5,7 +5,7 @@ using Moq;
 using System;
 using System.Linq;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Bindings
 {
     public class SheetBindingTests
     {

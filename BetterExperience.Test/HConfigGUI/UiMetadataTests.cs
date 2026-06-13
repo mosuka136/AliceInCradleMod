@@ -2,7 +2,7 @@ using System;
 using BetterExperience.HConfigGUI;
 using Xunit;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI
 {
     public class UiMetadataTests
     {

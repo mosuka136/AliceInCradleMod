@@ -3,7 +3,7 @@ using BetterExperience.HConfigGUI.Bindings;
 using Moq;
 using Xunit;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI
 {
     public class GuiStateStoreTests
     {

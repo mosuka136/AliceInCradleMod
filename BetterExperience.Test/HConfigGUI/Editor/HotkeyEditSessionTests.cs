@@ -7,7 +7,7 @@ using Moq;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Editor
 {
     public class HotkeyEditSessionTests
     {

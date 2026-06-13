@@ -10,7 +10,7 @@ using System.ComponentModel;
 using UnityEngine;
 using Xunit;
 
-namespace BetterExperience.Test
+namespace BetterExperience.Test.HConfigGUI.Editor.ValueEditor
 {
     public class EnumEditorTests
     {
