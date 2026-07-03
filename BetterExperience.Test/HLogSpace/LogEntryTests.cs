@@ -1,4 +1,4 @@
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 
 namespace BetterExperience.Test.HLogSpace
 {
@@ -12,7 +12,7 @@ namespace BetterExperience.Test.HLogSpace
             var timestamp = new DateTime(2026, 6, 13, 1, 2, 3, 4);
 
             // Act
-            var entry = new LogEntry(7, timestamp, 3, 12, null, HLog.LogLevel.Warning, null, null, 45, null, exception);
+            var entry = new LogEntry(7, timestamp, 3, 12, null, BLog.LogLevel.Warning, null, null, 45, null, exception);
 
             // Assert
             Assert.Equal(7, entry.Id);
@@ -20,7 +20,7 @@ namespace BetterExperience.Test.HLogSpace
             Assert.Equal(3, entry.ThreadId);
             Assert.Equal(12, entry.Frame);
             Assert.Equal("?", entry.Scene);
-            Assert.Equal(HLog.LogLevel.Warning, entry.Level);
+            Assert.Equal(BLog.LogLevel.Warning, entry.Level);
             Assert.Equal(string.Empty, entry.Message);
             Assert.Equal(string.Empty, entry.File);
             Assert.Equal(45, entry.Line);
@@ -39,7 +39,7 @@ namespace BetterExperience.Test.HLogSpace
             var timestamp = new DateTime(2026, 6, 13, 12, 34, 56, 789);
 
             // Act
-            var entry = new LogEntry(11, timestamp, 8, 99, "BattleScene", HLog.LogLevel.Error, "Something happened", @"C:\Logs\Game.cs", 123, "Run", exception);
+            var entry = new LogEntry(11, timestamp, 8, 99, "BattleScene", BLog.LogLevel.Error, "Something happened", @"C:\Logs\Game.cs", 123, "Run", exception);
 
             // Assert
             Assert.Equal(11, entry.Id);
@@ -47,7 +47,7 @@ namespace BetterExperience.Test.HLogSpace
             Assert.Equal(8, entry.ThreadId);
             Assert.Equal(99, entry.Frame);
             Assert.Equal("BattleScene", entry.Scene);
-            Assert.Equal(HLog.LogLevel.Error, entry.Level);
+            Assert.Equal(BLog.LogLevel.Error, entry.Level);
             Assert.Equal("Something happened", entry.Message);
             Assert.Equal(@"C:\Logs\Game.cs", entry.File);
             Assert.Equal(123, entry.Line);
@@ -60,7 +60,7 @@ namespace BetterExperience.Test.HLogSpace
         {
             // Arrange
             var exception = new InvalidOperationException("boom");
-            var entry = new LogEntry(5, new DateTime(2026, 6, 13, 1, 2, 3, 4), 2, 77, "Town", HLog.LogLevel.Notice, "Hello", @"C:\Code\Player.cs", 18, "Update", exception);
+            var entry = new LogEntry(5, new DateTime(2026, 6, 13, 1, 2, 3, 4), 2, 77, "Town", BLog.LogLevel.Notice, "Hello", @"C:\Code\Player.cs", 18, "Update", exception);
 
             // Act
             var result = entry.ToString();
@@ -77,7 +77,7 @@ namespace BetterExperience.Test.HLogSpace
         public void ToString_WhenLocationInfoIncomplete_OmitsLocationSuffix(string member, string file, int line)
         {
             // Arrange
-            var entry = new LogEntry(9, new DateTime(2026, 6, 13, 9, 8, 7, 6), 4, 15, "Menu", HLog.LogLevel.Info, "Ready", file, line, member, null);
+            var entry = new LogEntry(9, new DateTime(2026, 6, 13, 9, 8, 7, 6), 4, 15, "Menu", BLog.LogLevel.Info, "Ready", file, line, member, null);
 
             // Act
             var result = entry.ToString();
@@ -90,7 +90,7 @@ namespace BetterExperience.Test.HLogSpace
         public void ToString_WhenExceptionIsNull_ReturnsSingleLineText()
         {
             // Arrange
-            var entry = new LogEntry(1, new DateTime(2026, 6, 13, 10, 11, 12, 13), 6, 20, "Map", HLog.LogLevel.Debug, "Trace", @"C:\Temp\Trace.cs", 3, "Tick", null);
+            var entry = new LogEntry(1, new DateTime(2026, 6, 13, 10, 11, 12, 13), 6, 20, "Map", BLog.LogLevel.Debug, "Trace", @"C:\Temp\Trace.cs", 3, "Tick", null);
 
             // Act
             var result = entry.ToString();

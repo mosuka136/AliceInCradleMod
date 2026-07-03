@@ -1,5 +1,5 @@
 using BetterExperience.HLogGUI;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using static BetterExperience.HLogGUI.ListEditor;
 
 namespace BetterExperience.Test.HLogGUI
@@ -7,14 +7,14 @@ namespace BetterExperience.Test.HLogGUI
     public class ListEditorTests
     {
         [Theory]
-        [InlineData("Warning", HLog.LogLevel.Info, true)]
-        [InlineData("Info", HLog.LogLevel.Info, true)]
-        [InlineData("Debug", HLog.LogLevel.Info, false)]
-        [InlineData("not-a-level", HLog.LogLevel.Debug, false)]
-        [InlineData("", HLog.LogLevel.Debug, false)]
+        [InlineData("Warning", BLog.LogLevel.Info, true)]
+        [InlineData("Info", BLog.LogLevel.Info, true)]
+        [InlineData("Debug", BLog.LogLevel.Info, false)]
+        [InlineData("not-a-level", BLog.LogLevel.Debug, false)]
+        [InlineData("", BLog.LogLevel.Debug, false)]
         public void IsLogLevelHigherOrEqual_WithLevelText_ReturnsExpectedResult(
             string entryLogLevel,
-            HLog.LogLevel filterLogLevel,
+            BLog.LogLevel filterLogLevel,
             bool expected)
         {
             // Act
@@ -35,7 +35,7 @@ namespace BetterExperience.Test.HLogGUI
                 threadId: 9,
                 frame: 10,
                 scene: "Map",
-                level: HLog.LogLevel.Error,
+                level: BLog.LogLevel.Error,
                 message: "Message",
                 file: @"C:\Code\Patch.cs",
                 line: 11,
@@ -86,7 +86,7 @@ namespace BetterExperience.Test.HLogGUI
             int threadId = 2,
             int frame = 3,
             string scene = "Scene",
-            HLog.LogLevel level = HLog.LogLevel.Info,
+            BLog.LogLevel level = BLog.LogLevel.Info,
             string message = "Message",
             string file = @"C:\Code\File.cs",
             int line = 10,

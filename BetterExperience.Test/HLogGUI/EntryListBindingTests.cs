@@ -1,5 +1,5 @@
 using BetterExperience.HLogGUI;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 
 namespace BetterExperience.Test.HLogGUI
 {
@@ -119,7 +119,7 @@ namespace BetterExperience.Test.HLogGUI
             int threadId = 2,
             int frame = 3,
             string scene = "Scene",
-            HLog.LogLevel level = HLog.LogLevel.Info,
+            BLog.LogLevel level = BLog.LogLevel.Info,
             string message = "Message",
             string file = @"C:\Code\File.cs",
             int line = 10,

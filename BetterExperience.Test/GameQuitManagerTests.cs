@@ -1,4 +1,4 @@
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using System.Reflection;
 
 namespace BetterExperience.Test
@@ -73,11 +73,11 @@ namespace BetterExperience.Test
             public static GameQuitManagerStateScope Create()
             {
                 var scope = new GameQuitManagerStateScope(
-                    HLog.EnableLog,
+                    BLog.EnableLog,
                     (bool)InitializedField.GetValue(null),
                     (Action)OnGameQuitField.GetValue(null));
 
-                HLog.EnableLog = false;
+                BLog.EnableLog = false;
                 InitializedField.SetValue(null, false);
                 OnGameQuitField.SetValue(null, null);
 
@@ -88,7 +88,7 @@ namespace BetterExperience.Test
             {
                 OnGameQuitField.SetValue(null, _originalOnGameQuit);
                 InitializedField.SetValue(null, _originalInitialized);
-                HLog.EnableLog = _originalEnableLog;
+                BLog.EnableLog = _originalEnableLog;
             }
 
             private static FieldInfo GetRequiredField(string fieldName)

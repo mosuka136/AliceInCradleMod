@@ -1,4 +1,4 @@
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -32,7 +32,7 @@ namespace BetterExperience
             [HarmonyPatch(typeof(COOK), nameof(COOK.createBinary))]
             public static void SaveGamePrefix()
             {
-                HLog.Debug("Detected game saving activation.");
+                BLog.Debug("Detected game saving activation.");
 
                 foreach (var handler in (OnSavingActivated?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action>())
                 {
@@ -42,7 +42,7 @@ namespace BetterExperience
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error("An error occurred while invoking OnSavingActivated event.", ex);
+                        BLog.Error("An error occurred while invoking OnSavingActivated event.", ex);
                     }
                 }
             }
@@ -51,7 +51,7 @@ namespace BetterExperience
             [HarmonyPatch(typeof(SVD), nameof(SVD.saveBinary))]
             public static void SaveGamePostfix()
             {
-                HLog.Debug("Detected game saving completion.");
+                BLog.Debug("Detected game saving completion.");
 
                 foreach (var handler in (OnSavingCompleted?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action>())
                 {
@@ -61,7 +61,7 @@ namespace BetterExperience
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error("An error occurred while invoking OnSavingCompleted event.", ex);
+                        BLog.Error("An error occurred while invoking OnSavingCompleted event.", ex);
                     }
                 }
             }

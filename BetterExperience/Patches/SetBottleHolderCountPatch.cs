@@ -1,6 +1,6 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using UnityModBase.HClassAttribute;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -31,7 +31,7 @@ namespace BetterExperience.Patches
                 {
                     if (ConfigManager.EnablePreloadBottleHolderCount.Value)
                     {
-                        HLog.Debug($"Applying preloaded bottle holder count: {ConfigManager.SetBottleHolderCount.Value}");
+                        BLog.Debug($"Applying preloaded bottle holder count: {ConfigManager.SetBottleHolderCount.Value}");
                         SetBottleHolderCount(ConfigManager.SetBottleHolderCount.Value);
                     }
                 };
@@ -40,18 +40,18 @@ namespace BetterExperience.Patches
 
                 GameSaveProtectionManager.OnSavingCompleted += () =>
                 {
-                    HLog.Debug($"Restoring bottle holder count after save: {_originalBottleHolderCount}");
+                    BLog.Debug($"Restoring bottle holder count after save: {_originalBottleHolderCount}");
                     SetBottleHolderCount(_originalBottleHolderCount);
                 };
 
                 ConfigManager.SetBottleHolderCount.OnValueChanged += (s, e) =>
                 {
-                    HLog.Debug($"Bottle holder count config changed: {e}");
+                    BLog.Debug($"Bottle holder count config changed: {e}");
                     SetBottleHolderCount(e);
                 };
 
                 _initialized = true;
-                HLog.Debug("Bottle holder count patch initialized.");
+                BLog.Debug("Bottle holder count patch initialized.");
             }
 
             public static void SetBottleHolderCount(int count)
@@ -60,24 +60,24 @@ namespace BetterExperience.Patches
                 {
                     if (count < 0)
                     {
-                        HLog.Debug($"Ignored invalid bottle holder count: {count}");
+                        BLog.Debug($"Ignored invalid bottle holder count: {count}");
                         return;
                     }
 
                     var inventory = GetIMNG()?.getInventory();
                     if (inventory == null)
                     {
-                        HLog.Notice("Inventory not found while applying bottle holder count.");
+                        BLog.Notice("Inventory not found while applying bottle holder count.");
                         return;
                     }
 
                     inventory.hide_bottle_max = count;
                     inventory.fineRows(true);
-                    HLog.Debug($"{nameof(SetBottleHolderCount)} applied. New count: {count}");
+                    BLog.Debug($"{nameof(SetBottleHolderCount)} applied. New count: {count}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetBottleHolderCount)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetBottleHolderCount)}.", ex);
                 }
             }
 
@@ -88,21 +88,21 @@ namespace BetterExperience.Patches
                     var imng = GetIMNG();
                     if (imng == null)
                     {
-                        HLog.Notice("Item manager not found while recovering bottle holder count.");
+                        BLog.Notice("Item manager not found while recovering bottle holder count.");
                         return;
                     }
 
                     var inventory = imng.getInventory();
                     if (inventory == null)
                     {
-                        HLog.Notice("Inventory not found while recovering bottle holder count.");
+                        BLog.Notice("Inventory not found while recovering bottle holder count.");
                         return;
                     }
 
                     var item = NelItem.GetById("workbench_bottle");
                     if (item == null)
                     {
-                        HLog.Notice("workbench_bottle item not found while recovering bottle holder count.");
+                        BLog.Notice("workbench_bottle item not found while recovering bottle holder count.");
                         return;
                     }
 
@@ -111,11 +111,11 @@ namespace BetterExperience.Patches
 
                     _originalBottleHolderCount = inventory.hide_bottle_max;
                     inventory.hide_bottle_max = count;
-                    HLog.Debug($"Recovered bottle holder count for save operation. TemporaryCount={count}, OriginalCount={_originalBottleHolderCount}");
+                    BLog.Debug($"Recovered bottle holder count for save operation. TemporaryCount={count}, OriginalCount={_originalBottleHolderCount}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RecoverBottleHolderCount)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(RecoverBottleHolderCount)}.", ex);
                 }
             }
 

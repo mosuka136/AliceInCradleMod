@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using m2d;
 using nel;
@@ -43,12 +43,12 @@ namespace BetterExperience.Patches
                     if (!ConfigManager.EnableNoMpDamage.Value)
                         return true;
 
-                    HLog.Debug($"{nameof(NoMpDamagePatch)} applied.");
+                    BLog.Debug($"{nameof(NoMpDamagePatch)} applied.");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(NoMpDamagePatch)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(NoMpDamagePatch)}.", ex);
                     return true;
                 }
             }

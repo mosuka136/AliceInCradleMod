@@ -1,6 +1,6 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using UnityModBase.HClassAttribute;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -29,7 +29,7 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    HLog.Debug("Game save/load completed. Synchronizing weather config from game state.");
+                    BLog.Debug("Game save/load completed. Synchronizing weather config from game state.");
                     Flush();
                 };
 
@@ -66,14 +66,14 @@ namespace BetterExperience.Patches
                 };
 
                 _initialized = true;
-                HLog.Debug("Weather patch initialized.");
+                BLog.Debug("Weather patch initialized.");
             }
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(NightController), nameof(NightController.weatherShuffle))]
             public static void WeatherShufflePostfix()
             {
-                HLog.Debug("Detected weather shuffle. Synchronizing weather config from game state.");
+                BLog.Debug("Detected weather shuffle. Synchronizing weather config from game state.");
                 Flush();
             }
 
@@ -85,7 +85,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexcepted error in {nameof(SetWeatherPatch)}", ex);
+                    BLog.Error($"Unexcepted error in {nameof(SetWeatherPatch)}", ex);
                 }
             }
 
@@ -94,14 +94,14 @@ namespace BetterExperience.Patches
                 var nc = GetNightController();
                 if (nc == null)
                 {
-                    HLog.Notice($"NightController not found while applying weather setting: {weather} => {setWeather}");
+                    BLog.Notice($"NightController not found while applying weather setting: {weather} => {setWeather}");
                     return;
                 }
 
                 var nct = Traverse.Create(nc);
                 if (nct == null)
                 {
-                    HLog.Notice($"Traverse creation failed while applying weather setting: {weather} => {setWeather}");
+                    BLog.Notice($"Traverse creation failed while applying weather setting: {weather} => {setWeather}");
                     return;
                 }
 
@@ -110,11 +110,11 @@ namespace BetterExperience.Patches
 
                 if (cur_weather == null || AWeather == null)
                 {
-                    HLog.Notice($"Weather fields not found while applying weather setting: {weather} => {setWeather}");
+                    BLog.Notice($"Weather fields not found while applying weather setting: {weather} => {setWeather}");
                     return;
                 }
 
-                HLog.Debug($"Applying weather setting: {weather} => {setWeather}");
+                BLog.Debug($"Applying weather setting: {weather} => {setWeather}");
 
                 var hasWeather = GetBit(cur_weather.GetValue<int>(), (int)weather & 0x1F);
                 if (setWeather)
@@ -145,7 +145,7 @@ namespace BetterExperience.Patches
                         AWeather.SetValue(weatherItemList.ToArray());
                         cur_weather.SetValue(SetResetBit(cur_weather.GetValue<int>(), (int)weather & 0x1F, true));
                         newWeatherItem.showLog();
-                        HLog.Debug($"Weather enabled: {weather}");
+                        BLog.Debug($"Weather enabled: {weather}");
                     }
                 }
                 else
@@ -161,7 +161,7 @@ namespace BetterExperience.Patches
                             newWeatherList.RemoveAt(index);
                             AWeather.SetValue(newWeatherList.ToArray());
                             cur_weather.SetValue(SetResetBit(cur_weather.GetValue<int>(), (int)weather & 0x1F, false));
-                            HLog.Debug($"Weather disabled: {weather}");
+                            BLog.Debug($"Weather disabled: {weather}");
                         }
                     }
                 }
@@ -202,7 +202,7 @@ namespace BetterExperience.Patches
                     var nc = GetNightController();
                     if (nc == null)
                     {
-                        HLog.Notice("NightController not found while synchronizing weather config.");
+                        BLog.Notice("NightController not found while synchronizing weather config.");
                         return;
                     }
 
@@ -215,12 +215,12 @@ namespace BetterExperience.Patches
                     ConfigManager.SetWeatherPlague.Value = nc.getWeather(WeatherItem.WEATHER.PLAGUE) != null;
                     _isApplying = false;
 
-                    HLog.Debug("Weather config synchronized from game state.");
+                    BLog.Debug("Weather config synchronized from game state.");
                 }
                 catch (Exception ex)
                 {
                     _isApplying = false;
-                    HLog.Error($"Unexpected error in {nameof(Flush)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(Flush)}.", ex);
                 }
             }
         }

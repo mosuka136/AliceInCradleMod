@@ -1,6 +1,6 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using UnityModBase.HClassAttribute;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -28,19 +28,19 @@ namespace BetterExperience.Patches
                 {
                     if (ConfigManager.EnablePreloadDangerLevel.Value)
                     {
-                        HLog.Debug($"Applying preloaded danger level: {ConfigManager.SetDangerLevel.Value}");
+                        BLog.Debug($"Applying preloaded danger level: {ConfigManager.SetDangerLevel.Value}");
                         SetDangerLevel(ConfigManager.SetDangerLevel.Value);
                     }
                 };
 
                 ConfigManager.SetDangerLevel.OnValueChanged += (s, e) =>
                 {
-                    HLog.Debug($"Danger level config changed: {e}");
+                    BLog.Debug($"Danger level config changed: {e}");
                     SetDangerLevel(e);
                 };
 
                 _initialized = true;
-                HLog.Debug("Danger level patch initialized.");
+                BLog.Debug("Danger level patch initialized.");
             }
 
             public static void SetDangerLevel(int level)
@@ -49,32 +49,32 @@ namespace BetterExperience.Patches
                 {
                     if (level < 0)
                     {
-                        HLog.Debug($"Ignored invalid danger level: {level}");
+                        BLog.Debug($"Ignored invalid danger level: {level}");
                         return;
                     }
 
                     var sg = UnityEngine.Object.FindAnyObjectByType<SceneGame>();
                     if (sg == null)
                     {
-                        HLog.Notice("SceneGame not found while applying danger level.");
+                        BLog.Notice("SceneGame not found while applying danger level.");
                         return;
                     }
 
                     var m2d = Traverse.Create(sg).Field("M2D").GetValue<NelM2DBase>();
                     if (m2d == null)
                     {
-                        HLog.Notice("NelM2DBase not found while applying danger level.");
+                        BLog.Notice("NelM2DBase not found while applying danger level.");
                         return;
                     }
 
                     Traverse.Create(m2d.NightCon).Field("dlevel").SetValue(level);
                     m2d.NightCon.showNightLevelAdditionUI(true);
 
-                    HLog.Debug($"Danger level set to {level}");
+                    BLog.Debug($"Danger level set to {level}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetDangerLevel)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetDangerLevel)}.", ex);
                 }
             }
         }

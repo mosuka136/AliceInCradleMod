@@ -1,6 +1,6 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using UnityModBase.HClassAttribute;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -31,19 +31,19 @@ namespace BetterExperience.Patches
                 {
                     if (ConfigManager.EnablePreloadEnhancerSlotCount.Value)
                     {
-                        HLog.Debug("Applying preloaded enhancer slot count.");
+                        BLog.Debug("Applying preloaded enhancer slot count.");
                         SetEnhancerSlotCount();
                     }
                 };
 
                 ConfigManager.SetEnhancerSlotCount.OnValueChanged += (s, e) =>
                 {
-                    HLog.Debug($"Enhancer slot count config changed: {e}");
+                    BLog.Debug($"Enhancer slot count config changed: {e}");
                     SetEnhancerSlotCount();
                 };
 
                 _initialized = true;
-                HLog.Debug("Enhancer slot count patch initialized.");
+                BLog.Debug("Enhancer slot count patch initialized.");
             }
 
             public static void SetEnhancerSlotCount()
@@ -53,38 +53,38 @@ namespace BetterExperience.Patches
                     var sg = UnityEngine.Object.FindAnyObjectByType<SceneGame>();
                     if (sg == null)
                     {
-                        HLog.Notice("SceneGame not found while applying enhancer slot count.");
+                        BLog.Notice("SceneGame not found while applying enhancer slot count.");
                         return;
                     }
 
                     var m2d = Traverse.Create(sg).Field("M2D").GetValue<NelM2DBase>();
                     if (m2d == null)
                     {
-                        HLog.Notice("NelM2DBase not found while applying enhancer slot count.");
+                        BLog.Notice("NelM2DBase not found while applying enhancer slot count.");
                         return;
                     }
 
                     if (m2d.IMNG == null)
                     {
-                        HLog.Notice("Item manager not found while applying enhancer slot count.");
+                        BLog.Notice("Item manager not found while applying enhancer slot count.");
                         return;
                     }
 
                     var sp = Traverse.Create(m2d.IMNG).Field("StPrecious").GetValue<ItemStorage>();
                     if (sp == null)
                     {
-                        HLog.Notice("Precious storage not found while applying enhancer slot count.");
+                        BLog.Notice("Precious storage not found while applying enhancer slot count.");
                         return;
                     }
 
                     var se = Traverse.Create(m2d.IMNG).Field("StEnhancer").GetValue<ItemStorage>();
                     if (se == null)
                     {
-                        HLog.Notice("Enhancer storage not found while applying enhancer slot count.");
+                        BLog.Notice("Enhancer storage not found while applying enhancer slot count.");
                         return;
                     }
 
-                    HLog.Debug($"Refresh enhancer slots. TargetCount={ConfigManager.SetEnhancerSlotCount.Value}");
+                    BLog.Debug($"Refresh enhancer slots. TargetCount={ConfigManager.SetEnhancerSlotCount.Value}");
                     _isChanging = true;
                     _hasLoggedOverrideForCurrentApply = false;
                     // fineEnhancerStorage 会读取 enhancer_slot 数量，下面的 Harmony 前缀只在此窗口期返回配置值。
@@ -94,7 +94,7 @@ namespace BetterExperience.Patches
                 catch (Exception ex)
                 {
                     _isChanging = false;
-                    HLog.Error($"Unexpected error in {nameof(SetEnhancerSlotCount)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetEnhancerSlotCount)}.", ex);
                 }
             }
 
@@ -112,7 +112,7 @@ namespace BetterExperience.Patches
 
                     if (!_hasLoggedOverrideForCurrentApply)
                     {
-                        HLog.Debug($"Enhancer slot count overridden to {ConfigManager.SetEnhancerSlotCount.Value}");
+                        BLog.Debug($"Enhancer slot count overridden to {ConfigManager.SetEnhancerSlotCount.Value}");
                         _hasLoggedOverrideForCurrentApply = true;
                     }
 
@@ -121,7 +121,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetEnhancerSlotCountPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetEnhancerSlotCountPatch)}", ex);
                     return true;
                 }
             }

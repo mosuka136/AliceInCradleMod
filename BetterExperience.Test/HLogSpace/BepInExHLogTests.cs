@@ -1,5 +1,4 @@
-using BetterExperience.HLogSpace;
-using BetterExperience.HProvider;
+using BetterExperience.BLogSpace;
 using BepInExLogEventArgs = BepInEx.Logging.LogEventArgs;
 using BepInExLogLevel = BepInEx.Logging.LogLevel;
 using BepInExManualLogSource = BepInEx.Logging.ManualLogSource;
@@ -10,7 +9,7 @@ namespace BetterExperience.Test.HLogSpace
     {
         public void Dispose()
         {
-            BepInExHLog.Initialize(HLog.LogLevel.Debug, null, null);
+            BepInExLog.Initialize(BLog.LogLevel.Debug, null, null);
         }
 
         [Fact]
@@ -21,12 +20,12 @@ namespace BetterExperience.Test.HLogSpace
             var loggerProvider = CreateLoggerProvider();
 
             // Act
-            BepInExHLog.Initialize(HLog.LogLevel.Warning, unityProvider, loggerProvider);
+            BepInExLog.Initialize(BLog.LogLevel.Warning, unityProvider, loggerProvider);
 
             // Assert
-            Assert.Equal(HLog.LogLevel.Warning, BepInExHLog.LogLevel);
-            Assert.Same(unityProvider, BepInExHLog.UnityProvider);
-            Assert.Same(loggerProvider, BepInExHLog.BepInExLogger);
+            Assert.Equal(BLog.LogLevel.Warning, BepInExLog.Level);
+            Assert.Same(unityProvider, BepInExLog.UnityProvider);
+            Assert.Same(loggerProvider, BepInExLog.BepInExLogger);
         }
 
         [Fact]
@@ -36,33 +35,33 @@ namespace BetterExperience.Test.HLogSpace
             var loggerProvider = CreateLoggerProvider();
             var entries = new List<BepInExLogEventArgs>();
             loggerProvider.Logger.LogEvent += (sender, args) => entries.Add(args);
-            BepInExHLog.Initialize(HLog.LogLevel.Warning, null, loggerProvider);
-            var logEntry = CreateLogEntry(HLog.LogLevel.Info, "filtered message");
+            BepInExLog.Initialize(BLog.LogLevel.Warning, null, loggerProvider);
+            var logEntry = CreateLogEntry(BLog.LogLevel.Info, "filtered message");
 
             // Act
-            BepInExHLog.Log(logEntry);
+            BepInExLog.Log(logEntry);
 
             // Assert
             Assert.Empty(entries);
         }
 
         [Theory]
-        [InlineData(HLog.LogLevel.Error, BepInExLogLevel.Error)]
-        [InlineData(HLog.LogLevel.Warning, BepInExLogLevel.Warning)]
-        [InlineData(HLog.LogLevel.Info, BepInExLogLevel.Info)]
-        [InlineData(HLog.LogLevel.Debug, BepInExLogLevel.Debug)]
-        [InlineData(HLog.LogLevel.Notice, BepInExLogLevel.Info)]
-        public void Log_WhenLoggerProviderExists_WritesExpectedBepInExLevel(HLog.LogLevel level, BepInExLogLevel expectedLevel)
+        [InlineData(BLog.LogLevel.Error, BepInExLogLevel.Error)]
+        [InlineData(BLog.LogLevel.Warning, BepInExLogLevel.Warning)]
+        [InlineData(BLog.LogLevel.Info, BepInExLogLevel.Info)]
+        [InlineData(BLog.LogLevel.Debug, BepInExLogLevel.Debug)]
+        [InlineData(BLog.LogLevel.Notice, BepInExLogLevel.Info)]
+        public void Log_WhenLoggerProviderExists_WritesExpectedBepInExLevel(BLog.LogLevel level, BepInExLogLevel expectedLevel)
         {
             // Arrange
             var loggerProvider = CreateLoggerProvider();
             var entries = new List<BepInExLogEventArgs>();
             loggerProvider.Logger.LogEvent += (sender, args) => entries.Add(args);
-            BepInExHLog.Initialize(HLog.LogLevel.Debug, null, loggerProvider);
+            BepInExLog.Initialize(BLog.LogLevel.Debug, null, loggerProvider);
             var logEntry = CreateLogEntry(level, "mapped message");
 
             // Act
-            BepInExHLog.Log(logEntry);
+            BepInExLog.Log(logEntry);
 
             // Assert
             var entry = Assert.Single(entries);
@@ -75,11 +74,11 @@ namespace BetterExperience.Test.HLogSpace
         public void Log_WhenLoggerProviderAndUnityProviderAreNull_DoesNotThrow()
         {
             // Arrange
-            BepInExHLog.Initialize(HLog.LogLevel.Debug, null, null);
-            var logEntry = CreateLogEntry(HLog.LogLevel.Info, "no provider message");
+            BepInExLog.Initialize(BLog.LogLevel.Debug, null, null);
+            var logEntry = CreateLogEntry(BLog.LogLevel.Info, "no provider message");
 
             // Act
-            var exception = Record.Exception(() => BepInExHLog.Log(logEntry));
+            var exception = Record.Exception(() => BepInExLog.Log(logEntry));
 
             // Assert
             Assert.Null(exception);
@@ -89,11 +88,11 @@ namespace BetterExperience.Test.HLogSpace
         public void Log_WhenLoggerProviderIsNullAndUnityProviderExists_DoesNotThrow()
         {
             // Arrange
-            BepInExHLog.Initialize(HLog.LogLevel.Debug, new UnityProvider(), null);
-            var logEntry = CreateLogEntry(HLog.LogLevel.Info, "unity fallback message");
+            BepInExLog.Initialize(BLog.LogLevel.Debug, new UnityProvider(), null);
+            var logEntry = CreateLogEntry(BLog.LogLevel.Info, "unity fallback message");
 
             // Act
-            var exception = Record.Exception(() => BepInExHLog.Log(logEntry));
+            var exception = Record.Exception(() => BepInExLog.Log(logEntry));
 
             // Assert
             Assert.Null(exception);
@@ -103,10 +102,10 @@ namespace BetterExperience.Test.HLogSpace
         public void Log_WhenLogEntryIsNull_SwallowsException()
         {
             // Arrange
-            BepInExHLog.Initialize(HLog.LogLevel.Debug, null, CreateLoggerProvider());
+            BepInExLog.Initialize(BLog.LogLevel.Debug, null, CreateLoggerProvider());
 
             // Act
-            var exception = Record.Exception(() => BepInExHLog.Log(null));
+            var exception = Record.Exception(() => BepInExLog.Log(null));
 
             // Assert
             Assert.Null(exception);
@@ -117,7 +116,7 @@ namespace BetterExperience.Test.HLogSpace
             return new BepInExLoggerProvider(new BepInExManualLogSource(Guid.NewGuid().ToString("N")));
         }
 
-        private static LogEntry CreateLogEntry(HLog.LogLevel level, string message)
+        private static LogEntry CreateLogEntry(BLog.LogLevel level, string message)
         {
             return new LogEntry(1, new DateTime(2026, 6, 13, 12, 34, 56, 789), 2, 3, "Scene", level, message, "File.cs", 4, "Member", null);
         }

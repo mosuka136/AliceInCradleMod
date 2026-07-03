@@ -1,12 +1,13 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using nel;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityModBase;
+using UnityModBase.HClassAttribute;
 using XX;
 
 namespace BetterExperience.Patches
@@ -37,7 +38,7 @@ namespace BetterExperience.Patches
                 FrameUpdateManager.OnFrameUpdate += Update;
 
                 _initialized = true;
-                HLog.Debug($"{nameof(ReplaceTexturePatch)} initialized.");
+                BLog.Debug($"{nameof(ReplaceTexturePatch)} initialized.");
             }
 
             public static void Update()
@@ -64,11 +65,11 @@ namespace BetterExperience.Patches
                             TryReplace(texture.Value, texture.Key);
                         }
 
-                        HLog.Info("Textures flushed.");
+                        BLog.Info("Textures flushed.");
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error($"Unexpected error while flushing textures.", ex);
+                        BLog.Error($"Unexpected error while flushing textures.", ex);
                     }
                 }
             }
@@ -84,7 +85,7 @@ namespace BetterExperience.Patches
 
                     if (__instance.MtiImage0 == null || __instance.MtiImage0.Image == null)
                     {
-                        HLog.Debug("SvTexture has no image.");
+                        BLog.Debug("SvTexture has no image.");
                         return;
                     }
 
@@ -95,7 +96,7 @@ namespace BetterExperience.Patches
                     var image = TextureManager.GetReplaceTexture(imageName);
                     if (image == null)
                     {
-                        HLog.Debug("No replacement texture found for " + imageName);
+                        BLog.Debug("No replacement texture found for " + imageName);
                         return;
                     }
 
@@ -103,11 +104,11 @@ namespace BetterExperience.Patches
                         _originalSpineTexture[__instance] = __instance.MtiImage0.Image;
 
                     TryReplace(__instance, image);
-                    HLog.Info($"SvTexture {imageName} replaced.");
+                    BLog.Info($"SvTexture {imageName} replaced.");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(ReplaceTexturePatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(ReplaceTexturePatch)}", ex);
                 }
             }
 
@@ -122,12 +123,12 @@ namespace BetterExperience.Patches
 
                     _pictureTexture[asset_key] = __result;
 
-                    HLog.Debug($"Try replace texture for {asset_key}.");
+                    BLog.Debug($"Try replace texture for {asset_key}.");
                     TryReplace(__result, asset_key);
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(ReplaceTexturePatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(ReplaceTexturePatch)}", ex);
                 }
             }
 
@@ -159,7 +160,7 @@ namespace BetterExperience.Patches
                 TextureManager.CopyTextureProperties(image.Tx, texture);
                 image.Tx = texture;
 
-                HLog.Info($"ReplaceTexture: {name}");
+                BLog.Info($"ReplaceTexture: {name}");
             }
 
             public static void TryReplace(BetobetoManager.SvTexture svTexture, Texture image)
@@ -186,7 +187,7 @@ namespace BetterExperience.Patches
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error($"Error restoring original spine texture for {texture.Key.MtiImage0.Image.name}", ex);
+                        BLog.Error($"Error restoring original spine texture for {texture.Key.MtiImage0.Image.name}", ex);
                     }
                 }
 

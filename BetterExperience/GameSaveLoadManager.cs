@@ -1,4 +1,4 @@
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using evt;
 using HarmonyLib;
 using System;
@@ -30,7 +30,7 @@ namespace BetterExperience
                 if (_name != "__INITNEWGAME")
                     return;
 
-                HLog.Info("Detected game save/load completion event.");
+                BLog.Info("Detected game save/load completion event.");
 
                 foreach (var handler in (OnGameSaveLoadCompleted?.GetInvocationList() ?? Array.Empty<Delegate>()).Cast<Action>())
                 {
@@ -40,7 +40,7 @@ namespace BetterExperience
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error("An error occurred while invoking OnGameSaveLoadCompleted event.", ex);
+                        BLog.Error("An error occurred while invoking OnGameSaveLoadCompleted event.", ex);
                     }
                 }
             }

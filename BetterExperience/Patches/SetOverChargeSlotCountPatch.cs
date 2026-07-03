@@ -1,6 +1,6 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using UnityModBase.HClassAttribute;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -31,19 +31,19 @@ namespace BetterExperience.Patches
                 {
                     if (ConfigManager.EnablePreloadOverChargeSlotCount.Value)
                     {
-                        HLog.Debug("Applying preloaded overcharge slot count.");
+                        BLog.Debug("Applying preloaded overcharge slot count.");
                         SetOverChargeSlotCount();
                     }
                 };
 
                 ConfigManager.SetOverChargeSlotCount.OnValueChanged += (s, e) =>
                 {
-                    HLog.Debug($"Overcharge slot count config changed: {e}");
+                    BLog.Debug($"Overcharge slot count config changed: {e}");
                     SetOverChargeSlotCount();
                 };
 
                 _initialized = true;
-                HLog.Debug("Overcharge slot count patch initialized.");
+                BLog.Debug("Overcharge slot count patch initialized.");
             }
 
             public static void SetOverChargeSlotCount()
@@ -53,24 +53,24 @@ namespace BetterExperience.Patches
                     var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
                     if (pr == null)
                     {
-                        HLog.Notice("Player instance not found while applying overcharge slot count.");
+                        BLog.Notice("Player instance not found while applying overcharge slot count.");
                         return;
                     }
 
                     if (pr.Skill == null)
                     {
-                        HLog.Notice("Player skill data not found while applying overcharge slot count.");
+                        BLog.Notice("Player skill data not found while applying overcharge slot count.");
                         return;
                     }
 
                     var oc = Traverse.Create(pr.Skill).Field("OcSlots").GetValue<M2PrOverChargeSlot>();
                     if (oc == null)
                     {
-                        HLog.Notice("Overcharge slot component not found while applying overcharge slot count.");
+                        BLog.Notice("Overcharge slot component not found while applying overcharge slot count.");
                         return;
                     }
 
-                    HLog.Debug($"Refresh overcharge slots. TargetCount={ConfigManager.SetOverChargeSlotCount.Value}");
+                    BLog.Debug($"Refresh overcharge slots. TargetCount={ConfigManager.SetOverChargeSlotCount.Value}");
 
                     _isChanging = true;
                     _hasLoggedOverrideForCurrentApply = false;
@@ -81,7 +81,7 @@ namespace BetterExperience.Patches
                 catch (Exception ex)
                 {
                     _isChanging = false;
-                    HLog.Error($"Unexpected error in {nameof(SetOverChargeSlotCount)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetOverChargeSlotCount)}.", ex);
                 }
             }
 
@@ -99,7 +99,7 @@ namespace BetterExperience.Patches
 
                     if (!_hasLoggedOverrideForCurrentApply)
                     {
-                        HLog.Debug($"{nameof(SetOverChargeSlotCountPatch)} applied.");
+                        BLog.Debug($"{nameof(SetOverChargeSlotCountPatch)} applied.");
                         _hasLoggedOverrideForCurrentApply = true;
                     }
 
@@ -108,7 +108,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetOverChargeSlotCountPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetOverChargeSlotCountPatch)}", ex);
                     return true;
                 }
             }

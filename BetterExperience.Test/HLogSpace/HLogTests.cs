@@ -1,10 +1,10 @@
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using BetterExperience.HProvider;
 using HarmonyLib;
 using UnityEngine.SceneManagement;
 using Xunit.Abstractions;
 using Xunit.Sdk;
-using static BetterExperience.HLogSpace.HLog;
+using static BetterExperience.BLogSpace.BLog;
 
 namespace BetterExperience.Test.HLogSpace
 {
@@ -19,18 +19,18 @@ namespace BetterExperience.Test.HLogSpace
             var entries = new List<LogEntry>();
             Action<LogEntry> handler = entry => entries.Add(entry);
 
-            HLog.DisposeWriter();
-            HLog.EnableLog = true;
-            HLog.LogDirectory = logDirectory;
-            HLog.LogFileName = "queued-before-init.log";
-            HLog.HLogLevel = LogLevel.Debug;
-            HLog.UnityProvider = new UnityProvider();
-            HLog.OnLogAdd += handler;
+            BLog.DisposeWriter();
+            BLog.EnableLog = true;
+            BLog.LogDirectory = logDirectory;
+            BLog.LogFileName = "queued-before-init.log";
+            BLog.HLogLevel = LogLevel.Debug;
+            BLog.UnityProvider = new UnityProvider();
+            BLog.OnLogAdd += handler;
 
             try
             {
                 // Act
-                var exception = Record.Exception(() => HLog.WriteQueue(
+                var exception = Record.Exception(() => BLog.WriteQueue(
                     LogLevel.Info,
                     "queued-before-init",
                     null,
@@ -45,8 +45,8 @@ namespace BetterExperience.Test.HLogSpace
             }
             finally
             {
-                HLog.OnLogAdd -= handler;
-                HLog.DisposeWriter();
+                BLog.OnLogAdd -= handler;
+                BLog.DisposeWriter();
                 DeleteDirectoryIfExists(logDirectory);
             }
         }
@@ -59,26 +59,26 @@ namespace BetterExperience.Test.HLogSpace
             var logFileName = "initialize.log";
             var unityProvider = new UnityProvider();
 
-            HLog.EnableLog = true;
+            BLog.EnableLog = true;
 
             try
             {
                 // Act
-                HLog.Initialize(logDirectory, logFileName, LogLevel.Warning, unityProvider);
-                HLog.FlushQueue();
+                BLog.Initialize(logDirectory, logFileName, LogLevel.Warning, unityProvider);
+                BLog.FlushQueue();
 
                 // Assert
-                Assert.Equal(logDirectory, HLog.LogDirectory);
-                Assert.Equal(logFileName, HLog.LogFileName);
-                Assert.Equal(LogLevel.Warning, HLog.HLogLevel);
-                Assert.Same(unityProvider, HLog.UnityProvider);
+                Assert.Equal(logDirectory, BLog.LogDirectory);
+                Assert.Equal(logFileName, BLog.LogFileName);
+                Assert.Equal(LogLevel.Warning, BLog.HLogLevel);
+                Assert.Same(unityProvider, BLog.UnityProvider);
 
                 var logFilePath = GetSingleLogFilePath(logDirectory);
-                HLog.DisposeWriter();
+                BLog.DisposeWriter();
                 var contentAfterInitialize = ReadAllTextShared(logFilePath);
                 Assert.Contains("LOG-START", contentAfterInitialize);
 
-                HLog.InitializeWriter();
+                BLog.InitializeWriter();
                 GameQuitManager.Dispose();
 
                 var contentAfterDispose = ReadAllTextShared(logFilePath);
@@ -86,7 +86,7 @@ namespace BetterExperience.Test.HLogSpace
             }
             finally
             {
-                HLog.DisposeWriter();
+                BLog.DisposeWriter();
                 DeleteDirectoryIfExists(logDirectory);
             }
         }
@@ -100,26 +100,26 @@ namespace BetterExperience.Test.HLogSpace
             var newLogFileName = "reconfigure.log";
             var unityProvider = new UnityProvider();
 
-            HLog.Dispose();
-            HLog.EnableLog = false;
-            HLog.Initialize(initialLogDirectory, "initial.log", LogLevel.Debug, new UnityProvider());
-            HLog.EnableLog = true;
+            BLog.Dispose();
+            BLog.EnableLog = false;
+            BLog.Initialize(initialLogDirectory, "initial.log", LogLevel.Debug, new UnityProvider());
+            BLog.EnableLog = true;
 
             try
             {
                 // Act
-                HLog.Initialize(newLogDirectory, newLogFileName, LogLevel.Error, unityProvider);
+                BLog.Initialize(newLogDirectory, newLogFileName, LogLevel.Error, unityProvider);
 
                 // Assert
-                Assert.Equal(newLogDirectory, HLog.LogDirectory);
-                Assert.Equal(newLogFileName, HLog.LogFileName);
-                Assert.Equal(LogLevel.Error, HLog.HLogLevel);
-                Assert.Same(unityProvider, HLog.UnityProvider);
+                Assert.Equal(newLogDirectory, BLog.LogDirectory);
+                Assert.Equal(newLogFileName, BLog.LogFileName);
+                Assert.Equal(LogLevel.Error, BLog.HLogLevel);
+                Assert.Same(unityProvider, BLog.UnityProvider);
                 Assert.False(Directory.Exists(newLogDirectory));
             }
             finally
             {
-                HLog.Dispose();
+                BLog.Dispose();
                 DeleteDirectoryIfExists(initialLogDirectory);
                 DeleteDirectoryIfExists(newLogDirectory);
             }
@@ -132,14 +132,14 @@ namespace BetterExperience.Test.HLogSpace
             var logDirectory = CreateLogDirectory();
 
             ConfigureLogger(logDirectory, "writer.log", LogLevel.Debug, true);
-            HLog.DisposeWriter();
+            BLog.DisposeWriter();
 
             try
             {
                 // Act
-                HLog.InitializeWriter();
-                HLog.InitializeWriter();
-                HLog.DisposeWriter();
+                BLog.InitializeWriter();
+                BLog.InitializeWriter();
+                BLog.DisposeWriter();
 
                 // Assert
                 var content = ReadAllTextShared(GetSingleLogFilePath(logDirectory));
@@ -148,7 +148,7 @@ namespace BetterExperience.Test.HLogSpace
             }
             finally
             {
-                HLog.DisposeWriter();
+                BLog.DisposeWriter();
                 DeleteDirectoryIfExists(logDirectory);
             }
         }
@@ -161,21 +161,21 @@ namespace BetterExperience.Test.HLogSpace
             var eventRaised = false;
             Action<LogEntry> handler = _ => eventRaised = true;
 
-            HLog.DisposeWriter();
-            HLog.EnableLog = false;
-            HLog.Initialize(logDirectory, "disabled.log", LogLevel.Debug, new UnityProvider());
-            HLog.EnableLog = true;
-            HLog.InitializeWriter();
+            BLog.DisposeWriter();
+            BLog.EnableLog = false;
+            BLog.Initialize(logDirectory, "disabled.log", LogLevel.Debug, new UnityProvider());
+            BLog.EnableLog = true;
+            BLog.InitializeWriter();
             var logFilePath = GetSingleLogFilePath(logDirectory);
-            HLog.DisposeWriter();
+            BLog.DisposeWriter();
             var contentBefore = ReadAllTextShared(logFilePath);
-            HLog.EnableLog = false;
-            HLog.OnLogAdd += handler;
+            BLog.EnableLog = false;
+            BLog.OnLogAdd += handler;
 
             try
             {
                 // Act
-                HLog.WriteQueue(LogLevel.Error, "disabled-message", null, "DisabledMember", "disabled.cs", 55);
+                BLog.WriteQueue(LogLevel.Error, "disabled-message", null, "DisabledMember", "disabled.cs", 55);
 
                 // Assert
                 Assert.False(eventRaised);
@@ -183,9 +183,9 @@ namespace BetterExperience.Test.HLogSpace
             }
             finally
             {
-                HLog.OnLogAdd -= handler;
-                HLog.EnableLog = true;
-                HLog.DisposeWriter();
+                BLog.OnLogAdd -= handler;
+                BLog.EnableLog = true;
+                BLog.DisposeWriter();
                 DeleteDirectoryIfExists(logDirectory);
             }
         }
@@ -194,11 +194,11 @@ namespace BetterExperience.Test.HLogSpace
         public void InitializeWriter_09_WhenPathIsInvalid_SwallowsException()
         {
             // Arrange
-            HLog.LogDirectory = "bad\0path";
-            HLog.LogFileName = "invalid.log";
+            BLog.LogDirectory = "bad\0path";
+            BLog.LogFileName = "invalid.log";
 
             // Act
-            var exception = Record.Exception(HLog.InitializeWriter);
+            var exception = Record.Exception(BLog.InitializeWriter);
 
             // Assert
             Assert.Null(exception);
@@ -213,15 +213,15 @@ namespace BetterExperience.Test.HLogSpace
             Action<LogEntry> throwingHandler = _ => throw new InvalidOperationException("boom");
             Action<LogEntry> recordingHandler = loggedEntry => entries.Add(loggedEntry);
 
-            HLog.EnableLog = true;
-            HLog.HLogLevel = LogLevel.Debug;
-            HLog.OnLogAdd += throwingHandler;
-            HLog.OnLogAdd += recordingHandler;
+            BLog.EnableLog = true;
+            BLog.HLogLevel = LogLevel.Debug;
+            BLog.OnLogAdd += throwingHandler;
+            BLog.OnLogAdd += recordingHandler;
 
             try
             {
                 // Act
-                var exception = Record.Exception(() => HLog.WriteLog(entry));
+                var exception = Record.Exception(() => BLog.WriteLog(entry));
 
                 // Assert
                 Assert.Null(exception);
@@ -229,8 +229,8 @@ namespace BetterExperience.Test.HLogSpace
             }
             finally
             {
-                HLog.OnLogAdd -= recordingHandler;
-                HLog.OnLogAdd -= throwingHandler;
+                BLog.OnLogAdd -= recordingHandler;
+                BLog.OnLogAdd -= throwingHandler;
             }
         }
 
@@ -239,11 +239,11 @@ namespace BetterExperience.Test.HLogSpace
         {
             // Arrange
             var entry = new LogEntry(2, new DateTime(2026, 6, 13, 12, 34, 56, 789), 2, 3, "SceneY", LogLevel.Warning, "message", "file.cs", 20, "Member", null);
-            HLog.EnableLog = true;
-            HLog.HLogLevel = LogLevel.Debug;
+            BLog.EnableLog = true;
+            BLog.HLogLevel = LogLevel.Debug;
 
             // Act
-            var exception = Record.Exception(() => HLog.WriteLog(entry));
+            var exception = Record.Exception(() => BLog.WriteLog(entry));
 
             // Assert
             Assert.Null(exception);
@@ -253,10 +253,10 @@ namespace BetterExperience.Test.HLogSpace
         public void DisposeWriter_12_WhenWriterIsNull_ReturnsWithoutThrowing()
         {
             // Arrange
-            HLog.DisposeWriter();
+            BLog.DisposeWriter();
 
             // Act
-            var exception = Record.Exception(HLog.DisposeWriter);
+            var exception = Record.Exception(BLog.DisposeWriter);
 
             // Assert
             Assert.Null(exception);
@@ -269,15 +269,15 @@ namespace BetterExperience.Test.HLogSpace
             var logDirectory = CreateLogDirectory();
 
             ConfigureLogger(logDirectory, "dispose.log", LogLevel.Debug, true);
-            HLog.DisposeWriter();
-            HLog.InitializeWriter();
+            BLog.DisposeWriter();
+            BLog.InitializeWriter();
 
             try
             {
                 var logFilePath = GetSingleLogFilePath(logDirectory);
 
                 // Act
-                var exception = Record.Exception(HLog.DisposeWriter);
+                var exception = Record.Exception(BLog.DisposeWriter);
 
                 // Assert
                 Assert.Null(exception);
@@ -286,7 +286,7 @@ namespace BetterExperience.Test.HLogSpace
             }
             finally
             {
-                HLog.DisposeWriter();
+                BLog.DisposeWriter();
                 DeleteDirectoryIfExists(logDirectory);
             }
         }
@@ -299,14 +299,14 @@ namespace BetterExperience.Test.HLogSpace
             var start = new System.Threading.ManualResetEventSlim(false);
 
             ConfigureLogger(logDirectory, "dispose-throw.log", LogLevel.Debug, true);
-            HLog.DisposeWriter();
-            HLog.InitializeWriter();
+            BLog.DisposeWriter();
+            BLog.InitializeWriter();
 
             var tasks = Enumerable.Range(0, 16)
                 .Select(_ => System.Threading.Tasks.Task.Run(() =>
                 {
                     start.Wait();
-                    return Record.Exception(HLog.DisposeWriter);
+                    return Record.Exception(BLog.DisposeWriter);
                 }))
                 .ToArray();
 
@@ -321,7 +321,7 @@ namespace BetterExperience.Test.HLogSpace
             }
             finally
             {
-                HLog.DisposeWriter();
+                BLog.DisposeWriter();
                 start.Dispose();
                 DeleteDirectoryIfExists(logDirectory);
             }
@@ -332,11 +332,11 @@ namespace BetterExperience.Test.HLogSpace
 
         private static void ConfigureLogger(string logDirectory, string logFileName, LogLevel logLevel, bool enableLog)
         {
-            HLog.LogDirectory = logDirectory;
-            HLog.LogFileName = logFileName;
-            HLog.HLogLevel = logLevel;
-            HLog.EnableLog = enableLog;
-            HLog.UnityProvider = new UnityProvider();
+            BLog.LogDirectory = logDirectory;
+            BLog.LogFileName = logFileName;
+            BLog.HLogLevel = logLevel;
+            BLog.EnableLog = enableLog;
+            BLog.UnityProvider = new UnityProvider();
         }
 
         private static string CreateLogDirectory()

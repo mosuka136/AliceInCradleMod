@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -45,19 +45,19 @@ namespace BetterExperience.Patches
 
                     if (!matcher.IsValid)
                     {
-                        HLog.Error("Pattern not found: IKRow.count = X.Mn(this.IKRow.count, 99)");
+                        BLog.Error("Pattern not found: IKRow.count = X.Mn(this.IKRow.count, 99)");
                         return matcher.InstructionEnumeration();
                     }
 
                     for (int k = 0; k < 8; k++)
                         matcher.SetAndAdvance(OpCodes.Nop, null);
 
-                    HLog.Debug($"{nameof(RemoveLimitInTreasureChestsPatch)} applied.");
+                    BLog.Debug($"{nameof(RemoveLimitInTreasureChestsPatch)} applied.");
                     return matcher.InstructionEnumeration();
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveLimitInTreasureChestsPatch)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveLimitInTreasureChestsPatch)}.", ex);
                     return instructions;
                 }
             }

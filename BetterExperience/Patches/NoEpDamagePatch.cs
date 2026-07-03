@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -25,12 +25,12 @@ namespace BetterExperience.Patches
 
                     __result = false;
 
-                    HLog.Debug($"{nameof(NoEpDamagePatch)} applied.");
+                    BLog.Debug($"{nameof(NoEpDamagePatch)} applied.");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(NoEpDamagePatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(NoEpDamagePatch)}", ex);
                     return true;
                 }
             }

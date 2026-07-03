@@ -1,8 +1,9 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using UnityModBase.HClassAttribute;
+using BetterExperience.BLogSpace;
 using nel;
 using System;
+using UnityModBase;
 
 namespace BetterExperience.Patches
 {
@@ -37,11 +38,11 @@ namespace BetterExperience.Patches
                     try
                     {
                         StoreManager.FlushAll();
-                        HLog.Info("Flushed all store!");
+                        BLog.Info("Flushed all store!");
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error($"Unexpected error in {nameof(FlushStorePatch)}", ex);
+                        BLog.Error($"Unexpected error in {nameof(FlushStorePatch)}", ex);
                     }
                 }
             }

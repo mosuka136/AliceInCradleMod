@@ -1,7 +1,7 @@
-using BetterExperience.HConfigSpace;
-using BetterExperience.HLogSpace;
-using BetterExperience.HTranslatorSpace;
+using BetterExperience.BLogSpace;
 using System;
+using UnityModBase.HConfigSpace;
+using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
@@ -60,7 +60,7 @@ namespace BetterExperience.BConfigManager
             }
             catch (Exception ex)
             {
-                HLog.Error("Failed to initialize config manager. for texture", ex);
+                BLog.Error("Failed to initialize config manager. for texture", ex);
             }
         }
     }

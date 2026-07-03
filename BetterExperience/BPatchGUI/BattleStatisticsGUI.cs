@@ -1,12 +1,12 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
+using UnityModBase.HClassAttribute;
 using static BetterExperience.Patches.HPatches;
 
 namespace BetterExperience.BPatchGUI
@@ -35,7 +35,7 @@ namespace BetterExperience.BPatchGUI
         {
             if (AccessTools.TypeByName("nel.ENATTR") == null)
             {
-                HLog.Error("BattleStatisticsGUI requires nel.ENATTR type, but it was not found.");
+                BLog.Error("BattleStatisticsGUI requires nel.ENATTR type, but it was not found.");
                 Destroy(this);
             }
 
@@ -176,7 +176,7 @@ namespace BetterExperience.BPatchGUI
             if (!_isExpanded)
                 return;
 
-            // 展开视图需要同时显示 HP 与 MP 维度，两个字典可能只在其中一个维度存在该敌人。
+            // 展开视图需要同时显示 HP 与 MP 维度，两个字典可能只在其中一个维度存在该敌人
             var enemyKeys = new SortedSet<(ENEMYID, ENATTR)>(hpByEnemy.Keys);
             enemyKeys.UnionWith(mpByEnemy.Keys);
 

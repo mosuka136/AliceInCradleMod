@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -24,12 +24,12 @@ namespace BetterExperience.Patches
                     if (ConfigManager.EnablePressDamage.Value)
                         return true;
 
-                    HLog.Debug($"{nameof(RemovePressDamagePatch)} applied.");
+                    BLog.Debug($"{nameof(RemovePressDamagePatch)} applied.");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemovePressDamagePatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemovePressDamagePatch)}", ex);
                     return true;
                 }
             }

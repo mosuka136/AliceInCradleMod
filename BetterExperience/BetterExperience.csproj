@@ -70,79 +70,13 @@
     <Compile Include="BConfigManager\ConfigManagerTexture.cs" />
     <Compile Include="BPatchGUI\BattleStatisticsGUI.cs" />
     <Compile Include="BPatchGUI\TranslatorResource.cs" />
-    <Compile Include="GameBootManager.cs" />
-    <Compile Include="GameQuitManager.cs" />
-    <Compile Include="HClassAttribute\InitialzeOnGameBootAttribute.cs" />
-    <Compile Include="HClassAttribute\RegisterOnGameBootAttribute.cs" />
-    <Compile Include="HConfigGUI\Bindings\EntryBinding.cs" />
-    <Compile Include="HConfigGUI\Bindings\IEntryBinding.cs" />
-    <Compile Include="HConfigGUI\Bindings\SheetBinding.cs" />
-    <Compile Include="HConfigGUI\Bindings\TableBinding.cs" />
-    <Compile Include="HConfigGUI\Editor\PopupEditor.cs" />
-    <Compile Include="HConfigGUI\EntryChangeSink.cs" />
-    <Compile Include="HConfigGUI\Editor\EntryEditor.cs" />
-    <Compile Include="HConfigGUI\GuiPipe.cs" />
-    <Compile Include="HConfigGUI\GuiStateStore.cs" />
-    <Compile Include="HConfigGUI\Editor\HotkeyEditSession.cs" />
-    <Compile Include="HConfigGUI\Editor\SheetEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\TableEditor.cs" />
-    <Compile Include="HGuiSpace\IStyleResource.cs" />
-    <Compile Include="HGuiSpace\ToastEditor.cs" />
-    <Compile Include="HGuiSpace\TooltipEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\ValueEditor\BooleanEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\ValueEditor\EnumEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\ValueEditor\HotkeyEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\ValueEditor\IValueEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\ValueEditor\NumberEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\ValueEditor\SliderEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\ValueEditor\StringEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\ValueEditor\UnsupportedEditor.cs" />
-    <Compile Include="HConfigGUI\Editor\ValueEditorRegistry.cs" />
-    <Compile Include="HLogGUI\EntryBinding.cs" />
-    <Compile Include="HLogGUI\EntryContentType.cs" />
-    <Compile Include="HLogGUI\EntryEditor.cs" />
-    <Compile Include="HLogGUI\EntryListBinding.cs" />
-    <Compile Include="HLogGUI\GuiHost.cs" />
-    <Compile Include="HLogGUI\ListEditor.cs" />
-    <Compile Include="HLogGUI\Resource\StyleResource.cs" />
-    <Compile Include="HLogGUI\Resource\TranslatorResource.cs" />
-    <Compile Include="HLogSpace\BepInExHLog.cs" />
-    <Compile Include="HLogSpace\LogEntry.cs" />
-    <Compile Include="HotkeyManager\HotkeyEditState.cs" />
-    <Compile Include="HotkeyManager\HotkeyResult.cs" />
-    <Compile Include="HProvider\BepInExLoggerProvider.cs" />
-    <Compile Include="HProvider\IUnityGuiProvider.cs" />
-    <Compile Include="HProvider\IUnityProvider.cs" />
-    <Compile Include="HProvider\UnityGuiProvider.cs" />
-    <Compile Include="HProvider\UnityProvider.cs" />
-    <Compile Include="HClassAttribute\ClassHelper.cs" />
-    <Compile Include="HClassAttribute\ConfigSliderAttribute.cs" />
-    <Compile Include="HConfigSpace\ConfigEntry.cs" />
-    <Compile Include="HConfigSpace\ConfigFileEntry.cs" />
-    <Compile Include="HConfigSpace\ConfigFileManager.cs" />
-    <Compile Include="HConfigSpace\ConfigFileModel.cs" />
-    <Compile Include="HConfigSpace\ConfigFileResult.cs" />
-    <Compile Include="HConfigSpace\ConfigFileSheet.cs" />
-    <Compile Include="HConfigSpace\ConfigFileTable.cs" />
-    <Compile Include="HConfigSpace\ConfigSheet.cs" />
-    <Compile Include="HConfigSpace\ConfigTable.cs" />
-    <Compile Include="HConfigSpace\IConfigEntryAdapter.cs" />
-    <Compile Include="HConfigGUI\UiMetadata.cs" />
-    <Compile Include="HConfigGUI\UiMetadataHelper.cs" />
-    <Compile Include="HConfigGUI\GuiHost.cs" />
-    <Compile Include="HConfigGUI\Resource\LayoutResource.cs" />
-    <Compile Include="HConfigGUI\Resource\StyleResource.cs" />
-    <Compile Include="HConfigGUI\Resource\TranslatorResource.cs" />
-    <Compile Include="HEnumHelper\DisplayEnumAttribute.cs" />
-    <Compile Include="HEnumHelper\EnumHelper.cs" />
+    <Compile Include="BService.cs" />
+    <Compile Include="BLogSpace\BepInExLog.cs" />
+    <Compile Include="BepInExLoggerProvider.cs" />
     <Compile Include="GameSaveLoadManager.cs" />
-    <Compile Include="HotkeyManager\Hotkey.cs" />
-    <Compile Include="HotkeyManager\HotkeyChord.cs" />
-    <Compile Include="HotkeyManager\HotkeyTrigger.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
     <Compile Include="Patches\BattleStatisticsPatch.cs" />
     <Compile Include="Patches\DisableDrowningPatch.cs" />
-    <Compile Include="FrameUpdateManager.cs" />
     <Compile Include="Patches\ImmuneAbnormalitiesPatch.cs" />
     <Compile Include="Patches\InvalidateWormTrapPatch.cs" />
     <Compile Include="Patches\NoEpDamagePatch.cs" />
@@ -158,7 +92,7 @@
     <Compile Include="Patches\SetBackpackCapacityPatch.cs" />
     <Compile Include="BConfigManager\ConfigManager.cs" />
     <Compile Include="Patches\FlushStorePatch.cs" />
-    <Compile Include="HLogSpace\HLog.cs" />
+    <Compile Include="BLogSpace\BLog.cs" />
     <Compile Include="Patches\InfiniteShieldPatch.cs" />
     <Compile Include="Patches\NoHpDamagePatch.cs" />
     <Compile Include="Patches\NoMapDamagePatch.cs" />
@@ -187,57 +121,6 @@
     <Compile Include="Patches\RemoveMosaicPatch.cs" />
     <Compile Include="Patches\RemoveLimitInPuppetNpcDefeatedPatch.cs" />
     <Compile Include="Patches\RemoveHolyBurstFaintPatch.cs" />
-    <Compile Include="HTranslatorSpace\LanguageType.cs" />
-    <Compile Include="HTranslatorSpace\Translator.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\BepInEx\core\0Harmony.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\BepInEx\core\BepInEx.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Unity.InputSystem">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\Unity.InputSystem.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="unsafeAssem">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\unsafeAssem.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -254,6 +137,48 @@
   <ItemGroup>
     <None Include="Buele.pfx" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\ReferenceLibrary\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\ReferenceLibrary\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>..\ReferenceLibrary\BepInEx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="BepInExLauncher">
+      <HintPath>..\ReferenceLibrary\BepInExLauncher.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\ReferenceLibrary\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\ReferenceLibrary\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\ReferenceLibrary\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\ReferenceLibrary\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityModBase">
+      <HintPath>..\ReferenceLibrary\UnityModBase.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="unsafeAssem">
+      <HintPath>..\ReferenceLibrary\unsafeAssem.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

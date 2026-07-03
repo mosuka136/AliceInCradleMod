@@ -1,4 +1,4 @@
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using BetterExperience.Patches;
 using nel;
 using System.Reflection;
@@ -116,9 +116,9 @@ namespace BetterExperience.Test.Patches
             public static BattleStatisticsStateScope Create()
             {
                 var originalValues = StaticProperties.ToDictionary(property => property, property => property.GetValue(null));
-                var scope = new BattleStatisticsStateScope(originalValues, HLog.EnableLog);
+                var scope = new BattleStatisticsStateScope(originalValues, BLog.EnableLog);
 
-                HLog.EnableLog = false;
+                BLog.EnableLog = false;
                 ResetState();
 
                 return scope;
@@ -131,7 +131,7 @@ namespace BetterExperience.Test.Patches
                     pair.Key.SetValue(null, pair.Value);
                 }
 
-                HLog.EnableLog = _originalEnableLog;
+                BLog.EnableLog = _originalEnableLog;
             }
 
             private static void ResetState()

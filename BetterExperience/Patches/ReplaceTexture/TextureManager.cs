@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -61,7 +61,7 @@ namespace BetterExperience.Patches.ReplaceTexture
 
                     if (_imageInfos.ContainsKey(fileWithoutExtension))
                     {
-                        HLog.Warn($"Duplicate image name found: {fileWithoutExtension}. Skipping {file}.");
+                        BLog.Warn($"Duplicate image name found: {fileWithoutExtension}. Skipping {file}.");
                         continue;
                     }
 
@@ -69,14 +69,14 @@ namespace BetterExperience.Patches.ReplaceTexture
                     if (image == null)
                         continue;
                     _imageInfos[fileWithoutExtension] = image;
-                    HLog.Info($"Loaded image: {fileWithoutExtension} from {file}");
+                    BLog.Info($"Loaded image: {fileWithoutExtension} from {file}");
                 }
                 
-                HLog.Info($"Initialized ImageManager with {_imageInfos.Count} images.");
+                BLog.Info($"Initialized ImageManager with {_imageInfos.Count} images.");
             }
             catch (Exception ex)
             {
-                HLog.Error("Failed to initialize ImageManager.", ex);
+                BLog.Error("Failed to initialize ImageManager.", ex);
             }
         }
 
@@ -110,7 +110,7 @@ namespace BetterExperience.Patches.ReplaceTexture
 
             if (!CheckFileValid(imageName))
             {
-                HLog.Warn($"Invalid image file: {imageName}.");
+                BLog.Warn($"Invalid image file: {imageName}.");
                 return null;
             }
 
@@ -125,13 +125,13 @@ namespace BetterExperience.Patches.ReplaceTexture
                 }
                 else
                 {
-                    HLog.Warn($"Failed to load image as Texture: {imageName}");
+                    BLog.Warn($"Failed to load image as Texture: {imageName}");
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                HLog.Error($"Failed to create Texture from image: {imageName}", ex);
+                BLog.Error($"Failed to create Texture from image: {imageName}", ex);
                 return null;
             }
         }
@@ -170,7 +170,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
             catch (Exception ex)
             {
-                HLog.Error($"Failed to validate image file '{filePath}'", ex);
+                BLog.Error($"Failed to validate image file '{filePath}'", ex);
                 return false;
             }
         }

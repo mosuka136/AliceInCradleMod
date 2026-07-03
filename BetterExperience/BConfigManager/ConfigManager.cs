@@ -1,8 +1,9 @@
-using BetterExperience.HClassAttribute;
-using BetterExperience.HConfigSpace;
-using BetterExperience.HLogSpace;
-using BetterExperience.HTranslatorSpace;
+using BetterExperience.BLogSpace;
 using System;
+using UnityModBase;
+using UnityModBase.HClassAttribute;
+using UnityModBase.HConfigSpace;
+using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
@@ -19,7 +20,7 @@ namespace BetterExperience.BConfigManager
         /// <summary>
         /// 当前配置文件管理器。
         /// </summary>
-        public static ConfigFileManager Config { get; private set; }
+        public static ConfigService Config => BService.Config;
 
         /// <summary>
         /// 运行时配置表集合，供 GUI 构建配置页使用。
@@ -43,19 +44,12 @@ namespace BetterExperience.BConfigManager
 
         private const string SectionGeneral = "General";
 
-        /// <summary>
-        /// 初始化全部配置表和配置项。
-        /// 调用会读取现有配置文件，补齐缺失项，并在完成绑定后保存一次规范化后的配置文件。
-        /// </summary>
-        /// <param name="configFilePath">配置文件路径。</param>
-        public static void Initialize(string configFilePath)
+        public static void Initialize()
         {
             lock (_configSyncRoot)
             {
                 try
                 {
-                    Config = new ConfigFileManager(configFilePath);
-
                     Config.SaveOnConfigSet = false;
 
                     Config.CreateTable(SectionGeneral, new Translator(chinese: "通用", english: "General"));
@@ -143,7 +137,7 @@ namespace BetterExperience.BConfigManager
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error("Failed to initialize config manager.", ex);
+                    BLog.Error("Failed to initialize config manager.", ex);
                 }
 
                 InitializePlayerStatus();
@@ -161,7 +155,7 @@ namespace BetterExperience.BConfigManager
 
                 FrameUpdateManager.OnFrameUpdate += ReloadConfigOnUserOrder;
 
-                HLog.Info($"Config manager initialized: {configFilePath}");
+                BLog.Info($"Config manager initialized.");
             }
         }
 
@@ -173,7 +167,7 @@ namespace BetterExperience.BConfigManager
             lock (_configSyncRoot)
             {
                 Config.Reload();
-                HLog.Info("Config file reloaded.");
+                BLog.Info("Config file reloaded.");
             }
         }
 
@@ -190,7 +184,7 @@ namespace BetterExperience.BConfigManager
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(ReloadConfigOnUserOrder)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(ReloadConfigOnUserOrder)}.", ex);
                 }
             }
         }

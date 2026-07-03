@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -58,7 +58,7 @@ namespace BetterExperience.Patches
 
                     if (Reel == null)
                     {
-                        HLog.Notice("Reel is null.");
+                        BLog.Notice("Reel is null.");
                         return;
                     }
 
@@ -66,7 +66,7 @@ namespace BetterExperience.Patches
                     if (content == null || __instance.IKRow == null || content.Length == 0 ||
                         !FEnum<ReelExecuter.EFFECT>.TryParse(content[Reel.content_id_dec % content.Length], out var ik))
                     {
-                        HLog.Notice("content is null or __instance.IKRow is null or cannot parse effect from content.");
+                        BLog.Notice("content is null or __instance.IKRow is null or cannot parse effect from content.");
                         return;
                     }
 
@@ -105,22 +105,22 @@ namespace BetterExperience.Patches
 
                     if (sortedContent == null)
                     {
-                        HLog.Warn($"No custom order defined for effect {ik}");
+                        BLog.Warn($"No custom order defined for effect {ik}");
                         return;
                     }
                     var index = Array.IndexOf(content, sortedContent[0]);
                     if (index < 0)
                     {
-                        HLog.Warn($"Sorted content's first element '{sortedContent[0]}' not found in original content.");
+                        BLog.Warn($"Sorted content's first element '{sortedContent[0]}' not found in original content.");
                         return;
                     }
 
                     Reel.content_id_dec = index;
-                    HLog.Debug($"{nameof(BetterReelEffectPatch)} applied.");
+                    BLog.Debug($"{nameof(BetterReelEffectPatch)} applied.");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(BetterReelEffectPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(BetterReelEffectPatch)}", ex);
                 }
             }
 

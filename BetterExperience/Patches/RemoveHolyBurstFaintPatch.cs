@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -26,12 +26,12 @@ namespace BetterExperience.Patches
 
                     __result = 0f;
 
-                    HLog.Debug($"{nameof(RemoveHolyBurstFaintPatch)} applied.");
+                    BLog.Debug($"{nameof(RemoveHolyBurstFaintPatch)} applied.");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveHolyBurstFaintPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveHolyBurstFaintPatch)}", ex);
                     return true;
                 }
             }

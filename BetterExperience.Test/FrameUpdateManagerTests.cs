@@ -1,4 +1,4 @@
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -101,10 +101,10 @@ namespace BetterExperience.Test
             public static FrameUpdateManagerStateScope Create()
             {
                 var scope = new FrameUpdateManagerStateScope(
-                    HLog.EnableLog,
+                    BLog.EnableLog,
                     (Action)OnFrameUpdateField.GetValue(null));
 
-                HLog.EnableLog = false;
+                BLog.EnableLog = false;
                 OnFrameUpdateField.SetValue(null, null);
 
                 return scope;
@@ -121,7 +121,7 @@ namespace BetterExperience.Test
             public void Dispose()
             {
                 OnFrameUpdateField.SetValue(null, _originalOnFrameUpdate);
-                HLog.EnableLog = _originalEnableLog;
+                BLog.EnableLog = _originalEnableLog;
             }
 
             private static FieldInfo GetRequiredField(string fieldName)

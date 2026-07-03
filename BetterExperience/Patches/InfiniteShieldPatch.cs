@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -25,11 +25,11 @@ namespace BetterExperience.Patches
 
                     __instance.cure();
 
-                    HLog.Debug($"{nameof(InfiniteShieldPatch)} applied.");
+                    BLog.Debug($"{nameof(InfiniteShieldPatch)} applied.");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(InfiniteShieldPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(InfiniteShieldPatch)}", ex);
                 }
             }
         }

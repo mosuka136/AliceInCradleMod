@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using nel.gm;
@@ -24,7 +24,7 @@ namespace BetterExperience.Patches
                 var t = typeof(UiBenchMenu).GetNestedType("BenchCmd", BindingFlags.NonPublic);
                 if (t == null)
                 {
-                    HLog.Error("Failed to find nested type: UiBenchMenu.BenchCmd");
+                    BLog.Error("Failed to find nested type: UiBenchMenu.BenchCmd");
                     yield break;
                 }
 
@@ -37,7 +37,7 @@ namespace BetterExperience.Patches
                 if (ctor != null)
                     yield return ctor;
                 else
-                    HLog.Error("Failed to find constructor for UiBenchMenu.BenchCmd");
+                    BLog.Error("Failed to find constructor for UiBenchMenu.BenchCmd");
             }
 
             public static void Prefix(string _key, ref Func<PR, bool> _FnCanUse, bool _can_set_auto, ref bool _only_in_safearea)
@@ -49,18 +49,18 @@ namespace BetterExperience.Patches
 
                     if (_key == "pee")
                     {
-                        HLog.Debug("Skip modifying the pee option.");
+                        BLog.Debug("Skip modifying the pee option.");
                         return;
                     }
 
                     _only_in_safearea = false;
                     _FnCanUse = (pr) => true;
 
-                    HLog.Debug($"{nameof(RemoveLimitInBenchMenuPatch)} applied. Key={_key}");
+                    BLog.Debug($"{nameof(RemoveLimitInBenchMenuPatch)} applied. Key={_key}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveLimitInBenchMenuPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveLimitInBenchMenuPatch)}", ex);
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace BetterExperience.Patches
                     var buttons = Traverse.Create(__instance).Field("Btns").GetValue<BtnContainerRadio<aBtn>>();
                     if (buttons == null)
                     {
-                        HLog.Notice("Bench menu buttons not found while removing bench menu restrictions.");
+                        BLog.Notice("Bench menu buttons not found while removing bench menu restrictions.");
                         return;
                     }
 
@@ -99,11 +99,11 @@ namespace BetterExperience.Patches
                         btn.SetLocked(false, no_change_binding: true);
                     }
 
-                    HLog.Debug($"{nameof(RemoveLimitInBenchMenuButtonPatch)} applied.");
+                    BLog.Debug($"{nameof(RemoveLimitInBenchMenuButtonPatch)} applied.");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveLimitInBenchMenuButtonPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveLimitInBenchMenuButtonPatch)}", ex);
                 }
             }
         }

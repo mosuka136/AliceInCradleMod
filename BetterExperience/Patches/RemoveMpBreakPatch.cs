@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -32,12 +32,12 @@ namespace BetterExperience.Patches
                         Agage_breaked[i] = 0;
                     }
 
-                    HLog.Debug($"{nameof(RemoveMpBreakPatch)} applied.");
+                    BLog.Debug($"{nameof(RemoveMpBreakPatch)} applied.");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveMpBreakPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveMpBreakPatch)}", ex);
                     return true;
                 }
             }

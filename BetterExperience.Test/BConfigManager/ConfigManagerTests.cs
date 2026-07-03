@@ -2,7 +2,7 @@ using BetterExperience.BConfigManager;
 using BetterExperience.HClassAttribute;
 using BetterExperience.HConfigGUI;
 using BetterExperience.HConfigSpace;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using BetterExperience.HTranslatorSpace;
 using System.Reflection;
 
@@ -24,9 +24,9 @@ namespace BetterExperience.Test.BConfigManager
                 .Where(property => property.GetIndexParameters().Length == 0 && property.SetMethod != null)
                 .ToDictionary(property => property, property => property.GetValue(null));
             _originalOnFrameUpdate = OnFrameUpdateField.GetValue(null);
-            _originalEnableLog = HLog.EnableLog;
+            _originalEnableLog = BLog.EnableLog;
 
-            HLog.EnableLog = false;
+            BLog.EnableLog = false;
             OnFrameUpdateField.SetValue(null, null);
         }
 
@@ -179,7 +179,7 @@ namespace BetterExperience.Test.BConfigManager
             }
 
             OnFrameUpdateField.SetValue(null, _originalOnFrameUpdate);
-            HLog.EnableLog = _originalEnableLog;
+            BLog.EnableLog = _originalEnableLog;
 
             foreach (var file in _tempFiles)
             {

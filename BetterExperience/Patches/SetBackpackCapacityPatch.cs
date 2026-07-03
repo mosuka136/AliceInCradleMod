@@ -1,9 +1,9 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
+using UnityModBase.HClassAttribute;
 
 namespace BetterExperience.Patches
 {
@@ -30,7 +30,7 @@ namespace BetterExperience.Patches
                 {
                     if (ConfigManager.EnablePreloadBackpackCapacity.Value)
                     {
-                        HLog.Debug($"Applying preloaded backpack capacity: {ConfigManager.SetBackpackCapacity.Value}");
+                        BLog.Debug($"Applying preloaded backpack capacity: {ConfigManager.SetBackpackCapacity.Value}");
                         SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value);
                     }
                 };
@@ -38,18 +38,18 @@ namespace BetterExperience.Patches
                 GameSaveProtectionManager.OnSavingActivated += RecoverBackpackCapacity;
                 GameSaveProtectionManager.OnSavingCompleted += () =>
                 {
-                    HLog.Debug($"Restoring backpack capacity after save: {_currentCapacity}");
+                    BLog.Debug($"Restoring backpack capacity after save: {_currentCapacity}");
                     SetBackpackCapacity(_currentCapacity);
                 };
 
                 ConfigManager.SetBackpackCapacity.OnValueChanged += (s, e) =>
                 {
-                    HLog.Debug($"Backpack capacity config changed: {e}");
+                    BLog.Debug($"Backpack capacity config changed: {e}");
                     SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value);
                 };
 
                 _initialized = true;
-                HLog.Debug("Backpack capacity patch initialized.");
+                BLog.Debug("Backpack capacity patch initialized.");
             }
 
             public static void SetBackpackCapacity(int count)
@@ -58,30 +58,30 @@ namespace BetterExperience.Patches
                 {
                     if (count <= 0)
                     {
-                        HLog.Debug($"Ignored invalid backpack capacity: {count}");
+                        BLog.Debug($"Ignored invalid backpack capacity: {count}");
                         return;
                     }
 
                     var imng = GetIMNG();
                     if (imng == null)
                     {
-                        HLog.Notice("Item manager not found while applying backpack capacity.");
+                        BLog.Notice("Item manager not found while applying backpack capacity.");
                         return;
                     }
 
                     var inventory = imng.getInventory();
                     if (inventory == null)
                     {
-                        HLog.Notice("Inventory not found while applying backpack capacity.");
+                        BLog.Notice("Inventory not found while applying backpack capacity.");
                         return;
                     }
 
                     inventory.row_max = count;
-                    HLog.Debug($"{nameof(SetBackpackCapacity)} applied. New capacity: {count}");
+                    BLog.Debug($"{nameof(SetBackpackCapacity)} applied. New capacity: {count}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetBackpackCapacity)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetBackpackCapacity)}.", ex);
                 }
             }
 
@@ -108,21 +108,21 @@ namespace BetterExperience.Patches
                     var imng = GetIMNG();
                     if (imng == null)
                     {
-                        HLog.Notice("Item manager not found while recovering backpack capacity.");
+                        BLog.Notice("Item manager not found while recovering backpack capacity.");
                         return;
                     }
 
                     var inventory = imng.getInventory();
                     if (inventory == null)
                     {
-                        HLog.Notice("Inventory not found while recovering backpack capacity.");
+                        BLog.Notice("Inventory not found while recovering backpack capacity.");
                         return;
                     }
 
                     var item = NelItem.GetById("workbench_capacity");
                     if (item == null)
                     {
-                        HLog.Notice("workbench_capacity item not found while recovering backpack capacity.");
+                        BLog.Notice("workbench_capacity item not found while recovering backpack capacity.");
                         return;
                     }
 
@@ -132,11 +132,11 @@ namespace BetterExperience.Patches
                     _currentCapacity = inventory.row_max;
                     // 原游戏背包基础容量为 12，workbench_capacity 记录额外容量。
                     inventory.row_max = count + 12;
-                    HLog.Debug($"Recovered backpack capacity for save operation. TemporaryCapacity={inventory.row_max}, CurrentCapacity={_currentCapacity}");
+                    BLog.Debug($"Recovered backpack capacity for save operation. TemporaryCapacity={inventory.row_max}, CurrentCapacity={_currentCapacity}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RecoverBackpackCapacity)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(RecoverBackpackCapacity)}.", ex);
                 }
             }
         }

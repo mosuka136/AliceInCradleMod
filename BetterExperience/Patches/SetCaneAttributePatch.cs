@@ -1,6 +1,6 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using UnityModBase.HClassAttribute;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -102,7 +102,7 @@ namespace BetterExperience.Patches
 
                 _initialized = true;
 
-                HLog.Debug("Cane attribute patch initialized.");
+                BLog.Debug("Cane attribute patch initialized.");
             }
 
             public static void SetSwingSpeed(float speed)
@@ -111,14 +111,14 @@ namespace BetterExperience.Patches
                 {
                     if (speed < 0f)
                     {
-                        HLog.Debug($"Ignored invalid swing speed: {speed}");
+                        BLog.Debug($"Ignored invalid swing speed: {speed}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -126,11 +126,11 @@ namespace BetterExperience.Patches
                     cane.near_punch_speed = speed / 50f;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane swing speed set to: {speed}");
+                    BLog.Debug($"Cane swing speed set to: {speed}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetSwingSpeed)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetSwingSpeed)}.", ex);
                 }
             }
 
@@ -140,14 +140,14 @@ namespace BetterExperience.Patches
                 {
                     if (speed < 0f)
                     {
-                        HLog.Debug($"Ignored invalid caneCast speed: {speed}");
+                        BLog.Debug($"Ignored invalid caneCast speed: {speed}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -156,17 +156,17 @@ namespace BetterExperience.Patches
                     var dividend = 50f * (0.33f * (cane.magic_prepare_speed - 1f) + 1f) * (0.25f * (cane.castspeed_overhold - 1f) + 1f);
                     if (dividend == 0f)
                     {
-                        HLog.Notice($"Calculated dividend for cast speed is zero, cannot set cast speed. (magic_prepare_speed: {cane.magic_prepare_speed}, castspeed_overhold: {cane.castspeed_overhold})");
+                        BLog.Notice($"Calculated dividend for cast speed is zero, cannot set cast speed. (magic_prepare_speed: {cane.magic_prepare_speed}, castspeed_overhold: {cane.castspeed_overhold})");
                         return;
                     }
                     cane.castspeed = speed / dividend;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane cast speed set to: {cane.castspeed})");
+                    BLog.Debug($"Cane cast speed set to: {cane.castspeed})");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetCastSpeed)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetCastSpeed)}.", ex);
                 }
             }
 
@@ -176,14 +176,14 @@ namespace BetterExperience.Patches
                 {
                     if (balance < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane balance: {balance}");
+                        BLog.Debug($"Ignored invalid cane balance: {balance}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -191,11 +191,11 @@ namespace BetterExperience.Patches
                     cane.neutral = balance / 60f;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane balance set to: {balance}");
+                    BLog.Debug($"Cane balance set to: {balance}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetBalance)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetBalance)}.", ex);
                 }
             }
 
@@ -205,14 +205,14 @@ namespace BetterExperience.Patches
                 {
                     if (efficiency < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane efficiency: {efficiency}");
+                        BLog.Debug($"Ignored invalid cane efficiency: {efficiency}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -228,11 +228,11 @@ namespace BetterExperience.Patches
                         cane.mp_use_ratio = 0f;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane efficiency set to: {efficiency} (mp_use_ratio: {cane.mp_use_ratio})");
+                    BLog.Debug($"Cane efficiency set to: {efficiency} (mp_use_ratio: {cane.mp_use_ratio})");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetEfficiency)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetEfficiency)}.", ex);
                 }
             }
 
@@ -242,14 +242,14 @@ namespace BetterExperience.Patches
                 {
                     if (retention < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane retention: {retention}");
+                        BLog.Debug($"Ignored invalid cane retention: {retention}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -257,18 +257,18 @@ namespace BetterExperience.Patches
                     var dividend = 55f * cane.mana_splash_ratio * (0.75f * (cane.castspeed_overhold - 1f) + 1f) * (0.5f * (cane.drain_after_lock - 1f) + 1f);
                     if (dividend == 0f)
                     {
-                        HLog.Notice($"Calculated dividend for cane retention is zero, cannot set retention. (mana_splash_ratio: {cane.mana_splash_ratio}, castspeed_overhold: {cane.castspeed_overhold}, drain_after_lock: {cane.drain_after_lock})");
+                        BLog.Notice($"Calculated dividend for cane retention is zero, cannot set retention. (mana_splash_ratio: {cane.mana_splash_ratio}, castspeed_overhold: {cane.castspeed_overhold}, drain_after_lock: {cane.drain_after_lock})");
                         return;
                     }
                     // Retention 面板值还依赖其他法杖内部属性，因此只改写 stability 分量。
                     cane.stability = retention / dividend;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane retention set to: {retention} (stability: {cane.stability})");
+                    BLog.Debug($"Cane retention set to: {retention} (stability: {cane.stability})");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetRetention)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetRetention)}.", ex);
                 }
             }
 
@@ -278,14 +278,14 @@ namespace BetterExperience.Patches
                 {
                     if (lockOn < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane lock-on: {lockOn}");
+                        BLog.Debug($"Ignored invalid cane lock-on: {lockOn}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -293,11 +293,11 @@ namespace BetterExperience.Patches
                     cane.lockon_power = lockOn / 50f;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane lock-on set to: {lockOn}");
+                    BLog.Debug($"Cane lock-on set to: {lockOn}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetLockOn)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetLockOn)}.", ex);
                 }
             }
 
@@ -307,14 +307,14 @@ namespace BetterExperience.Patches
                 {
                     if (range < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane long range: {range}");
+                        BLog.Debug($"Ignored invalid cane long range: {range}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -322,11 +322,11 @@ namespace BetterExperience.Patches
                     cane.far_power = range / 46f;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane long range set to: {range}");
+                    BLog.Debug($"Cane long range set to: {range}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetLongRange)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetLongRange)}.", ex);
                 }
             }
 
@@ -336,14 +336,14 @@ namespace BetterExperience.Patches
                 {
                     if (range < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane short range: {range}");
+                        BLog.Debug($"Ignored invalid cane short range: {range}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -352,17 +352,17 @@ namespace BetterExperience.Patches
                     var dividend = 55f * cane.near_shotgun_power;
                     if (dividend == 0f)
                     {
-                        HLog.Notice($"Calculated dividend for cane short range is zero, cannot set short range. (near_shotgun_power: {cane.near_shotgun_power})");
+                        BLog.Notice($"Calculated dividend for cane short range is zero, cannot set short range. (near_shotgun_power: {cane.near_shotgun_power})");
                         return;
                     }
                     cane.near_power = 4f * (range / dividend - 1f) + 1f;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane short range set to: {range} (near_power: {cane.near_power})");
+                    BLog.Debug($"Cane short range set to: {range} (near_power: {cane.near_power})");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetShortRange)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetShortRange)}.", ex);
                 }
             }
 
@@ -372,14 +372,14 @@ namespace BetterExperience.Patches
                 {
                     if (reach < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane reach: {reach}");
+                        BLog.Debug($"Ignored invalid cane reach: {reach}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -387,11 +387,11 @@ namespace BetterExperience.Patches
                     cane.near_reach = reach / 50f;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane reach set to: {reach}");
+                    BLog.Debug($"Cane reach set to: {reach}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetReach)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetReach)}.", ex);
                 }
             }
 
@@ -401,14 +401,14 @@ namespace BetterExperience.Patches
                 {
                     if (nearPower < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane near power: {nearPower}");
+                        BLog.Debug($"Ignored invalid cane near power: {nearPower}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -416,11 +416,11 @@ namespace BetterExperience.Patches
                     cane.near_power = nearPower;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane near power set to: {nearPower}");
+                    BLog.Debug($"Cane near power set to: {nearPower}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetNearPower)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetNearPower)}.", ex);
                 }
             }
 
@@ -430,14 +430,14 @@ namespace BetterExperience.Patches
                 {
                     if (nearShotgunPower < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane near shotgun power: {nearShotgunPower}");
+                        BLog.Debug($"Ignored invalid cane near shotgun power: {nearShotgunPower}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -445,11 +445,11 @@ namespace BetterExperience.Patches
                     cane.near_shotgun_power = nearShotgunPower;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane near shotgun power set to: {nearShotgunPower}");
+                    BLog.Debug($"Cane near shotgun power set to: {nearShotgunPower}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetNearShotgunPower)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetNearShotgunPower)}.", ex);
                 }
             }
 
@@ -459,14 +459,14 @@ namespace BetterExperience.Patches
                 {
                     if (stability < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane stability: {stability}");
+                        BLog.Debug($"Ignored invalid cane stability: {stability}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -474,11 +474,11 @@ namespace BetterExperience.Patches
                     cane.stability = stability;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane stability set to: {stability}");
+                    BLog.Debug($"Cane stability set to: {stability}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetStability)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetStability)}.", ex);
                 }
             }
 
@@ -488,14 +488,14 @@ namespace BetterExperience.Patches
                 {
                     if (manaSplashRatio < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane mana splash ratio: {manaSplashRatio}");
+                        BLog.Debug($"Ignored invalid cane mana splash ratio: {manaSplashRatio}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -503,11 +503,11 @@ namespace BetterExperience.Patches
                     cane.mana_splash_ratio = manaSplashRatio;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane mana splash ratio set to: {manaSplashRatio}");
+                    BLog.Debug($"Cane mana splash ratio set to: {manaSplashRatio}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetManaSplashRatio)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetManaSplashRatio)}.", ex);
                 }
             }
 
@@ -517,14 +517,14 @@ namespace BetterExperience.Patches
                 {
                     if (castspeedOverhold < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane castspeed overhold: {castspeedOverhold}");
+                        BLog.Debug($"Ignored invalid cane castspeed overhold: {castspeedOverhold}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -532,11 +532,11 @@ namespace BetterExperience.Patches
                     cane.castspeed_overhold = castspeedOverhold;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane castspeed overhold set to: {castspeedOverhold}");
+                    BLog.Debug($"Cane castspeed overhold set to: {castspeedOverhold}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetCastspeedOverhold)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetCastspeedOverhold)}.", ex);
                 }
             }
 
@@ -546,14 +546,14 @@ namespace BetterExperience.Patches
                 {
                     if (drainAfterLock < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane drain after lock: {drainAfterLock}");
+                        BLog.Debug($"Ignored invalid cane drain after lock: {drainAfterLock}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -561,11 +561,11 @@ namespace BetterExperience.Patches
                     cane.drain_after_lock = drainAfterLock;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane drain after lock set to: {drainAfterLock}");
+                    BLog.Debug($"Cane drain after lock set to: {drainAfterLock}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetDrainAfterLock)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetDrainAfterLock)}.", ex);
                 }
             }
 
@@ -575,14 +575,14 @@ namespace BetterExperience.Patches
                 {
                     if (speed < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane cast speed: {speed}");
+                        BLog.Debug($"Ignored invalid cane cast speed: {speed}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -590,11 +590,11 @@ namespace BetterExperience.Patches
                     cane.castspeed = speed;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane cast speed set to: {speed}");
+                    BLog.Debug($"Cane cast speed set to: {speed}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetCastspeed)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetCastspeed)}.", ex);
                 }
             }
 
@@ -604,14 +604,14 @@ namespace BetterExperience.Patches
                 {
                     if (magicPrepareSpeed < 0f)
                     {
-                        HLog.Debug($"Ignored invalid cane magic prepare speed: {magicPrepareSpeed}");
+                        BLog.Debug($"Ignored invalid cane magic prepare speed: {magicPrepareSpeed}");
                         return;
                     }
 
                     var skill = GetM2PrSkill();
                     if (skill == null)
                     {
-                        HLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
                         return;
                     }
 
@@ -619,11 +619,11 @@ namespace BetterExperience.Patches
                     cane.magic_prepare_speed = magicPrepareSpeed;
                     skill.Field(EqCane).SetValue(cane);
 
-                    HLog.Debug($"Cane magic prepare speed set to: {magicPrepareSpeed}");
+                    BLog.Debug($"Cane magic prepare speed set to: {magicPrepareSpeed}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetMagicPrepareSpeed)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetMagicPrepareSpeed)}.", ex);
                 }
             }
 

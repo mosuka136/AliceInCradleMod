@@ -1,6 +1,6 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using UnityModBase.HClassAttribute;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -68,7 +68,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetCurrencyCountPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetCurrencyCountPatch)}", ex);
                     return true;
                 }
             }
@@ -83,7 +83,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetCurrencyCountPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetCurrencyCountPatch)}", ex);
                     return true;
                 }
             }
@@ -93,7 +93,7 @@ namespace BetterExperience.Patches
                 var ctype = cEntry.ctype;
                 if (ctype == CoinStorage.CTYPE.GOLD)
                 {
-                    HLog.Debug($"Set GOLD count to: {ConfigManager.SetCurrencyGoldCount.Value}");
+                    BLog.Debug($"Set GOLD count to: {ConfigManager.SetCurrencyGoldCount.Value}");
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyGoldCount.Value,
                         ConfigManager.SetCurrencyGoldCount.Value,
@@ -101,7 +101,7 @@ namespace BetterExperience.Patches
                 }
                 else if (ctype == CoinStorage.CTYPE.CRAFTS)
                 {
-                    HLog.Debug($"Set CRAFTS count to: {ConfigManager.SetCurrencyCraftsCount.Value}");
+                    BLog.Debug($"Set CRAFTS count to: {ConfigManager.SetCurrencyCraftsCount.Value}");
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyCraftsCount.Value,
                         ConfigManager.SetCurrencyCraftsCount.Value,
@@ -109,14 +109,14 @@ namespace BetterExperience.Patches
                 }
                 else if (ctype == CoinStorage.CTYPE.JUICE)
                 {
-                    HLog.Debug($"Set JUICE count to: {ConfigManager.SetCurrencyJuiceCount.Value}");
+                    BLog.Debug($"Set JUICE count to: {ConfigManager.SetCurrencyJuiceCount.Value}");
                     return DealWithCurrencyCount(
                         ConfigManager.EnableLockCurrencyJuiceCount.Value,
                         ConfigManager.SetCurrencyJuiceCount.Value,
                         cEntry);
                 }
 
-                HLog.Notice($"Unknown currency type: {ctype}. No lock applied.");
+                BLog.Notice($"Unknown currency type: {ctype}. No lock applied.");
                 return true;
             }
 
@@ -131,7 +131,7 @@ namespace BetterExperience.Patches
 
                 if (!UInt32.TryParse(count.ToString(), out var countUInt))
                 {
-                    HLog.Error($"Failed to parse lock count for {cEntry.ctype} currency. Value: {count}");
+                    BLog.Error($"Failed to parse lock count for {cEntry.ctype} currency. Value: {count}");
                     return true;
                 }
 
@@ -156,11 +156,11 @@ namespace BetterExperience.Patches
                     entry[0].Set(count, true);
                     entry[0].Add(0);
 
-                    HLog.Debug($"GOLD count set to: {count}");
+                    BLog.Debug($"GOLD count set to: {count}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error while setting GOLD count in {nameof(SetCurrencyCountPatch)}", ex);
+                    BLog.Error($"Unexpected error while setting GOLD count in {nameof(SetCurrencyCountPatch)}", ex);
                 }
             }
 
@@ -177,11 +177,11 @@ namespace BetterExperience.Patches
                     entry[1].Set(count, true);
                     entry[1].Add(0);
 
-                    HLog.Debug($"CRAFTS count set to: {count}");
+                    BLog.Debug($"CRAFTS count set to: {count}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error while setting CRAFTS count in {nameof(SetCurrencyCountPatch)}", ex);
+                    BLog.Error($"Unexpected error while setting CRAFTS count in {nameof(SetCurrencyCountPatch)}", ex);
                 }
             }
 
@@ -198,11 +198,11 @@ namespace BetterExperience.Patches
                     entry[2].Set(count, true);
                     entry[2].Add(0);
 
-                    HLog.Debug($"JUICE count set to: {count}");
+                    BLog.Debug($"JUICE count set to: {count}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error while setting JUICE count in {nameof(SetCurrencyCountPatch)}", ex);
+                    BLog.Error($"Unexpected error while setting JUICE count in {nameof(SetCurrencyCountPatch)}", ex);
                 }
             }
         }

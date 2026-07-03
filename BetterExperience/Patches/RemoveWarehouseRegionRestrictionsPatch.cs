@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -26,12 +26,12 @@ namespace BetterExperience.Patches
 
                     __result = true;
 
-                    HLog.Debug($"{nameof(RemoveWarehouseRegionRestrictionsPatch)} applied.");
+                    BLog.Debug($"{nameof(RemoveWarehouseRegionRestrictionsPatch)} applied.");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveWarehouseRegionRestrictionsPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveWarehouseRegionRestrictionsPatch)}", ex);
                     return true;
                 }
             }

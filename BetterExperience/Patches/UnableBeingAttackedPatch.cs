@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using m2d;
 using nel;
@@ -42,7 +42,7 @@ namespace BetterExperience.Patches
 
                     if (!_hasLoggedActivation)
                     {
-                        HLog.Debug("Player damage reception disabled.");
+                        BLog.Debug("Player damage reception disabled.");
                         _hasLoggedActivation = true;
                     }
 
@@ -50,7 +50,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(UnableBeingAttackedPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(UnableBeingAttackedPatch)}", ex);
                     return true;
                 }
             }

@@ -1,11 +1,11 @@
 using BepInEx.Logging;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 
-namespace BetterExperience.HProvider
+namespace BetterExperience
 {
     /// <summary>
     /// BepInEx 日志器的薄封装。
-    /// 该封装让 <see cref="HLog"/> 不直接依赖插件入口类中的 Logger 属性，便于在没有 BepInEx 日志器时回退到 Unity Debug 日志。
+    /// 该封装让 <see cref="BLog"/> 不直接依赖插件入口类中的 Logger 属性，便于在没有 BepInEx 日志器时回退到 Unity Debug 日志。
     /// </summary>
     public class BepInExLoggerProvider
     {

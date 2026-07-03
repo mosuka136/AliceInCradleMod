@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -28,13 +28,13 @@ namespace BetterExperience.Patches
 
                     if (!_hasLoggedActivation)
                     {
-                        HLog.Debug($"{nameof(RemoveMosaicPatch)} applied.");
+                        BLog.Debug($"{nameof(RemoveMosaicPatch)} applied.");
                         _hasLoggedActivation = true;
                     }
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveMosaicPatch)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveMosaicPatch)}.", ex);
                 }
             }
         }

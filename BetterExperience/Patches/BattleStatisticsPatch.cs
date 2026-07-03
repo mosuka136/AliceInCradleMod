@@ -1,4 +1,4 @@
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using m2d;
 using nel;
@@ -78,7 +78,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(BattleStatisticsPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(BattleStatisticsPatch)}", ex);
                 }
             }
 
@@ -92,7 +92,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(BattleStatisticsPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(BattleStatisticsPatch)}", ex);
                 }
             }
 
@@ -120,7 +120,7 @@ namespace BetterExperience.Patches
 
                     IsInBattle = true;
                     BattleStartTime = Time.time;
-                    HLog.Debug("Battle Started");
+                    BLog.Debug("Battle Started");
                 }
             }
 
@@ -130,7 +130,7 @@ namespace BetterExperience.Patches
                 {
                     IsInBattle = false;
                     BattleEndTime = Time.time;
-                    HLog.Debug("Battle Ended");
+                    BLog.Debug("Battle Ended");
                 }
             }
 
@@ -150,17 +150,17 @@ namespace BetterExperience.Patches
                         if (enemy != null)
                         {
                             _objectAttackPlayer = enemy;
-                            HLog.Debug($"Player Injured by Enemy: {GetEnemyKey(enemy)}");
+                            BLog.Debug($"Player Injured by Enemy: {GetEnemyKey(enemy)}");
                         }
                         else
                         {
                             _objectAttackPlayer = null;
-                            HLog.Debug($"Player Injured by {GetSource(Atk)?.GetType().Name ?? "Unknown Source"}");
+                            BLog.Debug($"Player Injured by {GetSource(Atk)?.GetType().Name ?? "Unknown Source"}");
                         }
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error($"Unexpected error in {nameof(PlayerInjuryCounterPatch)}", ex);
+                        BLog.Error($"Unexpected error in {nameof(PlayerInjuryCounterPatch)}", ex);
                     }
                 }
 
@@ -239,11 +239,11 @@ namespace BetterExperience.Patches
                             }
                         }
 
-                        HLog.Debug($"Player Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
+                        BLog.Debug($"Player Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error($"Unexpected error in {nameof(PlayerInjuryCounterPatch)}", ex);
+                        BLog.Error($"Unexpected error in {nameof(PlayerInjuryCounterPatch)}", ex);
                     }
                 }
             }
@@ -263,29 +263,29 @@ namespace BetterExperience.Patches
                         if (source == null)
                         {
                             _objectAttackEnemy = null;
-                            HLog.Debug($"Enemy Injured by Unknown Source");
+                            BLog.Debug($"Enemy Injured by Unknown Source");
                             return;
                         }
 
                         if (source is NelEnemy enemy)
                         {
                             _objectAttackEnemy = enemy;
-                            HLog.Debug($"Enemy Injured by Enemy: {GetEnemyKey(enemy)}");
+                            BLog.Debug($"Enemy Injured by Enemy: {GetEnemyKey(enemy)}");
                         }
                         else if (source is PR)
                         {
                             _objectAttackEnemy = source;
-                            HLog.Debug($"Enemy Injured by Player");
+                            BLog.Debug($"Enemy Injured by Player");
                         }
                         else
                         {
                             _objectAttackEnemy = null;
-                            HLog.Debug($"Enemy Injured by {source.GetType().Name}");
+                            BLog.Debug($"Enemy Injured by {source.GetType().Name}");
                         }
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error($"Unexpected error in {nameof(EnemyInjuryCounterPatch)}", ex);
+                        BLog.Error($"Unexpected error in {nameof(EnemyInjuryCounterPatch)}", ex);
                     }
                 }
 
@@ -398,11 +398,11 @@ namespace BetterExperience.Patches
                             }
                         }
 
-                        HLog.Debug($"Enemy Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
+                        BLog.Debug($"Enemy Injury Hp Counter: {delta_hp}, Mp Counter: {delta_mp}");
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error($"Unexpected error in {nameof(EnemyInjuryCounterPatch)}", ex);
+                        BLog.Error($"Unexpected error in {nameof(EnemyInjuryCounterPatch)}", ex);
                     }
                 }
             }

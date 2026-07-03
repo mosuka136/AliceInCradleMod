@@ -1,7 +1,6 @@
 using BepInEx;
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
-using BetterExperience.HProvider;
+using BetterExperience.BLogSpace;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using System;
@@ -43,6 +42,7 @@ namespace BetterExperience
     /// Unity 生命周期方法由主线程调用，当前实现未设计为从后台线程重复初始化。
     /// </summary>
     [BepInPlugin(PatchInfo.BepInPluginId, nameof(BetterExperience), PatchInfo.BepInPluginVersion)]
+    [BepInDependency(UMB_BepInExLauncher.UMB_BepInExLauncherInfo.GUID)]
     public class BetterExperience : BaseUnityPlugin
     {
         public void Awake()
@@ -51,8 +51,7 @@ namespace BetterExperience
             {
                 gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-                // 配置必须先于日志和补丁读取，因为后续初始化会依赖开关、日志等级和资源路径设置。
-                ConfigManager.Initialize(PatchInfo.ConfigFilePath);
+                BService.Initialize(PatchInfo.PluginPath, new BepInExLoggerProvider(Logger));
 
                 if (ConfigManager.EnableBetterExperience.Value)
                     Logger.LogWarning($"{nameof(BetterExperience)} Enabled!");
@@ -62,23 +61,21 @@ namespace BetterExperience
                     return;
                 }
 
-                InitializeLog();
-
-                HLog.Info($"{nameof(BetterExperience)} startup initialized. Version={PatchInfo.BepInPluginVersion}");
+                BLog.Info($"{nameof(BetterExperience)} startup initialized. Version={PatchInfo.BepInPluginVersion}");
 
                 TextureManager.Initialize(PatchInfo.ReplaceImagePath, PatchInfo.ReplaceSensitiveImagePath, PatchInfo.ReplaceImageSupportedExtensions);
 
                 // Harmony 注册失败时跳过单个补丁类，避免某个补丁因目标方法变更导致整个插件不可用。
                 var harmony = new Harmony(PatchInfo.HarmonyPluginId);
-                HLog.Debug($"Starting Harmony patch registration: {PatchInfo.HarmonyPluginId}");
+                BLog.Debug($"Starting Harmony patch registration: {PatchInfo.HarmonyPluginId}");
                 PatchAll(harmony, typeof(BetterExperience).Assembly);
                 LogPatchesInfo(harmony);
-                HLog.Info("Harmony patch registration completed.");
+                BLog.Info("Harmony patch registration completed.");
             }
             catch (Exception ex)
             {
                 Logger.LogError($"Failed to patch!\n{ex}");
-                HLog.Error("Failed to patch!", ex);
+                BLog.Error("Failed to patch!", ex);
             }
         }
 
@@ -86,19 +83,9 @@ namespace BetterExperience
         {
         }
 
-        public void InitializeLog()
+        public void OnDestroy()
         {
-            var unityProvider = new UnityProvider();
-
-            HLog.EnableLog = ConfigManager.EnableHLog.Value;
-            ConfigManager.EnableHLog.OnValueChanged += (s, e) => HLog.EnableLog = ConfigManager.EnableHLog.Value;
-            ConfigManager.HLogLevel.OnValueChanged += (s, e) => HLog.HLogLevel = ConfigManager.HLogLevel.Value;
-            HLog.Initialize(PatchInfo.LoggerPath, PatchInfo.LoggerName, ConfigManager.HLogLevel.Value, unityProvider);
-
-            ConfigManager.BepInExLogLevel.OnValueChanged += (s, e) => BepInExHLog.LogLevel = ConfigManager.BepInExLogLevel.Value;
-            BepInExHLog.Initialize(ConfigManager.BepInExLogLevel.Value, unityProvider, new BepInExLoggerProvider(Logger));
-
-            HLog.OnLogAdd += BepInExHLog.Log;
+            BService.Dispose();
         }
 
         /// <summary>
@@ -118,7 +105,7 @@ namespace BetterExperience
             }
             catch (ReflectionTypeLoadException e)
             {
-                HLog.Warn($"ReflectionTypeLoadException occurred while getting assembly types: {asm.FullName}");
+                BLog.Warn($"ReflectionTypeLoadException occurred while getting assembly types: {asm.FullName}");
                 types = e.Types.Where(t => t != null).ToArray();
             }
 
@@ -136,11 +123,11 @@ namespace BetterExperience
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Skip patch class: {t.FullName}", ex);
+                    BLog.Error($"Skip patch class: {t.FullName}", ex);
                 }
             }
 
-            HLog.Debug($"Scanned and processed Harmony patch classes: {patchClassCount}");
+            BLog.Debug($"Scanned and processed Harmony patch classes: {patchClassCount}");
         }
 
         /// <summary>
@@ -165,7 +152,7 @@ namespace BetterExperience
                     continue;
 
                 patchedMethodCount++;
-                HLog.Debug($"Original: {original.DeclaringType.FullName}.{original.Name}");
+                BLog.Debug($"Original: {original.DeclaringType.FullName}.{original.Name}");
 
                 CountList(info.Prefixes, ref prefixCount);
                 CountList(info.Postfixes, ref postfixCount);
@@ -183,17 +170,17 @@ namespace BetterExperience
                             continue;
 
                         count++;
-                        HLog.Debug($"    {p.PatchMethod.DeclaringType.FullName}.{p.PatchMethod.Name} ({p.PatchMethod.MetadataToken:X8})");
+                        BLog.Debug($"    {p.PatchMethod.DeclaringType.FullName}.{p.PatchMethod.Name} ({p.PatchMethod.MetadataToken:X8})");
                     }
                 }
             }
 
-            HLog.Info($"Total patched methods: {patchedMethodCount}");
-            HLog.Debug($"Total prefixes: {prefixCount}");
-            HLog.Debug($"Total postfixes: {postfixCount}");
-            HLog.Debug($"Total transpilers: {transpilerCount}");
-            HLog.Debug($"Total finalizers: {finalizerCount}");
-            HLog.Info($"Total patch methods: {prefixCount + postfixCount + transpilerCount + finalizerCount}");
+            BLog.Info($"Total patched methods: {patchedMethodCount}");
+            BLog.Debug($"Total prefixes: {prefixCount}");
+            BLog.Debug($"Total postfixes: {postfixCount}");
+            BLog.Debug($"Total transpilers: {transpilerCount}");
+            BLog.Debug($"Total finalizers: {finalizerCount}");
+            BLog.Info($"Total patch methods: {prefixCount + postfixCount + transpilerCount + finalizerCount}");
         }
     }
 }

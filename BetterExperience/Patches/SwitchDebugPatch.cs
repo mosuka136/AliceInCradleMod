@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using System;
 using XX;
@@ -24,7 +24,7 @@ namespace BetterExperience.Patches
             {
                 if (DebugAnnounceField == null || DebugTimestampField == null)
                 {
-                    HLog.Error($"Failed to access debug fields in {nameof(SwitchDebugPatch)}.");
+                    BLog.Error($"Failed to access debug fields in {nameof(SwitchDebugPatch)}.");
                     return;
                 }
 
@@ -40,11 +40,11 @@ namespace BetterExperience.Patches
                         DebugTimestampField.Value = false;
                     }
 
-                    HLog.Debug(ConfigManager.EnableDebugMode.Value ? "Debug mode enabled." : "Debug mode disabled.");
+                    BLog.Debug(ConfigManager.EnableDebugMode.Value ? "Debug mode enabled." : "Debug mode disabled.");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SwitchDebugPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(SwitchDebugPatch)}", ex);
                 }
             }
         }

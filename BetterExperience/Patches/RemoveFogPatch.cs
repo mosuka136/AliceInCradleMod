@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -30,11 +30,11 @@ namespace BetterExperience.Patches
                     __instance.DrM?.destruct();
                     __instance.DrM = null;
 
-                    HLog.Debug($"{nameof(RemoveFogPatch)} applied.");
+                    BLog.Debug($"{nameof(RemoveFogPatch)} applied.");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveFogPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveFogPatch)}", ex);
                 }
             }
         }

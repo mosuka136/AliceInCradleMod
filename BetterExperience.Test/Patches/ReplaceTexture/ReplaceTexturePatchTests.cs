@@ -310,7 +310,7 @@ namespace BetterExperience.Test.Patches.ReplaceTexture
         {
             var configPath = CreateTempFilePath("cfg");
             ConfigManager.Initialize(configPath);
-            ConfigManager.EnableHLog.Value = false;
+            ConfigManager.EnableLog.Value = false;
             ConfigManager.EnableReplaceTexture.Value = true;
             ConfigManager.EnableSensitivities.Value = true;
             ConfigManager.FlushTextureHotkey.Value = new Hotkey(new UnityProvider());

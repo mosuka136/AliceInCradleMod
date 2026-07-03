@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -25,12 +25,12 @@ namespace BetterExperience.Patches
 
                     __result = false;
 
-                    HLog.Debug($"{nameof(InvalidateWormTrapPatch)} applied.");
+                    BLog.Debug($"{nameof(InvalidateWormTrapPatch)} applied.");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(InvalidateWormTrapPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(InvalidateWormTrapPatch)}", ex);
                     return true;
                 }
             }

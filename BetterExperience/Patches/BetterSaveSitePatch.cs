@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -26,18 +26,18 @@ namespace BetterExperience.Patches
 
                     if (__instance.curMap == null)
                     {
-                        HLog.Notice($"curMap is null.");
+                        BLog.Notice($"curMap is null.");
                         return true;
                     }
 
                     __result = true;
 
-                    HLog.Debug($"{nameof(CanSaveInCurMapPrefix)} applied.");
+                    BLog.Debug($"{nameof(CanSaveInCurMapPrefix)} applied.");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(BetterSaveSitePatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(BetterSaveSitePatch)}", ex);
                     return true;
                 }
             }
@@ -53,12 +53,12 @@ namespace BetterExperience.Patches
 
                     __result = true;
 
-                    HLog.Debug($"{nameof(CanSavePrefix)} applied.");
+                    BLog.Debug($"{nameof(CanSavePrefix)} applied.");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(BetterSaveSitePatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(BetterSaveSitePatch)}", ex);
                     return true;
                 }
             }

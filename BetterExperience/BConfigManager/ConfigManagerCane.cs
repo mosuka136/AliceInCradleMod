@@ -1,8 +1,8 @@
-using BetterExperience.HClassAttribute;
-using BetterExperience.HConfigSpace;
-using BetterExperience.HLogSpace;
-using BetterExperience.HTranslatorSpace;
+using BetterExperience.BLogSpace;
 using System;
+using UnityModBase.HClassAttribute;
+using UnityModBase.HConfigSpace;
+using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
@@ -480,7 +480,7 @@ namespace BetterExperience.BConfigManager
             }
             catch (Exception ex)
             {
-                HLog.Error("Failed to initialize config manager for cane.", ex);
+                BLog.Error("Failed to initialize config manager for cane.", ex);
             }
         }
     }

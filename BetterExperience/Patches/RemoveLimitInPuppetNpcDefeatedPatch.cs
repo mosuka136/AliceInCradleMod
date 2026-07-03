@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -40,7 +40,7 @@ namespace BetterExperience.Patches
                         {
                             GameSaveProtectionManager.OnSavingActivated += RecoverPupKill;
                             _isInitialized = true;
-                            HLog.Debug($"{nameof(RemoveLimitInPuppetNpcDefeatedPatch)} applied.");
+                            BLog.Debug($"{nameof(RemoveLimitInPuppetNpcDefeatedPatch)} applied.");
                         }
 
                         _isChanging = true;
@@ -53,7 +53,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveLimitInPuppetNpcDefeatedPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveLimitInPuppetNpcDefeatedPatch)}", ex);
                     return true;
                 }
             }
@@ -69,7 +69,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveLimitInPuppetNpcDefeatedPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveLimitInPuppetNpcDefeatedPatch)}", ex);
                 }
             }
 
@@ -84,18 +84,18 @@ namespace BetterExperience.Patches
 
                     if (type == WanderingManager.TYPE.PUP)
                         __result = true;
-                    HLog.Debug($"{nameof(IsWNpcEnablePostfix)} applied.");
+                    BLog.Debug($"{nameof(IsWNpcEnablePostfix)} applied.");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveLimitInPuppetNpcDefeatedPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveLimitInPuppetNpcDefeatedPatch)}", ex);
                 }
             }
 
             public static void RecoverPupKill()
             {
                 GF.setC(PUP_KILL, _pup_kill);
-                HLog.Debug($"Recovered PUP_KILL before save: {_pup_kill}");
+                BLog.Debug($"Recovered PUP_KILL before save: {_pup_kill}");
             }
         }
     }

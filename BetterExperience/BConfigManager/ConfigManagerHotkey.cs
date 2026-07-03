@@ -1,9 +1,9 @@
-using BetterExperience.HProvider;
-using BetterExperience.HConfigSpace;
-using BetterExperience.HotkeyManager;
-using BetterExperience.HTranslatorSpace;
+using BetterExperience.BLogSpace;
 using System;
-using BetterExperience.HLogSpace;
+using UnityModBase.HConfigSpace;
+using UnityModBase.HotkeyManager;
+using UnityModBase.HProvider;
+using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
@@ -85,7 +85,7 @@ namespace BetterExperience.BConfigManager
                     )
                     );
 
-                var unityService = new UnityProvider();
+                var unityService = UnityProvider.Instance;
 
                 ConfigUIHotkey = Config.Bind(
                     SectionHotkey,
@@ -140,7 +140,7 @@ namespace BetterExperience.BConfigManager
             }
             catch (Exception ex)
             {
-                HLog.Error("Failed to initialize config manager for hotkey.", ex);
+                BLog.Error("Failed to initialize config manager for hotkey.", ex);
             }
         }
     }

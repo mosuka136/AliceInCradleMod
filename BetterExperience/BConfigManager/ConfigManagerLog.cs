@@ -1,15 +1,16 @@
-using BetterExperience.HConfigSpace;
-using BetterExperience.HLogSpace;
-using BetterExperience.HTranslatorSpace;
+using BetterExperience.BLogSpace;
 using System;
+using UnityModBase.HConfigSpace;
+using UnityModBase.HLogSpace;
+using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
     public partial class ConfigManager
     {
-        public static ConfigEntry<bool> EnableHLog { get; private set; }
-        public static ConfigEntry<HLog.LogLevel> HLogLevel { get; private set; }
-        public static ConfigEntry<HLog.LogLevel> BepInExLogLevel { get; private set; }
+        public static ConfigEntry<bool> EnableLog { get; private set; }
+        public static ConfigEntry<LogLevel> LogLevel { get; private set; }
+        public static ConfigEntry<LogLevel> BepInExLogLevel { get; private set; }
 
         private const string SectionLog = "Log";
 
@@ -36,9 +37,9 @@ namespace BetterExperience.BConfigManager
                                  "If the log level is set to Error, it will only log error messages."
                     )
                 );
-                EnableHLog = Config.Bind(
+                EnableLog = Config.Bind(
                     SectionLog,
-                    nameof(EnableHLog),
+                    nameof(EnableLog),
                     true,
                     new Translator(chinese: "启用日志", english: "Enable Log"),
                     new Translator(
@@ -46,10 +47,10 @@ namespace BetterExperience.BConfigManager
                         english: "Enable log. It will generate a log file in BetterExperience\\logs folder."
                     )
                     );
-                HLogLevel = Config.Bind(
+                LogLevel = Config.Bind(
                     SectionLog,
-                    nameof(HLogLevel),
-                    HLog.LogLevel.Info,
+                    nameof(LogLevel),
+                    UnityModBase.HLogSpace.LogLevel.Info,
                     new Translator(chinese: "日志等级", english: "Log Level"),
                     new Translator(
                         chinese: "日志等级。默认值为 Info。",
@@ -59,7 +60,7 @@ namespace BetterExperience.BConfigManager
                 BepInExLogLevel = Config.Bind(
                     SectionLog,
                     nameof(BepInExLogLevel),
-                    HLog.LogLevel.Warning,
+                    UnityModBase.HLogSpace.LogLevel.Warning,
                     new Translator(chinese: "BepInEx日志等级", english: "BepInEx Log Level"),
                     new Translator(
                         chinese: "BepInEx 日志等级。默认值为 Warning。",
@@ -69,7 +70,7 @@ namespace BetterExperience.BConfigManager
             }
             catch (Exception ex)
             {
-                HLog.Error("Failed to initialize config manager for log.", ex);
+                BLog.Error("Failed to initialize config manager for log.", ex);
             }
         }
     }

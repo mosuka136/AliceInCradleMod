@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -28,7 +28,7 @@ namespace BetterExperience.Patches
 
                     if (!_hasLoggedActivation)
                     {
-                        HLog.Debug($"{nameof(RemoveFallingToGroundPatch)} applied.");
+                        BLog.Debug($"{nameof(RemoveFallingToGroundPatch)} applied.");
                         _hasLoggedActivation = true;
                     }
 
@@ -36,7 +36,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(RemoveFallingToGroundPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(RemoveFallingToGroundPatch)}", ex);
                     return true;
                 }
             }

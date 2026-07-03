@@ -1,17 +1,18 @@
-using BetterExperience.HProvider;
-using static BetterExperience.HLogSpace.HLog;
+using UnityModBase.HLogSpace;
+using UnityModBase.HProvider;
 
-namespace BetterExperience.HLogSpace
+namespace BetterExperience.BLogSpace
 {
-    public static class BepInExHLog
+    public static class BepInExLog
     {
-        public static LogLevel LogLevel { get; set; }
+        public static bool Enable { get; set; } = true;
+        public static LogLevel Level { get; set; }
         public static UnityProvider UnityProvider { get; private set; }
         public static BepInExLoggerProvider BepInExLogger { get; private set; }
 
         public static void Initialize(LogLevel logLevel, UnityProvider unityProvider, BepInExLoggerProvider bepInExLogger)
         {
-            LogLevel = logLevel;
+            Level = logLevel;
             UnityProvider = unityProvider;
             BepInExLogger = bepInExLogger;
         }
@@ -20,7 +21,10 @@ namespace BetterExperience.HLogSpace
         {
             try
             {
-                if (logEntry.Level < LogLevel)
+                if (!Enable)
+                    return;
+
+                if (logEntry.Level < Level)
                     return;
 
                 var msg = logEntry.ToString();

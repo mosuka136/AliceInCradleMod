@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using m2d;
 using nel;
@@ -60,14 +60,14 @@ namespace BetterExperience.Patches
                 {
                     if (!IsLoading && (ConfigManager.EnableImmuneAbnormalities.Value || (ImmuneAbnormalityConfigMap.TryGetValue(ser, out var isEnabled) && isEnabled())))
                     {
-                        HLog.Debug($"{nameof(ImmuneAbnormalitiesPatch)} applied for {ser}.");
+                        BLog.Debug($"{nameof(ImmuneAbnormalitiesPatch)} applied for {ser}.");
                         return false;
                     }
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(ImmuneAbnormalitiesPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(ImmuneAbnormalitiesPatch)}", ex);
                     return true;
                 }
             }

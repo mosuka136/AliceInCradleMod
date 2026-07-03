@@ -1,6 +1,6 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HClassAttribute;
-using BetterExperience.HLogSpace;
+using UnityModBase.HClassAttribute;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -30,14 +30,14 @@ namespace BetterExperience.Patches
                 {
                     if (ConfigManager.EnablePreloadPlayerMaxSatiety.Value)
                     {
-                        HLog.Debug($"Applying preloaded max satiety: {ConfigManager.SetPlayerMaxSatiety.Value}");
+                        BLog.Debug($"Applying preloaded max satiety: {ConfigManager.SetPlayerMaxSatiety.Value}");
                         SetMaxSatiety(ConfigManager.SetPlayerMaxSatiety.Value);
                     }
                     else
                     {
                         if (_maxSatiety > 0)
                         {
-                            HLog.Debug($"Restoring original max satiety: {_maxSatiety}");
+                            BLog.Debug($"Restoring original max satiety: {_maxSatiety}");
                             SetMaxSatiety(_maxSatiety);
                         }
                     }
@@ -45,12 +45,12 @@ namespace BetterExperience.Patches
 
                 ConfigManager.SetPlayerMaxSatiety.OnValueChanged += (s, e) =>
                 {
-                    HLog.Debug($"Max satiety config changed: {e}");
+                    BLog.Debug($"Max satiety config changed: {e}");
                     SetMaxSatiety(e);
                 };
 
                 _initialized = true;
-                HLog.Debug("Max satiety patch initialized.");
+                BLog.Debug("Max satiety patch initialized.");
             }
 
             public static void SetMaxSatiety(int maxSatiety)
@@ -59,35 +59,35 @@ namespace BetterExperience.Patches
                 {
                     if (maxSatiety <= 0)
                     {
-                        HLog.Debug($"Ignored invalid max satiety value: {maxSatiety}");
+                        BLog.Debug($"Ignored invalid max satiety value: {maxSatiety}");
                         return;
                     }
 
                     var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
                     if (pr == null)
                     {
-                        HLog.Notice("Player instance not found while applying max satiety.");
+                        BLog.Notice("Player instance not found while applying max satiety.");
                         return;
                     }
 
                     if (pr.MyStomach == null)
                     {
-                        HLog.Notice("Player stomach data not found while applying max satiety.");
+                        BLog.Notice("Player stomach data not found while applying max satiety.");
                         return;
                     }
 
                     if (_maxSatiety < 0)
                     {
                         _maxSatiety = pr.MyStomach.cost_max;
-                        HLog.Debug($"Captured original max satiety: {_maxSatiety}");
+                        BLog.Debug($"Captured original max satiety: {_maxSatiety}");
                     }
 
                     pr.MyStomach.cost_max = maxSatiety;
-                    HLog.Debug($"Player max satiety set to {maxSatiety}");
+                    BLog.Debug($"Player max satiety set to {maxSatiety}");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetMaxSatiety)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetMaxSatiety)}.", ex);
                 }
             }
         }

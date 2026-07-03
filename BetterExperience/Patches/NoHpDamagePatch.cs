@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using m2d;
 using nel;
@@ -26,7 +26,7 @@ namespace BetterExperience.Patches
                 var m = AccessTools.Method(typeof(nel.PR), "applyHpDamage");
                 if (m == null)
                 {
-                    HLog.Error("applyHpDamage not found on PR.");
+                    BLog.Error("applyHpDamage not found on PR.");
                     yield break;
                 }
 
@@ -43,12 +43,12 @@ namespace BetterExperience.Patches
                     if (!ConfigManager.EnableNoHpDamage.Value)
                         return true;
 
-                    HLog.Debug($"{nameof(NoHpDamagePatch)} applied.");
+                    BLog.Debug($"{nameof(NoHpDamagePatch)} applied.");
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(NoHpDamagePatch)}.", ex);
+                    BLog.Error($"Unexpected error in {nameof(NoHpDamagePatch)}.", ex);
                     return true;
                 }
             }

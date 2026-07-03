@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
@@ -31,7 +31,7 @@ namespace BetterExperience.Patches
                     {
                         if (!_hasLoggedDisableDrop)
                         {
-                            HLog.Debug("Loot drop disabled.");
+                            BLog.Debug("Loot drop disabled.");
                             _hasLoggedDisableDrop = true;
                         }
 
@@ -42,7 +42,7 @@ namespace BetterExperience.Patches
 
                     if (!_hasLoggedRatioOverride)
                     {
-                        HLog.Debug($"Loot drop ratio override applied.");
+                        BLog.Debug($"Loot drop ratio override applied.");
                         _hasLoggedRatioOverride = true;
                     }
 
@@ -50,7 +50,7 @@ namespace BetterExperience.Patches
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(SetLootDropRatioPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(SetLootDropRatioPatch)}", ex);
                     return true;
                 }
             }

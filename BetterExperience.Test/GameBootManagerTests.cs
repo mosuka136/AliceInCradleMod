@@ -1,4 +1,4 @@
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using System.Reflection;
 using UnityEngine;
 
@@ -92,11 +92,11 @@ namespace BetterExperience.Test
             public static GameBootManagerStateScope Create()
             {
                 var scope = new GameBootManagerStateScope(
-                    HLog.EnableLog,
+                    BLog.EnableLog,
                     (bool)InitializedField.GetValue(null),
                     (Action)OnGameBootField.GetValue(null));
 
-                HLog.EnableLog = false;
+                BLog.EnableLog = false;
                 InitializedField.SetValue(null, false);
                 OnGameBootField.SetValue(null, null);
 
@@ -107,7 +107,7 @@ namespace BetterExperience.Test
             {
                 OnGameBootField.SetValue(null, _originalOnGameBoot);
                 InitializedField.SetValue(null, _originalInitialized);
-                HLog.EnableLog = _originalEnableLog;
+                BLog.EnableLog = _originalEnableLog;
             }
 
             private static FieldInfo GetRequiredField(string fieldName)

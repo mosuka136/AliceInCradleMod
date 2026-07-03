@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel.mgm.fis;
 using System;
@@ -62,11 +62,11 @@ namespace BetterExperience.Patches
                     _Mki.fistjump_multiple_min *= DecreaseRatio;
                     _Mki.fistjump_multiple_max = _Mki.fistjump_multiple_min + fistjump_multiple;
 
-                    HLog.Debug($"{nameof(BetterFishingPrefix)} applied.");
+                    BLog.Debug($"{nameof(BetterFishingPrefix)} applied.");
                 }
                 catch (Exception ex)
                 {
-                    HLog.Error($"Unexpected error in {nameof(BetterFishingPatch)}", ex);
+                    BLog.Error($"Unexpected error in {nameof(BetterFishingPatch)}", ex);
                 }
             }
         }

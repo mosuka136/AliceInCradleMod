@@ -1,5 +1,5 @@
 using BetterExperience.BConfigManager;
-using BetterExperience.HLogSpace;
+using BetterExperience.BLogSpace;
 using HarmonyLib;
 using m2d;
 using nel;
@@ -30,14 +30,14 @@ namespace BetterExperience.Patches
                     var type = AccessTools.TypeByName("nel.gm.UiGMCMap");
                     if (type == null)
                     {
-                        HLog.Error("Failed to find type: nel.gm.UiGMCMap");
+                        BLog.Error("Failed to find type: nel.gm.UiGMCMap");
                         yield break;
                     }
 
                     var getter = AccessTools.PropertyGetter(type, "can_use_fasttravel");
                     if (getter == null)
                     {
-                        HLog.Error("Failed to find getter: can_use_fasttravel");
+                        BLog.Error("Failed to find getter: can_use_fasttravel");
                         yield break;
                     }
 
@@ -54,11 +54,11 @@ namespace BetterExperience.Patches
 
                         __result = true;
 
-                        HLog.Debug($"{nameof(RemoveFastTravelMapLimitPatch)} applied.");
+                        BLog.Debug($"{nameof(RemoveFastTravelMapLimitPatch)} applied.");
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error($"Unexpected error in {nameof(RemoveFastTravelMapLimitPatch)}", ex);
+                        BLog.Error($"Unexpected error in {nameof(RemoveFastTravelMapLimitPatch)}", ex);
                     }
                 }
             }
@@ -71,14 +71,14 @@ namespace BetterExperience.Patches
                     var type = AccessTools.TypeByName("nel.gm.UiGMCMap");
                     if (type == null)
                     {
-                        HLog.Error("Failed to find type: nel.gm.UiGMCMap");
+                        BLog.Error("Failed to find type: nel.gm.UiGMCMap");
                         yield break;
                     }
 
                     var method = AccessTools.Method(type, "executeFastTravelConfirm");
                     if (method == null)
                     {
-                        HLog.Error("Failed to find method: executeFastTravelConfirm");
+                        BLog.Error("Failed to find method: executeFastTravelConfirm");
                         yield break;
                     }
 
@@ -96,17 +96,17 @@ namespace BetterExperience.Patches
                         var gm = Traverse.Create(__instance).Field("GM").GetValue<UiGameMenu>();
                         if (gm == null)
                         {
-                            HLog.Notice("UiGameMenu not found while removing fast travel bench restriction.");
+                            BLog.Notice("UiGameMenu not found while removing fast travel bench restriction.");
                             return;
                         }
 
                         gm.BenchChip = gm.BenchChip ?? _cachedBenchChip;
 
-                        HLog.Debug($"{nameof(RemoveFastTravelBenchLimitPatch)} applied.");
+                        BLog.Debug($"{nameof(RemoveFastTravelBenchLimitPatch)} applied.");
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error($"Unexpected error in {nameof(RemoveFastTravelBenchLimitPatch)}", ex);
+                        BLog.Error($"Unexpected error in {nameof(RemoveFastTravelBenchLimitPatch)}", ex);
                     }
                 }
             }
@@ -122,11 +122,11 @@ namespace BetterExperience.Patches
                     try
                     {
                         _cachedBenchChip = __instance;
-                        HLog.Debug($"Cached bench chip updated: {__instance.GetType().FullName}");
+                        BLog.Debug($"Cached bench chip updated: {__instance.GetType().FullName}");
                     }
                     catch (Exception ex)
                     {
-                        HLog.Error($"Unexpected error in {nameof(GetBenchChipPatch)}", ex);
+                        BLog.Error($"Unexpected error in {nameof(GetBenchChipPatch)}", ex);
                     }
                 }
             }
