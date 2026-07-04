@@ -50,6 +50,28 @@ namespace BetterExperience.Test.BPatchGUI
         }
 
         [Fact]
+        public void GetEnemyName_WithUnknownContaminatedEnemyId_AppendsSuffixToBaseId()
+        {
+            // Arrange
+            var originalDefaultLanguage = Translator.DefaultLanguage;
+            var enemyId = (ENEMYID)123456 | ENEMYID._OVERDRIVE_FLAG;
+            Translator.DefaultLanguage = LanguageType.English;
+
+            try
+            {
+                // Act
+                var result = TranslatorResource.GetEnemyName(enemyId);
+
+                // Assert
+                Assert.Equal("123456(Contaminated)", result);
+            }
+            finally
+            {
+                Translator.DefaultLanguage = originalDefaultLanguage;
+            }
+        }
+
+        [Fact]
         public void GetEnemyName_WithContaminatedKnownEnemyId_AppendsContaminatedSuffix()
         {
             // Arrange
@@ -108,6 +130,40 @@ namespace BetterExperience.Test.BPatchGUI
         }
 
         [Fact]
+        public void GetEnemyAttributeName_WithOnlyUnknownAttribute_ReturnsNumericValue()
+        {
+            // Arrange
+            var unknownAttribute = (ENATTR)536870912;
+
+            // Act
+            var result = TranslatorResource.GetEnemyAttributeName(unknownAttribute);
+
+            // Assert
+            Assert.Equal("536870912", result);
+        }
+
+        [Fact]
+        public void GetEnemyAttributeName_WhenKnownTranslationIsMissing_FallsBackToEnumName()
+        {
+            // Arrange
+            var originalTranslator = TranslatorResource.EnemyAttributes[ENATTR.ATK];
+            TranslatorResource.EnemyAttributes.Remove(ENATTR.ATK);
+
+            try
+            {
+                // Act
+                var result = TranslatorResource.GetEnemyAttributeName(ENATTR.ATK);
+
+                // Assert
+                Assert.Equal(nameof(ENATTR.ATK), result);
+            }
+            finally
+            {
+                TranslatorResource.EnemyAttributes[ENATTR.ATK] = originalTranslator;
+            }
+        }
+
+        [Fact]
         public void GetEnemyDisplayName_WithAttributeNameEmpty_ReturnsEnemyNameOnly()
         {
             // Arrange
@@ -142,6 +198,27 @@ namespace BetterExperience.Test.BPatchGUI
 
                 // Assert
                 Assert.Equal("Slime (ATK Up+Fire)", result);
+            }
+            finally
+            {
+                Translator.DefaultLanguage = originalDefaultLanguage;
+            }
+        }
+
+        [Fact]
+        public void GetEnemyDisplayName_WithChineseLanguage_UsesChineseNameAttributesAndBrackets()
+        {
+            // Arrange
+            var originalDefaultLanguage = Translator.DefaultLanguage;
+            Translator.DefaultLanguage = LanguageType.Chinese;
+
+            try
+            {
+                // Act
+                var result = TranslatorResource.GetEnemyDisplayName(ENEMYID.SLIME_0, ENATTR.ATK | ENATTR.FIRE);
+
+                // Assert
+                Assert.Equal("史莱姆（攻击强化+野火）", result);
             }
             finally
             {
