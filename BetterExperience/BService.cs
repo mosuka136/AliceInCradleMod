@@ -2,16 +2,17 @@ using BetterExperience.BConfigManager;
 using BetterExperience.BLogSpace;
 using System;
 using System.IO;
-using UnityModBase;
 using UnityModBase.HConfigSpace;
 using UnityModBase.HLogSpace;
 using UnityModBase.HProvider;
+using UnityModBase.HUserSpace;
 
 namespace BetterExperience
 {
     internal static class BService
     {
-        public static ServiceRegistry Service { get; private set; }
+        public static UserContext Context { get; private set; }
+        public static UserService Service => Context.Service;
         public static LogDatabase LogDatabase => Service.LogDatabase;
         public static LogWriter LogWriter => Service.LogWriter;
         public static ConfigService Config => Service.Config;
@@ -20,7 +21,7 @@ namespace BetterExperience
         {
             try
             {
-                Service = ServiceRegistry.Register(nameof(BetterExperience), nameof(BetterExperience));
+                Context = UserManager.Register(nameof(BetterExperience), nameof(BetterExperience));
 
                 if (!Directory.Exists(baseDirectory))
                     Directory.CreateDirectory(baseDirectory);
@@ -51,8 +52,8 @@ namespace BetterExperience
         {
             try
             {
-                Service?.Dispose();
-                Service = null;
+                Context?.Dispose();
+                Context = null;
             }
             catch (Exception ex)
             {
