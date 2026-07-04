@@ -1,6 +1,6 @@
 using BetterExperience.BPatchGUI;
-using BetterExperience.HTranslatorSpace;
 using nel;
+using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.Test.BPatchGUI
 {

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -64,6 +64,10 @@
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="UnityModBase">
+      <HintPath>..\ReferenceLibrary\UnityModBase.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="unsafeAssem">
