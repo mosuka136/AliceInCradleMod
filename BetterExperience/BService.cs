@@ -21,7 +21,7 @@ namespace BetterExperience
         {
             try
             {
-                Context = UserManager.Register(nameof(BetterExperience), nameof(BetterExperience));
+                Context = UserManager.Register(nameof(BetterExperience), PatchInfo.UserName);
 
                 if (!Directory.Exists(baseDirectory))
                     Directory.CreateDirectory(baseDirectory);

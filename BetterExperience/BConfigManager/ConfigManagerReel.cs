@@ -11,7 +11,7 @@ namespace BetterExperience.BConfigManager
         // 转轮速度配置中 -1 表示保留游戏默认速度。
         public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
-        [ConfigSlider(-0.2f, 1f, 0.01f)]
+        [EntrySlider(-0.2f, 1f, 0.01f)]
         public static ConfigEntry<float> SetReelSpeed { get; private set; }
 
         private const string SectionReel = "Reel";

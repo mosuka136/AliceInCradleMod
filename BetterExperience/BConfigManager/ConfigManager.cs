@@ -39,7 +39,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableBetterFishing { get; private set; }
         public static ConfigEntry<bool> EnableDamageCounter { get; private set; }
         public static ConfigEntry<bool> EnableDebugMode { get; private set; }
-        [ConfigSlider(-1f, 20f, 0.1f)]
+        [EntrySlider(-1f, 20f, 0.1f)]
         public static ConfigEntry<float> SetLootDropRatio { get; private set; }
 
         private const string SectionGeneral = "General";

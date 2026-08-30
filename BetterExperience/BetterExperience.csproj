@@ -116,6 +116,7 @@
     <Compile Include="Patches\HPatches.cs" />
     <Compile Include="Patches\RemoveLimitInBenchMenuPatch.cs" />
     <Compile Include="Patches\ReplaceTexture\TextureManager.cs" />
+    <Compile Include="PatchInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Patches\RemoveLimitInTreasureChestsPatch.cs" />
     <Compile Include="Patches\RemoveMosaicPatch.cs" />
@@ -150,10 +151,6 @@
       <HintPath>..\ReferenceLibrary\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="BepInExLauncher">
-      <HintPath>..\ReferenceLibrary\BepInExLauncher.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEngine">
       <HintPath>..\ReferenceLibrary\UnityEngine.dll</HintPath>
@@ -174,6 +171,9 @@
     <Reference Include="UnityModBase">
       <HintPath>..\ReferenceLibrary\UnityModBase.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityModBase.BepInExLauncher">
+      <HintPath>..\ReferenceLibrary\UnityModBase.BepInExLauncher.dll</HintPath>
     </Reference>
     <Reference Include="unsafeAssem">
       <HintPath>..\ReferenceLibrary\unsafeAssem.dll</HintPath>

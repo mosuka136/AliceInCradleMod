@@ -17,7 +17,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableDrowning { get; private set; }
         public static ConfigEntry<bool> EnableDarkArea { get; private set; }
         public static ConfigEntry<bool> EnablePreloadDangerLevel { get; private set; }
-        [ConfigSlider(-1f, 160f, 1f)]
+        [EntrySlider(-1f, 160f, 1f)]
         public static ConfigEntry<int> SetDangerLevel { get; private set; }
 
         private const string SectionMap = "Map";
