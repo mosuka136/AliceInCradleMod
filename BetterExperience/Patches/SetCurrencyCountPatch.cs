@@ -11,7 +11,8 @@ namespace BetterExperience.Patches
     {
         /// <summary>
         /// 设置或锁定货币数量。
-        /// 预加载只在读档后写入一次；锁定模式通过拦截 Add/Reduce 阻止游戏修改数量。
+        /// 设置有两个入口：读档后按双值配置预加载一次，或经实时控制界面即时修改；
+        /// 锁定模式通过 Prefix 拦截 CoinEntry.Add/Reduce，把数量冻结在当前值，不主动改写。
         /// </summary>
         [HarmonyPatch]
         public class SetCurrencyCountPatch
@@ -26,6 +27,7 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
+                    // 双值配置以 long 存储设置值，游戏接口使用 uint；经字符串解析一并完成负数与超界过滤，非法值跳过不应用。
                     if (ConfigManager.SetCurrencyGoldCount.Value1
                         && UInt32.TryParse(ConfigManager.SetCurrencyGoldCount.Value2.ToString(), out var countGold))
                         SetCurrencyGoldCount(countGold);
@@ -42,6 +44,9 @@ namespace BetterExperience.Patches
                 _initialized = true;
             }
 
+            /// <summary>
+            /// CoinEntry.Add 的 Prefix：对应货币启用锁定时返回 false 跳过原方法，阻止数量增加。
+            /// </summary>
             [HarmonyPrefix]
             [HarmonyPatch(typeof(CoinEntry), "Add")]
             public static bool AddPrefix(CoinEntry __instance)
@@ -57,6 +62,9 @@ namespace BetterExperience.Patches
                 }
             }
 
+            /// <summary>
+            /// CoinEntry.Reduce 的 Prefix：对应货币启用锁定时返回 false 跳过原方法，阻止数量减少。
+            /// </summary>
             [HarmonyPrefix]
             [HarmonyPatch(typeof(CoinEntry), "Reduce")]
             public static bool ReducePrefix(CoinEntry __instance)
@@ -72,6 +80,10 @@ namespace BetterExperience.Patches
                 }
             }
 
+            /// <summary>
+            /// 按货币类型应用锁定判定，作为 Add/Reduce 两个 Prefix 的公共入口。
+            /// 返回值直接作为 Prefix 结果：true 放行原方法，false 拦截。
+            /// </summary>
             public static bool DealWithCurrencyCount(CoinEntry cEntry)
             {
                 var ctype = cEntry.ctype;
@@ -92,6 +104,10 @@ namespace BetterExperience.Patches
                 return true;
             }
 
+            /// <summary>
+            /// 锁定判定：启用时返回 false 拦截本次变更，把数量冻结在当前值（具体数值由设置入口另行写入）；
+            /// 未启用时返回 true 放行原方法。
+            /// </summary>
             public static bool DealWithCurrencyCount(bool isEnabled, CoinEntry cEntry)
             {
                 if (!isEnabled)
@@ -101,6 +117,7 @@ namespace BetterExperience.Patches
                 return false;
             }
 
+            // 以下 long 重载供实时控制界面调用（配置与控制条目均以 long 表示货币值），校验范围后转发到 uint 重载。
             public static long GetCurrencyGoldCount()
             {
                 return GetCurrencyCount(CoinStorage.CTYPE.GOLD);
@@ -131,12 +148,18 @@ namespace BetterExperience.Patches
                 SetCurrencyCount(count, "JUICE", SetCurrencyJuiceCount);
             }
 
+            /// <summary>
+            /// 读取指定货币的当前数量，供实时控制界面显示；对应条目不存在时返回 -1 占位。
+            /// </summary>
             private static long GetCurrencyCount(CoinStorage.CTYPE type)
             {
                 var entry = CoinStorage.GetEntry(type);
                 return entry == null ? -1L : entry.Get();
             }
 
+            /// <summary>
+            /// 校验货币数量在 uint 范围内后转发给 <paramref name="valueSetter"/>；负数或超界值忽略并记录日志。
+            /// </summary>
             private static void SetCurrencyCount(long count, string currencyName, Action<uint> valueSetter)
             {
                 if (count < 0 || count > UInt32.MaxValue)
@@ -148,6 +171,9 @@ namespace BetterExperience.Patches
                 valueSetter((uint)count);
             }
 
+            // 以下 uint 重载执行实际写入：Aentry 是 CoinStorage 的静态私有数组，
+            // 索引 0/1/2 固定对应 GOLD/CRAFTS/JUICE。Set 写入后再调用一次 Add(0)，
+            // 借游戏自身的数量变更流程刷新货币显示；若该货币已启用锁定，这次 Add(0) 会被本补丁拦截，不影响已写入的数值。
             public static void SetCurrencyGoldCount(uint count)
             {
                 try

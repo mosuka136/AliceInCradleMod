@@ -20,6 +20,7 @@ namespace BetterExperience.Patches
             // 仅在主动调用 fineEnhancerStorage 期间拦截 ItemStorage.getCount，避免影响其他物品计数。
             private static bool _isChanging = false;
             private static bool _hasLoggedOverrideForCurrentApply = false;
+            // 本次刷新要应用的插槽数量，由调用方传入：同一数值有“读档预加载”和“实时控制”两个来源，不能再固定读取某个配置项。
             private static int _targetCount = -1;
 
             [InitializeOnGameBoot]
@@ -87,6 +88,10 @@ namespace BetterExperience.Patches
                 }
             }
 
+            /// <summary>
+            /// 读取当前强化插槽数量，供实时控制界面显示；物品管理器未加载时返回 -1 占位。
+            /// max_slot 是 ENHA 的静态字段，保存最近一次 fineEnhancerStorage 计算出的插槽数。
+            /// </summary>
             public static int GetEnhancerSlotCount()
             {
                 if (GetIMNG() == null)

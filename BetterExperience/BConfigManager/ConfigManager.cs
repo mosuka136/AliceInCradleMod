@@ -1,6 +1,5 @@
 using BetterExperience.BLogSpace;
 using System;
-using UnityModBase;
 using UnityModBase.HClassAttribute;
 using UnityModBase.HConfigSpace;
 using UnityModBase.HTranslatorSpace;
@@ -14,7 +13,7 @@ namespace BetterExperience.BConfigManager
     /// </summary>
     public static partial class ConfigManager
     {
-        // 初始化和重载都会改写静态配置引用，需要串行化以避免 GUI 或输入回调读到中间状态。
+        // 初始化期间会集中改写全部静态配置项引用，加锁串行化以避免其他入口在绑定完成前读到 null。
         private static readonly object _configSyncRoot = new object();
 
         /// <summary>
@@ -41,6 +40,9 @@ namespace BetterExperience.BConfigManager
 
         /// <summary>
         /// 将“读档后预加载”开关与对应设置值绑定为同一个双值配置项。
+        /// 返回项的 <c>Value1</c> 为是否在读档完成后自动应用设置值（默认 false），
+        /// <c>Value2</c> 为要应用的值；各调用方的默认值均约定为 -1，表示不覆盖游戏当前值。
+        /// 两个子项的说明文案固定，具体用途说明由调用方通过 <paramref name="description"/> 提供。
         /// </summary>
         private static ConfigEntry<bool, T> BindPreloadValue<T>(
             string section,
@@ -176,39 +178,7 @@ namespace BetterExperience.BConfigManager
                 Config.SaveOnConfigSet = true;
                 Config.Save();
 
-                FrameUpdateManager.OnFrameUpdate += ReloadConfigOnUserOrder;
-
                 BLog.Info($"Config manager initialized.");
-            }
-        }
-
-        /// <summary>
-        /// 从磁盘重新读取配置，并将已有静态配置项重新绑定到新文件项。
-        /// </summary>
-        public static void ReloadConfig()
-        {
-            lock (_configSyncRoot)
-            {
-                Config.Reload();
-                BLog.Info("Config file reloaded.");
-            }
-        }
-
-        /// <summary>
-        /// 如果用户按下了指定的热键，则重新加载配置文件。
-        /// </summary>
-        public static void ReloadConfigOnUserOrder()
-        {
-            if (ReloadConfigHotkey?.Value?.WasPressedThisFrame() == true)
-            {
-                try
-                {
-                    ReloadConfig();
-                }
-                catch (Exception ex)
-                {
-                    BLog.Error($"Unexpected error in {nameof(ReloadConfigOnUserOrder)}.", ex);
-                }
             }
         }
     }

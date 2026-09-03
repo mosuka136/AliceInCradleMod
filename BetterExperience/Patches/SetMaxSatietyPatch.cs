@@ -1,9 +1,8 @@
 using BetterExperience.BConfigManager;
-using UnityModBase.HClassAttribute;
 using BetterExperience.BLogSpace;
 using HarmonyLib;
-using nel;
 using System;
+using UnityModBase.HClassAttribute;
 
 namespace BetterExperience.Patches
 {
@@ -17,8 +16,6 @@ namespace BetterExperience.Patches
         public class SetMaxSatietyPatch
         {
             private static bool _initialized = false;
-            // -1 表示尚未捕获过游戏原始最大饱食度。
-            private static int _maxSatiety = -1;
 
             [InitializeOnGameBoot]
             public static void Initialize()
@@ -28,9 +25,6 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    // 原始值属于当前存档，读档后必须重新捕获，不能沿用上一个存档的基准。
-                    _maxSatiety = -1;
-
                     if (ConfigManager.SetPlayerMaxSatiety.Value1)
                     {
                         BLog.Debug($"Applying preloaded max satiety: {ConfigManager.SetPlayerMaxSatiety.Value2}");
@@ -65,12 +59,6 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    if (_maxSatiety < 0)
-                    {
-                        _maxSatiety = pr.MyStomach.cost_max;
-                        BLog.Debug($"Captured original max satiety: {_maxSatiety}");
-                    }
-
                     pr.MyStomach.cost_max = maxSatiety;
                     BLog.Debug($"Player max satiety set to {maxSatiety}");
                 }
@@ -80,6 +68,9 @@ namespace BetterExperience.Patches
                 }
             }
 
+            /// <summary>
+            /// 读取当前最大饱食度，供实时控制界面显示；玩家或胃部数据未加载时返回 -1 占位。
+            /// </summary>
             public static int GetMaxSatiety()
             {
                 var stomach = GetPR()?.MyStomach;

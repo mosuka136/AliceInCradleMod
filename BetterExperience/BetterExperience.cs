@@ -47,6 +47,7 @@ namespace BetterExperience
                 BLog.Debug($"Starting Harmony patch registration: {PatchInfo.HarmonyPluginId}");
                 PatchAll(harmony, typeof(BetterExperience).Assembly);
                 LogPatchesInfo(harmony);
+                // 实时控制项的写回依赖已注册的补丁（如插槽刷新依赖 getCount 拦截），必须在补丁注册完成后初始化。
                 ControlManager.Initialize();
                 BLog.Info("Harmony patch registration completed.");
             }

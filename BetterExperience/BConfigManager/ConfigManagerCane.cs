@@ -8,7 +8,8 @@ namespace BetterExperience.BConfigManager
 {
     public static partial class ConfigManager
     {
-        // 法杖配置同时暴露面板显示属性和内部原始属性；所有 SetCane* 使用 -1 表示不覆盖当前装备值。
+        // 法杖配置为双值“读档后预加载”项：Value1 为是否读档后自动应用，Value2 为设置值（-1 表示不覆盖当前装备值）。
+        // 同时暴露面板显示属性和内部原始属性两类条目。
         [EntryGui(2)]
         [EntrySlider(1, -1f, 255f, 0.1f)]
         public static ConfigEntry<bool, float> SetCaneSwingSpeed { get; private set; }

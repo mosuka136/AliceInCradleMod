@@ -4,12 +4,17 @@ using nel;
 namespace BetterExperience.Patches
 {
     /// <summary>
-    /// Harmony 补丁的分部容器。
+    /// Harmony 补丁的分部容器：各功能补丁以嵌套类形式放在独立文件中，
+    /// 启动时由插件入口扫描所有带 HarmonyPatch 特性的类型统一注册。
+    /// 本文件同时提供跨补丁共享的游戏对象定位与反射访问方法，
+    /// 供各补丁类和 ControlManager 的读写委托复用。
+    /// 这些方法基于 UnityEngine 场景查找与 Harmony Traverse 反射，只应在主线程调用；
+    /// 目标对象未加载（未进入游戏场景）时一律返回 null 或调用方指定的默认值。
     /// </summary>
     public partial class HPatches
     {
         /// <summary>
-        /// 获取当前玩家实例。
+        /// 获取当前玩家实例；未进入游戏场景时返回 null。
         /// </summary>
         public static PR GetPR()
         {
@@ -26,6 +31,7 @@ namespace BetterExperience.Patches
 
         /// <summary>
         /// 获取当前游戏的二维地图管理器。
+        /// M2D 是 SceneGame 的私有字段且无公开访问器，只能经 Traverse 反射读取。
         /// </summary>
         public static NelM2DBase GetM2D()
         {
@@ -71,7 +77,8 @@ namespace BetterExperience.Patches
         }
 
         /// <summary>
-        /// 读取当前玩家字段；玩家不可用时返回调用方指定的默认值。
+        /// 读取当前玩家实例上指定名称的字段；玩家不可用时返回 <paramref name="unavailableValue"/>，
+        /// 字段不存在或类型不匹配时 Traverse 返回默认值。字段名以游戏内部命名为准，改名需同步修改调用方。
         /// </summary>
         public static T GetPRFieldValue<T>(string fieldName, T unavailableValue = default(T))
         {

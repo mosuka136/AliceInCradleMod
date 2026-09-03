@@ -8,7 +8,7 @@ namespace BetterExperience.BConfigManager
 {
     public static partial class ConfigManager
     {
-        // 地图配置主要影响地图交互限制和环境伤害；SetDangerLevel 使用 -1 表示不覆盖当前危险度。
+        // 地图配置主要影响地图交互限制和环境伤害；SetDangerLevel 为双值“读档后预加载”项，Value2 的 -1 表示不覆盖当前危险度。
         public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
         public static ConfigEntry<bool> EnableFastTravelAnywhere { get; private set; }

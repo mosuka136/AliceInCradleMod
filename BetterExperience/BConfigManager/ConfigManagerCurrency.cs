@@ -8,7 +8,8 @@ namespace BetterExperience.BConfigManager
 {
     public static partial class ConfigManager
     {
-        // 货币可在读档时加载或在游戏中设置或锁定， -1 表示不修改货币值。
+        // 货币可经双值“读档后预加载”项（Value1 是否应用，Value2 数量，-1 表示不修改）在读档时写入，
+        // 也可在游戏中经实时控制界面设置或按类型锁定。
         public static ConfigEntry<bool> EnableLockCurrencyGoldCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyCraftsCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyJuiceCount { get; private set; }

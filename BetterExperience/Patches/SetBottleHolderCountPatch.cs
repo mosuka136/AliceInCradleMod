@@ -29,6 +29,7 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
+                    // 恢复值属于上一个存档的运行时状态，读档后必须丢弃，避免之后的保存完成回调把旧数量写入新存档。
                     _originalBottleHolderCount = -1;
 
                     if (ConfigManager.SetBottleHolderCount.Value1)
@@ -115,6 +116,9 @@ namespace BetterExperience.Patches
                 }
             }
 
+            /// <summary>
+            /// 读取当前空瓶收纳槽位数量，供实时控制界面显示；背包未加载时返回 -1 占位。
+            /// </summary>
             public static int GetBottleHolderCount()
             {
                 var inventory = GetInventory();

@@ -8,7 +8,8 @@ namespace BetterExperience.BConfigManager
 {
     public static partial class ConfigManager
     {
-        // 玩家配置同时包含即时开关和“读档后预加载”项。Set* 数值中的 -1 约定为保持游戏当前值。
+        // 玩家配置同时包含即时开关和双值“读档后预加载”项：Value1 为是否读档后自动应用，Value2 为设置值。
+        // Set* 双值项的 Value2 以 -1 约定为保持游戏当前值。
         public static ConfigEntry<bool> EnableBeingAttacked { get; private set; }
         public static ConfigEntry<bool> EnableNoHpDamage { get; private set; }
         public static ConfigEntry<bool> EnableNoMpDamage { get; private set; }

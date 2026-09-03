@@ -65,6 +65,9 @@ namespace BetterExperience.Patches
                 }
             }
 
+            /// <summary>
+            /// 读取当前危险度（真实计量值），供实时控制界面显示；NightController 未加载时返回 -1 占位。
+            /// </summary>
             public static int GetDangerLevel()
             {
                 var nightController = GetNightController();

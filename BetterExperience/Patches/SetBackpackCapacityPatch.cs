@@ -28,6 +28,7 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
+                    // 恢复值属于上一个存档的运行时状态，读档后必须丢弃，避免之后的保存完成回调把旧容量写入新存档。
                     _currentCapacity = -1;
 
                     if (ConfigManager.SetBackpackCapacity.Value1)
@@ -74,6 +75,9 @@ namespace BetterExperience.Patches
                 }
             }
 
+            /// <summary>
+            /// 读取当前背包行数上限，供实时控制界面显示；背包未加载时返回 -1 占位。
+            /// </summary>
             public static int GetBackpackCapacity()
             {
                 var inventory = GetInventory();

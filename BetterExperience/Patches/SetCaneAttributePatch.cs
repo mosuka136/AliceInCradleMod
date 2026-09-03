@@ -11,8 +11,11 @@ namespace BetterExperience.Patches
     public partial class HPatches
     {
         /// <summary>
-        /// 设置当前玩家法杖的显示属性或内部属性。
-        /// 部分方法接收的是面板显示值，需要按游戏显示公式反推到 <see cref="PrCaneEquip"/> 内部字段。
+        /// 设置或读取当前玩家法杖的属性。
+        /// 属性分两类：面板显示属性（近战攻击速度、咏唱速度等）以游戏显示值为准，
+        /// 写入时按显示公式反推 <see cref="PrCaneEquip"/> 内部字段，读取时按同一公式计算；
+        /// 内部原始属性（near_power、castspeed 等）直接读写字段值。
+        /// 读写目标始终是当前装备的法杖；切换或重装法杖后需重新应用。
         /// </summary>
         [HarmonyPatch]
         public class SetCaneAttributePatch
@@ -100,7 +103,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetSwingSpeed)}.");
                         return;
                     }
 
@@ -122,14 +125,14 @@ namespace BetterExperience.Patches
                 {
                     if (speed < 0f)
                     {
-                        BLog.Debug($"Ignored invalid caneCast speed: {speed}");
+                        BLog.Debug($"Ignored invalid cane cast speed: {speed}");
                         return;
                     }
 
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetCastSpeed)}.");
                         return;
                     }
 
@@ -144,7 +147,7 @@ namespace BetterExperience.Patches
                     cane.castspeed = speed / dividend;
                     skill.Field(EqCane).SetValue(cane);
 
-                    BLog.Debug($"Cane cast speed set to: {cane.castspeed})");
+                    BLog.Debug($"Cane cast speed set to: {cane.castspeed}");
                 }
                 catch (Exception ex)
                 {
@@ -165,7 +168,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetBalance)}.");
                         return;
                     }
 
@@ -194,7 +197,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetEfficiency)}.");
                         return;
                     }
 
@@ -231,7 +234,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetRetention)}.");
                         return;
                     }
 
@@ -267,7 +270,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetLockOn)}.");
                         return;
                     }
 
@@ -296,7 +299,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetLongRange)}.");
                         return;
                     }
 
@@ -325,7 +328,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetShortRange)}.");
                         return;
                     }
 
@@ -361,7 +364,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetReach)}.");
                         return;
                     }
 
@@ -390,7 +393,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetNearPower)}.");
                         return;
                     }
 
@@ -419,7 +422,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetNearShotgunPower)}.");
                         return;
                     }
 
@@ -448,7 +451,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetStability)}.");
                         return;
                     }
 
@@ -477,7 +480,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetManaSplashRatio)}.");
                         return;
                     }
 
@@ -506,7 +509,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetCastspeedOverhold)}.");
                         return;
                     }
 
@@ -535,7 +538,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetDrainAfterLock)}.");
                         return;
                     }
 
@@ -564,7 +567,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetCastspeed)}.");
                         return;
                     }
 
@@ -593,7 +596,7 @@ namespace BetterExperience.Patches
                     var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
-                        BLog.Notice("Failed to find PR skill for setting cane swing speed.");
+                        BLog.Notice($"Failed to find PR skill in {nameof(SetMagicPrepareSpeed)}.");
                         return;
                     }
 
@@ -609,6 +612,7 @@ namespace BetterExperience.Patches
                 }
             }
 
+            // 以下 Get* 方法供实时控制界面读取当前装备法杖的属性值，与对应 Set* 方法使用同一套显示值口径。
             public static float GetSwingSpeed()
             {
                 return GetCaneValue(cane => 50f * cane.near_punch_speed);
@@ -703,6 +707,9 @@ namespace BetterExperience.Patches
                 return GetCaneValue(cane => cane.magic_prepare_speed);
             }
 
+            /// <summary>
+            /// 读取当前装备法杖的指定值；玩家技能数据未加载或未装备法杖时返回 -1 占位。
+            /// </summary>
             private static float GetCaneValue(Func<PrCaneEquip, float> valueSelector)
             {
                 var skill = GetPRSkillTraverse();

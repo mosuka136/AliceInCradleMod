@@ -8,7 +8,14 @@ using UnityModBase.HTranslatorSpace;
 namespace BetterExperience.BControlManager
 {
     /// <summary>
-    /// 独立声明只影响当前游戏状态的实时控制表和条目。
+    /// 声明只影响当前游戏状态的实时控制表和条目，供控制界面在游戏中查看和即时修改数值。
+    /// 与 <see cref="BConfigManager.ConfigManager"/> 的分工：配置项跨会话持久化到文件，
+    /// 控制条目不落盘，只在当前游戏会话内生效。
+    /// 条目本身不实现读写逻辑：读取委托给 HPatches 各补丁类的 Get* 方法，
+    /// 用户在界面提交新值时通过 OnValueChanged 转发给对应 Set* 方法写回游戏。
+    /// 各 Get* 方法在游戏对象不可用（未进入游戏、未读档等）时统一返回 -1 作为占位值。
+    /// 生命周期：由插件入口在 Harmony 补丁注册完成后调用一次 <see cref="Initialize"/>，
+    /// 之后不再变更结构；ControlService 不提供并发保护，条目刷新与界面写入须由 GUI 宿主在主线程驱动。
     /// </summary>
     internal static class ControlManager
     {
@@ -54,6 +61,11 @@ namespace BetterExperience.BControlManager
         internal static ControlEntry<long> SetCurrencyCraftsCount { get; private set; }
         internal static ControlEntry<long> SetCurrencyJuiceCount { get; private set; }
 
+        /// <summary>
+        /// 创建控制表并绑定全部实时控制条目。
+        /// 通过 <see cref="_initialized"/> 保证幂等，重复调用直接返回；
+        /// 初始化失败只记录日志不抛出，已成功绑定的条目仍可使用。
+        /// </summary>
         internal static void Initialize()
         {
             if (_initialized)
@@ -312,6 +324,9 @@ namespace BetterExperience.BControlManager
                 new Translator(chinese: "设置精萃数量", english: "Set Juice Count"));
         }
 
+        /// <summary>
+        /// 绑定玩家 HP/MP/EP 等数值属性，统一使用 -1~1000、步进 1 的滑杆。
+        /// </summary>
         private static ControlEntry<int> BindPlayerValue(
             string key,
             Func<int> valueGetter,
@@ -331,6 +346,9 @@ namespace BetterExperience.BControlManager
                 new UiSliderMetadata(-1f, 1000f, 1f));
         }
 
+        /// <summary>
+        /// 绑定法杖属性，统一使用下限 -1、步进 0.1 的滑杆；上限因属性而异（多数为 255，魔力消耗效率为 169）。
+        /// </summary>
         private static ControlEntry<float> BindCane(
             string key,
             Func<float> valueGetter,
@@ -351,6 +369,9 @@ namespace BetterExperience.BControlManager
                 new UiSliderMetadata(-1f, sliderMax, 0.1f));
         }
 
+        /// <summary>
+        /// 绑定货币数量，统一使用 -1~1000000、步进 1 的滑杆。
+        /// </summary>
         private static ControlEntry<long> BindCurrency(
             string key,
             Func<long> valueGetter,
@@ -370,6 +391,12 @@ namespace BetterExperience.BControlManager
                 new UiSliderMetadata(-1f, 1000000f, 1f));
         }
 
+        /// <summary>
+        /// 绑定一个实时控制条目并接线读写：
+        /// 刷新策略固定为“界面可见时每秒读取一次”，避免每帧执行反射扫描；
+        /// <c>OnValueChanged</c> 只在用户通过界面提交新值时触发（定时刷新缓存不触发），
+        /// 因此可直接把新值转发给 <paramref name="valueSetter"/> 写回游戏，不会形成回环。
+        /// </summary>
         private static ControlEntry<T> Bind<T>(
             string tableKey,
             string key,

@@ -10,9 +10,6 @@ namespace BetterExperience.BConfigManager
     public static partial class ConfigManager
     {
         // 热键配置使用 Hotkey 自定义适配器序列化，默认 UnityProvider 实例在初始化时统一创建。
-        public static ConfigEntry<Hotkey> ConfigUIHotkey { get; private set; }
-        public static ConfigEntry<Hotkey> LogUIHotkey { get; private set; }
-        public static ConfigEntry<Hotkey> ReloadConfigHotkey { get; private set; }
         public static ConfigEntry<Hotkey> FlushAllStoreHotkey { get; private set; }
         public static ConfigEntry<Hotkey> FlushTextureHotkey { get; private set; }
 
@@ -20,103 +17,15 @@ namespace BetterExperience.BConfigManager
 
         /// <summary>
         /// 初始化全局热键配置。
-        /// 配置表说明记录了热键文本协议，避免用户手写配置时误把键盘和手柄输入混用到同一组合。
         /// </summary>
         public static void InitializeHotkey()
         {
             try
             {
-                Config.CreateTable(
-                    SectionHotkey,
-                    new Translator(chinese: "热键", english: "Hotkey"),
-                    new Translator(
-                        chinese: "热键写法说明：\n" +
-                                 "1） 单键：F / F1 / Space / Tab\n" +
-                                 "2） 键盘组合键：修饰键在前，主键在最后，例如 Ctrl+Shift+F\n" +
-                                 "3） 手柄组合键：手柄按键用 + 连接，例如 GamepadStart+GamepadA\n" +
-                                 "4） 备选热键：Ctrl+F, GamepadStart+GamepadA（用逗号分隔）\n" +
-                                 "5） 同一组组合键不能混用键盘和手柄，例如 Ctrl+GamepadA 不支持\n" +
-                                 "\n" +
-                                 "键盘修饰键：\n" +
-                                 "- Ctrl（或 Control）/ Shift / Alt\n" +
-                                 "- LeftCtrl（或 LCtrl）/ RightCtrl（或 RCtrl）\n" +
-                                 "- LeftShift（或 LShift）/ RightShift（或 RShift）\n" +
-                                 "- LeftAlt（或 LAlt）/ RightAlt（或 RAlt）\n" +
-                                 "\n" +
-                                 "手柄按键名称（配置写回时会规范化为以下名称）：\n" +
-                                 "- GamepadA / GamepadB / GamepadX / GamepadY\n" +
-                                 "- GamepadStart / GamepadBack / GamepadLB / GamepadRB\n" +
-                                 "- GamepadDpadUp / GamepadDpadDown / GamepadDpadLeft / GamepadDpadRight\n" +
-                                 "- GamepadLS / GamepadRS\n" +
-                                 "- 也接受别名：South / East / West / North、Cross / Circle / Square / Triangle、Select / LeftShoulder / RightShoulder / LeftStick / RightStick\n" +
-                                 "- 为避免与键盘键名冲突，建议手柄按键始终写成带 Gamepad 前缀的形式，例如 GamepadA\n" +
-                                 "\n" +
-                                 "示例：\n" +
-                                 "- Ctrl+F\n" +
-                                 "- LeftCtrl+RightShift+F\n" +
-                                 "- GamepadStart+GamepadA\n" +
-                                 "- Ctrl+Shift+F, GamepadStart+GamepadA",
-                        english: "Hotkey notation guide:\n" +
-                                 "1) Single key: F / F1 / Space / Tab\n" +
-                                 "2) Keyboard chord: modifiers first, main key last, e.g. Ctrl+Shift+F\n" +
-                                 "3) Gamepad chord: join gamepad buttons with +, e.g. GamepadStart+GamepadA\n" +
-                                 "4) Alternatives: Ctrl+F, GamepadStart+GamepadA (comma-separated)\n" +
-                                 "5) Keyboard and gamepad cannot be mixed in the same chord, e.g. Ctrl+GamepadA is not supported\n" +
-                                 "\n" +
-                                 "Keyboard modifiers:\n" +
-                                 "- Ctrl (or Control) / Shift / Alt\n" +
-                                 "- LeftCtrl (or LCtrl) / RightCtrl (or RCtrl)\n" +
-                                 "- LeftShift (or LShift) / RightShift (or RShift)\n" +
-                                 "- LeftAlt (or LAlt) / RightAlt (or RAlt)\n" +
-                                 "\n" +
-                                 "Gamepad button names (config values are normalized to these names when written back):\n" +
-                                 "- GamepadA / GamepadB / GamepadX / GamepadY\n" +
-                                 "- GamepadStart / GamepadBack / GamepadLB / GamepadRB\n" +
-                                 "- GamepadDpadUp / GamepadDpadDown / GamepadDpadLeft / GamepadDpadRight\n" +
-                                 "- GamepadLS / GamepadRS\n" +
-                                 "- Also accepts aliases: South / East / West / North, Cross / Circle / Square / Triangle, Select / LeftShoulder / RightShoulder / LeftStick / RightStick\n" +
-                                 "- To avoid conflicts with keyboard key names, gamepad buttons should be written with the Gamepad prefix, e.g. GamepadA\n" +
-                                 "\n" +
-                                 "Examples:\n" +
-                                 "- Ctrl+F\n" +
-                                 "- LeftCtrl+RightShift+F\n" +
-                                 "- GamepadStart+GamepadA\n" +
-                                 "- Ctrl+Shift+F, GamepadStart+GamepadA"
-                    )
-                    );
+                Config.CreateTable(SectionHotkey, new Translator(chinese: "热键", english: "Hotkey"));
 
                 var unityService = UnityProvider.Instance;
 
-                ConfigUIHotkey = Config.Bind(
-                    SectionHotkey,
-                    nameof(ConfigUIHotkey),
-                    new Hotkey("F1", unityService),
-                    new Translator(chinese: "配置界面热键", english: "Config UI Hotkey"),
-                    new Translator(
-                        chinese: "打开配置界面的热键。默认是 F1。",
-                        english: "The hotkey to open config UI. Default is F1."
-                    )
-                    );
-                LogUIHotkey = Config.Bind(
-                    SectionHotkey,
-                    nameof(LogUIHotkey),
-                    new Hotkey("F2", unityService),
-                    new Translator(chinese: "日志界面热键", english: "Log UI Hotkey"),
-                    new Translator(
-                        chinese: "打开日志界面的热键。默认是 F2。",
-                        english: "The hotkey to open log UI. Default is F2."
-                    )
-                    );
-                ReloadConfigHotkey = Config.Bind(
-                    SectionHotkey,
-                    nameof(ReloadConfigHotkey),
-                    new Hotkey("Ctrl+R", unityService),
-                    new Translator(chinese: "重新加载配置热键", english: "Reload Config Hotkey"),
-                    new Translator(
-                        chinese: "重新加载配置的热键。默认值为 Ctrl+R。",
-                        english: "The hotkey to reload config. Default is Ctrl+R."
-                    )
-                    );
                 FlushAllStoreHotkey = Config.Bind(
                     SectionHotkey,
                     nameof(FlushAllStoreHotkey),

@@ -39,7 +39,7 @@ namespace BetterExperience
 
                 BepInExLog.Initialize(ConfigManager.BepInExLogLevel.Value, UnityProvider.Instance, logger);
                 ConfigManager.EnableLog.OnValueChanged += (s, e) => BepInExLog.Enable = e;
-                ConfigManager.BepInExLogLevel.OnValueChanged += (s, e) => BepInExLog.Level = ConfigManager.BepInExLogLevel.Value;
+                ConfigManager.BepInExLogLevel.OnValueChanged += (s, e) => BepInExLog.Level = e;
                 LogDatabase.OnLogAdded += (entry) => BepInExLog.Log(entry);
                 LogDatabase.OnLogRepeated += (entry) => BepInExLog.Log(entry);
                 BepInExLog.Enable = ConfigManager.EnableLog.Value;

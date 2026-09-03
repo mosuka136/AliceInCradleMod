@@ -214,6 +214,7 @@ namespace BetterExperience.Patches
                 }
             }
 
+            // 以下 Get* 方法供实时控制界面读取玩家当前属性值；玩家未加载时统一返回 -1 占位。
             public static int GetHp()
             {
                 return GetPlayerValue("hp");
@@ -239,6 +240,9 @@ namespace BetterExperience.Patches
                 return GetPlayerValue("maxmp");
             }
 
+            /// <summary>
+            /// 按游戏内部字段名（hp/mp/ep/maxhp/maxmp）读取玩家属性；玩家不可用时返回 -1。
+            /// </summary>
             private static int GetPlayerValue(string fieldName)
             {
                 return GetPRFieldValue(fieldName, -1);
