@@ -30,75 +30,57 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    if (ConfigManager.EnablePreloadCaneSwingSpeed.Value)
-                        SetSwingSpeed(ConfigManager.SetCaneSwingSpeed.Value);
+                    if (ConfigManager.SetCaneSwingSpeed.Value1)
+                        SetSwingSpeed(ConfigManager.SetCaneSwingSpeed.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneCastSpeed.Value)
-                        SetCastSpeed(ConfigManager.SetCaneCastSpeed.Value);
+                    if (ConfigManager.SetCaneCastSpeed.Value1)
+                        SetCastSpeed(ConfigManager.SetCaneCastSpeed.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneBalance.Value)
-                        SetBalance(ConfigManager.SetCaneBalance.Value);
+                    if (ConfigManager.SetCaneBalance.Value1)
+                        SetBalance(ConfigManager.SetCaneBalance.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneEfficiency.Value)
-                        SetEfficiency(ConfigManager.SetCaneEfficiency.Value);
+                    if (ConfigManager.SetCaneEfficiency.Value1)
+                        SetEfficiency(ConfigManager.SetCaneEfficiency.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneRetention.Value)
-                        SetRetention(ConfigManager.SetCaneRetention.Value);
+                    if (ConfigManager.SetCaneRetention.Value1)
+                        SetRetention(ConfigManager.SetCaneRetention.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneLockOn.Value)
-                        SetLockOn(ConfigManager.SetCaneLockOn.Value);
+                    if (ConfigManager.SetCaneLockOn.Value1)
+                        SetLockOn(ConfigManager.SetCaneLockOn.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneLongRange.Value)
-                        SetLongRange(ConfigManager.SetCaneLongRange.Value);
+                    if (ConfigManager.SetCaneLongRange.Value1)
+                        SetLongRange(ConfigManager.SetCaneLongRange.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneShortRange.Value)
-                        SetShortRange(ConfigManager.SetCaneShortRange.Value);
+                    if (ConfigManager.SetCaneShortRange.Value1)
+                        SetShortRange(ConfigManager.SetCaneShortRange.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneReach.Value)
-                        SetReach(ConfigManager.SetCaneReach.Value);
+                    if (ConfigManager.SetCaneReach.Value1)
+                        SetReach(ConfigManager.SetCaneReach.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneNearPower.Value)
-                        SetNearPower(ConfigManager.SetCaneNearPower.Value);
+                    if (ConfigManager.SetCaneNearPower.Value1)
+                        SetNearPower(ConfigManager.SetCaneNearPower.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneNearShotgunPower.Value)
-                        SetNearShotgunPower(ConfigManager.SetCaneNearShotgunPower.Value);
+                    if (ConfigManager.SetCaneNearShotgunPower.Value1)
+                        SetNearShotgunPower(ConfigManager.SetCaneNearShotgunPower.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneStability.Value)
-                        SetStability(ConfigManager.SetCaneStability.Value);
+                    if (ConfigManager.SetCaneStability.Value1)
+                        SetStability(ConfigManager.SetCaneStability.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneManaSplashRatio.Value)
-                        SetManaSplashRatio(ConfigManager.SetCaneManaSplashRatio.Value);
+                    if (ConfigManager.SetCaneManaSplashRatio.Value1)
+                        SetManaSplashRatio(ConfigManager.SetCaneManaSplashRatio.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneCastspeedOverhold.Value)
-                        SetCastspeedOverhold(ConfigManager.SetCaneCastspeedOverhold.Value);
+                    if (ConfigManager.SetCaneCastspeedOverhold.Value1)
+                        SetCastspeedOverhold(ConfigManager.SetCaneCastspeedOverhold.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneDrainAfterLock.Value)
-                        SetDrainAfterLock(ConfigManager.SetCaneDrainAfterLock.Value);
+                    if (ConfigManager.SetCaneDrainAfterLock.Value1)
+                        SetDrainAfterLock(ConfigManager.SetCaneDrainAfterLock.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneCastspeed.Value)
-                        SetCastspeed(ConfigManager.SetCaneCastspeed.Value);
+                    if (ConfigManager.SetCaneCastspeed.Value1)
+                        SetCastspeed(ConfigManager.SetCaneCastspeed.Value2);
 
-                    if (ConfigManager.EnablePreloadCaneMagicPrepareSpeed.Value)
-                        SetMagicPrepareSpeed(ConfigManager.SetCaneMagicPrepareSpeed.Value);
+                    if (ConfigManager.SetCaneMagicPrepareSpeed.Value1)
+                        SetMagicPrepareSpeed(ConfigManager.SetCaneMagicPrepareSpeed.Value2);
                 };
-
-                ConfigManager.SetCaneSwingSpeed.OnValueChanged += (s, e) => SetSwingSpeed(e);
-                ConfigManager.SetCaneCastSpeed.OnValueChanged += (s, e) => SetCastSpeed(e);
-                ConfigManager.SetCaneBalance.OnValueChanged += (s, e) => SetBalance(e);
-                ConfigManager.SetCaneEfficiency.OnValueChanged += (s, e) => SetEfficiency(e);
-                ConfigManager.SetCaneRetention.OnValueChanged += (s, e) => SetRetention(e);
-                ConfigManager.SetCaneLockOn.OnValueChanged += (s, e) => SetLockOn(e);
-                ConfigManager.SetCaneLongRange.OnValueChanged += (s, e) => SetLongRange(e);
-                ConfigManager.SetCaneShortRange.OnValueChanged += (s, e) => SetShortRange(e);
-                ConfigManager.SetCaneReach.OnValueChanged += (s, e) => SetReach(e);
-                ConfigManager.SetCaneNearPower.OnValueChanged += (s, e) => SetNearPower(e);
-                ConfigManager.SetCaneNearShotgunPower.OnValueChanged += (s, e) => SetNearShotgunPower(e);
-                ConfigManager.SetCaneStability.OnValueChanged += (s, e) => SetStability(e);
-                ConfigManager.SetCaneManaSplashRatio.OnValueChanged += (s, e) => SetManaSplashRatio(e);
-                ConfigManager.SetCaneCastspeedOverhold.OnValueChanged += (s, e) => SetCastspeedOverhold(e);
-                ConfigManager.SetCaneDrainAfterLock.OnValueChanged += (s, e) => SetDrainAfterLock(e);
-                ConfigManager.SetCaneCastspeed.OnValueChanged += (s, e) => SetCastspeed(e);
-                ConfigManager.SetCaneMagicPrepareSpeed.OnValueChanged += (s, e) => SetMagicPrepareSpeed(e);
 
                 _initialized = true;
 
@@ -115,7 +97,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -144,7 +126,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -180,7 +162,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -209,7 +191,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -246,7 +228,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -282,7 +264,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -311,7 +293,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -340,7 +322,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -376,7 +358,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -405,7 +387,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -434,7 +416,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -463,7 +445,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -492,7 +474,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -521,7 +503,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -550,7 +532,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -579,7 +561,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -608,7 +590,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var skill = GetM2PrSkill();
+                    var skill = GetPRSkillTraverse();
                     if (skill == null)
                     {
                         BLog.Notice("Failed to find PR skill for setting cane swing speed.");
@@ -627,14 +609,110 @@ namespace BetterExperience.Patches
                 }
             }
 
-            public static Traverse GetM2PrSkill()
+            public static float GetSwingSpeed()
             {
-                var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
-                if (pr == null)
-                    return null;
-
-                return Traverse.Create(pr.Skill);
+                return GetCaneValue(cane => 50f * cane.near_punch_speed);
             }
+
+            public static float GetCastSpeed()
+            {
+                return GetCaneValue(cane =>
+                    50f * cane.castspeed *
+                    (0.33f * cane.magic_prepare_speed + 0.67f) *
+                    (0.25f * cane.castspeed_overhold + 0.75f));
+            }
+
+            public static float GetBalance()
+            {
+                return GetCaneValue(cane => 60f * cane.neutral);
+            }
+
+            public static float GetEfficiency()
+            {
+                return GetCaneValue(cane => cane.mp_use_ratio < 1f
+                    ? 169f - 104f * cane.mp_use_ratio
+                    : 65f / (cane.mp_use_ratio * cane.mp_use_ratio));
+            }
+
+            public static float GetRetention()
+            {
+                return GetCaneValue(cane =>
+                    55f * cane.stability * cane.mana_splash_ratio *
+                    (0.75f * cane.castspeed_overhold + 0.25f) *
+                    (0.5f * cane.drain_after_lock + 0.5f));
+            }
+
+            public static float GetLockOn()
+            {
+                return GetCaneValue(cane => 50f * cane.lockon_power);
+            }
+
+            public static float GetLongRange()
+            {
+                return GetCaneValue(cane => 46f * cane.far_power);
+            }
+
+            public static float GetShortRange()
+            {
+                return GetCaneValue(cane =>
+                    55f * (0.25f * cane.near_power + 0.75f) * cane.near_shotgun_power);
+            }
+
+            public static float GetReach()
+            {
+                return GetCaneValue(cane => 50f * cane.near_reach);
+            }
+
+            public static float GetNearPower()
+            {
+                return GetCaneValue(cane => cane.near_power);
+            }
+
+            public static float GetNearShotgunPower()
+            {
+                return GetCaneValue(cane => cane.near_shotgun_power);
+            }
+
+            public static float GetStability()
+            {
+                return GetCaneValue(cane => cane.stability);
+            }
+
+            public static float GetManaSplashRatio()
+            {
+                return GetCaneValue(cane => cane.mana_splash_ratio);
+            }
+
+            public static float GetCastspeedOverhold()
+            {
+                return GetCaneValue(cane => cane.castspeed_overhold);
+            }
+
+            public static float GetDrainAfterLock()
+            {
+                return GetCaneValue(cane => cane.drain_after_lock);
+            }
+
+            public static float GetCastspeed()
+            {
+                return GetCaneValue(cane => cane.castspeed);
+            }
+
+            public static float GetMagicPrepareSpeed()
+            {
+                return GetCaneValue(cane => cane.magic_prepare_speed);
+            }
+
+            private static float GetCaneValue(Func<PrCaneEquip, float> valueSelector)
+            {
+                var skill = GetPRSkillTraverse();
+                if (skill == null)
+                    return -1f;
+
+                var cane = skill.Field(EqCane).GetValue<PrCaneEquip>();
+                return valueSelector(cane);
+            }
+
         }
     }
 }

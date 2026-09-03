@@ -182,19 +182,6 @@ namespace BetterExperience.Patches
                 return (value & (1 << bit)) != 0;
             }
 
-            public static NightController GetNightController()
-            {
-                var sg = UnityEngine.Object.FindAnyObjectByType<SceneGame>();
-                if (sg == null)
-                    return null;
-
-                var m2d = Traverse.Create(sg).Field("M2D").GetValue<NelM2DBase>();
-                if (m2d == null)
-                    return null;
-
-                return m2d.NightCon;
-            }
-
             public static void Flush()
             {
                 try

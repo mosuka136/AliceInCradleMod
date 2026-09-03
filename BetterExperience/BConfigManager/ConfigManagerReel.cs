@@ -6,7 +6,7 @@ using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
-    public partial class ConfigManager
+    public static partial class ConfigManager
     {
         // 转轮速度配置中 -1 表示保留游戏默认速度。
         public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }

@@ -20,6 +20,7 @@ namespace BetterExperience.Patches
             // 仅在主动调用 fineSlots 期间拦截 ItemStorage.getCount，避免影响其他物品计数。
             private static bool _isChanging = false;
             private static bool _hasLoggedOverrideForCurrentApply = false;
+            private static int _targetCount = -1;
 
             [InitializeOnGameBoot]
             public static void Initialize()
@@ -29,49 +30,44 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    if (ConfigManager.EnablePreloadOverChargeSlotCount.Value)
+                    if (ConfigManager.SetOverChargeSlotCount.Value1)
                     {
                         BLog.Debug("Applying preloaded overcharge slot count.");
-                        SetOverChargeSlotCount();
+                        SetOverChargeSlotCount(ConfigManager.SetOverChargeSlotCount.Value2);
                     }
-                };
-
-                ConfigManager.SetOverChargeSlotCount.OnValueChanged += (s, e) =>
-                {
-                    BLog.Debug($"Overcharge slot count config changed: {e}");
-                    SetOverChargeSlotCount();
                 };
 
                 _initialized = true;
                 BLog.Debug("Overcharge slot count patch initialized.");
             }
 
-            public static void SetOverChargeSlotCount()
+            public static void SetOverChargeSlotCount(int count)
             {
                 try
                 {
-                    var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
-                    if (pr == null)
+                    if (count < 0)
                     {
-                        BLog.Notice("Player instance not found while applying overcharge slot count.");
+                        BLog.Debug($"Ignored invalid overcharge slot count: {count}");
                         return;
                     }
 
-                    if (pr.Skill == null)
+                    var skill = GetPRSkillTraverse();
+                    if (skill == null)
                     {
                         BLog.Notice("Player skill data not found while applying overcharge slot count.");
                         return;
                     }
 
-                    var oc = Traverse.Create(pr.Skill).Field("OcSlots").GetValue<M2PrOverChargeSlot>();
+                    var oc = skill.Field("OcSlots").GetValue<M2PrOverChargeSlot>();
                     if (oc == null)
                     {
                         BLog.Notice("Overcharge slot component not found while applying overcharge slot count.");
                         return;
                     }
 
-                    BLog.Debug($"Refresh overcharge slots. TargetCount={ConfigManager.SetOverChargeSlotCount.Value}");
+                    BLog.Debug($"Refresh overcharge slots. TargetCount={count}");
 
+                    _targetCount = count;
                     _isChanging = true;
                     _hasLoggedOverrideForCurrentApply = false;
                     // fineSlots 会读取 oc_slot 数量，下面的 Harmony Prefix 只在此窗口期返回配置值。
@@ -85,6 +81,18 @@ namespace BetterExperience.Patches
                 }
             }
 
+            public static int GetOverChargeSlotCount()
+            {
+                var skill = GetPRSkillTraverse();
+                if (skill == null)
+                    return -1;
+
+                var slots = skill.Field("OcSlots").GetValue<M2PrOverChargeSlot>();
+                return slots == null
+                    ? -1
+                    : Traverse.Create(slots).Field("max_slot").GetValue<int>();
+            }
+
             [HarmonyPrefix]
             [HarmonyPatch(typeof(ItemStorage), nameof(ItemStorage.getCount), new Type[] { typeof(NelItem), typeof(int)})]
             public static bool GetCountPrefix(NelItem Data, ref int __result)
@@ -94,7 +102,7 @@ namespace BetterExperience.Patches
                     if (NelItem.GetById("oc_slot") != Data)
                         return true;
 
-                    if (!_isChanging || ConfigManager.SetOverChargeSlotCount.Value < 0)
+                    if (!_isChanging || _targetCount < 0)
                         return true;
 
                     if (!_hasLoggedOverrideForCurrentApply)
@@ -103,7 +111,7 @@ namespace BetterExperience.Patches
                         _hasLoggedOverrideForCurrentApply = true;
                     }
 
-                    __result = ConfigManager.SetOverChargeSlotCount.Value;
+                    __result = _targetCount;
                     return false;
                 }
                 catch (Exception ex)

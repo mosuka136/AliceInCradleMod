@@ -6,7 +6,7 @@ using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
-    public partial class ConfigManager
+    public static partial class ConfigManager
     {
         // 地图配置主要影响地图交互限制和环境伤害；SetDangerLevel 使用 -1 表示不覆盖当前危险度。
         public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
@@ -16,9 +16,9 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableMapDamage { get; private set; }
         public static ConfigEntry<bool> EnableDrowning { get; private set; }
         public static ConfigEntry<bool> EnableDarkArea { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadDangerLevel { get; private set; }
-        [EntrySlider(-1f, 160f, 1f)]
-        public static ConfigEntry<int> SetDangerLevel { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 160f, 1f)]
+        public static ConfigEntry<bool, int> SetDangerLevel { get; private set; }
 
         private const string SectionMap = "Map";
 
@@ -101,25 +101,14 @@ namespace BetterExperience.BConfigManager
                         english: "Enable dark area. After disabling, specific areas will no longer require the Magic Bug Lantern to illuminate."
                     )
                     );
-                EnablePreloadDangerLevel = Config.Bind(
-                    SectionMap,
-                    nameof(EnablePreloadDangerLevel),
-                    false,
-                    new Translator(chinese: "预加载危险度", english: "Preload Danger Level"),
-                    new Translator(
-                        chinese: "启用预加载危险度。开启后，危险度将在存档读取后自动设置一次，使用设置值覆盖原始危险度。",
-                        english: "Enable preload danger level. When enabled, the danger level will be automatically set once after loading a save, " +
-                        "using the configured value to override the original danger level."
-                    )
-                    );
-                SetDangerLevel = Config.Bind(
+                SetDangerLevel = BindPreloadValue(
                     SectionMap,
                     nameof(SetDangerLevel),
                     -1,
                     new Translator(chinese: "设置危险度", english: "Set Danger Level"),
                     new Translator(
-                        chinese: "设置危险度。将覆盖原始的危险度。设为 -1 可保持为当前值。",
-                        english: "Set the danger level. It will override the original danger level. Set to -1 to keep the danger level at its current value."
+                        chinese: "设置危险度。将覆盖原始的危险度。",
+                        english: "Set the danger level."
                     )
                     );
             }

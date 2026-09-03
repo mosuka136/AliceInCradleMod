@@ -5,7 +5,7 @@ using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
-    public partial class ConfigManager
+    public static partial class ConfigManager
     {
         // 贴图配置影响资源加载阶段；替换贴图开关关闭时不会扫描外部图片目录。
         public static ConfigEntry<bool> EnableMosaic { get; private set; }

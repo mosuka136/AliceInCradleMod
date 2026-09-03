@@ -6,21 +6,21 @@ using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
-    public partial class ConfigManager
+    public static partial class ConfigManager
     {
         // 货币可在读档时加载或在游戏中设置或锁定， -1 表示不修改货币值。
-        public static ConfigEntry<bool> EnablePreloadCurrencyGoldCount { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadCurrencyCraftsCount { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadCurrencyJuiceCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyGoldCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyCraftsCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyJuiceCount { get; private set; }
-        [EntrySlider(-1f, 1000000f, 1f)]
-        public static ConfigEntry<long> SetCurrencyGoldCount { get; private set; }
-        [EntrySlider(-1f, 1000000f, 1f)]
-        public static ConfigEntry<long> SetCurrencyCraftsCount { get; private set; }
-        [EntrySlider(-1f, 1000000f, 1f)]
-        public static ConfigEntry<long> SetCurrencyJuiceCount { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 1000000f, 1f)]
+        public static ConfigEntry<bool, long> SetCurrencyGoldCount { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 1000000f, 1f)]
+        public static ConfigEntry<bool, long> SetCurrencyCraftsCount { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 1000000f, 1f)]
+        public static ConfigEntry<bool, long> SetCurrencyJuiceCount { get; private set; }
 
         private const string SectionCurrency = "Currency";
 
@@ -33,39 +33,6 @@ namespace BetterExperience.BConfigManager
             {
                 Config.CreateTable(SectionCurrency, new Translator(chinese: "货币", english: "Currency"));
 
-                EnablePreloadCurrencyGoldCount = Config.Bind(
-                    SectionCurrency,
-                    nameof(EnablePreloadCurrencyGoldCount),
-                    false,
-                    new Translator(chinese: "预加载金币数量", english: "Preload Gold Count"),
-                    new Translator(
-                        chinese: "启用预加载金币数量。开启后，金币数量将在存档读取后自动设置一次，使用设置值覆盖原始的金币数量。",
-                        english: "Enable preload gold count. When enabled, the gold count will be automatically set once after loading a save, " +
-                        "using the configured value to override the original gold count."
-                    )
-                    );
-                EnablePreloadCurrencyCraftsCount = Config.Bind(
-                    SectionCurrency,
-                    nameof(EnablePreloadCurrencyCraftsCount),
-                    false,
-                    new Translator(chinese: "预加载兑锭数量", english: "Preload Crafts Count"),
-                    new Translator(
-                        chinese: "启用预加载兑锭数量。开启后，兑锭数量将在存档读取后自动设置一次，使用设置值覆盖原始的兑锭数量。",
-                        english: "Enable preload crafts count. When enabled, the crafts count will be automatically set once after loading a save, " +
-                        "using the configured value to override the original crafts count."
-                    )
-                    );
-                EnablePreloadCurrencyJuiceCount = Config.Bind(
-                    SectionCurrency,
-                    nameof(EnablePreloadCurrencyJuiceCount),
-                    false,
-                    new Translator(chinese: "预加载精萃数量", english: "Preload Juice Count"),
-                    new Translator(
-                        chinese: "启用预加载精萃数量。开启后，精萃数量将在存档读取后自动设置一次，使用设置值覆盖原始的精萃数量。",
-                        english: "Enable preload juice count. When enabled, the juice count will be automatically set once after loading a save, " +
-                        "using the configured value to override the original juice count."
-                    )
-                    );
                 EnableLockCurrencyGoldCount = Config.Bind(
                     SectionCurrency,
                     nameof(EnableLockCurrencyGoldCount),
@@ -96,34 +63,34 @@ namespace BetterExperience.BConfigManager
                         english: "Enable lock juice count. When enabled, the number of juice will not increase or decrease."
                     )
                     );
-                SetCurrencyGoldCount = Config.Bind(
+                SetCurrencyGoldCount = BindPreloadValue(
                     SectionCurrency,
                     nameof(SetCurrencyGoldCount),
                     -1L,
                     new Translator(chinese: "设置金币数量", english: "Set Gold Count"),
                     new Translator(
-                        chinese: "设置金币数量。设为 -1 可保持为当前数量。",
-                        english: "Set gold count. Set to -1 to keep the current count."
+                        chinese: "设置金币数量。",
+                        english: "Set gold count."
                     )
                     );
-                SetCurrencyCraftsCount = Config.Bind(
+                SetCurrencyCraftsCount = BindPreloadValue(
                     SectionCurrency,
                     nameof(SetCurrencyCraftsCount),
                     -1L,
                     new Translator(chinese: "设置兑锭数量", english: "Set Crafts Count"),
                     new Translator(
-                        chinese: "设置兑锭数量。设为 -1 可保持为当前数量。",
-                        english: "Set crafts count. Set to -1 to keep the current count."
+                        chinese: "设置兑锭数量。",
+                        english: "Set crafts count."
                     )
                     );
-                SetCurrencyJuiceCount = Config.Bind(
+                SetCurrencyJuiceCount = BindPreloadValue(
                     SectionCurrency,
                     nameof(SetCurrencyJuiceCount),
                     -1L,
                     new Translator(chinese: "设置精萃数量", english: "Set Juice Count"),
                     new Translator(
-                        chinese: "设置精萃数量。设为 -1 可保持为当前数量。",
-                        english: "Set juice count. Set to -1 to keep the current count."
+                        chinese: "设置精萃数量。",
+                        english: "Set juice count."
                     )
                     );
             }

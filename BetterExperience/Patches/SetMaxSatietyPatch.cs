@@ -11,7 +11,7 @@ namespace BetterExperience.Patches
     {
         /// <summary>
         /// 设置玩家最大饱食度。
-        /// 首次应用时缓存原值；如果读档后预加载关闭，则尝试恢复缓存的原始最大饱食度。
+        /// 每次读档后重新捕获当前存档的原始值，避免沿用其他存档的基准。
         /// </summary>
         [HarmonyPatch]
         public class SetMaxSatietyPatch
@@ -28,25 +28,14 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    if (ConfigManager.EnablePreloadPlayerMaxSatiety.Value)
-                    {
-                        BLog.Debug($"Applying preloaded max satiety: {ConfigManager.SetPlayerMaxSatiety.Value}");
-                        SetMaxSatiety(ConfigManager.SetPlayerMaxSatiety.Value);
-                    }
-                    else
-                    {
-                        if (_maxSatiety > 0)
-                        {
-                            BLog.Debug($"Restoring original max satiety: {_maxSatiety}");
-                            SetMaxSatiety(_maxSatiety);
-                        }
-                    }
-                };
+                    // 原始值属于当前存档，读档后必须重新捕获，不能沿用上一个存档的基准。
+                    _maxSatiety = -1;
 
-                ConfigManager.SetPlayerMaxSatiety.OnValueChanged += (s, e) =>
-                {
-                    BLog.Debug($"Max satiety config changed: {e}");
-                    SetMaxSatiety(e);
+                    if (ConfigManager.SetPlayerMaxSatiety.Value1)
+                    {
+                        BLog.Debug($"Applying preloaded max satiety: {ConfigManager.SetPlayerMaxSatiety.Value2}");
+                        SetMaxSatiety(ConfigManager.SetPlayerMaxSatiety.Value2);
+                    }
                 };
 
                 _initialized = true;
@@ -63,7 +52,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
+                    var pr = GetPR();
                     if (pr == null)
                     {
                         BLog.Notice("Player instance not found while applying max satiety.");
@@ -89,6 +78,12 @@ namespace BetterExperience.Patches
                 {
                     BLog.Error($"Unexpected error in {nameof(SetMaxSatiety)}.", ex);
                 }
+            }
+
+            public static int GetMaxSatiety()
+            {
+                var stomach = GetPR()?.MyStomach;
+                return stomach == null ? -1 : stomach.cost_max;
             }
         }
     }

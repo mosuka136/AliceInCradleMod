@@ -1,5 +1,6 @@
 using BepInEx;
 using BetterExperience.BConfigManager;
+using BetterExperience.BControlManager;
 using BetterExperience.BLogSpace;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
@@ -46,6 +47,7 @@ namespace BetterExperience
                 BLog.Debug($"Starting Harmony patch registration: {PatchInfo.HarmonyPluginId}");
                 PatchAll(harmony, typeof(BetterExperience).Assembly);
                 LogPatchesInfo(harmony);
+                ControlManager.Initialize();
                 BLog.Info("Harmony patch registration completed.");
             }
             catch (Exception ex)

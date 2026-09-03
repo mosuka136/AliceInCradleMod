@@ -28,10 +28,12 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    if (ConfigManager.EnablePreloadBackpackCapacity.Value)
+                    _currentCapacity = -1;
+
+                    if (ConfigManager.SetBackpackCapacity.Value1)
                     {
-                        BLog.Debug($"Applying preloaded backpack capacity: {ConfigManager.SetBackpackCapacity.Value}");
-                        SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value);
+                        BLog.Debug($"Applying preloaded backpack capacity: {ConfigManager.SetBackpackCapacity.Value2}");
+                        SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value2);
                     }
                 };
 
@@ -40,12 +42,6 @@ namespace BetterExperience.Patches
                 {
                     BLog.Debug($"Restoring backpack capacity after save: {_currentCapacity}");
                     SetBackpackCapacity(_currentCapacity);
-                };
-
-                ConfigManager.SetBackpackCapacity.OnValueChanged += (s, e) =>
-                {
-                    BLog.Debug($"Backpack capacity config changed: {e}");
-                    SetBackpackCapacity(ConfigManager.SetBackpackCapacity.Value);
                 };
 
                 _initialized = true;
@@ -62,14 +58,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var imng = GetIMNG();
-                    if (imng == null)
-                    {
-                        BLog.Notice("Item manager not found while applying backpack capacity.");
-                        return;
-                    }
-
-                    var inventory = imng.getInventory();
+                    var inventory = GetInventory();
                     if (inventory == null)
                     {
                         BLog.Notice("Inventory not found while applying backpack capacity.");
@@ -85,34 +74,17 @@ namespace BetterExperience.Patches
                 }
             }
 
-            public static NelItemManager GetIMNG()
+            public static int GetBackpackCapacity()
             {
-                var sg = UnityEngine.Object.FindAnyObjectByType<SceneGame>();
-                if (sg == null)
-                    return null;
-
-                var m2d = Traverse.Create(sg).Field("M2D").GetValue<NelM2DBase>();
-                if (m2d == null)
-                    return null;
-
-                if (m2d.IMNG == null)
-                    return null;
-
-                return m2d.IMNG;
+                var inventory = GetInventory();
+                return inventory == null ? -1 : inventory.row_max;
             }
 
             public static void RecoverBackpackCapacity()
             {
                 try
                 {
-                    var imng = GetIMNG();
-                    if (imng == null)
-                    {
-                        BLog.Notice("Item manager not found while recovering backpack capacity.");
-                        return;
-                    }
-
-                    var inventory = imng.getInventory();
+                    var inventory = GetInventory();
                     if (inventory == null)
                     {
                         BLog.Notice("Inventory not found while recovering backpack capacity.");
@@ -126,7 +98,14 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var count = imng.getInventoryPrecious().getCount(item);
+                    var preciousInventory = GetPreciousInventory();
+                    if (preciousInventory == null)
+                    {
+                        BLog.Notice("Precious inventory not found while recovering backpack capacity.");
+                        return;
+                    }
+
+                    var count = preciousInventory.getCount(item);
                     count = Math.Max(count, 0);
 
                     _currentCapacity = inventory.row_max;

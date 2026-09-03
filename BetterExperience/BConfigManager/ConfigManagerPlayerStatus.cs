@@ -6,7 +6,7 @@ using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
-    public partial class ConfigManager
+    public static partial class ConfigManager
     {
         // 玩家配置同时包含即时开关和“读档后预加载”项。Set* 数值中的 -1 约定为保持游戏当前值。
         public static ConfigEntry<bool> EnableBeingAttacked { get; private set; }
@@ -47,34 +47,34 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableImmuneAbnormalityWebTrapped { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityStone { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityAtkDown { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadBackpackCapacity { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadBottleHolderCount { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadPlayerHp { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadPlayerMp { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadPlayerEp { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadPlayerMaxHp { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadPlayerMaxMp { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadPlayerMaxSatiety { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadOverChargeSlotCount { get; private set; }
-        public static ConfigEntry<bool> EnablePreloadEnhancerSlotCount { get; private set; }
-        public static ConfigEntry<int> SetBackpackCapacity { get; private set; }
-        public static ConfigEntry<int> SetBottleHolderCount { get; private set; }
-        [EntrySlider(-1f, 1000f, 1f)]
-        public static ConfigEntry<int> SetPlayerHp { get; private set; }
-        [EntrySlider(-1f, 1000f, 1f)]
-        public static ConfigEntry<int> SetPlayerMp { get; private set; }
-        [EntrySlider(-1f, 1000f, 1f)]
-        public static ConfigEntry<int> SetPlayerEp { get; private set; }
-        [EntrySlider(-1f, 1000f, 1f)]
-        public static ConfigEntry<int> SetPlayerMaxHp { get; private set; }
-        [EntrySlider(-1f, 1000f, 1f)]
-        public static ConfigEntry<int> SetPlayerMaxMp { get; private set; }
-        [EntrySlider(-1f, 100f, 1f)]
-        public static ConfigEntry<int> SetPlayerMaxSatiety { get; private set; }
-        [EntrySlider(-1f, 10f, 1f)]
-        public static ConfigEntry<int> SetOverChargeSlotCount { get; private set; }
-        [EntrySlider(-1f, 20f, 1f)]
-        public static ConfigEntry<int> SetEnhancerSlotCount { get; private set; }
+        [EntryGui(2)]
+        public static ConfigEntry<bool, int> SetBackpackCapacity { get; private set; }
+        [EntryGui(2)]
+        public static ConfigEntry<bool, int> SetBottleHolderCount { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 1000f, 1f)]
+        public static ConfigEntry<bool, int> SetPlayerHp { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 1000f, 1f)]
+        public static ConfigEntry<bool, int> SetPlayerMp { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 1000f, 1f)]
+        public static ConfigEntry<bool, int> SetPlayerEp { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 1000f, 1f)]
+        public static ConfigEntry<bool, int> SetPlayerMaxHp { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 1000f, 1f)]
+        public static ConfigEntry<bool, int> SetPlayerMaxMp { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 100f, 1f)]
+        public static ConfigEntry<bool, int> SetPlayerMaxSatiety { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 10f, 1f)]
+        public static ConfigEntry<bool, int> SetOverChargeSlotCount { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 20f, 1f)]
+        public static ConfigEntry<bool, int> SetEnhancerSlotCount { get; private set; }
         [EntrySlider(-1f, 10f, 0.1f)]
         public static ConfigEntry<float> SetPlayerWalkSpeed { get; private set; }
 
@@ -469,214 +469,104 @@ namespace BetterExperience.BConfigManager
                         english: "Immune abnormality: Atk Down."
                     )
                     );
-                EnablePreloadBackpackCapacity = Config.Bind(
-                    SectionPlayer,
-                    nameof(EnablePreloadBackpackCapacity),
-                    false,
-                    new Translator(chinese: "预加载背包容量", english: "Preload Backpack Capacity"),
-                    new Translator(
-                        chinese: "启用预加载背包容量。开启后，背包容量将在存档读取后自动设置一次，使用设置值覆盖原始的背包容量。",
-                        english: "Enable preload backpack capacity. When enabled, the backpack capacity will be automatically set once after loading a save, " +
-                        "using the configured value to override the original backpack capacity."
-                    )
-                    );
-                EnablePreloadBottleHolderCount = Config.Bind(
-                    SectionPlayer,
-                    nameof(EnablePreloadBottleHolderCount),
-                    false,
-                    new Translator(chinese: "预加载空瓶收纳数量", english: "Preload Bottle Holder Count"),
-                    new Translator(
-                        chinese: "启用预加载空瓶收纳槽位数量。开启后，空瓶收纳槽位数量将在存档读取后自动设置一次，使用设置值覆盖原始的空瓶收纳槽位数量。",
-                        english: "Enable preload bottle holder count. When enabled, the bottle holder count will be automatically set once after loading a save, " +
-                        "using the configured value to override the original bottle holder count."
-                    )
-                    );
-                EnablePreloadPlayerHp = Config.Bind(
-                    SectionPlayer,
-                    nameof(EnablePreloadPlayerHp),
-                    false,
-                    new Translator(chinese: "预加载玩家HP", english: "Preload Player HP"),
-                    new Translator(
-                        chinese: "启用预加载玩家 HP。开启后，玩家 HP 将在存档读取后自动设置一次，使用设置值覆盖原始的玩家 HP。",
-                        english: "Enable preload player HP. When enabled, the player HP will be automatically set once after loading a save, " +
-                        "using the configured value to override the original player HP."
-                    )
-                    );
-                EnablePreloadPlayerMp = Config.Bind(
-                    SectionPlayer,
-                    nameof(EnablePreloadPlayerMp),
-                    false,
-                    new Translator(chinese: "预加载玩家MP", english: "Preload Player MP"),
-                    new Translator(
-                        chinese: "启用预加载玩家 MP。开启后，玩家 MP 将在存档读取后自动设置一次，使用设置值覆盖原始的玩家 MP。",
-                        english: "Enable preload player MP. When enabled, the player MP will be automatically set once after loading a save, " +
-                        "using the configured value to override the original player MP."
-                    )
-                    );
-                EnablePreloadPlayerEp = Config.Bind(
-                    SectionPlayer,
-                    nameof(EnablePreloadPlayerEp),
-                    false,
-                    new Translator(chinese: "预加载玩家EP", english: "Preload Player EP"),
-                    new Translator(
-                        chinese: "启用预加载玩家 EP。开启后，玩家 EP 将在存档读取后自动设置一次，使用设置值覆盖原始的玩家 EP。",
-                        english: "Enable preload player EP. When enabled, the player EP will be automatically set once after loading a save, " +
-                        "using the configured value to override the original player EP."
-                    )
-                    );
-                EnablePreloadPlayerMaxHp = Config.Bind(
-                    SectionPlayer,
-                    nameof(EnablePreloadPlayerMaxHp),
-                    false,
-                    new Translator(chinese: "预加载玩家最大HP", english: "Preload Player Max HP"),
-                    new Translator(
-                        chinese: "启用预加载玩家最大 HP。开启后，玩家最大 HP 将在存档读取后自动设置一次，使用设置值覆盖原始的玩家最大 HP。",
-                        english: "Enable preload player max HP. When enabled, the player max HP will be automatically set once after loading a save, " +
-                        "using the configured value to override the original player max HP."
-                    )
-                    );
-                EnablePreloadPlayerMaxMp = Config.Bind(
-                    SectionPlayer,
-                    nameof(EnablePreloadPlayerMaxMp),
-                    false,
-                    new Translator(chinese: "预加载玩家最大MP", english: "Preload Player Max MP"),
-                    new Translator(
-                        chinese: "启用预加载玩家最大 MP。开启后，玩家最大 MP 将在存档读取后自动设置一次，使用设置值覆盖原始的玩家最大 MP。",
-                        english: "Enable preload player max MP. When enabled, the player max MP will be automatically set once after loading a save, " +
-                        "using the configured value to override the original player max MP."
-                    )
-                    );
-                EnablePreloadPlayerMaxSatiety = Config.Bind(
-                    SectionPlayer,
-                    nameof(EnablePreloadPlayerMaxSatiety),
-                    false,
-                    new Translator(chinese: "预加载玩家最大饱食度", english: "Preload Player Max Satiety"),
-                    new Translator(
-                        chinese: "启用预加载玩家最大饱食度。开启后，玩家最大饱食度将在存档读取后自动设置一次，使用设置值覆盖原始的玩家最大饱食度。",
-                        english: "Enable preload player max satiety. When enabled, the player max satiety will be automatically set once after loading a save, " +
-                        "using the configured value to override the original player max satiety."
-                    )
-                    );
-                EnablePreloadOverChargeSlotCount = Config.Bind(
-                    SectionPlayer,
-                    nameof(EnablePreloadOverChargeSlotCount),
-                    false,
-                    new Translator(chinese: "预加载过充插槽数量", english: "Preload Over Charge Slot Count"),
-                    new Translator(
-                        chinese: "启用预加载过充插槽数量。开启后，过充插槽数量将在存档读取后自动设置一次，使用设置值覆盖原始的过充插槽数量。",
-                        english: "Enable preload over charge slot count. When enabled, the over charge slot count will be automatically set once after loading a save, " +
-                        "using the configured value to override the original over charge slot count."
-                    )
-                    );
-                EnablePreloadEnhancerSlotCount = Config.Bind(
-                    SectionPlayer,
-                    nameof(EnablePreloadEnhancerSlotCount),
-                    false,
-                    new Translator(chinese: "预加载强化插槽数量", english: "Preload Enhancer Slot Count"),
-                    new Translator(
-                        chinese: "启用预加载强化插槽数量。开启后，强化插槽数量将在存档读取后自动设置一次，使用设置值覆盖原始的强化插槽数量。",
-                        english: "Enable preload enhancer slot count. When enabled, the enhancer slot count will be automatically set once after loading a save, " +
-                        "using the configured value to override the original enhancer slot count."
-                    )
-                    );
-                SetBackpackCapacity = Config.Bind(
+                SetBackpackCapacity = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetBackpackCapacity),
                     -1,
                     new Translator(chinese: "设置背包容量", english: "Set Backpack Capacity"),
                     new Translator(
-                        chinese: "设置背包容量。将覆盖原始的背包容量。设为 -1 可保持为当前值。",
-                        english: "Set backpack capacity. It will override the original backpack capacity. Set to -1 to keep the capacity at its current value."
+                        chinese: "设置背包容量。将覆盖原始的背包容量。",
+                        english: "Set backpack capacity. It will override the original backpack capacity."
                     )
                     );
-                SetBottleHolderCount = Config.Bind(
+                SetBottleHolderCount = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetBottleHolderCount),
                     -1,
                     new Translator(chinese: "设置空瓶收纳数量", english: "Set Bottle Holder Count"),
                     new Translator(
-                        chinese: "设置空瓶收纳槽位数量。将覆盖原始的空瓶收纳槽位数量。设为 -1 可保持为当前值。",
-                        english: "Set bottle holder count. It will override the original bottle holder count. Set to -1 to keep the bottle holder count at its current value."
+                        chinese: "设置空瓶收纳槽位数量。将覆盖原始的空瓶收纳槽位数量。",
+                        english: "Set bottle holder count."
                     )
                     );
-                SetPlayerHp = Config.Bind(
+                SetPlayerHp = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetPlayerHp),
                     -1,
                     new Translator(chinese: "设置玩家HP", english: "Set Player HP"),
                     new Translator(
-                        chinese: "设置玩家 HP。将覆盖原始的玩家 HP。设为 -1 可保持为当前值。",
-                        english: "Set player HP. It will override the original player HP. Set to -1 to keep the HP at its current value."
+                        chinese: "设置玩家 HP。将覆盖原始的玩家 HP。",
+                        english: "Set player HP. It will override the original player HP."
                     )
                     );
-                SetPlayerMp = Config.Bind(
+                SetPlayerMp = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetPlayerMp),
                     -1,
                     new Translator(chinese: "设置玩家MP", english: "Set Player MP"),
                     new Translator(
-                        chinese: "设置玩家 MP。将覆盖原始的玩家 MP。设为 -1 可保持为当前值。",
-                        english: "Set player MP. It will override the original player MP. Set to -1 to keep the MP at its current value."
+                        chinese: "设置玩家 MP。将覆盖原始的玩家 MP。",
+                        english: "Set player MP. It will override the original player MP."
                     )
                     );
-                SetPlayerEp = Config.Bind(
+                SetPlayerEp = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetPlayerEp),
                     -1,
                     new Translator(chinese: "设置玩家EP", english: "Set Player EP"),
                     new Translator(
-                        chinese: "设置玩家 EP。将覆盖原始的玩家 EP。设为 -1 可保持为当前值。",
-                        english: "Set player EP. It will override the original player EP. Set to -1 to keep the EP at its current value."
+                        chinese: "设置玩家 EP。将覆盖原始的玩家 EP。",
+                        english: "Set player EP. It will override the original player EP."
                     )
                     );
-                SetPlayerMaxHp = Config.Bind(
+                SetPlayerMaxHp = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetPlayerMaxHp),
                     -1,
                     new Translator(chinese: "设置玩家最大HP", english: "Set Player Max HP"),
                     new Translator(
-                        chinese: "设置玩家最大 HP。将覆盖原始的玩家最大 HP。设为 -1 可保持为当前值。",
-                        english: "Set player max HP. It will override the original player max HP. Set to -1 to keep the max HP at its current value."
+                        chinese: "设置玩家最大 HP。将覆盖原始的玩家最大 HP。",
+                        english: "Set player max HP. It will override the original player max HP."
                     )
                     );
-                SetPlayerMaxMp = Config.Bind(
+                SetPlayerMaxMp = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetPlayerMaxMp),
                     -1,
                     new Translator(chinese: "设置玩家最大MP", english: "Set Player Max MP"),
                     new Translator(
-                        chinese: "设置玩家最大 MP。将覆盖原始的玩家最大 MP。设为 -1 可保持为当前值。",
-                        english: "Set player max MP. It will override the original player max MP. Set to -1 to keep the max MP at its current value."
+                        chinese: "设置玩家最大 MP。将覆盖原始的玩家最大 MP。",
+                        english: "Set player max MP. It will override the original player max MP."
                     )
                     );
-                SetPlayerMaxSatiety = Config.Bind(
+                SetPlayerMaxSatiety = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetPlayerMaxSatiety),
                     -1,
                     new Translator(chinese: "设置玩家最大饱食度", english: "Set Player Max Satiety"),
                     new Translator(
-                        chinese: "设置玩家最大饱食度。将覆盖原始的玩家最大饱食度。设为 -1 可保持为当前值。",
-                        english: "Set player max satiety. It will override the original player max satiety. Set to -1 to keep the max satiety at its current value."
+                        chinese: "设置玩家最大饱食度。将覆盖原始的玩家最大饱食度。",
+                        english: "Set player max satiety. It will override the original player max satiety."
                     )
                     );
-                SetOverChargeSlotCount = Config.Bind(
+                SetOverChargeSlotCount = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetOverChargeSlotCount),
                     -1,
                     new Translator(chinese: "设置过充插槽数量", english: "Set Over Charge Slot Count"),
                     new Translator(
-                        chinese: "设置过充插槽数量。将覆盖原始的过充插槽数量。设为 -1 可保持为当前值。",
-                        english: "Set over charge slot count. It will override the original over charge slot count. Set to -1 to keep the over charge slot count at its current value."
+                        chinese: "设置过充插槽数量。将覆盖原始的过充插槽数量。",
+                        english: "Set over charge slot count. It will override the original over charge slot count."
                     )
                     );
-                SetEnhancerSlotCount = Config.Bind(
+                SetEnhancerSlotCount = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetEnhancerSlotCount),
                     -1,
                     new Translator(chinese: "设置强化插槽数量", english: "Set Enhancer Slot Count"),
                     new Translator(
-                        chinese: "设置强化插槽数量。将覆盖原始的强化插槽数量。设为 -1 可保持为当前值。",
-                        english: "Set enhancer slot count. It will override the original enhancer slot count. Set to -1 to keep the enhancer slot count at its current value."
+                        chinese: "设置强化插槽数量。将覆盖原始的强化插槽数量。",
+                        english: "Set enhancer slot count. It will override the original enhancer slot count."
                     )
                     );
                 SetPlayerWalkSpeed = Config.Bind(

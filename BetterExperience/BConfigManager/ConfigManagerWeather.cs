@@ -5,7 +5,7 @@ using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
-    public partial class ConfigManager
+    public static partial class ConfigManager
     {
         // 天气配置会与游戏当前天气双向同步，SetWeatherPatch 写回配置时会抑制递归应用。
         public static ConfigEntry<bool> EnableVisualImpactOfFog { get; private set; }

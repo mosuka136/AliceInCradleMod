@@ -3,6 +3,7 @@ using BetterExperience.BLogSpace;
 using System;
 using System.IO;
 using UnityModBase.HConfigSpace;
+using UnityModBase.HControlSpace;
 using UnityModBase.HLogSpace;
 using UnityModBase.HProvider;
 using UnityModBase.HUserSpace;
@@ -16,6 +17,7 @@ namespace BetterExperience
         public static LogDatabase LogDatabase => Service.LogDatabase;
         public static LogWriter LogWriter => Service.LogWriter;
         public static ConfigService Config => Service.Config;
+        public static ControlService Control => Service.Control;
 
         public static void Initialize(string baseDirectory, BepInExLoggerProvider logger)
         {

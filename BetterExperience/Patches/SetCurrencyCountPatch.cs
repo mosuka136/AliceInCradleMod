@@ -26,33 +26,17 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    if (ConfigManager.EnablePreloadCurrencyGoldCount.Value
-                        && UInt32.TryParse(ConfigManager.SetCurrencyGoldCount.Value.ToString(), out var countGold))
+                    if (ConfigManager.SetCurrencyGoldCount.Value1
+                        && UInt32.TryParse(ConfigManager.SetCurrencyGoldCount.Value2.ToString(), out var countGold))
                         SetCurrencyGoldCount(countGold);
 
-                    if (ConfigManager.EnablePreloadCurrencyCraftsCount.Value
-                        && UInt32.TryParse(ConfigManager.SetCurrencyCraftsCount.Value.ToString(), out var countCrafts))
+                    if (ConfigManager.SetCurrencyCraftsCount.Value1
+                        && UInt32.TryParse(ConfigManager.SetCurrencyCraftsCount.Value2.ToString(), out var countCrafts))
                         SetCurrencyCraftsCount(countCrafts);
 
-                    if (ConfigManager.EnablePreloadCurrencyJuiceCount.Value
-                        && UInt32.TryParse(ConfigManager.SetCurrencyJuiceCount.Value.ToString(), out var countJuice))
+                    if (ConfigManager.SetCurrencyJuiceCount.Value1
+                        && UInt32.TryParse(ConfigManager.SetCurrencyJuiceCount.Value2.ToString(), out var countJuice))
                         SetCurrencyJuiceCount(countJuice);
-                };
-
-                ConfigManager.SetCurrencyGoldCount.OnValueChanged += (s, e) =>
-                {
-                    if (UInt32.TryParse(e.ToString(), out var count))
-                        SetCurrencyGoldCount(count);
-                };
-                ConfigManager.SetCurrencyCraftsCount.OnValueChanged += (s, e) =>
-                {
-                    if (UInt32.TryParse(e.ToString(), out var count))
-                        SetCurrencyCraftsCount(count);
-                };
-                ConfigManager.SetCurrencyJuiceCount.OnValueChanged += (s, e) =>
-                {
-                    if (UInt32.TryParse(e.ToString(), out var count))
-                        SetCurrencyJuiceCount(count);
                 };
 
                 _initialized = true;
@@ -93,54 +77,75 @@ namespace BetterExperience.Patches
                 var ctype = cEntry.ctype;
                 if (ctype == CoinStorage.CTYPE.GOLD)
                 {
-                    BLog.Debug($"Set GOLD count to: {ConfigManager.SetCurrencyGoldCount.Value}");
-                    return DealWithCurrencyCount(
-                        ConfigManager.EnableLockCurrencyGoldCount.Value,
-                        ConfigManager.SetCurrencyGoldCount.Value,
-                        cEntry);
+                    return DealWithCurrencyCount(ConfigManager.EnableLockCurrencyGoldCount.Value, cEntry);
                 }
                 else if (ctype == CoinStorage.CTYPE.CRAFTS)
                 {
-                    BLog.Debug($"Set CRAFTS count to: {ConfigManager.SetCurrencyCraftsCount.Value}");
-                    return DealWithCurrencyCount(
-                        ConfigManager.EnableLockCurrencyCraftsCount.Value,
-                        ConfigManager.SetCurrencyCraftsCount.Value,
-                        cEntry);
+                    return DealWithCurrencyCount(ConfigManager.EnableLockCurrencyCraftsCount.Value, cEntry);
                 }
                 else if (ctype == CoinStorage.CTYPE.JUICE)
                 {
-                    BLog.Debug($"Set JUICE count to: {ConfigManager.SetCurrencyJuiceCount.Value}");
-                    return DealWithCurrencyCount(
-                        ConfigManager.EnableLockCurrencyJuiceCount.Value,
-                        ConfigManager.SetCurrencyJuiceCount.Value,
-                        cEntry);
+                    return DealWithCurrencyCount(ConfigManager.EnableLockCurrencyJuiceCount.Value, cEntry);
                 }
 
                 BLog.Notice($"Unknown currency type: {ctype}. No lock applied.");
                 return true;
             }
 
-            public static bool DealWithCurrencyCount(bool isEnabled, long count, CoinEntry cEntry)
+            public static bool DealWithCurrencyCount(bool isEnabled, CoinEntry cEntry)
             {
                 if (!isEnabled)
                     return true;
 
-                // 负数表示只冻结当前数量，不主动把货币改成配置值。
-                if (count < 0)
-                    return false;
+                BLog.Debug($"{cEntry.ctype} count locked at {cEntry.Get()}.");
+                return false;
+            }
 
-                if (!UInt32.TryParse(count.ToString(), out var countUInt))
+            public static long GetCurrencyGoldCount()
+            {
+                return GetCurrencyCount(CoinStorage.CTYPE.GOLD);
+            }
+
+            public static long GetCurrencyCraftsCount()
+            {
+                return GetCurrencyCount(CoinStorage.CTYPE.CRAFTS);
+            }
+
+            public static long GetCurrencyJuiceCount()
+            {
+                return GetCurrencyCount(CoinStorage.CTYPE.JUICE);
+            }
+
+            public static void SetCurrencyGoldCount(long count)
+            {
+                SetCurrencyCount(count, "GOLD", SetCurrencyGoldCount);
+            }
+
+            public static void SetCurrencyCraftsCount(long count)
+            {
+                SetCurrencyCount(count, "CRAFTS", SetCurrencyCraftsCount);
+            }
+
+            public static void SetCurrencyJuiceCount(long count)
+            {
+                SetCurrencyCount(count, "JUICE", SetCurrencyJuiceCount);
+            }
+
+            private static long GetCurrencyCount(CoinStorage.CTYPE type)
+            {
+                var entry = CoinStorage.GetEntry(type);
+                return entry == null ? -1L : entry.Get();
+            }
+
+            private static void SetCurrencyCount(long count, string currencyName, Action<uint> valueSetter)
+            {
+                if (count < 0 || count > UInt32.MaxValue)
                 {
-                    BLog.Error($"Failed to parse lock count for {cEntry.ctype} currency. Value: {count}");
-                    return true;
+                    BLog.Debug($"Ignored invalid {currencyName} count: {count}");
+                    return;
                 }
 
-                if (cEntry.Get() == countUInt)
-                    return false;
-
-                cEntry.Set(countUInt, true);
-
-                return false;
+                valueSetter((uint)count);
             }
 
             public static void SetCurrencyGoldCount(uint count)

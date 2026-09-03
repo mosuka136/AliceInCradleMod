@@ -12,7 +12,7 @@ namespace BetterExperience.BConfigManager
     /// 该类把配置文件模型中的表/项绑定为静态强类型属性，供补丁、GUI 和输入处理直接读取。
     /// 具体配置项按功能拆分到同名 partial 文件中，避免单个文件过长。
     /// </summary>
-    public partial class ConfigManager
+    public static partial class ConfigManager
     {
         // 初始化和重载都会改写静态配置引用，需要串行化以避免 GUI 或输入回调读到中间状态。
         private static readonly object _configSyncRoot = new object();
@@ -27,11 +27,6 @@ namespace BetterExperience.BConfigManager
         /// </summary>
         public static ConfigSheet Sheet => Config.Sheet;
 
-        private ConfigManager()
-        {
-            
-        }
-
         public static ConfigEntry<bool> EnableBetterExperience { get; private set; }
         public static ConfigEntry<LanguageType> SetLanguage { get; private set; }
         public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
@@ -43,6 +38,34 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<float> SetLootDropRatio { get; private set; }
 
         private const string SectionGeneral = "General";
+
+        /// <summary>
+        /// 将“读档后预加载”开关与对应设置值绑定为同一个双值配置项。
+        /// </summary>
+        private static ConfigEntry<bool, T> BindPreloadValue<T>(
+            string section,
+            string key,
+            T defaultValue,
+            Translator name,
+            Translator description)
+        {
+            return Config.Bind(
+                section,
+                key,
+                false,
+                defaultValue,
+                name,
+                description,
+                new Translator(
+                    chinese: "是否在存档读取后自动应用设置值。",
+                    english: "Whether to apply the configured value automatically after loading a save."
+                ),
+                new Translator(
+                    chinese: "要应用的设置值。",
+                    english: "The configured value to apply."
+                )
+                );
+        }
 
         public static void Initialize()
         {

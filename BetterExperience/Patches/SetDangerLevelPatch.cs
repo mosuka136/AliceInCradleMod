@@ -26,17 +26,11 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    if (ConfigManager.EnablePreloadDangerLevel.Value)
+                    if (ConfigManager.SetDangerLevel.Value1)
                     {
-                        BLog.Debug($"Applying preloaded danger level: {ConfigManager.SetDangerLevel.Value}");
-                        SetDangerLevel(ConfigManager.SetDangerLevel.Value);
+                        BLog.Debug($"Applying preloaded danger level: {ConfigManager.SetDangerLevel.Value2}");
+                        SetDangerLevel(ConfigManager.SetDangerLevel.Value2);
                     }
-                };
-
-                ConfigManager.SetDangerLevel.OnValueChanged += (s, e) =>
-                {
-                    BLog.Debug($"Danger level config changed: {e}");
-                    SetDangerLevel(e);
                 };
 
                 _initialized = true;
@@ -53,22 +47,15 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var sg = UnityEngine.Object.FindAnyObjectByType<SceneGame>();
-                    if (sg == null)
+                    var nightController = GetNightController();
+                    if (nightController == null)
                     {
-                        BLog.Notice("SceneGame not found while applying danger level.");
+                        BLog.Notice("NightController not found while applying danger level.");
                         return;
                     }
 
-                    var m2d = Traverse.Create(sg).Field("M2D").GetValue<NelM2DBase>();
-                    if (m2d == null)
-                    {
-                        BLog.Notice("NelM2DBase not found while applying danger level.");
-                        return;
-                    }
-
-                    Traverse.Create(m2d.NightCon).Field("dlevel").SetValue(level);
-                    m2d.NightCon.showNightLevelAdditionUI(true);
+                    Traverse.Create(nightController).Field("dlevel").SetValue(level);
+                    nightController.showNightLevelAdditionUI(true);
 
                     BLog.Debug($"Danger level set to {level}");
                 }
@@ -76,6 +63,14 @@ namespace BetterExperience.Patches
                 {
                     BLog.Error($"Unexpected error in {nameof(SetDangerLevel)}.", ex);
                 }
+            }
+
+            public static int GetDangerLevel()
+            {
+                var nightController = GetNightController();
+                return nightController == null
+                    ? -1
+                    : nightController.getDangerMeterVal(real: true, raw: true);
             }
         }
     }

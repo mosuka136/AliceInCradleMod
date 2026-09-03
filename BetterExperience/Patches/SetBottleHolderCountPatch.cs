@@ -29,10 +29,12 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    if (ConfigManager.EnablePreloadBottleHolderCount.Value)
+                    _originalBottleHolderCount = -1;
+
+                    if (ConfigManager.SetBottleHolderCount.Value1)
                     {
-                        BLog.Debug($"Applying preloaded bottle holder count: {ConfigManager.SetBottleHolderCount.Value}");
-                        SetBottleHolderCount(ConfigManager.SetBottleHolderCount.Value);
+                        BLog.Debug($"Applying preloaded bottle holder count: {ConfigManager.SetBottleHolderCount.Value2}");
+                        SetBottleHolderCount(ConfigManager.SetBottleHolderCount.Value2);
                     }
                 };
 
@@ -42,12 +44,6 @@ namespace BetterExperience.Patches
                 {
                     BLog.Debug($"Restoring bottle holder count after save: {_originalBottleHolderCount}");
                     SetBottleHolderCount(_originalBottleHolderCount);
-                };
-
-                ConfigManager.SetBottleHolderCount.OnValueChanged += (s, e) =>
-                {
-                    BLog.Debug($"Bottle holder count config changed: {e}");
-                    SetBottleHolderCount(e);
                 };
 
                 _initialized = true;
@@ -64,7 +60,7 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var inventory = GetIMNG()?.getInventory();
+                    var inventory = GetInventory();
                     if (inventory == null)
                     {
                         BLog.Notice("Inventory not found while applying bottle holder count.");
@@ -85,14 +81,7 @@ namespace BetterExperience.Patches
             {
                 try
                 {
-                    var imng = GetIMNG();
-                    if (imng == null)
-                    {
-                        BLog.Notice("Item manager not found while recovering bottle holder count.");
-                        return;
-                    }
-
-                    var inventory = imng.getInventory();
+                    var inventory = GetInventory();
                     if (inventory == null)
                     {
                         BLog.Notice("Inventory not found while recovering bottle holder count.");
@@ -106,7 +95,14 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var count = imng.getInventoryPrecious().getCount(item);
+                    var preciousInventory = GetPreciousInventory();
+                    if (preciousInventory == null)
+                    {
+                        BLog.Notice("Precious inventory not found while recovering bottle holder count.");
+                        return;
+                    }
+
+                    var count = preciousInventory.getCount(item);
                     count = Mathf.Max(count, 0);
 
                     _originalBottleHolderCount = inventory.hide_bottle_max;
@@ -119,17 +115,10 @@ namespace BetterExperience.Patches
                 }
             }
 
-            public static NelItemManager GetIMNG()
+            public static int GetBottleHolderCount()
             {
-                var sg = UnityEngine.Object.FindAnyObjectByType<SceneGame>();
-                if (sg == null)
-                    return null;
-
-                var m2d = Traverse.Create(sg).Field("M2D").GetValue<NelM2DBase>();
-                if (m2d == null)
-                    return null;
-
-                return m2d.IMNG;
+                var inventory = GetInventory();
+                return inventory == null ? -1 : inventory.hide_bottle_max;
             }
         }
     }

@@ -6,7 +6,7 @@ using UnityModBase.HTranslatorSpace;
 
 namespace BetterExperience.BConfigManager
 {
-    public partial class ConfigManager
+    public static partial class ConfigManager
     {
         public static ConfigEntry<bool> EnableLog { get; private set; }
         public static ConfigEntry<LogLevel> LogLevel { get; private set; }

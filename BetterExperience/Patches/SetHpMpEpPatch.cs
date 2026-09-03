@@ -27,61 +27,35 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    if (ConfigManager.EnablePreloadPlayerHp.Value)
+                    if (ConfigManager.SetPlayerHp.Value1)
                     {
-                        BLog.Debug($"Applying preloaded HP: {ConfigManager.SetPlayerHp.Value}");
-                        SetHp(ConfigManager.SetPlayerHp.Value);
+                        BLog.Debug($"Applying preloaded HP: {ConfigManager.SetPlayerHp.Value2}");
+                        SetHp(ConfigManager.SetPlayerHp.Value2);
                     }
 
-                    if (ConfigManager.EnablePreloadPlayerMp.Value)
+                    if (ConfigManager.SetPlayerMp.Value1)
                     {
-                        BLog.Debug($"Applying preloaded MP: {ConfigManager.SetPlayerMp.Value}");
-                        SetMp(ConfigManager.SetPlayerMp.Value);
+                        BLog.Debug($"Applying preloaded MP: {ConfigManager.SetPlayerMp.Value2}");
+                        SetMp(ConfigManager.SetPlayerMp.Value2);
                     }
 
-                    if (ConfigManager.EnablePreloadPlayerEp.Value)
+                    if (ConfigManager.SetPlayerEp.Value1)
                     {
-                        BLog.Debug($"Applying preloaded EP: {ConfigManager.SetPlayerEp.Value}");
-                        SetEp(ConfigManager.SetPlayerEp.Value);
+                        BLog.Debug($"Applying preloaded EP: {ConfigManager.SetPlayerEp.Value2}");
+                        SetEp(ConfigManager.SetPlayerEp.Value2);
                     }
 
-                    if (ConfigManager.EnablePreloadPlayerMaxHp.Value)
+                    if (ConfigManager.SetPlayerMaxHp.Value1)
                     {
-                        BLog.Debug($"Applying preloaded max HP: {ConfigManager.SetPlayerMaxHp.Value}");
-                        SetMaxHp(ConfigManager.SetPlayerMaxHp.Value);
+                        BLog.Debug($"Applying preloaded max HP: {ConfigManager.SetPlayerMaxHp.Value2}");
+                        SetMaxHp(ConfigManager.SetPlayerMaxHp.Value2);
                     }
 
-                    if (ConfigManager.EnablePreloadPlayerMaxMp.Value)
+                    if (ConfigManager.SetPlayerMaxMp.Value1)
                     {
-                        BLog.Debug($"Applying preloaded max MP: {ConfigManager.SetPlayerMaxMp.Value}");
-                        SetMaxMp(ConfigManager.SetPlayerMaxMp.Value);
+                        BLog.Debug($"Applying preloaded max MP: {ConfigManager.SetPlayerMaxMp.Value2}");
+                        SetMaxMp(ConfigManager.SetPlayerMaxMp.Value2);
                     }
-                };
-
-                ConfigManager.SetPlayerHp.OnValueChanged += (s, e) =>
-                {
-                    BLog.Debug($"Player HP config changed: {e}");
-                    SetHp(e);
-                };
-                ConfigManager.SetPlayerMp.OnValueChanged += (s, e) =>
-                {
-                    BLog.Debug($"Player MP config changed: {e}");
-                    SetMp(e);
-                };
-                ConfigManager.SetPlayerEp.OnValueChanged += (s, e) =>
-                {
-                    BLog.Debug($"Player EP config changed: {e}");
-                    SetEp(e);
-                };
-                ConfigManager.SetPlayerMaxHp.OnValueChanged += (s, e) =>
-                {
-                    BLog.Debug($"Player max HP config changed: {e}");
-                    SetMaxHp(e);
-                };
-                ConfigManager.SetPlayerMaxMp.OnValueChanged += (s, e) =>
-                {
-                    BLog.Debug($"Player max MP config changed: {e}");
-                    SetMaxMp(e);
                 };
 
                 _initialized = true;
@@ -98,17 +72,11 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
-                    if (pr == null)
+                    PR pr;
+                    Traverse prTraverse;
+                    if (!TryGetPRTraverse(out pr, out prTraverse))
                     {
                         BLog.Notice("Player instance not found while applying HP.");
-                        return;
-                    }
-
-                    var prTraverse = Traverse.Create(pr);
-                    if (prTraverse == null)
-                    {
-                        BLog.Notice("Player traverse not found while applying HP.");
                         return;
                     }
 
@@ -135,17 +103,11 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
-                    if (pr == null)
+                    PR pr;
+                    Traverse prTraverse;
+                    if (!TryGetPRTraverse(out pr, out prTraverse))
                     {
                         BLog.Notice("Player instance not found while applying MP.");
-                        return;
-                    }
-
-                    var prTraverse = Traverse.Create(pr);
-                    if (prTraverse == null)
-                    {
-                        BLog.Notice("Player traverse not found while applying MP.");
                         return;
                     }
 
@@ -172,17 +134,11 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
-                    if (pr == null)
+                    PR pr;
+                    Traverse prTraverse;
+                    if (!TryGetPRTraverse(out pr, out prTraverse))
                     {
                         BLog.Notice("Player instance not found while applying EP.");
-                        return;
-                    }
-
-                    var prTraverse = Traverse.Create(pr);
-                    if (prTraverse == null)
-                    {
-                        BLog.Notice("Player traverse not found while applying EP.");
                         return;
                     }
 
@@ -208,17 +164,11 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
-                    if (pr == null)
+                    PR pr;
+                    Traverse prTraverse;
+                    if (!TryGetPRTraverse(out pr, out prTraverse))
                     {
                         BLog.Notice("Player instance not found while applying max HP.");
-                        return;
-                    }
-
-                    var prTraverse = Traverse.Create(pr);
-                    if (prTraverse == null)
-                    {
-                        BLog.Notice("Player traverse not found while applying max HP.");
                         return;
                     }
 
@@ -245,17 +195,11 @@ namespace BetterExperience.Patches
                         return;
                     }
 
-                    var pr = UnityEngine.Object.FindAnyObjectByType<PR>();
-                    if (pr == null)
+                    PR pr;
+                    Traverse prTraverse;
+                    if (!TryGetPRTraverse(out pr, out prTraverse))
                     {
                         BLog.Notice("Player instance not found while applying max MP.");
-                        return;
-                    }
-
-                    var prTraverse = Traverse.Create(pr);
-                    if (prTraverse == null)
-                    {
-                        BLog.Notice("Player traverse not found while applying max MP.");
                         return;
                     }
 
@@ -268,6 +212,36 @@ namespace BetterExperience.Patches
                 {
                     BLog.Error($"Unexpected error in {nameof(SetMaxMp)}.", ex);
                 }
+            }
+
+            public static int GetHp()
+            {
+                return GetPlayerValue("hp");
+            }
+
+            public static int GetMp()
+            {
+                return GetPlayerValue("mp");
+            }
+
+            public static int GetEp()
+            {
+                return GetPlayerValue("ep");
+            }
+
+            public static int GetMaxHp()
+            {
+                return GetPlayerValue("maxhp");
+            }
+
+            public static int GetMaxMp()
+            {
+                return GetPlayerValue("maxmp");
+            }
+
+            private static int GetPlayerValue(string fieldName)
+            {
+                return GetPRFieldValue(fieldName, -1);
             }
         }
     }

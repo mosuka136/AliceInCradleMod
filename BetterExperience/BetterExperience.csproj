@@ -58,6 +58,7 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BControlManager\ControlManager.cs" />
     <Compile Include="BConfigManager\ConfigManagerWeather.cs" />
     <Compile Include="BetterExperience.cs" />
     <Compile Include="BConfigManager\ConfigManagerCane.cs" />
