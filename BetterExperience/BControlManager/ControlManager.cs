@@ -1,5 +1,6 @@
 using BetterExperience.BLogSpace;
 using BetterExperience.Patches;
+using nel;
 using System;
 using UnityModBase.HControlSpace;
 using UnityModBase.HGuiSpace;
@@ -13,7 +14,7 @@ namespace BetterExperience.BControlManager
     /// 控制条目不落盘，只在当前游戏会话内生效。
     /// 条目本身不实现读写逻辑：读取委托给 HPatches 各补丁类的 Get* 方法，
     /// 用户在界面提交新值时通过 OnValueChanged 转发给对应 Set* 方法写回游戏。
-    /// 各 Get* 方法在游戏对象不可用（未进入游戏、未读档等）时统一返回 -1 作为占位值。
+    /// 各 Get* 方法在游戏对象不可用（未进入游戏、未读档等）时返回数值 -1 或布尔 false 作为占位值。
     /// 生命周期：由插件入口在 Harmony 补丁注册完成后调用一次 <see cref="Initialize"/>，
     /// 之后不再变更结构；ControlService 不提供并发保护，条目刷新与界面写入须由 GUI 宿主在主线程驱动。
     /// </summary>
@@ -22,6 +23,7 @@ namespace BetterExperience.BControlManager
         private const string SectionPlayer = "Player";
         private const string SectionCane = "Cane";
         private const string SectionMap = "Map";
+        private const string SectionWeather = "Weather";
         private const string SectionCurrency = "Currency";
 
         private static bool _initialized;
@@ -57,6 +59,13 @@ namespace BetterExperience.BControlManager
 
         internal static ControlEntry<int> SetDangerLevel { get; private set; }
 
+        internal static ControlEntry<bool> SetWeatherWind { get; private set; }
+        internal static ControlEntry<bool> SetWeatherThunder { get; private set; }
+        internal static ControlEntry<bool> SetWeatherMist { get; private set; }
+        internal static ControlEntry<bool> SetWeatherDrought { get; private set; }
+        internal static ControlEntry<bool> SetWeatherDenseMist { get; private set; }
+        internal static ControlEntry<bool> SetWeatherPlague { get; private set; }
+
         internal static ControlEntry<long> SetCurrencyGoldCount { get; private set; }
         internal static ControlEntry<long> SetCurrencyCraftsCount { get; private set; }
         internal static ControlEntry<long> SetCurrencyJuiceCount { get; private set; }
@@ -77,6 +86,7 @@ namespace BetterExperience.BControlManager
                 InitializePlayerControls();
                 InitializeCaneControls();
                 InitializeMapControls();
+                InitializeWeatherControls();
                 InitializeCurrencyControls();
 
                 _initialized = true;
@@ -110,6 +120,13 @@ namespace BetterExperience.BControlManager
                 new Translator(
                     chinese: "查看和修改当前游戏中的地图状态。",
                     english: "View and modify map state in the current game."
+                ));
+            BService.Control.CreateTable(
+                SectionWeather,
+                new Translator(chinese: "天气", english: "Weather"),
+                new Translator(
+                    chinese: "查看和修改当前游戏中的天气状态。",
+                    english: "View and modify weather in the current game."
                 ));
             BService.Control.CreateTable(
                 SectionCurrency,
@@ -305,6 +322,34 @@ namespace BetterExperience.BControlManager
                 new UiSliderMetadata(-1f, 160f, 1f));
         }
 
+        private static void InitializeWeatherControls()
+        {
+            SetWeatherWind = BindWeather(
+                nameof(SetWeatherWind),
+                WeatherItem.WEATHER.WIND,
+                new Translator(chinese: "设置天气旋风", english: "Set Weather Wind"));
+            SetWeatherThunder = BindWeather(
+                nameof(SetWeatherThunder),
+                WeatherItem.WEATHER.THUNDER,
+                new Translator(chinese: "设置天气雷暴", english: "Set Weather Thunder"));
+            SetWeatherMist = BindWeather(
+                nameof(SetWeatherMist),
+                WeatherItem.WEATHER.MIST,
+                new Translator(chinese: "设置天气雾", english: "Set Weather Mist"));
+            SetWeatherDrought = BindWeather(
+                nameof(SetWeatherDrought),
+                WeatherItem.WEATHER.DROUGHT,
+                new Translator(chinese: "设置天气干旱", english: "Set Weather Drought"));
+            SetWeatherDenseMist = BindWeather(
+                nameof(SetWeatherDenseMist),
+                WeatherItem.WEATHER.MIST_DENSE,
+                new Translator(chinese: "设置天气浓雾", english: "Set Weather Dense Mist"));
+            SetWeatherPlague = BindWeather(
+                nameof(SetWeatherPlague),
+                WeatherItem.WEATHER.PLAGUE,
+                new Translator(chinese: "设置天气瘟疫", english: "Set Weather Plague"));
+        }
+
         private static void InitializeCurrencyControls()
         {
             SetCurrencyGoldCount = BindCurrency(
@@ -389,6 +434,26 @@ namespace BetterExperience.BControlManager
                     english: "Set the currency amount in the current game."
                 ),
                 new UiSliderMetadata(-1f, 1000000f, 1f));
+        }
+
+        /// <summary>
+        /// 绑定天气开关，读取当前 NightController 状态并把界面修改即时写回游戏。
+        /// </summary>
+        private static ControlEntry<bool> BindWeather(
+            string key,
+            WeatherItem.WEATHER weather,
+            Translator name)
+        {
+            return Bind(
+                SectionWeather,
+                key,
+                () => HPatches.SetWeatherPatch.GetWeather(weather),
+                value => HPatches.SetWeatherPatch.SetWeather(weather, value),
+                name,
+                new Translator(
+                    chinese: "设置当前游戏中的天气状态。",
+                    english: "Set the weather state in the current game."
+                ));
         }
 
         /// <summary>

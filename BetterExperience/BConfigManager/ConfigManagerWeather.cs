@@ -1,5 +1,6 @@
 using BetterExperience.BLogSpace;
 using System;
+using UnityModBase.HClassAttribute;
 using UnityModBase.HConfigSpace;
 using UnityModBase.HTranslatorSpace;
 
@@ -7,19 +8,25 @@ namespace BetterExperience.BConfigManager
 {
     public static partial class ConfigManager
     {
-        // 天气配置会与游戏当前天气双向同步，SetWeatherPatch 写回配置时会抑制递归应用。
+        // 雾效开关是持久化偏好；具体天气使用双值“读档后预加载”配置，实时修改由 ControlManager 负责。
         public static ConfigEntry<bool> EnableVisualImpactOfFog { get; private set; }
-        public static ConfigEntry<bool> SetWeatherWind { get; private set; }
-        public static ConfigEntry<bool> SetWeatherThunder { get; private set; }
-        public static ConfigEntry<bool> SetWeatherMist { get; private set; }
-        public static ConfigEntry<bool> SetWeatherDrought { get; private set; }
-        public static ConfigEntry<bool> SetWeatherDenseMist { get; private set; }
-        public static ConfigEntry<bool> SetWeatherPlague { get; private set; }
+        [EntryGui(2)]
+        public static ConfigEntry<bool, bool> SetWeatherWind { get; private set; }
+        [EntryGui(2)]
+        public static ConfigEntry<bool, bool> SetWeatherThunder { get; private set; }
+        [EntryGui(2)]
+        public static ConfigEntry<bool, bool> SetWeatherMist { get; private set; }
+        [EntryGui(2)]
+        public static ConfigEntry<bool, bool> SetWeatherDrought { get; private set; }
+        [EntryGui(2)]
+        public static ConfigEntry<bool, bool> SetWeatherDenseMist { get; private set; }
+        [EntryGui(2)]
+        public static ConfigEntry<bool, bool> SetWeatherPlague { get; private set; }
 
         private const string SectionWeather = "Weather";
 
         /// <summary>
-        /// 初始化天气可视效果和具体天气开关配置。
+        /// 初始化天气可视效果和具体天气的读档预加载配置。
         /// </summary>
         public static void InitializeWeather()
         {
@@ -37,7 +44,7 @@ namespace BetterExperience.BConfigManager
                         english: "Enable visual impact of fog. After disabling, the fog will not be displayed or block the view."
                     )
                     );
-                SetWeatherWind = Config.Bind(
+                SetWeatherWind = BindPreloadValue(
                     SectionWeather,
                     nameof(SetWeatherWind),
                     false,
@@ -47,7 +54,7 @@ namespace BetterExperience.BConfigManager
                         english: "Set weather to wind."
                     )
                     );
-                SetWeatherThunder = Config.Bind(
+                SetWeatherThunder = BindPreloadValue(
                     SectionWeather,
                     nameof(SetWeatherThunder),
                     false,
@@ -57,7 +64,7 @@ namespace BetterExperience.BConfigManager
                         english: "Set weather to thunder."
                     )
                     );
-                SetWeatherMist = Config.Bind(
+                SetWeatherMist = BindPreloadValue(
                     SectionWeather,
                     nameof(SetWeatherMist),
                     false,
@@ -67,7 +74,7 @@ namespace BetterExperience.BConfigManager
                         english: "Set weather to mist."
                     )
                     );
-                SetWeatherDrought = Config.Bind(
+                SetWeatherDrought = BindPreloadValue(
                     SectionWeather,
                     nameof(SetWeatherDrought),
                     false,
@@ -77,7 +84,7 @@ namespace BetterExperience.BConfigManager
                         english: "Set weather to drought."
                     )
                     );
-                SetWeatherDenseMist = Config.Bind(
+                SetWeatherDenseMist = BindPreloadValue(
                     SectionWeather,
                     nameof(SetWeatherDenseMist),
                     false,
@@ -87,7 +94,7 @@ namespace BetterExperience.BConfigManager
                         english: "Set weather to dense mist."
                     )
                     );
-                SetWeatherPlague = Config.Bind(
+                SetWeatherPlague = BindPreloadValue(
                     SectionWeather,
                     nameof(SetWeatherPlague),
                     false,

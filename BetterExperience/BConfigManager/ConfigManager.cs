@@ -40,8 +40,9 @@ namespace BetterExperience.BConfigManager
 
         /// <summary>
         /// 将“读档后预加载”开关与对应设置值绑定为同一个双值配置项。
+        /// 仅直接覆盖存档所拥有状态的目标值使用此格式；持续 Hook 规则和跨会话偏好继续使用普通单值配置。
         /// 返回项的 <c>Value1</c> 为是否在读档完成后自动应用设置值（默认 false），
-        /// <c>Value2</c> 为要应用的值；各调用方的默认值均约定为 -1，表示不覆盖游戏当前值。
+        /// <c>Value2</c> 为要应用的值；不覆盖游戏当前值时使用的默认值由调用方决定。
         /// 两个子项的说明文案固定，具体用途说明由调用方通过 <paramref name="description"/> 提供。
         /// </summary>
         private static ConfigEntry<bool, T> BindPreloadValue<T>(

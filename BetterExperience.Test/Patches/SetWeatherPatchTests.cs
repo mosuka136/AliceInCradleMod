@@ -1,9 +1,52 @@
+using BetterExperience.BConfigManager;
+using BetterExperience.BControlManager;
 using BetterExperience.Patches;
+using System.Reflection;
+using UnityModBase.HClassAttribute;
+using UnityModBase.HConfigSpace;
+using UnityModBase.HControlSpace;
 
 namespace BetterExperience.Test.Patches
 {
     public class SetWeatherPatchTests
     {
+        [Theory]
+        [InlineData(nameof(ConfigManager.SetWeatherWind))]
+        [InlineData(nameof(ConfigManager.SetWeatherThunder))]
+        [InlineData(nameof(ConfigManager.SetWeatherMist))]
+        [InlineData(nameof(ConfigManager.SetWeatherDrought))]
+        [InlineData(nameof(ConfigManager.SetWeatherDenseMist))]
+        [InlineData(nameof(ConfigManager.SetWeatherPlague))]
+        public void WeatherConfigProperty_UsesDualPreloadValue(string propertyName)
+        {
+            // Act
+            var property = typeof(ConfigManager).GetProperty(propertyName);
+
+            // Assert
+            Assert.NotNull(property);
+            Assert.Equal(typeof(ConfigEntry<bool, bool>), property.PropertyType);
+            Assert.Equal(2, property.GetCustomAttribute<EntryGuiAttribute>()?.Count);
+        }
+
+        [Theory]
+        [InlineData(nameof(ControlManager.SetWeatherWind))]
+        [InlineData(nameof(ControlManager.SetWeatherThunder))]
+        [InlineData(nameof(ControlManager.SetWeatherMist))]
+        [InlineData(nameof(ControlManager.SetWeatherDrought))]
+        [InlineData(nameof(ControlManager.SetWeatherDenseMist))]
+        [InlineData(nameof(ControlManager.SetWeatherPlague))]
+        public void WeatherControlProperty_UsesRuntimeBooleanValue(string propertyName)
+        {
+            // Act
+            var property = typeof(ControlManager).GetProperty(
+                propertyName,
+                BindingFlags.NonPublic | BindingFlags.Static);
+
+            // Assert
+            Assert.NotNull(property);
+            Assert.Equal(typeof(ControlEntry<bool>), property.PropertyType);
+        }
+
         [Theory]
         [InlineData(0, 0, true, 1)]
         [InlineData(0, 5, true, 32)]
