@@ -80,6 +80,9 @@
     <Compile Include="Patches\BetterFishingPatch.cs" />
     <Compile Include="Patches\CookingRandomEffectPatch.cs" />
     <Compile Include="Patches\CookingEffectPreview.cs" />
+    <Compile Include="Patches\BattleEnemyPreview.cs" />
+    <Compile Include="Patches\BattleEnemyPreviewScript.cs" />
+    <Compile Include="Patches\BattleEnemyPreviewPatch.cs" />
     <Compile Include="Patches\BattleStatisticsPatch.cs" />
     <Compile Include="Patches\DisableDrowningPatch.cs" />
     <Compile Include="Patches\ImmuneAbnormalitiesPatch.cs" />

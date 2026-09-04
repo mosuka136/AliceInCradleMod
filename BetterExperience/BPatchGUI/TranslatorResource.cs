@@ -21,6 +21,17 @@ namespace BetterExperience.BPatchGUI
         internal readonly static Translator NoclipActive = new Translator("穿墙飞行中", "Noclip flight active");
 
         public readonly static Translator BattleStatisticsTitle = new Translator("战斗统计", "Battle Statistics");
+        internal readonly static Translator BattleEnemyPreviewTitle = new Translator("魔物详细预览", "Enemy Details");
+        internal readonly static Translator BattleEnemyPreviewTotal = new Translator("脚本编排总数：", "Scripted total: ");
+        internal readonly static Translator BattleEnemyPreviewUnknown = new Translator("未定", "Unknown");
+        internal readonly static Translator BattleEnemyPreviewIncomplete = new Translator("部分数量或属性未定（特殊脚本/条件）。", "Some counts or attributes are unknown (special script/conditions).");
+        internal readonly static Translator BattleEnemyPreviewShared = new Translator("各行范围共享随机名额，上限不可相加。", "Ranges share random slots; do not add their upper bounds.");
+        internal readonly static Translator BattleEnemyPreviewAdditional = new Translator("随机增补名额上限：", "Extra enemy slots, up to: ");
+        internal readonly static Translator BattleEnemyPreviewAttributes = new Translator("可能追加：", "May also have: ");
+        internal readonly static Translator BattleEnemyPreviewAttributeSlots = new Translator("随机强化名额上限：", "Random attribute slots, up to: ");
+        internal readonly static Translator BattleEnemyPreviewThunder = new Translator("随机污染名额上限：", "Random contamination slots, up to: ");
+        internal readonly static Translator BattleEnemyPreviewFollower = new Translator("（条件增援）", " (Conditional reinforcement)");
+        internal readonly static Translator BattleEnemyPreviewDynamic = new Translator("可能存在战中制造、召唤或条件增援，实际数量由战况决定。", "Manufactured, summoned or conditional reinforcements may appear; their counts depend on the battle.");
         public readonly static Translator BattleDuration = new Translator("战斗时长：", "Battle Duration:");
         public readonly static Translator AverageDps = new Translator("平均DPS：", "Average DPS:");
         public readonly static Translator TotalStatistics = new Translator("累计统计", "Total Statistics");
