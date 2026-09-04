@@ -15,6 +15,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 
 - Core controls: mod master switch, standalone config file, built-in config UI, Chinese/English localization, config hot reload, log level control
 - QoL features: one-key shop refresh, improved save points, access warehouse anywhere, improved fishing, reel-related adjustments
+- Cooking: preview mushroom effects and reroll them in the cooking confirmation screen
 - Stat tweaks: HP/MP/EP, currency amount, max satiety, movement speed, drop multiplier, cane attributes, danger level, etc.
 - Capacity tweaks: backpack capacity, empty bottle holder slots, enhancer slot count, overcharge slot count, etc.
 - Survival/combat protection and statistics: no HP/MP/EP damage, no map damage, abnormal status immunity, infinite shield, cannot be attacked, battle statistics, damage counter, etc.

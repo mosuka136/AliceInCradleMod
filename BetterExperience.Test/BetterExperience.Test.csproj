@@ -27,43 +27,47 @@
 
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\BepInEx\core\0Harmony.dll</HintPath>
+      <HintPath>..\ReferenceLibrary\0Harmony.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="better">
+      <HintPath>..\ReferenceLibrary\better.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Better.UnsafeGeneric">
+      <HintPath>..\ReferenceLibrary\Better.UnsafeGeneric.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\ReferenceLibrary\Assembly-CSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\BepInEx\core\BepInEx.dll</HintPath>
+      <HintPath>..\ReferenceLibrary\BepInEx.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Unity.InputSystem">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\Unity.InputSystem.dll</HintPath>
+      <HintPath>..\ReferenceLibrary\Unity.InputSystem.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <HintPath>..\ReferenceLibrary\UnityEngine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\ReferenceLibrary\UnityEngine.CoreModule.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>..\ReferenceLibrary\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>..\ReferenceLibrary\UnityEngine.IMGUIModule.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>..\ReferenceLibrary\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="UnityModBase">
@@ -71,7 +75,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="unsafeAssem">
-      <HintPath>..\..\..\..\mine\B\programme\AliceInCradle\ver029j2\AliceInCradle_Data\Managed\unsafeAssem.dll</HintPath>
+      <HintPath>..\ReferenceLibrary\unsafeAssem.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

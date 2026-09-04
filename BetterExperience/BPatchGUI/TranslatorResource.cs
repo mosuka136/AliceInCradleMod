@@ -5,11 +5,14 @@ using UnityModBase.HTranslatorSpace;
 namespace BetterExperience.BPatchGUI
 {
     /// <summary>
-    /// 战斗统计窗口的文本资源和敌人名称映射。
+    /// 补丁界面的文本资源和战斗统计的敌人名称映射。
     /// 未登记的敌人或属性会回退到游戏枚举名，避免新版本新增内容导致显示失败。
     /// </summary>
     public static class TranslatorResource
     {
+        internal readonly static Translator CookingReroll = new Translator("重新随机", "Reroll Effects");
+        internal readonly static Translator CookingRandomPreview = new Translator("蘑菇随机效果（预览）", "Mushroom Effects (Preview)");
+
         public readonly static Translator BattleStatisticsTitle = new Translator("战斗统计", "Battle Statistics");
         public readonly static Translator BattleDuration = new Translator("战斗时长：", "Battle Duration:");
         public readonly static Translator AverageDps = new Translator("平均DPS：", "Average DPS:");

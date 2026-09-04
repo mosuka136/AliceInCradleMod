@@ -76,6 +76,8 @@
     <Compile Include="BepInExLoggerProvider.cs" />
     <Compile Include="GameSaveLoadManager.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
+    <Compile Include="Patches\CookingRandomEffectPatch.cs" />
+    <Compile Include="Patches\CookingEffectPreview.cs" />
     <Compile Include="Patches\BattleStatisticsPatch.cs" />
     <Compile Include="Patches\DisableDrowningPatch.cs" />
     <Compile Include="Patches\ImmuneAbnormalitiesPatch.cs" />
@@ -150,6 +152,10 @@
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\ReferenceLibrary\BepInEx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="better">
+      <HintPath>..\ReferenceLibrary\better.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
