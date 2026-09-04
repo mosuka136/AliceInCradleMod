@@ -4,8 +4,8 @@ using HarmonyLib;
 using nel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using XX;
 
 namespace BetterExperience.Patches
 {
@@ -18,6 +18,7 @@ namespace BetterExperience.Patches
         [HarmonyPatch(typeof(ReelExecuter), "applyEffectToIK")]
         public class BetterReelEffectPatch
         {
+            private static bool _missingSpecifiedEffectLogged;
             // 每个数组按“优先采用”的顺序排列；未列入的效果保留原顺序并排在后面。
             private readonly static string[] _grade = new string[]
                 {
@@ -53,74 +54,116 @@ namespace BetterExperience.Patches
             {
                 try
                 {
-                    if (!ConfigManager.EnableBetterReelEffect.Value)
+                    if (ConfigManager.EnableBetterExperience?.Value != true)
                         return;
 
-                    if (Reel == null)
-                    {
-                        BLog.Notice("Reel is null.");
+                    bool betterEffect = ConfigManager.EnableBetterReelEffect?.Value == true;
+                    var specified = ConfigManager.SpecifiedLuckyBagEffect?.Value ?? LuckyBagEffect.Default;
+                    if (!betterEffect && specified == LuckyBagEffect.Default)
                         return;
-                    }
+
+                    if (Reel == null || __instance?.IKRow == null || Reel.content_id_dec < 0)
+                        return;
 
                     var content = Traverse.Create(Reel).Field("Acontent").GetValue<string[]>();
-                    if (content == null || __instance.IKRow == null || content.Length == 0 ||
-                        !FEnum<ReelExecuter.EFFECT>.TryParse(content[Reel.content_id_dec % content.Length], out var ik))
-                    {
-                        BLog.Notice("content is null or __instance.IKRow is null or cannot parse effect from content.");
-                        return;
-                    }
+                    if (TrySelectEffect(content, Reel.content_id_dec, Reel.getEType(), specified,
+                        betterEffect, out int index, out bool missingSpecifiedEffect))
+                        Reel.content_id_dec = index;
 
-                    string[] sortedContent;
-                    switch (ik)
+                    if (missingSpecifiedEffect && !_missingSpecifiedEffectLogged)
                     {
-                        case ReelExecuter.EFFECT.GRADE0:
-                        case ReelExecuter.EFFECT.GRADE1:
-                        case ReelExecuter.EFFECT.GRADE2:
-                        case ReelExecuter.EFFECT.GRADE3:
-                        case ReelExecuter.EFFECT.GRADE4:
-                            sortedContent = SortByCustomOrder(content, _grade);
-                            break;
-                        case ReelExecuter.EFFECT.COUNT_ADD0:
-                        case ReelExecuter.EFFECT.COUNT_ADD1:
-                        case ReelExecuter.EFFECT.COUNT_ADD2:
-                        case ReelExecuter.EFFECT.COUNT_ADD3:
-                        case ReelExecuter.EFFECT.COUNT_ADD4:
-                        case ReelExecuter.EFFECT.COUNT_ADD5:
-                            sortedContent = SortByCustomOrder(content, _countAdd);
-                            break;
-                        case ReelExecuter.EFFECT.COUNT_MUL1:
-                        case ReelExecuter.EFFECT.COUNT_MUL2:
-                            sortedContent = SortByCustomOrder(content, _countMul);
-                            break;
-                        case ReelExecuter.EFFECT.ADD_MONEY10:
-                        case ReelExecuter.EFFECT.ADD_MONEY20:
-                        case ReelExecuter.EFFECT.ADD_MONEY30:
-                        case ReelExecuter.EFFECT.ADD_MONEY100:
-                            sortedContent = SortByCustomOrder(content, _addMoney);
-                            break;
-                        default:
-                            sortedContent = null;
-                            break;
+                        _missingSpecifiedEffectLogged = true;
+                        BLog.Warn("Specified Lucky Bag effect is absent; keeping this reel's original result.");
                     }
-
-                    if (sortedContent == null)
-                    {
-                        BLog.Warn($"No custom order defined for effect {ik}");
-                        return;
-                    }
-                    var index = Array.IndexOf(content, sortedContent[0]);
-                    if (index < 0)
-                    {
-                        BLog.Warn($"Sorted content's first element '{sortedContent[0]}' not found in original content.");
-                        return;
-                    }
-
-                    Reel.content_id_dec = index;
-                    BLog.Debug($"{nameof(BetterReelEffectPatch)} applied.");
                 }
                 catch (Exception ex)
                 {
                     BLog.Error($"Unexpected error in {nameof(BetterReelEffectPatch)}", ex);
+                }
+            }
+
+            /// <summary>
+            /// 只选择索引，不改写共享数组。指定效果缺失时也不回退到自动择优。
+            /// </summary>
+            internal static bool TrySelectEffect(string[] content, int currentIndex, ReelExecuter.ETYPE type,
+                LuckyBagEffect specified, bool betterEffect, out int index, out bool missingSpecifiedEffect)
+            {
+                index = currentIndex;
+                missingSpecifiedEffect = false;
+                if (content == null || content.Length == 0 || currentIndex < 0)
+                    return false;
+
+                string requested = GetSpecifiedEffect(specified);
+                if (type == ReelExecuter.ETYPE.RANDOM && requested != null)
+                {
+                    int selected = Array.FindIndex(content, value =>
+                        string.Equals(value, requested, StringComparison.OrdinalIgnoreCase));
+                    if (selected < 0)
+                    {
+                        missingSpecifiedEffect = true;
+                        return false;
+                    }
+                    index = selected;
+                    return true;
+                }
+
+                if (!betterEffect || !Enum.TryParse(content[currentIndex % content.Length], true,
+                    out ReelExecuter.EFFECT ik))
+                    return false;
+
+                string[] sortedContent;
+                switch (ik)
+                {
+                    case ReelExecuter.EFFECT.GRADE0:
+                    case ReelExecuter.EFFECT.GRADE1:
+                    case ReelExecuter.EFFECT.GRADE2:
+                    case ReelExecuter.EFFECT.GRADE3:
+                    case ReelExecuter.EFFECT.GRADE4:
+                        sortedContent = SortByCustomOrder(content, _grade);
+                        break;
+                    case ReelExecuter.EFFECT.COUNT_ADD0:
+                    case ReelExecuter.EFFECT.COUNT_ADD1:
+                    case ReelExecuter.EFFECT.COUNT_ADD2:
+                    case ReelExecuter.EFFECT.COUNT_ADD3:
+                    case ReelExecuter.EFFECT.COUNT_ADD4:
+                    case ReelExecuter.EFFECT.COUNT_ADD5:
+                        sortedContent = SortByCustomOrder(content, _countAdd);
+                        break;
+                    case ReelExecuter.EFFECT.COUNT_MUL1:
+                    case ReelExecuter.EFFECT.COUNT_MUL2:
+                        sortedContent = SortByCustomOrder(content, _countMul);
+                        break;
+                    case ReelExecuter.EFFECT.ADD_MONEY10:
+                    case ReelExecuter.EFFECT.ADD_MONEY20:
+                    case ReelExecuter.EFFECT.ADD_MONEY30:
+                    case ReelExecuter.EFFECT.ADD_MONEY100:
+                        sortedContent = SortByCustomOrder(content, _addMoney);
+                        break;
+                    default:
+                        sortedContent = null;
+                        break;
+                }
+
+                if (sortedContent == null)
+                    return false;
+
+                index = Array.IndexOf(content, sortedContent[0]);
+                return index >= 0;
+            }
+
+            private static string GetSpecifiedEffect(LuckyBagEffect effect)
+            {
+                switch (effect)
+                {
+                    case LuckyBagEffect.CountAdd1: return "COUNT_ADD1";
+                    case LuckyBagEffect.CountAdd2: return "COUNT_ADD2";
+                    case LuckyBagEffect.CountAdd3: return "COUNT_ADD3";
+                    case LuckyBagEffect.GradeAdd1: return "GRADE1";
+                    case LuckyBagEffect.GradeAdd2: return "GRADE2";
+                    case LuckyBagEffect.GradeAdd3: return "GRADE3";
+                    case LuckyBagEffect.CountMultiply2: return "COUNT_MUL2";
+                    case LuckyBagEffect.MoneyAdd100: return "ADD_MONEY100";
+                    default: return null;
                 }
             }
 
@@ -148,10 +191,32 @@ namespace BetterExperience.Patches
 
                 return input
                     .Select((s, idx) => new { s, idx })
-                    .OrderBy(x => priority.TryGetValue(x.s, out var p) ? p : int.MaxValue)
+                    .OrderBy(x => x.s != null && priority.TryGetValue(x.s, out var p) ? p : int.MaxValue)
                     .ThenBy(x => x.idx)
                     .Select(x => x.s)
                     .ToArray();
+            }
+
+            public enum LuckyBagEffect
+            {
+                [Description("保持原行为 / Default")]
+                Default,
+                [Description("数量 +1 / Amount +1")]
+                CountAdd1,
+                [Description("数量 +2 / Amount +2")]
+                CountAdd2,
+                [Description("数量 +3 / Amount +3")]
+                CountAdd3,
+                [Description("品质 +1 / Grade +1")]
+                GradeAdd1,
+                [Description("品质 +2 / Grade +2")]
+                GradeAdd2,
+                [Description("品质 +3 / Grade +3")]
+                GradeAdd3,
+                [Description("数量 ×2 / Amount ×2")]
+                CountMultiply2,
+                [Description("金币 +100 / Gold +100")]
+                MoneyAdd100
             }
         }
     }

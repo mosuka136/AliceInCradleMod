@@ -3,6 +3,7 @@ using System;
 using UnityModBase.HClassAttribute;
 using UnityModBase.HConfigSpace;
 using UnityModBase.HTranslatorSpace;
+using static BetterExperience.Patches.HPatches.BetterReelEffectPatch;
 
 namespace BetterExperience.BConfigManager
 {
@@ -10,6 +11,7 @@ namespace BetterExperience.BConfigManager
     {
         // 转轮速度配置中 -1 表示保留游戏默认速度。
         public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }
+        public static ConfigEntry<LuckyBagEffect> SpecifiedLuckyBagEffect { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
         [EntrySlider(-0.2f, 1f, 0.01f)]
         public static ConfigEntry<float> SetReelSpeed { get; private set; }
@@ -34,6 +36,16 @@ namespace BetterExperience.BConfigManager
                         chinese: "启用更好的转轮效果。",
                         english: "Enable better reel effect."
                     )
+                    );
+                SpecifiedLuckyBagEffect = Config.Bind(
+                    SectionReel,
+                    nameof(SpecifiedLuckyBagEffect),
+                    LuckyBagEffect.Default,
+                    new Translator(chinese: "指定福袋效果", english: "Specified Lucky Bag Effect"),
+                    new Translator(
+                        chinese: "仅影响福袋转轮。指定效果优先于“更好的转轮效果”，无需开启自动择优。品质与数量仍受原有上限控制。",
+                        english: "Only affects Lucky Bag reels. Takes priority over Better Reel Effect and works independently of it. Existing grade and count limits still apply."
+                        )
                     );
                 EnableRemoveLimitInTreasureChests = Config.Bind(
                     SectionReel,

@@ -48,6 +48,14 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableImmuneAbnormalityWebTrapped { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityStone { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityAtkDown { get; private set; }
+        public static ConfigEntry<bool> EnableMouseTeleport { get; private set; }
+        public static ConfigEntry<bool> EnableNoclip { get; private set; }
+        [EntrySlider(-1f, 10f, 0.1f)]
+        public static ConfigEntry<float> SetPlayerWalkSpeed { get; private set; }
+        [EntrySlider(0.1f, 5f, 0.1f)]
+        public static ConfigEntry<float> PlayerJumpMultiplier { get; private set; }
+        [EntrySlider(1f, 30f, 1f)]
+        public static ConfigEntry<float> NoclipSpeed { get; private set; }
         [EntryGui(2)]
         public static ConfigEntry<bool, int> SetBackpackCapacity { get; private set; }
         [EntryGui(2)]
@@ -76,8 +84,6 @@ namespace BetterExperience.BConfigManager
         [EntryGui(2)]
         [EntrySlider(1, -1f, 20f, 1f)]
         public static ConfigEntry<bool, int> SetEnhancerSlotCount { get; private set; }
-        [EntrySlider(-1f, 10f, 0.1f)]
-        public static ConfigEntry<float> SetPlayerWalkSpeed { get; private set; }
 
         private const string SectionPlayer = "Player";
 
@@ -470,6 +476,56 @@ namespace BetterExperience.BConfigManager
                         english: "Immune abnormality: Atk Down."
                     )
                     );
+                EnableMouseTeleport = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableMouseTeleport),
+                    false,
+                    new Translator(chinese: "启用鼠标传送", english: "Enable Mouse Teleport"),
+                    new Translator(
+                        chinese: "鼠标指向游戏画面内的空地，按传送热键跨墙传送。默认 Ctrl+G；菜单、剧情或不能操作玩家时不可用。",
+                        english: "Point at clear space in the game view and press the teleport hotkey (Ctrl+G by default). Unavailable in menus, events or while player control is blocked."
+                        )
+                    );
+                EnableNoclip = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableNoclip),
+                    false,
+                    new Translator(chinese: "启用穿墙热键", english: "Enable Noclip Hotkey"),
+                    new Translator(
+                        chinese: "允许用热键切换穿墙飞行，默认 Ctrl+N。方向键/WASD 或手柄左摇杆/方向键移动；每次读档、切图后需重新开启。",
+                        english: "Allow toggling noclip flight (Ctrl+N by default). Move with arrows/WASD or gamepad left stick/D-pad. Toggle again after loading or changing maps."
+                        )
+                    );
+                SetPlayerWalkSpeed = Config.Bind(
+                    SectionPlayer,
+                    nameof(SetPlayerWalkSpeed),
+                    -1f,
+                    new Translator(chinese: "设置玩家行走速度", english: "Set Player Walk Speed"),
+                    new Translator(
+                        chinese: "设置玩家行走速度。设置的值为倍率，即 0 - 1 内玩家速度减小，大于 1 速度增大。",
+                        english: "Set player walk speed. The set value is a multiplier, where values between 0 and 1 decrease player speed, and values greater than 1 increase speed."
+                    )
+                    );
+                PlayerJumpMultiplier = Config.Bind(
+                    SectionPlayer,
+                    nameof(PlayerJumpMultiplier),
+                    1f,
+                    new Translator(chinese: "玩家跳跃力度倍率", english: "Player Jump Strength Multiplier"),
+                    new Translator(
+                        chinese: "通过起跳速度调整跳跃高度，范围 0.1–5，1 为原值。影响普通和水中跳跃，保留异常状态修正；力度倍率不等于高度倍率。",
+                        english: "Adjust jump height through launch speed (0.1–5; 1 is unchanged). Applies on land and in water, preserving status modifiers. Strength and height multipliers differ."
+                        )
+                    );
+                NoclipSpeed = Config.Bind(
+                    SectionPlayer,
+                    nameof(NoclipSpeed),
+                    8f,
+                    new Translator(chinese: "穿墙飞行速度", english: "Noclip Flight Speed"),
+                    new Translator(
+                        chinese: "每秒移动的地图格数，范围 1–30。",
+                        english: "Map units moved per second, from 1 to 30."
+                        )
+                    );
                 SetBackpackCapacity = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetBackpackCapacity),
@@ -568,16 +624,6 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置强化插槽数量。将覆盖原始的强化插槽数量。",
                         english: "Set enhancer slot count. It will override the original enhancer slot count."
-                    )
-                    );
-                SetPlayerWalkSpeed = Config.Bind(
-                    SectionPlayer,
-                    nameof(SetPlayerWalkSpeed),
-                    -1f,
-                    new Translator(chinese: "设置玩家行走速度", english: "Set Player Walk Speed"),
-                    new Translator(
-                        chinese: "设置玩家行走速度。设置的值为倍率，即 0 - 1 内玩家速度减小，大于 1 速度增大。",
-                        english: "Set player walk speed. The set value is a multiplier, where values between 0 and 1 decrease player speed, and values greater than 1 increase speed."
                     )
                     );
             }

@@ -70,6 +70,8 @@
     <Compile Include="BConfigManager\ConfigManagerReel.cs" />
     <Compile Include="BConfigManager\ConfigManagerTexture.cs" />
     <Compile Include="BPatchGUI\BattleStatisticsGUI.cs" />
+    <Compile Include="BPatchGUI\NoticeGUI.cs" />
+    <Compile Include="BPatchGUI\NoticeState.cs" />
     <Compile Include="BPatchGUI\TranslatorResource.cs" />
     <Compile Include="BService.cs" />
     <Compile Include="BLogSpace\BepInExLog.cs" />
@@ -111,6 +113,10 @@
     <Compile Include="Patches\SetOverChargeSlotCountPatch.cs" />
     <Compile Include="Patches\SetReelSpeedPatch.cs" />
     <Compile Include="Patches\SetWalkSpeedPatch.cs" />
+    <Compile Include="Patches\SetJumpHeightPatch.cs" />
+    <Compile Include="Patches\MovementGeometry.cs" />
+    <Compile Include="Patches\PlayerMovementController.cs" />
+    <Compile Include="Patches\NoclipPatch.cs" />
     <Compile Include="Patches\SetWeatherPatch.cs" />
     <Compile Include="Patches\SwitchDebugPatch.cs" />
     <Compile Include="Patches\ReplaceTexture\ReplaceTexturePatch.cs" />
@@ -167,8 +173,16 @@
       <HintPath>..\ReferenceLibrary\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>..\ReferenceLibrary\Unity.InputSystem.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
       <HintPath>..\ReferenceLibrary\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\ReferenceLibrary\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">

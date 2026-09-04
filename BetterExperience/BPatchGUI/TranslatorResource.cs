@@ -13,6 +13,13 @@ namespace BetterExperience.BPatchGUI
         internal readonly static Translator CookingReroll = new Translator("重新随机", "Reroll Effects");
         internal readonly static Translator CookingRandomPreview = new Translator("蘑菇随机效果（预览）", "Mushroom Effects (Preview)");
 
+        internal readonly static Translator TeleportTargetBlocked = new Translator("目标位置没有足够空间。", "There is not enough room at the target.");
+        internal readonly static Translator NoclipStartBlocked = new Translator("请在有足够空间的空地开启穿墙。", "Start noclip in clear space.");
+        internal readonly static Translator NoclipEnabled = new Translator("穿墙已开启：方向键/WASD 或手柄移动。", "Noclip on: move with arrows/WASD or gamepad.");
+        internal readonly static Translator NoclipDisabled = new Translator("穿墙已关闭。", "Noclip off.");
+        internal readonly static Translator NoclipDefaultPosition = new Translator("落点已失效，已恢复到游戏默认位置。", "No clear exit remained; restored the game's default position.");
+        internal readonly static Translator NoclipActive = new Translator("穿墙飞行中", "Noclip flight active");
+
         public readonly static Translator BattleStatisticsTitle = new Translator("战斗统计", "Battle Statistics");
         public readonly static Translator BattleDuration = new Translator("战斗时长：", "Battle Duration:");
         public readonly static Translator AverageDps = new Translator("平均DPS：", "Average DPS:");

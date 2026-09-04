@@ -2,6 +2,8 @@ using BepInEx;
 using BetterExperience.BConfigManager;
 using BetterExperience.BControlManager;
 using BetterExperience.BLogSpace;
+using BetterExperience.BPatchGUI;
+using BetterExperience.Patches;
 using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using System;
@@ -49,6 +51,7 @@ namespace BetterExperience
                 LogPatchesInfo(harmony);
                 // 实时控制项的写回依赖已注册的补丁（如插槽刷新依赖 getCount 拦截），必须在补丁注册完成后初始化。
                 ControlManager.Initialize();
+                PlayerMovementController.Initialize();
                 BLog.Info("Harmony patch registration completed.");
             }
             catch (Exception ex)
@@ -60,10 +63,19 @@ namespace BetterExperience
 
         public void Update()
         {
+            PlayerMovementController.Update();
+        }
+
+        public void OnDisable()
+        {
+            PlayerMovementController.Stop();
+            NoticeGUI.ClearAll();
         }
 
         public void OnDestroy()
         {
+            PlayerMovementController.Dispose();
+            NoticeGUI.ClearAll();
             BService.Dispose();
         }
 
