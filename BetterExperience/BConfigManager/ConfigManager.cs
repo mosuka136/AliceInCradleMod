@@ -63,11 +63,11 @@ namespace BetterExperience.BConfigManager
                 new Translator(
                     chinese: "是否在存档读取后自动应用设置值。",
                     english: "Whether to apply the configured value automatically after loading a save."
-                ),
+                    ),
                 new Translator(
                     chinese: "要应用的设置值。",
                     english: "The configured value to apply."
-                )
+                    )
                 );
         }
 
@@ -89,7 +89,7 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "启用更好的体验模组，必须在游戏启动前设置。",
                             english: "Enable Better Experience mod, must be set before launching the game."
-                        )
+                            )
                         );
                     SetLanguage = Config.Bind(
                         SectionGeneral,
@@ -106,7 +106,7 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "启用一键刷新商店功能。",
                             english: "Enable flush all store function."
-                        )
+                            )
                         );
                     EnableRemoveLimitInBenchMenu = Config.Bind(
                         SectionGeneral,
@@ -116,7 +116,7 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "启用移除玩家在某些情况下椅子菜单中的某些选项不可用的限制，必须在游戏启动前设置。",
                             english: "Enable the restriction that certain options in the chair menu are unavailable for players under specific circumstances, must be set before launching the game."
-                        )
+                            )
                         );
                     EnableBetterFishing = Config.Bind(
                         SectionGeneral,
@@ -126,7 +126,7 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "启用更好的钓鱼。它将允许玩家更容易地钓到鱼。",
                             english: "Enable better fishing. It will allow players to catch fish more easily."
-                        )
+                            )
                         );
                     EnableCookingRandomEffectPreview = Config.Bind(
                         SectionGeneral,
@@ -136,7 +136,7 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "选材时预览蘑菇随机效果，并可在制作确认界面重新随机。",
                             english: "Preview mushroom effects while choosing ingredients and reroll them on the cooking confirmation screen."
-                        )
+                            )
                         );
                     EnableDamageCounter = Config.Bind(
                         SectionGeneral,
@@ -146,7 +146,7 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "启用伤害计数器。它将显示玩家与魔物造成的伤害。",
                             english: "Enable damage counter. It will display the damage dealt by the player and monsters."
-                        )
+                            )
                         );
                     EnableDebugMode = Config.Bind(
                         SectionGeneral,
@@ -156,7 +156,7 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "启用调试模式，必须在游戏启动前设置。",
                             english: "Enable debug mode, must be set before launching the game."
-                        )
+                            )
                         );
                     SetLootDropRatio = Config.Bind(
                         SectionGeneral,
@@ -166,7 +166,7 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "设置战利品掉落倍率。默认值为 -1，表示不改变。设置为 0 禁用掉落，设置为 n（n >= 1）为 n 倍掉落。",
                             english: "Set loot drop ratio. Default value is -1, which means no change. Set it to 0 to disable loot drop. Set it to n(n >= 1) to multiply loot drop by n."
-                        )
+                            )
                         );
 
                     SetLanguage.OnValueChanged += (s, e) => Translator.DefaultLanguage = e;

@@ -195,6 +195,7 @@
     </Reference>
     <Reference Include="UnityModBase.BepInExLauncher">
       <HintPath>..\ReferenceLibrary\UnityModBase.BepInExLauncher.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="unsafeAssem">
       <HintPath>..\ReferenceLibrary\unsafeAssem.dll</HintPath>

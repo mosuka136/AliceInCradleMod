@@ -42,7 +42,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用雾的视觉效果。关闭后雾将不会显示或遮挡视野。",
                         english: "Enable visual impact of fog. After disabling, the fog will not be displayed or block the view."
-                    )
+                        )
                     );
                 SetWeatherWind = BindPreloadValue(
                     SectionWeather,
@@ -52,7 +52,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置天气为旋风。",
                         english: "Set weather to wind."
-                    )
+                        )
                     );
                 SetWeatherThunder = BindPreloadValue(
                     SectionWeather,
@@ -62,7 +62,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置天气为雷暴。",
                         english: "Set weather to thunder."
-                    )
+                        )
                     );
                 SetWeatherMist = BindPreloadValue(
                     SectionWeather,
@@ -72,7 +72,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置天气为雾。",
                         english: "Set weather to mist."
-                    )
+                        )
                     );
                 SetWeatherDrought = BindPreloadValue(
                     SectionWeather,
@@ -82,7 +82,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置天气为干旱。",
                         english: "Set weather to drought."
-                    )
+                        )
                     );
                 SetWeatherDenseMist = BindPreloadValue(
                     SectionWeather,
@@ -92,7 +92,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置天气为浓雾。",
                         english: "Set weather to dense mist."
-                    )
+                        )
                     );
                 SetWeatherPlague = BindPreloadValue(
                     SectionWeather,
@@ -102,7 +102,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置天气为瘟疫。",
                         english: "Set weather to plague."
-                    )
+                        )
                     );
             }
             catch (Exception ex)

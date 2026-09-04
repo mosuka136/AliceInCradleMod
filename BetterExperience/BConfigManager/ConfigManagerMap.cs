@@ -39,7 +39,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用更好的存档点功能。允许在任意位置保存。",
                         english: "Enable better save site. It will allow saving anywhere."
-                    )
+                        )
                     );
                 EnableRemoveLimitInPuppetNpcDefeated = Config.Bind(
                     SectionMap,
@@ -49,7 +49,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "移除木偶商人在复仇战未完成前无法生成的限制。",
                         english: "Remove the restriction that prevents the Puppet Merchant from spawning before the revenge quest is completed."
-                    )
+                        )
                     );
                 EnableFastTravelAnywhere = Config.Bind(
                     SectionMap,
@@ -59,7 +59,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用随时快速传送。它将允许玩家在地图上的任何地方快速传送。",
                         english: "Enable fast travel anywhere. It will allow players to fast travel anywhere on the map."
-                    )
+                        )
                     );
                 EnableWormTrap = Config.Bind(
                     SectionMap,
@@ -69,7 +69,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用虫墙。",
                         english: "Enable worm trap."
-                    )
+                        )
                     );
                 EnableMapDamage = Config.Bind(
                     SectionMap,
@@ -79,7 +79,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用地图伤害，包括地刺、荆棘、电击、酸液。禁用后将不再受到以上伤害。",
                         english: "Enable map damage, including spikes, thorns, electric shock, and acid. Disabling will prevent taking the above damage."
-                    )
+                        )
                     );
                 EnableDrowning = Config.Bind(
                     SectionMap,
@@ -89,7 +89,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用溺水。禁用后将不再受到溺水伤害。",
                         english: "Enable drowning. Disabling will prevent drowning damage."
-                    )
+                        )
                     );
                 EnableDarkArea = Config.Bind(
                     SectionMap,
@@ -99,7 +99,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用黑暗区域。禁用后特定区域将不再需要魔荧虫提灯照亮。",
                         english: "Enable dark area. After disabling, specific areas will no longer require the Magic Bug Lantern to illuminate."
-                    )
+                        )
                     );
                 SetDangerLevel = BindPreloadValue(
                     SectionMap,
@@ -109,7 +109,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置危险度。将覆盖原始的危险度。",
                         english: "Set the danger level."
-                    )
+                        )
                     );
             }
             catch (Exception ex)

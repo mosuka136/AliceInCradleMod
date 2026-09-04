@@ -42,7 +42,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用金币数量锁定。开启后金币数量不会增加或减少。",
                         english: "Enable lock gold count. When enabled, the number of gold will not increase or decrease."
-                    )
+                        )
                     );
                 EnableLockCurrencyCraftsCount = Config.Bind(
                     SectionCurrency,
@@ -52,7 +52,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用兑锭数量锁定。开启后兑锭数量不会增加或减少。",
                         english: "Enable lock crafts count. When enabled, the number of crafts will not increase or decrease."
-                    )
+                        )
                     );
                 EnableLockCurrencyJuiceCount = Config.Bind(
                     SectionCurrency,
@@ -62,7 +62,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用精萃数量锁定。开启后精萃数量不会增加或减少。",
                         english: "Enable lock juice count. When enabled, the number of juice will not increase or decrease."
-                    )
+                        )
                     );
                 SetCurrencyGoldCount = BindPreloadValue(
                     SectionCurrency,
@@ -72,7 +72,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置金币数量。",
                         english: "Set gold count."
-                    )
+                        )
                     );
                 SetCurrencyCraftsCount = BindPreloadValue(
                     SectionCurrency,
@@ -82,7 +82,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置兑锭数量。",
                         english: "Set crafts count."
-                    )
+                        )
                     );
                 SetCurrencyJuiceCount = BindPreloadValue(
                     SectionCurrency,
@@ -92,7 +92,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置精萃数量。",
                         english: "Set juice count."
-                    )
+                        )
                     );
             }
             catch (Exception ex)

@@ -35,7 +35,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用更好的转轮效果。",
                         english: "Enable better reel effect."
-                    )
+                        )
                     );
                 SpecifiedLuckyBagEffect = Config.Bind(
                     SectionReel,
@@ -55,7 +55,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用移除宝箱99物品数量上限，必须在游戏启动前设置。",
                         english: "Enable removal of the 99-item limit in treasure chests, must be set before launching the game."
-                    )
+                        )
                     );
                 SetReelSpeed = Config.Bind(
                     SectionReel,
@@ -65,7 +65,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置转轮速度。设为 0 和 1 之间的值可调节转轮速度。数值越大速度越慢。",
                         english: "Set reel speed. Set a value between 0 and 1 to adjust the wheel speed. The larger the value, the slower the speed."
-                    )
+                        )
                     );
             }
             catch (Exception ex)

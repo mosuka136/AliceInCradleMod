@@ -104,7 +104,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用被攻击。若关闭，玩家将不会受到敌人的攻击，但仍可能触发陷阱。",
                         english: "Enable being attacked. If disabled, players will not be attacked by enemies, but traps may still be triggered."
-                    )
+                        )
                     );
                 EnableNoHpDamage = Config.Bind(
                     SectionPlayer,
@@ -114,7 +114,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用无 HP 伤害。",
                         english: "Enable no HP damage."
-                    )
+                        )
                     );
                 EnableNoMpDamage = Config.Bind(
                     SectionPlayer,
@@ -124,7 +124,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用无 MP 伤害。",
                         english: "Enable no MP damage."
-                    )
+                        )
                     );
                 EnableNoEpDamage = Config.Bind(
                     SectionPlayer,
@@ -134,7 +134,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用无 EP 伤害。玩家“好感度”将不会增加。",
                         english: "Enable no EP damage."
-                    )
+                        )
                     );
                 EnableInfiniteShield = Config.Bind(
                     SectionPlayer,
@@ -144,7 +144,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用无限护盾。",
                         english: "Enable infinite shield."
-                    )
+                        )
                     );
                 EnableHolyBurstFaint = Config.Bind(
                     SectionPlayer,
@@ -154,7 +154,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用圣光爆发昏厥。关闭后，玩家将不会因为使用圣光爆发而晕厥。",
                         english: "Enable Holy Burst Faint. When disabled, players will not faint after using Holy Burst."
-                    )
+                        )
                     );
                 EnableMpBreak = Config.Bind(
                     SectionPlayer,
@@ -164,7 +164,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用 MP 破裂。关闭后，玩家 MP 槽将不会破裂。",
                         english: "Enable MP break. When disabled, the player's MP slot will not break."
-                    )
+                        )
                     );
                 EnablePressDamage = Config.Bind(
                     SectionPlayer,
@@ -174,7 +174,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用挤压伤害。关闭后，玩家将不会受到挤压伤害。",
                         english: "Enable press damage. When disabled, players will not take press damage."
-                    )
+                        )
                     );
                 EnableFallingToGround = Config.Bind(
                     SectionPlayer,
@@ -184,7 +184,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用摔倒。关闭后，玩家将不会摔倒。",
                         english: "Enable falling to ground. When disabled, players will not fall to the ground."
-                    )
+                        )
                     );
                 EnableAccessWarehouseAnywhere = Config.Bind(
                     SectionPlayer,
@@ -194,7 +194,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用随时访问仓库。它将允许玩家在任何地方访问仓库库存。这将会取代原来的宝箱效果转轮。",
                         english: "Enable access warehouse anywhere. It will allow players to access warehouse inventory anywhere. This will replace the original Chest Reels."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalities = Config.Bind(
                     SectionPlayer,
@@ -204,7 +204,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用免疫异常状态。开启后，玩家将免疫所有异常状态。",
                         english: "Enable immune abnormalities. When enabled, players will be immune to all abnormalities."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityMpReduce = Config.Bind(
                     SectionPlayer,
@@ -214,7 +214,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：枯竭。",
                         english: "Immune abnormality: MP Reduce."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityBurstTired = Config.Bind(
                     SectionPlayer,
@@ -224,7 +224,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：晕厥。",
                         english: "Immune abnormality: Burst Tired."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityClothesBroken = Config.Bind(
                     SectionPlayer,
@@ -234,7 +234,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：服装损坏。",
                         english: "Immune abnormality: Clothes Broken."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityOverRunTired = Config.Bind(
                     SectionPlayer,
@@ -244,7 +244,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：疲惫。",
                         english: "Immune abnormality: Tired."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityShieldBreak = Config.Bind(
                     SectionPlayer,
@@ -254,7 +254,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：破盾。",
                         english: "Immune abnormality: Shield Break."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalitySleep = Config.Bind(
                     SectionPlayer,
@@ -264,7 +264,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：睡眠。",
                         english: "Immune abnormality: Sleep."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityBurned = Config.Bind(
                     SectionPlayer,
@@ -274,7 +274,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：燃烧。",
                         english: "Immune abnormality: Burned."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityFrozen = Config.Bind(
                     SectionPlayer,
@@ -284,7 +284,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：冻结。",
                         english: "Immune abnormality: Frozen."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityParalysis = Config.Bind(
                     SectionPlayer,
@@ -294,7 +294,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：麻痹。",
                         english: "Immune abnormality: Paralysis."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityConfuse = Config.Bind(
                     SectionPlayer,
@@ -304,7 +304,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：混乱。",
                         english: "Immune abnormality: Confuse."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityJamming = Config.Bind(
                     SectionPlayer,
@@ -314,7 +314,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：杂念。",
                         english: "Immune abnormality: Jamming."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityParasitised = Config.Bind(
                     SectionPlayer,
@@ -324,7 +324,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：植物寄生。",
                         english: "Immune abnormality: Parasitised."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityShamed = Config.Bind(
                     SectionPlayer,
@@ -334,7 +334,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：羞耻。",
                         english: "Immune abnormality: Shamed."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityShamedSplit = Config.Bind(
                     SectionPlayer,
@@ -344,7 +344,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：羞耻（魔力流失）。",
                         english: "Immune abnormality: Shamed Split."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityShamedWet = Config.Bind(
                     SectionPlayer,
@@ -354,7 +354,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：羞耻（濡湿）。",
                         english: "Immune abnormality: Shamed Wet."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityShamedEp = Config.Bind(
                     SectionPlayer,
@@ -364,7 +364,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：羞耻（兴奋）。",
                         english: "Immune abnormality: Shamed EP."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalitySexercise = Config.Bind(
                     SectionPlayer,
@@ -374,7 +374,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：催淫。",
                         english: "Immune abnormality: Sexercise."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityFrustrated = Config.Bind(
                     SectionPlayer,
@@ -384,7 +384,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：欲火中烧。",
                         english: "Immune abnormality: Frustrated."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityOrgasmAfter = Config.Bind(
                     SectionPlayer,
@@ -394,7 +394,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：恍惚。",
                         english: "Immune abnormality: Orgasm After."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityEgged = Config.Bind(
                     SectionPlayer,
@@ -404,7 +404,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：怀卵。",
                         english: "Immune abnormality: Egged."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityLayingEgg = Config.Bind(
                     SectionPlayer,
@@ -414,7 +414,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：产卵。",
                         english: "Immune abnormality: Laying Egg."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityDoNotLayEgg = Config.Bind(
                     SectionPlayer,
@@ -424,7 +424,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：无法产卵。",
                         english: "Immune abnormality: Do Not Lay Egg."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityNearPee = Config.Bind(
                     SectionPlayer,
@@ -434,7 +434,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：尿意。",
                         english: "Immune abnormality: Near Pee."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityDrunk = Config.Bind(
                     SectionPlayer,
@@ -444,7 +444,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：晕乎乎。",
                         english: "Immune abnormality: Drunk."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityWebTrapped = Config.Bind(
                     SectionPlayer,
@@ -454,7 +454,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：黏糊糊。",
                         english: "Immune abnormality: Web Trapped."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityStone = Config.Bind(
                     SectionPlayer,
@@ -464,7 +464,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：石化。",
                         english: "Immune abnormality: Stone."
-                    )
+                        )
                     );
                 EnableImmuneAbnormalityAtkDown = Config.Bind(
                     SectionPlayer,
@@ -474,7 +474,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：攻击力下降。",
                         english: "Immune abnormality: Atk Down."
-                    )
+                        )
                     );
                 EnableMouseTeleport = Config.Bind(
                     SectionPlayer,
@@ -504,7 +504,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置玩家行走速度。设置的值为倍率，即 0 - 1 内玩家速度减小，大于 1 速度增大。",
                         english: "Set player walk speed. The set value is a multiplier, where values between 0 and 1 decrease player speed, and values greater than 1 increase speed."
-                    )
+                        )
                     );
                 PlayerJumpMultiplier = Config.Bind(
                     SectionPlayer,
@@ -534,7 +534,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置背包容量。将覆盖原始的背包容量。",
                         english: "Set backpack capacity. It will override the original backpack capacity."
-                    )
+                        )
                     );
                 SetBottleHolderCount = BindPreloadValue(
                     SectionPlayer,
@@ -544,7 +544,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置空瓶收纳槽位数量。将覆盖原始的空瓶收纳槽位数量。",
                         english: "Set bottle holder count."
-                    )
+                        )
                     );
                 SetPlayerHp = BindPreloadValue(
                     SectionPlayer,
@@ -554,7 +554,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置玩家 HP。将覆盖原始的玩家 HP。",
                         english: "Set player HP. It will override the original player HP."
-                    )
+                        )
                     );
                 SetPlayerMp = BindPreloadValue(
                     SectionPlayer,
@@ -564,7 +564,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置玩家 MP。将覆盖原始的玩家 MP。",
                         english: "Set player MP. It will override the original player MP."
-                    )
+                        )
                     );
                 SetPlayerEp = BindPreloadValue(
                     SectionPlayer,
@@ -574,7 +574,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置玩家 EP。将覆盖原始的玩家 EP。",
                         english: "Set player EP. It will override the original player EP."
-                    )
+                        )
                     );
                 SetPlayerMaxHp = BindPreloadValue(
                     SectionPlayer,
@@ -584,7 +584,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置玩家最大 HP。将覆盖原始的玩家最大 HP。",
                         english: "Set player max HP. It will override the original player max HP."
-                    )
+                        )
                     );
                 SetPlayerMaxMp = BindPreloadValue(
                     SectionPlayer,
@@ -594,7 +594,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置玩家最大 MP。将覆盖原始的玩家最大 MP。",
                         english: "Set player max MP. It will override the original player max MP."
-                    )
+                        )
                     );
                 SetPlayerMaxSatiety = BindPreloadValue(
                     SectionPlayer,
@@ -604,7 +604,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置玩家最大饱食度。将覆盖原始的玩家最大饱食度。",
                         english: "Set player max satiety. It will override the original player max satiety."
-                    )
+                        )
                     );
                 SetOverChargeSlotCount = BindPreloadValue(
                     SectionPlayer,
@@ -614,7 +614,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置过充插槽数量。将覆盖原始的过充插槽数量。",
                         english: "Set over charge slot count. It will override the original over charge slot count."
-                    )
+                        )
                     );
                 SetEnhancerSlotCount = BindPreloadValue(
                     SectionPlayer,
@@ -624,7 +624,7 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置强化插槽数量。将覆盖原始的强化插槽数量。",
                         english: "Set enhancer slot count. It will override the original enhancer slot count."
-                    )
+                        )
                     );
             }
             catch (Exception ex)
