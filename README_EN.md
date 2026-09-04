@@ -52,7 +52,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 
 ## Supported Versions
 
-- `Alice In Cradle`: `ver029j2`
+- `Alice In Cradle`: `ver030d`
 - `BepInEx`: `v5.4.23.5`
 
 ## Texture Replacement Usage

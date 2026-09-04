@@ -51,7 +51,7 @@
 
 ## 支持的版本
 
-- `Alice In Cradle`：`ver029j2`
+- `Alice In Cradle`：`ver030d`
 - `BepInEx`：`v5.4.23.5`
 
 ## 贴图替换使用说明

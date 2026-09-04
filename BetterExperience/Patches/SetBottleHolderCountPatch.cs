@@ -1,25 +1,24 @@
 using BetterExperience.BConfigManager;
-using UnityModBase.HClassAttribute;
 using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
-using UnityEngine;
+using UnityModBase.HClassAttribute;
 
 namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
         /// <summary>
-        /// 设置空瓶收纳槽位数量。
-        /// 和背包容量类似，保存前恢复到游戏贵重品记录对应的数量，保存后再恢复运行时配置值。
+        /// 新版空瓶槽位由主背包中的 workbench_bottle 数量生成。
+        /// 修改物品数量后重建收纳行；序列化主背包时暂时去掉 Mod 增量，结束或异常后恢复。
         /// </summary>
         [HarmonyPatch]
         public class SetBottleHolderCountPatch
         {
-            private static bool _initialized = false;
-            // 保存期间暂存运行时配置数量，保存完成后恢复。
-            private static int _originalBottleHolderCount = -1;
+            private static bool _initialized;
+            private static ItemStorage _inventory;
+            private static BottleHolderCountOverride _countOverride;
 
             [InitializeOnGameBoot]
             public static void Initialize()
@@ -29,22 +28,9 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    // 恢复值属于上一个存档的运行时状态，读档后必须丢弃，避免之后的保存完成回调把旧数量写入新存档。
-                    _originalBottleHolderCount = -1;
-
+                    ClearOverride();
                     if (ConfigManager.SetBottleHolderCount.Value1)
-                    {
-                        BLog.Debug($"Applying preloaded bottle holder count: {ConfigManager.SetBottleHolderCount.Value2}");
                         SetBottleHolderCount(ConfigManager.SetBottleHolderCount.Value2);
-                    }
-                };
-
-                GameSaveProtectionManager.OnSavingActivated += RecoverBottleHolderCount;
-
-                GameSaveProtectionManager.OnSavingCompleted += () =>
-                {
-                    BLog.Debug($"Restoring bottle holder count after save: {_originalBottleHolderCount}");
-                    SetBottleHolderCount(_originalBottleHolderCount);
                 };
 
                 _initialized = true;
@@ -55,22 +41,36 @@ namespace BetterExperience.Patches
             {
                 try
                 {
-                    if (count < 0)
+                    if (count < 0 || count > BottleHolderCountOverride.MaxCount)
                     {
-                        BLog.Debug($"Ignored invalid bottle holder count: {count}");
+                        BLog.Notice($"Ignored invalid bottle holder count: {count}");
                         return;
                     }
 
                     var inventory = GetInventory();
-                    if (inventory == null)
+                    if (inventory?.getHid() == null)
                     {
                         BLog.Notice("Inventory not found while applying bottle holder count.");
                         return;
                     }
 
-                    inventory.hide_bottle_max = count;
-                    inventory.fineRows(true);
-                    BLog.Debug($"{nameof(SetBottleHolderCount)} applied. New count: {count}");
+                    var item = NelItem.GetById("workbench_bottle");
+                    if (item == null)
+                    {
+                        BLog.Notice("workbench_bottle item not found while applying bottle holder count.");
+                        return;
+                    }
+
+                    if (!ReferenceEquals(_inventory, inventory) || _countOverride == null)
+                    {
+                        _inventory = inventory;
+                        _countOverride = new BottleHolderCountOverride(
+                            () => inventory.getCount(item),
+                            value => SetStoredBottleCount(inventory, item, value));
+                    }
+
+                    _countOverride.Apply(count);
+                    BLog.Debug($"Bottle holder count applied. New count: {GetBottleHolderCount(inventory)}");
                 }
                 catch (Exception ex)
                 {
@@ -78,51 +78,71 @@ namespace BetterExperience.Patches
                 }
             }
 
-            public static void RecoverBottleHolderCount()
+            internal static void SetStoredBottleCount(ItemStorage inventory, NelItem item, int count)
+            {
+                var current = inventory.getCount(item);
+                if (current < count)
+                    inventory.Add(item, count - current, 0);
+                else if (current > count)
+                {
+                    // 被空瓶占用的收纳行不能直接 Reduce；先解除关联，瓶子仍保留在背包中。
+                    inventory.removeWLink(item);
+                    inventory.Reduce(item, current - count, -1, false);
+                }
+
+                // fineRows 会从实际物品数量重建 ItemHid 和空瓶关联，不能只写 hide_bottle_max 属性。
+                inventory.fineRows(true);
+                if (inventory.getCount(item) != count)
+                    throw new InvalidOperationException($"Could not apply bottle holder count: {count}.");
+            }
+
+            /// <summary>背包或收纳组件尚未加载时返回 -1。</summary>
+            public static int GetBottleHolderCount()
+            {
+                return GetBottleHolderCount(GetInventory());
+            }
+
+            internal static int GetBottleHolderCount(ItemStorage inventory)
+            {
+                return inventory?.getHid()?.hide_bottle_max ?? -1;
+            }
+
+            // ItemStorage 在读档时会复用；必须在读取新数据前丢弃旧存档的原始数量。
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(ItemStorage), nameof(ItemStorage.clearAllItems))]
+            public static void ClearInventoryPrefix(ItemStorage __instance)
+            {
+                if (ReferenceEquals(_inventory, __instance))
+                    ClearOverride();
+            }
+
+            private static void ClearOverride()
+            {
+                _inventory = null;
+                _countOverride = null;
+            }
+
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(ItemStorage), nameof(ItemStorage.writeBinaryTo))]
+            internal static void SaveInventoryPrefix(ItemStorage __instance, out BottleHolderCountOverride __state)
+            {
+                __state = ReferenceEquals(_inventory, __instance) ? _countOverride : null;
+                // 还原失败时让保存中止，避免将临时数量写入存档；Finalizer 仍会尝试恢复运行时数量。
+                __state?.SuspendForSave();
+            }
+
+            [HarmonyFinalizer]
+            [HarmonyPatch(typeof(ItemStorage), nameof(ItemStorage.writeBinaryTo))]
+            internal static void SaveInventoryFinalizer(BottleHolderCountOverride __state)
             {
                 try
                 {
-                    var inventory = GetInventory();
-                    if (inventory == null)
-                    {
-                        BLog.Notice("Inventory not found while recovering bottle holder count.");
-                        return;
-                    }
-
-                    var item = NelItem.GetById("workbench_bottle");
-                    if (item == null)
-                    {
-                        BLog.Notice("workbench_bottle item not found while recovering bottle holder count.");
-                        return;
-                    }
-
-                    var preciousInventory = GetPreciousInventory();
-                    if (preciousInventory == null)
-                    {
-                        BLog.Notice("Precious inventory not found while recovering bottle holder count.");
-                        return;
-                    }
-
-                    var count = preciousInventory.getCount(item);
-                    count = Mathf.Max(count, 0);
-
-                    _originalBottleHolderCount = inventory.hide_bottle_max;
-                    inventory.hide_bottle_max = count;
-                    BLog.Debug($"Recovered bottle holder count for save operation. TemporaryCount={count}, OriginalCount={_originalBottleHolderCount}");
+                    __state?.ResumeAfterSave();
                 }
                 catch (Exception ex)
                 {
-                    BLog.Error($"Unexpected error in {nameof(RecoverBottleHolderCount)}.", ex);
+                    BLog.Error("Failed to restore bottle holder count after serialization.", ex);
                 }
-            }
-
-            /// <summary>
-            /// 读取当前空瓶收纳槽位数量，供实时控制界面显示；背包未加载时返回 -1 占位。
-            /// </summary>
-            public static int GetBottleHolderCount()
-            {
-                var inventory = GetInventory();
-                return inventory == null ? -1 : inventory.hide_bottle_max;
             }
         }
     }
