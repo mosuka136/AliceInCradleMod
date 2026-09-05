@@ -64,6 +64,11 @@ namespace BetterExperience.Test.Patches
         private static List<CodeInstruction> ReadLayoutInstructions()
         {
             var method = typeof(UiCraftBase).GetMethod("initCmd", BindingFlags.Instance | BindingFlags.NonPublic);
+            return ReadInstructions(method);
+        }
+
+        internal static List<CodeInstruction> ReadInstructions(MethodBase method)
+        {
             var codes = typeof(OpCodes).GetFields(BindingFlags.Static | BindingFlags.Public)
                 .Where(field => field.FieldType == typeof(OpCode))
                 .Select(field => (OpCode)field.GetValue(null)).ToDictionary(code => (ushort)code.Value);

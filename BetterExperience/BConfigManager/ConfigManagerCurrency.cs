@@ -13,6 +13,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableLockCurrencyGoldCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyCraftsCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyJuiceCount { get; private set; }
+        public static ConfigEntry<bool> EnableLockGuildPoint { get; private set; }
         [EntryGui(2)]
         [EntrySlider(1, -1f, 1000000f, 1f)]
         public static ConfigEntry<bool, long> SetCurrencyGoldCount { get; private set; }
@@ -22,6 +23,9 @@ namespace BetterExperience.BConfigManager
         [EntryGui(2)]
         [EntrySlider(1, -1f, 1000000f, 1f)]
         public static ConfigEntry<bool, long> SetCurrencyJuiceCount { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, nel.GuildManager.GQ_POINT_MAX, 1f)]
+        public static ConfigEntry<bool, int> SetGuildPoint { get; private set; }
 
         private const string SectionCurrency = "Currency";
 
@@ -64,6 +68,16 @@ namespace BetterExperience.BConfigManager
                         english: "Enable lock juice count. When enabled, the number of juice will not increase or decrease."
                         )
                     );
+                EnableLockGuildPoint = Config.Bind(
+                    SectionCurrency,
+                    nameof(EnableLockGuildPoint),
+                    false,
+                    new Translator(chinese: "启用工会积分锁定", english: "Enable Guild Points Lock"),
+                    new Translator(
+                        chinese: "锁定当前工会积分，任务奖励、失败惩罚和购物不再改变积分。",
+                        english: "Lock current guild points against quest rewards, failure penalties, and shopping."
+                        )
+                    );
                 SetCurrencyGoldCount = BindPreloadValue(
                     SectionCurrency,
                     nameof(SetCurrencyGoldCount),
@@ -92,6 +106,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置精萃数量。",
                         english: "Set juice count."
+                        )
+                    );
+                SetGuildPoint = BindPreloadValue(
+                    SectionCurrency,
+                    nameof(SetGuildPoint),
+                    -1,
+                    new Translator(chinese: "设置工会积分", english: "Set Guild Points"),
+                    new Translator(
+                        chinese: "设置工会积分，同时影响工会等级。-1 表示不修改。",
+                        english: "Set guild points, which also affect guild rank. -1 leaves them unchanged."
                         )
                     );
             }
