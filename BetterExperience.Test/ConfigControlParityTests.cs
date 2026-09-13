@@ -60,6 +60,12 @@ namespace BetterExperience.Test
             nameof(ConfigManager.SetGuildPoint)
         };
 
+        // 只存在于实时控制、不落盘的会话开关；不要求对应 ConfigEntry<bool, T>。
+        private static readonly string[] ExpectedControlOnlyEntryNames = new[]
+        {
+            nameof(ControlManager.SetAutoFishing)
+        };
+
         [Fact]
         public void PreloadConfigEntries_ExactlyMatchRuntimeControls()
         {
@@ -79,10 +85,15 @@ namespace BetterExperience.Test
                 .OrderBy(property => property.Name)
                 .ToArray();
 
+            var expectedControlNames = ExpectedPreloadEntryNames
+                .Concat(ExpectedControlOnlyEntryNames)
+                .OrderBy(name => name)
+                .ToArray();
+
             // Assert
             Assert.Equal(38, ExpectedPreloadEntryNames.Length);
             Assert.Equal(expectedNames, preloadProperties.Select(property => property.Name).ToArray());
-            Assert.Equal(expectedNames, controlProperties.Select(property => property.Name).ToArray());
+            Assert.Equal(expectedControlNames, controlProperties.Select(property => property.Name).ToArray());
 
             foreach (var preloadProperty in preloadProperties)
             {

@@ -58,6 +58,7 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BConfigManager\ConfigManagerMiniGame.cs" />
     <Compile Include="BControlManager\ControlManager.cs" />
     <Compile Include="BConfigManager\ConfigManagerWeather.cs" />
     <Compile Include="BetterExperience.cs" />
@@ -77,6 +78,8 @@
     <Compile Include="BLogSpace\BepInExLog.cs" />
     <Compile Include="BepInExLoggerProvider.cs" />
     <Compile Include="GameSaveLoadManager.cs" />
+    <Compile Include="Patches\AutoFishingLogic.cs" />
+    <Compile Include="Patches\AutoFishingPatch.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
     <Compile Include="Patches\CookingRandomEffectPatch.cs" />
     <Compile Include="Patches\CookingEffectPreview.cs" />

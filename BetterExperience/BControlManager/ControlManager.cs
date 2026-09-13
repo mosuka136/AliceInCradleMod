@@ -25,6 +25,7 @@ namespace BetterExperience.BControlManager
         private const string SectionMap = "Map";
         private const string SectionWeather = "Weather";
         private const string SectionCurrency = "Currency";
+        private const string SectionMiniGame = "MiniGame";
 
         private static bool _initialized;
 
@@ -38,6 +39,7 @@ namespace BetterExperience.BControlManager
         internal static ControlEntry<int> SetPlayerMaxSatiety { get; private set; }
         internal static ControlEntry<int> SetOverChargeSlotCount { get; private set; }
         internal static ControlEntry<int> SetEnhancerSlotCount { get; private set; }
+        internal static ControlEntry<bool> SetAutoFishing { get; private set; }
 
         internal static ControlEntry<float> SetCaneSwingSpeed { get; private set; }
         internal static ControlEntry<float> SetCaneCastSpeed { get; private set; }
@@ -89,6 +91,7 @@ namespace BetterExperience.BControlManager
                 InitializeMapControls();
                 InitializeWeatherControls();
                 InitializeCurrencyControls();
+                InitializeMiniGameControls();
 
                 _initialized = true;
                 BLog.Debug("Runtime control manager initialized.");
@@ -139,6 +142,14 @@ namespace BetterExperience.BControlManager
                 new Translator(
                     chinese: "查看和修改当前游戏中的货币数量。",
                     english: "View and modify currency amounts in the current game."
+                    )
+                );
+            BService.Control.CreateTable(
+                SectionMiniGame,
+                new Translator(chinese: "小游戏", english: "Mini Game"),
+                new Translator(
+                    chinese: "查看和修改当前游戏中的小游戏状态。",
+                    english: "View and modify mini game state in the current game."
                     )
                 );
         }
@@ -439,6 +450,21 @@ namespace BetterExperience.BControlManager
                 HPatches.SetCurrencyCountPatch.GetCurrencyJuiceCount,
                 HPatches.SetCurrencyCountPatch.SetCurrencyJuiceCount,
                 new Translator(chinese: "设置精萃数量", english: "Set Juice Count")
+                );
+        }
+
+        private static void InitializeMiniGameControls()
+        {
+            SetAutoFishing = Bind(
+                SectionMiniGame,
+                nameof(SetAutoFishing),
+                HPatches.AutoFishing.GetAutoFishing,
+                HPatches.AutoFishing.SetAutoFishing,
+                new Translator(chinese: "自动钓鱼", english: "Auto Fishing"),
+                new Translator(
+                    chinese: "开启后，开始钓鱼会自动瞄准、抛竿、起竿、跟随鱼标并确认结算。",
+                    english: "After you start fishing it will aim, cast, hook, follow the marker and confirm the result."
+                    )
                 );
         }
 

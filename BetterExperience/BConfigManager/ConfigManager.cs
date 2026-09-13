@@ -29,7 +29,6 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableBetterExperience { get; private set; }
         public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
-        public static ConfigEntry<bool> EnableBetterFishing { get; private set; }
         public static ConfigEntry<bool> EnableCookingRandomEffectPreview { get; private set; }
         public static ConfigEntry<bool> EnableBattleEnemyPreview { get; private set; }
         public static ConfigEntry<bool> EnableDamageCounter { get; private set; }
@@ -111,16 +110,6 @@ namespace BetterExperience.BConfigManager
                             english: "Enable the restriction that certain options in the chair menu are unavailable for players under specific circumstances, must be set before launching the game."
                             )
                         );
-                    EnableBetterFishing = Config.Bind(
-                        SectionGeneral,
-                        nameof(EnableBetterFishing),
-                        false,
-                        new Translator(chinese: "启用更好的钓鱼", english: "Enable Better Fishing"),
-                        new Translator(
-                            chinese: "启用更好的钓鱼。它将允许玩家更容易地钓到鱼。",
-                            english: "Enable better fishing. It will allow players to catch fish more easily."
-                            )
-                        );
                     EnableCookingRandomEffectPreview = Config.Bind(
                         SectionGeneral,
                         nameof(EnableCookingRandomEffectPreview),
@@ -183,6 +172,7 @@ namespace BetterExperience.BConfigManager
                 InitializeWeather();
                 InitializeMapTrap();
                 InitializeCurrency();
+                InitializeMiniGame();
                 InitializeTexture();
                 InitializeHotkey();
                 InitializeLog();

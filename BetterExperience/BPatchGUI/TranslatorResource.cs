@@ -19,6 +19,9 @@ namespace BetterExperience.BPatchGUI
         internal readonly static Translator NoclipDisabled = new Translator("穿墙已关闭。", "Noclip off.");
         internal readonly static Translator NoclipDefaultPosition = new Translator("落点已失效，已恢复到游戏默认位置。", "No clear exit remained; restored the game's default position.");
         internal readonly static Translator NoclipActive = new Translator("穿墙飞行中", "Noclip flight active");
+        internal readonly static Translator AutoFishingEnabled = new Translator("自动钓鱼已开启：开始钓鱼后将自动抛竿、起竿并收杆。", "Auto fishing on: after you start, it will cast, hook and reel.");
+        internal readonly static Translator AutoFishingDisabled = new Translator("自动钓鱼已关闭。", "Auto fishing off.");
+        internal readonly static Translator AutoFishingActive = new Translator("自动钓鱼中", "Auto fishing active");
 
         public readonly static Translator BattleStatisticsTitle = new Translator("战斗统计", "Battle Statistics");
         internal readonly static Translator BattleEnemyPreviewTitle = new Translator("魔物详细预览", "Enemy Details");
