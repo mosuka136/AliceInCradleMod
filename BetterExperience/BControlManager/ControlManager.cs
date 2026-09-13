@@ -40,6 +40,7 @@ namespace BetterExperience.BControlManager
         internal static ControlEntry<int> SetOverChargeSlotCount { get; private set; }
         internal static ControlEntry<int> SetEnhancerSlotCount { get; private set; }
         internal static ControlEntry<bool> SetAutoFishing { get; private set; }
+        internal static ControlEntry<bool> SetAutoMilk { get; private set; }
 
         internal static ControlEntry<float> SetCaneSwingSpeed { get; private set; }
         internal static ControlEntry<float> SetCaneCastSpeed { get; private set; }
@@ -464,6 +465,17 @@ namespace BetterExperience.BControlManager
                 new Translator(
                     chinese: "开启后，开始钓鱼会自动瞄准、抛竿、起竿、跟随鱼标并确认结算。",
                     english: "After you start fishing it will aim, cast, hook, follow the marker and confirm the result."
+                    )
+                );
+            SetAutoMilk = Bind(
+                SectionMiniGame,
+                nameof(SetAutoMilk),
+                HPatches.AutoMilk.GetAutoMilk,
+                HPatches.AutoMilk.SetAutoMilk,
+                new Translator(chinese: "自动挤奶", english: "Auto Milking"),
+                new Translator(
+                    chinese: "开启后，挤奶小游戏会自动寻找奶量最多的奶牛、对话并完成满级挤奶，循环到计时结束。",
+                    english: "During the milking minigame it will find the fullest cow, talk and milk at full charge repeatedly until time is up."
                     )
                 );
         }

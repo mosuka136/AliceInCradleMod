@@ -63,7 +63,8 @@ namespace BetterExperience.Test
         // 只存在于实时控制、不落盘的会话开关；不要求对应 ConfigEntry<bool, T>。
         private static readonly string[] ExpectedControlOnlyEntryNames = new[]
         {
-            nameof(ControlManager.SetAutoFishing)
+            nameof(ControlManager.SetAutoFishing),
+            nameof(ControlManager.SetAutoMilk)
         };
 
         [Fact]

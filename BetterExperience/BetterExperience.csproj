@@ -80,6 +80,7 @@
     <Compile Include="GameSaveLoadManager.cs" />
     <Compile Include="Patches\AutoFishingLogic.cs" />
     <Compile Include="Patches\AutoFishingPatch.cs" />
+    <Compile Include="Patches\AutoMilkPatch.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
     <Compile Include="Patches\CookingRandomEffectPatch.cs" />
     <Compile Include="Patches\CookingEffectPreview.cs" />

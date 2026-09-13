@@ -22,6 +22,9 @@ namespace BetterExperience.BPatchGUI
         internal readonly static Translator AutoFishingEnabled = new Translator("自动钓鱼已开启：开始钓鱼后将自动抛竿、起竿并收杆。", "Auto fishing on: after you start, it will cast, hook and reel.");
         internal readonly static Translator AutoFishingDisabled = new Translator("自动钓鱼已关闭。", "Auto fishing off.");
         internal readonly static Translator AutoFishingActive = new Translator("自动钓鱼中", "Auto fishing active");
+        internal readonly static Translator AutoMilkEnabled = new Translator("自动挤奶已开启：挤奶小游戏中将自动找牛、对话并完成满级挤奶。", "Auto milking on: during the minigame it will find cows, talk and milk at full charge.");
+        internal readonly static Translator AutoMilkDisabled = new Translator("自动挤奶已关闭。", "Auto milking off.");
+        internal readonly static Translator AutoMilkActive = new Translator("自动挤奶中", "Auto milking active");
 
         public readonly static Translator BattleStatisticsTitle = new Translator("战斗统计", "Battle Statistics");
         internal readonly static Translator BattleEnemyPreviewTitle = new Translator("魔物详细预览", "Enemy Details");
