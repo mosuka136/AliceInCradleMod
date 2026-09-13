@@ -44,12 +44,13 @@ namespace BetterExperience.Patches.ReplaceTexture
                     Directory.CreateDirectory(sensitiveImagePath);
 
                 var imageFiles = Directory.GetFiles(imagePath, "*.*", SearchOption.AllDirectories)
-                    .Where(f => supportedExtensions.Any(s => f.EndsWith(s, StringComparison.OrdinalIgnoreCase)));
+                    .Where(f => supportedExtensions.Any(s => f.EndsWith(s, StringComparison.OrdinalIgnoreCase)))
+                    .Where(f => !PortraitRuntime.IsReservedImage(f));
 
                 if (!ConfigManager.EnableSensitivities.Value)
                 {
                     // 敏感内容开关关闭时，只排除敏感目录下的文件；普通目录中的同名文件仍可作为替换资源。
-                    imageFiles = imageFiles.Where(f => !f.StartsWith(sensitiveImagePath, StringComparison.OrdinalIgnoreCase));
+                    imageFiles = imageFiles.Where(f => !PortraitCatalog.Within(sensitiveImagePath, f));
                 }
 
                 foreach (var file in imageFiles)

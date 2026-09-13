@@ -42,6 +42,7 @@ namespace BetterExperience
 
                 BLog.Info($"{nameof(BetterExperience)} startup initialized. Version={PatchInfo.BepInPluginVersion}");
 
+                PortraitRuntime.Initialize();
                 TextureManager.Initialize(PatchInfo.ReplaceImagePath, PatchInfo.ReplaceSensitiveImagePath, PatchInfo.ReplaceImageSupportedExtensions);
 
                 // Harmony 注册失败时跳过单个补丁类，避免某个补丁因目标方法变更导致整个插件不可用。
@@ -64,6 +65,7 @@ namespace BetterExperience
         public void Update()
         {
             PlayerMovementController.Update();
+            PortraitRuntime.PollSettings();
         }
 
         public void OnDisable()
@@ -74,6 +76,7 @@ namespace BetterExperience
 
         public void OnDestroy()
         {
+            PortraitRuntime.Stop();
             PlayerMovementController.Dispose();
             NoticeGUI.ClearAll();
             BService.Dispose();

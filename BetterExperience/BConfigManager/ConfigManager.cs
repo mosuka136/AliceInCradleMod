@@ -27,7 +27,6 @@ namespace BetterExperience.BConfigManager
         public static ConfigSheet Sheet => Config.Sheet;
 
         public static ConfigEntry<bool> EnableBetterExperience { get; private set; }
-        public static ConfigEntry<LanguageType> SetLanguage { get; private set; }
         public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableBetterFishing { get; private set; }
@@ -91,13 +90,6 @@ namespace BetterExperience.BConfigManager
                             chinese: "启用更好的体验模组，必须在游戏启动前设置。",
                             english: "Enable Better Experience mod, must be set before launching the game."
                             )
-                        );
-                    SetLanguage = Config.Bind(
-                        SectionGeneral,
-                        nameof(SetLanguage),
-                        LanguageType.English,
-                        new Translator(chinese: "设置语言", english: "Set Language"),
-                        new Translator()
                         );
                     EnableFlushAllStore = Config.Bind(
                         SectionGeneral,
@@ -179,9 +171,6 @@ namespace BetterExperience.BConfigManager
                             english: "Set loot drop ratio. Default value is -1, which means no change. Set it to 0 to disable loot drop. Set it to n(n >= 1) to multiply loot drop by n."
                             )
                         );
-
-                    SetLanguage.OnValueChanged += (s, e) => Translator.DefaultLanguage = e;
-                    Translator.DefaultLanguage = SetLanguage.Value;
                 }
                 catch (Exception ex)
                 {

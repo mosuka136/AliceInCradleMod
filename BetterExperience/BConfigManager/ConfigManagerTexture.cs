@@ -1,5 +1,6 @@
 using BetterExperience.BLogSpace;
 using System;
+using System.Collections.Generic;
 using UnityModBase.HConfigSpace;
 using UnityModBase.HTranslatorSpace;
 
@@ -11,8 +12,12 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableMosaic { get; private set; }
         public static ConfigEntry<bool> EnableReplaceTexture { get; private set; }
         public static ConfigEntry<bool> EnableSensitivities { get; private set; }
+        public static ConfigEntry<bool> EnableReplacePortrait { get; private set; }
 
-        private const string SectionTexture = "Texture";
+        // 立绘包启用列表：每行 (包 id, 是否启用)，配置界面展开后逐行显示 id 文本框和启用开关；扫描会把新发现的包自动追加成行。
+        public static ConfigEntry<List<(string Id, bool Enabled)>> EnabledPortraitPacks { get; private set; }
+
+        internal const string SectionTexture = "Texture";
 
         /// <summary>
         /// 初始化马赛克和外部贴图替换相关配置。
@@ -23,6 +28,11 @@ namespace BetterExperience.BConfigManager
             {
                 Config.CreateTable(SectionTexture, new Translator(chinese: "贴图", english: "Texture"));
 
+                EnableReplacePortrait = Config.Bind(
+                    SectionTexture, nameof(EnableReplacePortrait), false,
+                    new Translator(chinese: "启用立绘附件替换", english: "Enable Portrait Attachments"),
+                    new Translator(chinese: "自动扫描 ReplaceTexture 中的 .portrait.json 清单，保留原骨骼和动画。修改在下一次立绘切换时生效，使用刷新贴图热键可立即生效。",
+                        english: "Auto-scan .portrait.json manifests from ReplaceTexture, preserving original bones and animations. Changes apply at the next portrait switch, or immediately via the texture refresh hotkey."));
                 EnableMosaic = Config.Bind(
                     SectionTexture,
                     nameof(EnableMosaic),
@@ -57,6 +67,16 @@ namespace BetterExperience.BConfigManager
                         english: "Enable sensitivities. If disabled, textures in the BetterExperience\\ReplaceTexture\\Sensitive folder will not be loaded to replace the original textures."
                         )
                     );
+                EnabledPortraitPacks = Config.Bind(
+                    SectionTexture, nameof(EnabledPortraitPacks), new List<(string, bool)>(),
+                    new Translator(chinese: "立绘包列表", english: "Portrait Packs"),
+                    new Translator(chinese: "每行一个立绘包：id 旁边的开关决定是否启用。插件自动扫描 ReplaceTexture，" +
+                                             "扫描到的新包会自动追加到列表末尾（默认关闭）。同一目标只能启用一个包：" +
+                                             "同时启用多个同目标包会冲突，相关包全部不生效并记录错误。文件修改后使用刷新贴图热键。",
+                        english: "One portrait pack per row; the toggle next to the id decides whether it is enabled. " +
+                                 "The plugin auto-scans ReplaceTexture and appends newly found packs at the end of the list (disabled by default). " +
+                                 "Only one pack per target may be enabled: enabling several packs with the same target conflicts, none of them applies, and errors are logged. " +
+                                 "Use the texture refresh hotkey after changing pack files."));
             }
             catch (Exception ex)
             {

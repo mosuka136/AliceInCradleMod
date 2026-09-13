@@ -43,13 +43,15 @@ namespace BetterExperience.Patches
 
             public static void Update()
             {
-                if (ConfigManager.EnableReplaceTexture?.Value != true)
+                if (ConfigManager.EnableReplaceTexture?.Value != true && ConfigManager.EnableReplacePortrait?.Value != true && !PortraitRuntime.HasWork)
                     return;
 
                 if (ConfigManager.FlushTextureHotkey?.Value?.WasPressedThisFrame() == true)
                 {
                     try
                     {
+                        // Refresh 会重扫立绘包目录并让已显示的立绘立即重切到新资源。
+                        PortraitRuntime.Refresh();
                         // 刷新时先恢复原资源，再重新加载外部图片，避免把已替换贴图当作下一轮的“原图”。
                         RestoreOriginalTexture();
 
@@ -57,7 +59,8 @@ namespace BetterExperience.Patches
 
                         foreach (var texture in new List<BetobetoManager.SvTexture>(_spineTexture))
                         {
-                            texture?.cleanExecute();
+                            if (texture != null && !PortraitRuntime.HasActive(texture))
+                                texture.cleanExecute();
                         }
 
                         foreach (var texture in _pictureTexture)
@@ -76,11 +79,11 @@ namespace BetterExperience.Patches
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(BetobetoManager.SvTexture), nameof(BetobetoManager.SvTexture.cleanExecute))]
-            public static void CleanExecutePostfix(BetobetoManager.SvTexture __instance)
+            public static void CleanExecutePostfix(BetobetoManager.SvTexture __instance, bool __result)
             {
                 try
                 {
-                    if (!ConfigManager.EnableReplaceTexture.Value)
+                    if (!__result || PortraitRuntime.HasActive(__instance) || !ConfigManager.EnableReplaceTexture.Value)
                         return;
 
                     if (__instance.MtiImage0 == null || __instance.MtiImage0.Image == null)
@@ -165,6 +168,8 @@ namespace BetterExperience.Patches
 
             public static void TryReplace(BetobetoManager.SvTexture svTexture, Texture image)
             {
+                if (svTexture != null && PortraitRuntime.HasActive(svTexture))
+                    return;
                 if (svTexture == null || svTexture.MtiImage0 == null || svTexture.MtiImage0.Image == null)
                     return;
 

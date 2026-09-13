@@ -363,4 +363,10 @@ MigrationBackup/
 FodyWeavers.xsd
 /.codetesting
 /.github
+
+# Ignore ReferenceLibrary folder
 /ReferenceLibrary
+
+# AI Agent
+.github/
+.zcode/

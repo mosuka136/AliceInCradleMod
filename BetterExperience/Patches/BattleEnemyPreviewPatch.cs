@@ -225,7 +225,7 @@ namespace BetterExperience.Patches
             key.Append('|').Append(danger).Append('|').Append(level.ToString("R", CultureInfo.InvariantCulture)).Append('|').Append(attributeDanger)
                 .Append('|').Append(weather).Append('|').Append(divisor).Append('|').Append(isNight).Append('|').Append(context.ThunderCapacity)
                 .Append('|').Append(quest.fix_enemykind).Append('|').Append((uint)quest.nattr).Append('|').Append(quest.nattr_addable_max)
-                .Append('|').Append(context.SpecialBattle).Append('|').Append(ConfigManager.SetLanguage?.Value).Append('|').Append(TX.getCurrentFamilyName());
+                .Append('|').Append(context.SpecialBattle).Append('|').Append(TX.getCurrentFamilyName());
             foreach (var value in context.Variables.OrderBy(value => value.Key, StringComparer.Ordinal)) key.Append('|').Append(value.Key).Append('=').Append(value.Value);
             foreach (var value in context.Values.OrderBy(value => value.Key, StringComparer.Ordinal)) key.Append('|').Append(value.Key).Append('=').Append(value.Value.ToString("R", CultureInfo.InvariantCulture));
             signature = key.ToString();

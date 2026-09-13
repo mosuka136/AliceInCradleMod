@@ -17,14 +17,14 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 - QoL features: one-key shop refresh, improved save points, access warehouse anywhere, improved fishing, reel-related adjustments
 - Cooking: preview mushroom effects and reroll them in the cooking confirmation screen
 - Battle point preview: detailed enemy kinds, contamination, attributes and count ranges
-- Movement helpers: teleport to the mouse pointer, noclip flight, and player jump strength adjustment
+- Movement helpers: teleport to the mouse pointer, four-direction noclip flight, and player jump strength multiplier
 - Stat tweaks: HP/MP/EP, currency amount, max satiety, movement speed, drop multiplier, cane attributes, danger level, etc.
 - Capacity tweaks: backpack capacity, empty bottle holder slots, enhancer slot count, overcharge slot count, etc.
 - Survival/combat protection and statistics: no HP/MP/EP damage, no map damage, abnormal status immunity, infinite shield, cannot be attacked, battle statistics, damage counter, etc.
 - Trap/environment: drowning, crush damage, falling, MP break, worm traps, and fog visual effects can be enabled or disabled through config
 - Limit removals: puppet merchant spawn limits, bench menu limits, treasure chest limits, warehouse region limits, etc.
 - Map and weather: fast travel anywhere, dark area removal in specific zones, forced weather (wind/thunder/mist/drought/dense mist/plague)
-- Visual features: remove mosaic, texture replacement, sensitivity toggle, runtime texture reload
+- Visual features: remove mosaic, texture replacement, external Spine portrait attachment replacement, sensitive content texture toggle, runtime texture reload
 - Hotkey features: supports key combinations, multiple alternative hotkeys, and gamepad input
 - Debug: debug switch
 
@@ -72,6 +72,49 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 - No visible change after replacement: check the directory, filename, file format, and config toggles, then inspect the loading logs in `BepInEx/plugins/BetterExperience/logs/`.
 - Duplicate texture name not loaded: only one file with the same name is loaded across directories; duplicates are skipped and recorded in the log.
 - Broken body or limb layout after replacement: this usually means the game version changed the texture layout. Re-export the texture from the current game version, adjust the mask or alignment in an image editor, and save it again.
+
+## External Portrait Attachment Replacement
+
+This feature reads external Spine export files and replaces Region, Mesh, and Linked Mesh attachments. The game's original bones, slots, constraints, skin state, and animations remain unchanged. Attachment images and mesh shapes can be modified.
+
+### File Layout and Manifest
+
+Uses the directory `BetterExperience/ReplaceTexture`:
+
+```text
+ReplaceTexture/
+    stand_normal.png                 Whole-texture replacement as before, optional
+    stand_normal.portrait.json       Attachment pack entry point
+    stand_normal.attachments.json   Spine-exported JSON
+    stand_normal.attachments.atlas  Spine-exported single-page atlas
+    stand_normal.attachments.png    Atlas image
+```
+
+`stand_normal.portrait.json` example:
+
+```json
+{
+    "formatVersion": 1,
+    "id": "stand-normal-cloth-demo",
+    "target": "stand_normal",
+    "jsonKey": "stand_normal",
+    "json": "stand_normal.attachments.json",
+    "atlas": "stand_normal.attachments.atlas"
+}
+```
+
+`target` is the game's `SvTexture.key`; `jsonKey` is the skeleton JSON resource key it uses. The two are usually identical, but for CGs with JSON variants you must fill in the actual key. `id` is case-sensitive. The entry file must end with `.portrait.json`; other filenames can be customized.
+
+JSON and atlas paths are relative to the manifest; the PNG path is specified by the first line of the atlas and is relative to the atlas. All paths must stay inside `ReplaceTexture`; absolute paths, directory traversal to the outside, and symbolic links/junctions are not accepted. The existing `Sensitive` toggle covers the manifest and all of its dependency files: a manifest in the regular directory cannot reference `Sensitive` content while that toggle is off.
+
+### Asset Creation Requirements
+
+1. Base your work on the original assets of the matching game version. Currently only Spine **4.1** JSON is accepted.
+2. Keep bone order, bone initial transforms, slots, constraints, and skin constraint definitions identical. External animations are not merged; the original animations are used at runtime.
+3. Provide same-named attachments through the original `skin / slot / attachment` lookup keys; attachments that are not provided keep their original versions. You cannot add new skins, slots, or attachments, nor modify functional attachments such as paths, colliders, or clipping.
+4. Keep the attachment's original atlas region names (including effect naming such as `EM` and `ND`). Export a single-page atlas containing all regions referenced by the merged attachments; you cannot pack only the modified images.
+5. Export straight-alpha PNGs; do not use PMA or attachment sequences. The PNG size must match the atlas declaration, and device texture size limits are also validated at runtime. Rotated slices support 0° and 90°.
+6. Meshes without Deform dependencies may change vertex counts, triangles, and weights, but may only bind to the original bones. When Deform dependencies exist, you must preserve the UV/vertex correspondence order, triangles, hull/edges, and bone influences with weights; modifying the corresponding vertex coordinates is allowed. Linked Meshes additionally validate the parent mesh, skin, and deform inheritance relationships.
 
 ## License
 

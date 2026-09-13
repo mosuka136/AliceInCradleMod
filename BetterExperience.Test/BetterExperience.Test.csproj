@@ -30,6 +30,10 @@
       <HintPath>..\ReferenceLibrary\pixelliner.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="spine-unity">
+      <HintPath>..\ReferenceLibrary\spine-unity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>..\ReferenceLibrary\0Harmony.dll</HintPath>
       <Private>True</Private>

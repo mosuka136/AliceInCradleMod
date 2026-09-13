@@ -131,6 +131,10 @@
     <Compile Include="Patches\HPatches.cs" />
     <Compile Include="Patches\RemoveLimitInBenchMenuPatch.cs" />
     <Compile Include="Patches\ReplaceTexture\TextureManager.cs" />
+    <Compile Include="Patches\ReplaceTexture\PortraitJson.cs" />
+    <Compile Include="Patches\ReplaceTexture\PortraitCatalog.cs" />
+    <Compile Include="Patches\ReplaceTexture\PortraitMerger.cs" />
+    <Compile Include="Patches\ReplaceTexture\PortraitRuntime.cs" />
     <Compile Include="PatchInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Patches\RemoveLimitInTreasureChestsPatch.cs" />
@@ -171,6 +175,10 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="spine-unity">
+      <HintPath>..\ReferenceLibrary\spine-unity.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\ReferenceLibrary\UnityEngine.dll</HintPath>
       <Private>False</Private>
