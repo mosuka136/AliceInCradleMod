@@ -267,7 +267,12 @@ namespace BetterExperience.Patches.ReplaceTexture
             // No Unity objects visible to renderers were changed before this point.
             Invalidate(texture, old);
             state.Current = candidate;
+            var retiredTexture = texture.getRendered();
             texture.releaseTexture();
+            // The game's releaseTexture only calls RenderTexture.Release().
+            // At this safe switch no other enabled viewer uses this texture;
+            // also destroy the Unity object instead of leaking one per refresh.
+            if (retiredTexture != null) Object.Destroy(retiredTexture);
             depth.SetValue(texture, null);
             texture.atlas_depth_written = false;
             svAtlas.SetValue(texture, candidate?.Atlas);

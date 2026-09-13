@@ -84,7 +84,8 @@
     <Compile Include="Patches\AutoBunServeLogic.cs" />
     <Compile Include="Patches\AutoBunServePatch.cs" />
     <Compile Include="Patches\BetterBunAssistPatch.cs" />
-    <Compile Include="Patches\BetterFishingPatch.cs" />
+    <Compile Include="Patches\FishingMinigameAssistLogic.cs" />
+    <Compile Include="Patches\FishingMinigameAssistPatch.cs" />
     <Compile Include="Patches\CookingRandomEffectPatch.cs" />
     <Compile Include="Patches\CookingEffectPreview.cs" />
     <Compile Include="Patches\BattleEnemyPreview.cs" />
