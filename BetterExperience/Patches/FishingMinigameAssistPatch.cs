@@ -4,7 +4,6 @@ using HarmonyLib;
 using m2d;
 using nel.mgm.fis;
 using System;
-using UnityEngine;
 
 namespace BetterExperience.Patches
 {

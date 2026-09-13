@@ -13,6 +13,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableLockCurrencyGoldCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyCraftsCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyJuiceCount { get; private set; }
+        public static ConfigEntry<bool> EnableLockCurrencyBarScoreCount { get; private set; }
         public static ConfigEntry<bool> EnableLockGuildPoint { get; private set; }
         [EntryGui(2)]
         [EntrySlider(1, -1f, 1000000f, 1f)]
@@ -23,6 +24,9 @@ namespace BetterExperience.BConfigManager
         [EntryGui(2)]
         [EntrySlider(1, -1f, 1000000f, 1f)]
         public static ConfigEntry<bool, long> SetCurrencyJuiceCount { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 1000000f, 1f)]
+        public static ConfigEntry<bool, long> SetCurrencyBarScoreCount { get; private set; }
         [EntryGui(2)]
         [EntrySlider(1, -1f, nel.GuildManager.GQ_POINT_MAX, 1f)]
         public static ConfigEntry<bool, int> SetGuildPoint { get; private set; }
@@ -68,6 +72,16 @@ namespace BetterExperience.BConfigManager
                         english: "Enable lock juice count. When enabled, the number of juice will not increase or decrease."
                         )
                     );
+                EnableLockCurrencyBarScoreCount = Config.Bind(
+                    SectionCurrency,
+                    nameof(EnableLockCurrencyBarScoreCount),
+                    false,
+                    new Translator(chinese: "启用酒吧积分锁定", english: "Enable Lock Bar Score"),
+                    new Translator(
+                        chinese: "启用酒吧打工积分锁定。开启后结算入账和商店消费都不会改变积分。",
+                        english: "Lock bar work points. Settlement payouts and shop purchases will not change the amount."
+                        )
+                    );
                 EnableLockGuildPoint = Config.Bind(
                     SectionCurrency,
                     nameof(EnableLockGuildPoint),
@@ -106,6 +120,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置精萃数量。",
                         english: "Set juice count."
+                        )
+                    );
+                SetCurrencyBarScoreCount = BindPreloadValue(
+                    SectionCurrency,
+                    nameof(SetCurrencyBarScoreCount),
+                    -1L,
+                    new Translator(chinese: "设置酒吧积分", english: "Set Bar Score"),
+                    new Translator(
+                        chinese: "设置酒吧打工积分。写入时会把生涯获得量抬到不低于当前值，以便累计满 20000 后解锁无限外带。",
+                        english: "Set bar work points. Lifetime earned is raised to at least this amount so 20000 still unlocks unlimited takeout."
                         )
                     );
                 SetGuildPoint = BindPreloadValue(

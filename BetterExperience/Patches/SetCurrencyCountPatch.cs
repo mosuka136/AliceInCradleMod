@@ -1,9 +1,10 @@
 using BetterExperience.BConfigManager;
-using UnityModBase.HClassAttribute;
 using BetterExperience.BLogSpace;
 using HarmonyLib;
 using nel;
 using System;
+using UnityModBase.HClassAttribute;
+using UnityModBase.HConfigSpace;
 
 namespace BetterExperience.Patches
 {
@@ -13,6 +14,7 @@ namespace BetterExperience.Patches
         /// 设置或锁定货币数量。
         /// 设置有两个入口：读档后按双值配置预加载一次，或经实时控制界面即时修改；
         /// 锁定模式通过 Prefix 拦截 CoinEntry.Add/Reduce，把数量冻结在当前值，不主动改写。
+        /// 酒吧积分写入时会把生涯获得量抬到不低于当前值，以便累计满 20000 后仍能解锁无限外带。
         /// </summary>
         [HarmonyPatch]
         public class SetCurrencyCountPatch
@@ -27,18 +29,10 @@ namespace BetterExperience.Patches
 
                 GameSaveLoadManager.OnGameSaveLoadCompleted += () =>
                 {
-                    // 双值配置以 long 存储设置值，游戏接口使用 uint；经字符串解析一并完成负数与超界过滤，非法值跳过不应用。
-                    if (ConfigManager.SetCurrencyGoldCount.Value1
-                        && UInt32.TryParse(ConfigManager.SetCurrencyGoldCount.Value2.ToString(), out var countGold))
-                        SetCurrencyGoldCount(countGold);
-
-                    if (ConfigManager.SetCurrencyCraftsCount.Value1
-                        && UInt32.TryParse(ConfigManager.SetCurrencyCraftsCount.Value2.ToString(), out var countCrafts))
-                        SetCurrencyCraftsCount(countCrafts);
-
-                    if (ConfigManager.SetCurrencyJuiceCount.Value1
-                        && UInt32.TryParse(ConfigManager.SetCurrencyJuiceCount.Value2.ToString(), out var countJuice))
-                        SetCurrencyJuiceCount(countJuice);
+                    ApplyPreload(ConfigManager.SetCurrencyGoldCount, SetCurrencyGoldCount);
+                    ApplyPreload(ConfigManager.SetCurrencyCraftsCount, SetCurrencyCraftsCount);
+                    ApplyPreload(ConfigManager.SetCurrencyJuiceCount, SetCurrencyJuiceCount);
+                    ApplyPreload(ConfigManager.SetCurrencyBarScoreCount, SetCurrencyBarScoreCount);
                 };
 
                 _initialized = true;
@@ -86,22 +80,41 @@ namespace BetterExperience.Patches
             /// </summary>
             public static bool DealWithCurrencyCount(CoinEntry cEntry)
             {
-                var ctype = cEntry.ctype;
-                if (ctype == CoinStorage.CTYPE.GOLD)
+                if (cEntry == null)
+                    return true;
+
+                if (!TryGetLockFlag(cEntry.ctype, out var locked))
                 {
-                    return DealWithCurrencyCount(ConfigManager.EnableLockCurrencyGoldCount.Value, cEntry);
-                }
-                else if (ctype == CoinStorage.CTYPE.CRAFTS)
-                {
-                    return DealWithCurrencyCount(ConfigManager.EnableLockCurrencyCraftsCount.Value, cEntry);
-                }
-                else if (ctype == CoinStorage.CTYPE.JUICE)
-                {
-                    return DealWithCurrencyCount(ConfigManager.EnableLockCurrencyJuiceCount.Value, cEntry);
+                    BLog.Notice($"Unknown currency type: {cEntry.ctype}. No lock applied.");
+                    return true;
                 }
 
-                BLog.Notice($"Unknown currency type: {ctype}. No lock applied.");
-                return true;
+                return DealWithCurrencyCount(locked, cEntry);
+            }
+
+            /// <summary>
+            /// 识别可锁定的货币类型并读出对应锁定开关。配置尚未绑定时视为未锁定。
+            /// </summary>
+            internal static bool TryGetLockFlag(CoinStorage.CTYPE ctype, out bool locked)
+            {
+                locked = false;
+                switch (ctype)
+                {
+                    case CoinStorage.CTYPE.GOLD:
+                        locked = ConfigManager.EnableLockCurrencyGoldCount?.Value == true;
+                        return true;
+                    case CoinStorage.CTYPE.CRAFTS:
+                        locked = ConfigManager.EnableLockCurrencyCraftsCount?.Value == true;
+                        return true;
+                    case CoinStorage.CTYPE.JUICE:
+                        locked = ConfigManager.EnableLockCurrencyJuiceCount?.Value == true;
+                        return true;
+                    case CoinStorage.CTYPE.BAR_SCORE:
+                        locked = ConfigManager.EnableLockCurrencyBarScoreCount?.Value == true;
+                        return true;
+                    default:
+                        return false;
+                }
             }
 
             /// <summary>
@@ -133,6 +146,11 @@ namespace BetterExperience.Patches
                 return GetCurrencyCount(CoinStorage.CTYPE.JUICE);
             }
 
+            public static long GetCurrencyBarScoreCount()
+            {
+                return GetCurrencyCount(CoinStorage.CTYPE.BAR_SCORE);
+            }
+
             public static void SetCurrencyGoldCount(long count)
             {
                 SetCurrencyCount(count, "GOLD", SetCurrencyGoldCount);
@@ -148,11 +166,19 @@ namespace BetterExperience.Patches
                 SetCurrencyCount(count, "JUICE", SetCurrencyJuiceCount);
             }
 
+            public static void SetCurrencyBarScoreCount(long count)
+            {
+                SetCurrencyCount(count, "BAR_SCORE", SetCurrencyBarScoreCount);
+            }
+
             /// <summary>
             /// 读取指定货币的当前数量，供实时控制界面显示；对应条目不存在时返回 -1 占位。
             /// </summary>
             private static long GetCurrencyCount(CoinStorage.CTYPE type)
             {
+                if (type < CoinStorage.CTYPE.GOLD || type >= CoinStorage.CTYPE._MAX)
+                    return -1L;
+
                 var entry = CoinStorage.GetEntry(type);
                 return entry == null ? -1L : entry.Get();
             }
@@ -162,79 +188,97 @@ namespace BetterExperience.Patches
             /// </summary>
             private static void SetCurrencyCount(long count, string currencyName, Action<uint> valueSetter)
             {
-                if (count < 0 || count > UInt32.MaxValue)
+                if (!TryConvertCount(count, out var value))
                 {
                     BLog.Debug($"Ignored invalid {currencyName} count: {count}");
                     return;
                 }
 
-                valueSetter((uint)count);
+                valueSetter(value);
+            }
+
+            internal static bool TryConvertCount(long count, out uint value)
+            {
+                if (count < 0 || count > uint.MaxValue)
+                {
+                    value = 0;
+                    return false;
+                }
+
+                value = (uint)count;
+                return true;
             }
 
             // 以下 uint 重载执行实际写入：Aentry 是 CoinStorage 的静态私有数组，
-            // 索引 0/1/2 固定对应 GOLD/CRAFTS/JUICE。Set 写入后再调用一次 Add(0)，
+            // 索引 0/1/2/3 固定对应 GOLD/CRAFTS/JUICE/BAR_SCORE。Set 写入后再调用一次 Add(0)，
             // 借游戏自身的数量变更流程刷新货币显示；若该货币已启用锁定，这次 Add(0) 会被本补丁拦截，不影响已写入的数值。
             public static void SetCurrencyGoldCount(uint count)
             {
-                try
-                {
-                    var entry = Traverse.Create(typeof(CoinStorage)).Field("Aentry").GetValue<CoinEntry[]>();
-                    if (entry == null)
-                        return;
-
-                    count = count > CoinEntry.MAX_COUNT ? CoinEntry.MAX_COUNT : count;
-
-                    entry[0].Set(count, true);
-                    entry[0].Add(0);
-
-                    BLog.Debug($"GOLD count set to: {count}");
-                }
-                catch (Exception ex)
-                {
-                    BLog.Error($"Unexpected error while setting GOLD count in {nameof(SetCurrencyCountPatch)}", ex);
-                }
+                SetCurrencyCount(count, CoinStorage.CTYPE.GOLD);
             }
 
             public static void SetCurrencyCraftsCount(uint count)
             {
-                try
-                {
-                    var entry = Traverse.Create(typeof(CoinStorage)).Field("Aentry").GetValue<CoinEntry[]>();
-                    if (entry == null)
-                        return;
-
-                    count = count > CoinEntry.MAX_COUNT ? CoinEntry.MAX_COUNT : count;
-
-                    entry[1].Set(count, true);
-                    entry[1].Add(0);
-
-                    BLog.Debug($"CRAFTS count set to: {count}");
-                }
-                catch (Exception ex)
-                {
-                    BLog.Error($"Unexpected error while setting CRAFTS count in {nameof(SetCurrencyCountPatch)}", ex);
-                }
+                SetCurrencyCount(count, CoinStorage.CTYPE.CRAFTS);
             }
 
             public static void SetCurrencyJuiceCount(uint count)
             {
+                SetCurrencyCount(count, CoinStorage.CTYPE.JUICE);
+            }
+
+            public static void SetCurrencyBarScoreCount(uint count)
+            {
+                SetCurrencyCount(count, CoinStorage.CTYPE.BAR_SCORE);
+            }
+
+            private static void SetCurrencyCount(uint count, CoinStorage.CTYPE type)
+            {
                 try
                 {
-                    var entry = Traverse.Create(typeof(CoinStorage)).Field("Aentry").GetValue<CoinEntry[]>();
+                    var entries = Traverse.Create(typeof(CoinStorage)).Field("Aentry").GetValue<CoinEntry[]>();
+                    int index = (int)type;
+                    if (entries == null || index < 0 || index >= entries.Length)
+                        return;
+
+                    var entry = entries[index];
                     if (entry == null)
                         return;
 
-                    count = count > CoinEntry.MAX_COUNT ? CoinEntry.MAX_COUNT : count;
+                    count = WriteCount(entry, count, ShouldRaiseObtain(type));
+                    entry.Add(0);
 
-                    entry[2].Set(count, true);
-                    entry[2].Add(0);
-
-                    BLog.Debug($"JUICE count set to: {count}");
+                    BLog.Debug($"{type} count set to: {count}");
                 }
                 catch (Exception ex)
                 {
-                    BLog.Error($"Unexpected error while setting JUICE count in {nameof(SetCurrencyCountPatch)}", ex);
+                    BLog.Error($"Unexpected error while setting {type} count in {nameof(SetCurrencyCountPatch)}", ex);
                 }
+            }
+
+            internal static bool ShouldRaiseObtain(CoinStorage.CTYPE type)
+            {
+                return type == CoinStorage.CTYPE.BAR_SCORE;
+            }
+
+            /// <summary>
+            /// 写入当前余额；酒吧积分还会把 <see cref="CoinEntry.total_obtain"/> 抬到不低于当前值。
+            /// </summary>
+            internal static uint WriteCount(CoinEntry entry, uint count, bool raiseObtain)
+            {
+                count = count > CoinEntry.MAX_COUNT ? CoinEntry.MAX_COUNT : count;
+                entry.Set(count, true);
+                if (raiseObtain && entry.total_obtain < count)
+                    entry.total_obtain = count;
+                return count;
+            }
+
+            private static void ApplyPreload(ConfigEntry<bool, long> entry, Action<uint> setter)
+            {
+                if (entry != null
+                    && entry.Value1
+                    && uint.TryParse(entry.Value2.ToString(), out var count))
+                    setter(count);
             }
         }
     }

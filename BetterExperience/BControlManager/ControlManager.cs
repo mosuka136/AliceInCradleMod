@@ -73,6 +73,7 @@ namespace BetterExperience.BControlManager
         internal static ControlEntry<long> SetCurrencyGoldCount { get; private set; }
         internal static ControlEntry<long> SetCurrencyCraftsCount { get; private set; }
         internal static ControlEntry<long> SetCurrencyJuiceCount { get; private set; }
+        internal static ControlEntry<long> SetCurrencyBarScoreCount { get; private set; }
         internal static ControlEntry<int> SetGuildPoint { get; private set; }
 
         /// <summary>
@@ -423,18 +424,6 @@ namespace BetterExperience.BControlManager
 
         private static void InitializeCurrencyControls()
         {
-            SetGuildPoint = Bind(
-                SectionCurrency,
-                nameof(SetGuildPoint),
-                HPatches.SetGuildPointPatch.GetGuildPoint,
-                HPatches.SetGuildPointPatch.SetGuildPoint,
-                new Translator(chinese: "设置工会积分", english: "Set Guild Points"),
-                new Translator(
-                    chinese: "设置工会积分，同时影响工会等级。",
-                    english: "Set guild points, which also affect guild rank."
-                    ),
-                new UiSliderMetadata(-1f, GuildManager.GQ_POINT_MAX, 1f)
-                );
             SetCurrencyGoldCount = BindCurrency(
                 nameof(SetCurrencyGoldCount),
                 HPatches.SetCurrencyCountPatch.GetCurrencyGoldCount,
@@ -452,6 +441,24 @@ namespace BetterExperience.BControlManager
                 HPatches.SetCurrencyCountPatch.GetCurrencyJuiceCount,
                 HPatches.SetCurrencyCountPatch.SetCurrencyJuiceCount,
                 new Translator(chinese: "设置精萃数量", english: "Set Juice Count")
+                );
+            SetCurrencyBarScoreCount = BindCurrency(
+                nameof(SetCurrencyBarScoreCount),
+                HPatches.SetCurrencyCountPatch.GetCurrencyBarScoreCount,
+                HPatches.SetCurrencyCountPatch.SetCurrencyBarScoreCount,
+                new Translator(chinese: "设置酒吧积分", english: "Set Bar Score")
+                );
+            SetGuildPoint = Bind(
+                SectionCurrency,
+                nameof(SetGuildPoint),
+                HPatches.SetGuildPointPatch.GetGuildPoint,
+                HPatches.SetGuildPointPatch.SetGuildPoint,
+                new Translator(chinese: "设置工会积分", english: "Set Guild Points"),
+                new Translator(
+                    chinese: "设置工会积分，同时影响工会等级。",
+                    english: "Set guild points, which also affect guild rank."
+                    ),
+                new UiSliderMetadata(-1f, GuildManager.GQ_POINT_MAX, 1f)
                 );
         }
 

@@ -53,10 +53,11 @@ namespace BetterExperience.Test
             nameof(ConfigManager.SetWeatherDenseMist),
             nameof(ConfigManager.SetWeatherPlague),
 
-            // Currency (4)
+            // Currency (5)
             nameof(ConfigManager.SetCurrencyGoldCount),
             nameof(ConfigManager.SetCurrencyCraftsCount),
             nameof(ConfigManager.SetCurrencyJuiceCount),
+            nameof(ConfigManager.SetCurrencyBarScoreCount),
             nameof(ConfigManager.SetGuildPoint)
         };
 
@@ -93,7 +94,7 @@ namespace BetterExperience.Test
                 .ToArray();
 
             // Assert
-            Assert.Equal(38, ExpectedPreloadEntryNames.Length);
+            Assert.Equal(39, ExpectedPreloadEntryNames.Length);
             Assert.Equal(expectedNames, preloadProperties.Select(property => property.Name).ToArray());
             Assert.Equal(expectedControlNames, controlProperties.Select(property => property.Name).ToArray());
 
