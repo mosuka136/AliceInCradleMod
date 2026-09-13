@@ -25,6 +25,9 @@ namespace BetterExperience.BPatchGUI
         internal readonly static Translator AutoMilkEnabled = new Translator("自动挤奶已开启：挤奶小游戏中将自动找牛、对话并完成满级挤奶。", "Auto milking on: during the minigame it will find cows, talk and milk at full charge.");
         internal readonly static Translator AutoMilkDisabled = new Translator("自动挤奶已关闭。", "Auto milking off.");
         internal readonly static Translator AutoMilkActive = new Translator("自动挤奶中", "Auto milking active");
+        internal readonly static Translator AutoBunServeEnabled = new Translator("自动配送酒水已开启：酒吧小游戏中会走路取酒并送到对应客人。", "Auto drink serving on: in the bar minigame it will walk, pick up drinks and deliver them.");
+        internal readonly static Translator AutoBunServeDisabled = new Translator("自动配送酒水已关闭。", "Auto drink serving off.");
+        internal readonly static Translator AutoBunServeActive = new Translator("自动配送酒水中", "Auto drink serving active");
 
         public readonly static Translator BattleStatisticsTitle = new Translator("战斗统计", "Battle Statistics");
         internal readonly static Translator BattleEnemyPreviewTitle = new Translator("魔物详细预览", "Enemy Details");

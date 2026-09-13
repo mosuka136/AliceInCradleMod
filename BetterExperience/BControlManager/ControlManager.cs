@@ -41,6 +41,7 @@ namespace BetterExperience.BControlManager
         internal static ControlEntry<int> SetEnhancerSlotCount { get; private set; }
         internal static ControlEntry<bool> SetAutoFishing { get; private set; }
         internal static ControlEntry<bool> SetAutoMilk { get; private set; }
+        internal static ControlEntry<bool> SetAutoBunServe { get; private set; }
 
         internal static ControlEntry<float> SetCaneSwingSpeed { get; private set; }
         internal static ControlEntry<float> SetCaneCastSpeed { get; private set; }
@@ -476,6 +477,17 @@ namespace BetterExperience.BControlManager
                 new Translator(
                     chinese: "开启后，挤奶小游戏会自动寻找奶量最多的奶牛、对话并完成满级挤奶，循环到计时结束。",
                     english: "During the milking minigame it will find the fullest cow, talk and milk at full charge repeatedly until time is up."
+                    )
+                );
+            SetAutoBunServe = Bind(
+                SectionMiniGame,
+                nameof(SetAutoBunServe),
+                HPatches.AutoBunServe.GetAutoBunServe,
+                HPatches.AutoBunServe.SetAutoBunServe,
+                new Translator(chinese: "自动配送酒水", english: "Auto Drink Serving"),
+                new Translator(
+                    chinese: "开启后，酒吧小游戏会按原版走路去吧台取酒，再送到点了对应酒款的客人面前。",
+                    english: "During the bar minigame it will walk to the counter, pick up drinks and deliver them to the matching customers."
                     )
                 );
         }

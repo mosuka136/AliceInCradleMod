@@ -64,7 +64,8 @@ namespace BetterExperience.Test
         private static readonly string[] ExpectedControlOnlyEntryNames = new[]
         {
             nameof(ControlManager.SetAutoFishing),
-            nameof(ControlManager.SetAutoMilk)
+            nameof(ControlManager.SetAutoMilk),
+            nameof(ControlManager.SetAutoBunServe)
         };
 
         [Fact]
