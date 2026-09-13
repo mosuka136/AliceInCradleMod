@@ -23,11 +23,11 @@ namespace BetterExperience.Patches
         /// 奶量与蓄力进度(pushdown_level)成正比，进度在 Ef.z == pushdown_maxt + 10 时到达 1.0，
         /// 按住超过 pushdown_maxt + 10 + alloc_over_t(至少 2 帧) 判“按过头”失败并触怒奶牛；
         /// 结算还要求奶牛奶量 mp_ratio 大于 0.25。
-        /// 本类分两部分：
+        /// 本类分三部分：
         /// 输入垫片——替换 UiMgmFarmSuck.run 内的 IN.isBP/IN.isBO 两处调用，自动按下并按住，
         /// 蓄力进度第一次到达 1.0 的那一帧松开，得到满级奶量且不触怒奶牛（替换只作用于该方法内部）；
-        /// 场地驱动——每帧选择奶量最高的奶牛，把玩家滑行带到牛旁后调用
-        /// <see cref="M2EventItem.execute"/> 触发对话事件，之后由游戏事件脚本完成对齐与挤奶，循环到计时结束。
+        /// 场地驱动——每帧选择奶量最高的奶牛，通过 isLO/isRO 前缀注入方向输入让玩家正常走到牛旁，
+        /// 再调用 <see cref="M2EventItem.execute"/> 触发对话事件，之后由游戏事件脚本完成对齐与挤奶，循环到计时结束。
         /// </summary>
         internal static class AutoMilk
         {
@@ -54,12 +54,21 @@ namespace BetterExperience.Patches
             private static NelNMgmFarmAnimal _target;
             private static float _retryCooldown;
 
+            // 接近阶段的虚拟方向输入：由 TickFarm 每帧刷新，经 IN.isLO/isRO 前缀注入，
+            // 玩家的行走动画、加减速与朝向全部由游戏普通状态逻辑自然完成。
+            private static M2MoverPr _drivenPr;
+            private static int _moveDir;
+            private static int _driveFrameCount = -10;
+            // 虚拟按键的持续帧数（用于 IN.isLO(press)/isRO(press) 的“按住至少 N 帧”语义）。
+            private static int _lastWalkDir;
+            private static int _dirHeldFrames;
+
             // 奶量低于结算失败线(0.25)的牛不挤；留少量余量避免边界失败。
             private const float MilkMpRatioMin = 0.3f;
             // 距奶牛中心的停止距离（地图单位）；事件脚本会把玩家对齐到最终位置。
             private const float ApproachStopDist = 1.5f;
-            // 每帧滑行速度（地图单位/帧），与玩家奔跑速度相当。
-            private const float GlideSpeed = 0.32f;
+            // 到达目的地的判定容差；小于该值即停止走路并触发对话（余量容忍减速惯性）。
+            private const float ArriveTolerance = 0.25f;
             // 触发对话后的冷却帧：既等待事件结束，也避免对话被拒（牛忙）时连续刷事件。
             private const float TriggerCooldown = 60f;
 
@@ -101,6 +110,11 @@ namespace BetterExperience.Patches
                 _activeUi = null;
                 _holding = false;
                 _broken = false;
+                _drivenPr = null;
+                _moveDir = 0;
+                _driveFrameCount = -10;
+                _lastWalkDir = 0;
+                _dirHeldFrames = 0;
             }
 
             // ===== QTE 输入垫片 =====
@@ -187,6 +201,8 @@ namespace BetterExperience.Patches
                         ResetDriver();
                     return;
                 }
+                // 每帧先撤销方向注入，仅在本帧接近分支内重新设置。
+                _moveDir = 0;
                 if (_farm != farm)
                 {
                     // 换图或重新进入小游戏后农场实例会变化，丢弃旧目标。
@@ -228,14 +244,28 @@ namespace BetterExperience.Patches
                     _target = null;
                 if (_target == null)
                     _target = PickCow(cows, pr);
+                // 无达标奶牛时待命（开局牛无奶，需先吃草恢复）。
                 if (_target == null)
                     return;
 
                 float destX = _target.x + Math.Sign(pr.x - _target.x) * ApproachStopDist;
                 float dx = destX - pr.x;
-                if (Math.Abs(dx) > 0.1f)
+                if (Math.Abs(dx) > ArriveTolerance)
                 {
-                    Glide(pr, dx, fcnt);
+                    // 正常走路：只注入方向输入，行走由游戏普通状态逻辑完成。
+                    int dir = Math.Sign(dx);
+                    if (dir != _lastWalkDir)
+                    {
+                        _lastWalkDir = dir;
+                        _dirHeldFrames = 0;
+                        BLog.Debug($"{nameof(AutoMilk)} walking to cow {_target.cow_index} dir={(dir < 0 ? "L" : "R")} " +
+                            $"(mp_ratio={_target.mp_ratio:0.00}, dist={Math.Abs(_target.x - pr.x):0.0})");
+                    }
+                    else if (_dirHeldFrames < 9999)
+                        _dirHeldFrames++;
+                    _drivenPr = pr;
+                    _moveDir = dir;
+                    _driveFrameCount = UnityEngine.Time.frameCount;
                     return;
                 }
 
@@ -275,16 +305,33 @@ namespace BetterExperience.Patches
                 return best;
             }
 
-            private static void Glide(PR pr, float dx, float fcnt)
+            /// <summary>
+            /// 当前注入的虚拟方向（-1 左 / +1 右 / 0 不介入）。
+            /// 仅当驱动状态来自最近几帧（TickFarm 正常运转）时生效——容差取 4 帧，
+            /// 覆盖地图逻辑更新与渲染帧错拍（FixedUpdate 节奏）的情况；
+            /// 农场层停止回调（切图/读档）后自动失效，避免玩家被持续推着走。
+            /// </summary>
+            internal static int GetWalkDirection()
             {
-                // 与穿墙一致的清速+直移地滑：每帧清掉输入速度，按固定步长平移。
-                pr.jumpRaisingQuit(true);
-                pr.getFootManager()?.initJump(false, true, false);
-                var physics = pr.getPhysic();
-                physics.walk_xspeed = 0f;
-                physics.killSpeedForce(kill_phy_translate_stack: true);
-                float step = Math.Min(Math.Abs(dx), GlideSpeed * Math.Max(fcnt, 1f));
-                pr.setTo(pr.x + Math.Sign(dx) * step, pr.y);
+                if (_moveDir == 0 || _drivenPr == null)
+                    return 0;
+                if (UnityEngine.Time.frameCount - _driveFrameCount > 4)
+                {
+                    _moveDir = 0;
+                    _drivenPr = null;
+                    _lastWalkDir = 0;
+                    _dirHeldFrames = 0;
+                    return 0;
+                }
+                return _moveDir;
+            }
+
+            /// <summary>
+            /// 虚拟方向键是否已按住至少 press 帧（对应 IN.isLO(press)/IN.isRO(press) 语义）。
+            /// </summary>
+            internal static bool IsVirtualKeyHeldFor(int press)
+            {
+                return press <= _dirHeldFrames;
             }
 
             private static void LogActivationOnce()
@@ -397,6 +444,40 @@ namespace BetterExperience.Patches
                     BLog.Error($"Unexpected error in {nameof(AutoMilkDriverPatch)}", ex);
                     AutoMilk.ResetDriver();
                 }
+            }
+        }
+
+        /// <summary>
+        /// 接近阶段的正常走路：前缀替换全局方向输入 IN.isLO/IN.isRO（物理左右键的真实读取入口）。
+        /// 游戏所有移动相关路径（refineMoveKey 合成 move_key、mkRO/mkLO 方向判定、
+        /// 直读 IN 的逻辑）最终都经由这两个静态方法，注入后等价于玩家按住方向键，
+        /// 行走动画、加减速、朝向与脚步全部由游戏自身逻辑完成。
+        /// 注入只在接近目标的短窗口内生效（详见 <see cref="AutoMilk.GetWalkDirection"/>）；
+        /// 驱动方向相反的一侧同时被压制，避免真实输入与虚拟输入同时按住导致原地不动。
+        /// </summary>
+        [HarmonyPatch]
+        public class AutoMilkWalkPatch
+        {
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(IN), nameof(IN.isLO))]
+            public static bool IsLOPrefix(int press, ref bool __result)
+            {
+                var dir = AutoMilk.GetWalkDirection();
+                if (dir == 0)
+                    return true;
+                __result = dir < 0 && AutoMilk.IsVirtualKeyHeldFor(press);
+                return false;
+            }
+
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(IN), nameof(IN.isRO))]
+            public static bool IsROPrefix(int press, ref bool __result)
+            {
+                var dir = AutoMilk.GetWalkDirection();
+                if (dir == 0)
+                    return true;
+                __result = dir > 0 && AutoMilk.IsVirtualKeyHeldFor(press);
+                return false;
             }
         }
     }
