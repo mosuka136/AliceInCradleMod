@@ -81,6 +81,7 @@
     <Compile Include="Patches\AutoFishingLogic.cs" />
     <Compile Include="Patches\AutoFishingPatch.cs" />
     <Compile Include="Patches\AutoMilkPatch.cs" />
+    <Compile Include="Patches\MilkAssistPatch.cs" />
     <Compile Include="Patches\AutoBunServeLogic.cs" />
     <Compile Include="Patches\AutoBunServePatch.cs" />
     <Compile Include="Patches\BetterBunAssistPatch.cs" />

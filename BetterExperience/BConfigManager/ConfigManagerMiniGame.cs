@@ -20,6 +20,11 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableBunNoBodyTouch { get; private set; }
         public static ConfigEntry<bool> EnableBunClearVision { get; private set; }
         public static ConfigEntry<bool> EnableBunEatWhileCarrying { get; private set; }
+        public static ConfigEntry<bool> EnableMilkReleaseAssist { get; private set; }
+        public static ConfigEntry<bool> EnableMilkTolerance { get; private set; }
+        public static ConfigEntry<bool> EnableMilkNoDrain { get; private set; }
+        public static ConfigEntry<bool> EnableMilkNoRunAnger { get; private set; }
+        public static ConfigEntry<bool> EnableMilkNoTiredLimit { get; private set; }
 
         private const string SectionMiniGame = "MiniGame";
 
@@ -107,6 +112,56 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "兔女郎酒吧中端着酒也能按道具键吃零食回体力。",
                         english: "In the bunny bar you can eat snacks to restore stamina while carrying drinks."
+                        )
+                    );
+                EnableMilkReleaseAssist = Config.Bind(
+                    SectionMiniGame,
+                    nameof(EnableMilkReleaseAssist),
+                    false,
+                    new Translator(chinese: "挤奶：满级自动松手", english: "Milking: auto release at full charge"),
+                    new Translator(
+                        chinese: "手动按住蓄力时，在进度恰好满级的一帧自动松开，保证满级奶量且不会按过头。",
+                        english: "While you hold to charge, it releases the instant the gauge is full for maximum milk and no overhold failure."
+                        )
+                    );
+                EnableMilkTolerance = Config.Bind(
+                    SectionMiniGame,
+                    nameof(EnableMilkTolerance),
+                    false,
+                    new Translator(chinese: "挤奶：放宽过压判定", english: "Milking: wider overhold timing"),
+                    new Translator(
+                        chinese: "大幅延长蓄力满级后允许继续按住的宽限时间，按过头不再轻易失败。",
+                        english: "Greatly extends the grace period after the gauge is full, so overholding rarely fails."
+                        )
+                    );
+                EnableMilkNoDrain = Config.Bind(
+                    SectionMiniGame,
+                    nameof(EnableMilkNoDrain),
+                    false,
+                    new Translator(chinese: "挤奶：奶量不减", english: "Milking: no milk drain"),
+                    new Translator(
+                        chinese: "挤奶结束后奶牛不再消耗奶量，同一头牛可反复挤；开场奶牛仍需先吃草积累奶量。",
+                        english: "Cows no longer lose milk after being milked, so one cow can be milked repeatedly; they still start empty and must graze first."
+                        )
+                    );
+                EnableMilkNoRunAnger = Config.Bind(
+                    SectionMiniGame,
+                    nameof(EnableMilkNoRunAnger),
+                    false,
+                    new Translator(chinese: "挤奶：奔跑不扰牛", english: "Milking: run without disturbing cows"),
+                    new Translator(
+                        chinese: "玩家奔跑或跳跃经过奶牛身边不再打扰、触怒它们。",
+                        english: "Running or jumping past cows no longer disturbs or angers them."
+                        )
+                    );
+                EnableMilkNoTiredLimit = Config.Bind(
+                    SectionMiniGame,
+                    nameof(EnableMilkNoTiredLimit),
+                    false,
+                    new Translator(chinese: "挤奶：解除牛疲劳开局限制", english: "Milking: remove cow-tiredness limit"),
+                    new Translator(
+                        chinese: "原版连续游玩几局后，奶农会以“牛累了”为由不再开启新的一局（疲劳计数累计到 7）。开启后忽略并清零该计数，可无限连续开局。",
+                        english: "Vanilla blocks starting a new round after several games because the cows are tired (a fatigue counter reaching 7). This ignores and resets that counter, allowing unlimited consecutive rounds."
                         )
                     );
             }

@@ -161,24 +161,39 @@ namespace BetterExperience.Patches
             {
                 try
                 {
-                    if (!_broken && IsEnabled() && _holding && _activeUi != null && _activeUi.isActive())
+                    if (!_broken && _activeUi != null && _activeUi.isActive())
                     {
                         var ef = (EffectItem)EfField.GetValue(_activeUi);
-                        if (ef == null || _activeUi.decided_this_phase)
+                        if (IsEnabled() && _holding)
                         {
-                            // 本槽已结算或效果对象已失效，停止介入。
-                            _holding = false;
+                            if (ef == null || _activeUi.decided_this_phase)
+                            {
+                                // 本槽已结算或效果对象已失效，停止介入。
+                                _holding = false;
+                            }
+                            else if (ef.z >= _activeUi.pushdown_maxt + 10f)
+                            {
+                                // 蓄力进度恰好到达 1.0 时松开；距“按过头”失败阈值仍余 alloc_over_t(>= 2 帧)。
+                                BLog.Debug($"{nameof(AutoMilk)} releasing slot {ef.time} at pushdown_level 1.0 (z={ef.z}, maxt={_activeUi.pushdown_maxt}).");
+                                _holding = false;
+                                return false;
+                            }
+                            else
+                            {
+                                return true;
+                            }
                         }
-                        else if (ef.z >= _activeUi.pushdown_maxt + 10f)
+                        else if (MilkAssist.ReleaseAssistOn && ef != null && !_activeUi.decided_this_phase)
                         {
-                            // 蓄力进度恰好到达 1.0 时松开；距“按过头”失败阈值仍余 alloc_over_t(>= 2 帧)。
-                            BLog.Debug($"{nameof(AutoMilk)} releasing slot {ef.time} at pushdown_level 1.0 (z={ef.z}, maxt={_activeUi.pushdown_maxt}).");
-                            _holding = false;
-                            return false;
-                        }
-                        else
-                        {
-                            return true;
+                            // 满级松手辅助（自动挤奶关闭时生效）：玩家自己按住蓄力，
+                            // 进度恰好满级的那一帧替玩家松开；其余时刻透传真实输入。
+                            bool realHeld = IN.isBO(press);
+                            if (realHeld && ef.z >= _activeUi.pushdown_maxt + 10f)
+                            {
+                                BLog.Debug($"{nameof(MilkAssist)} releasing slot {ef.time} at pushdown_level 1.0 (z={ef.z}, maxt={_activeUi.pushdown_maxt}).");
+                                return false;
+                            }
+                            return realHeld;
                         }
                     }
                 }
