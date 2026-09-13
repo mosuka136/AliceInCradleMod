@@ -83,6 +83,7 @@
     <Compile Include="Patches\AutoMilkPatch.cs" />
     <Compile Include="Patches\AutoBunServeLogic.cs" />
     <Compile Include="Patches\AutoBunServePatch.cs" />
+    <Compile Include="Patches\BetterBunAssistPatch.cs" />
     <Compile Include="Patches\BetterFishingPatch.cs" />
     <Compile Include="Patches\CookingRandomEffectPatch.cs" />
     <Compile Include="Patches\CookingEffectPreview.cs" />
