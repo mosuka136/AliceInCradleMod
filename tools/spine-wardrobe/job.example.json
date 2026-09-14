@@ -1,0 +1,9 @@
+{
+    "id": "gothic-nun-v1",
+    "gameDir": "D:/mine/B/programme/AliceInCradle/ver030d",
+    "targets": ["stand_normal", "stand_weak"],
+    "description": "哥特修女服，黑色修女长裙，暗红玫瑰装饰，长面纱，蕾丝袖口，十字架吊坠，暗黑圣洁感。适配原骨架，保留脸部、身体比例和动画。",
+    "referenceImages": [],
+    "outputDir": "work/gothic-nun-v1",
+    "designApproval": null
+}

@@ -130,6 +130,8 @@
     <Compile Include="Patches\SetMaxSatietyPatch.cs" />
     <Compile Include="Patches\SatietyLogic.cs" />
     <Compile Include="Patches\SatietyPatch.cs" />
+    <Compile Include="Patches\DebugGiveLogic.cs" />
+    <Compile Include="Patches\DebugGivePatch.cs" />
     <Compile Include="Patches\SetOverChargeSlotCountPatch.cs" />
     <Compile Include="Patches\SetReelSpeedPatch.cs" />
     <Compile Include="Patches\SetWalkSpeedPatch.cs" />

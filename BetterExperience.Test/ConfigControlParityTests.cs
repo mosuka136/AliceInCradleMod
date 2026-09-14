@@ -66,7 +66,13 @@ namespace BetterExperience.Test
         {
             nameof(ControlManager.SetAutoFishing),
             nameof(ControlManager.SetAutoMilk),
-            nameof(ControlManager.SetAutoBunServe)
+            nameof(ControlManager.SetAutoBunServe),
+            nameof(ControlManager.GiveKind),
+            nameof(ControlManager.GiveFilter),
+            nameof(ControlManager.GiveChoices),
+            nameof(ControlManager.GiveItemGrade),
+            nameof(ControlManager.GiveItemCount),
+            nameof(ControlManager.GiveItem)
         };
 
         [Fact]

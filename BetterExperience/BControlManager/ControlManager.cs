@@ -2,6 +2,7 @@ using BetterExperience.BLogSpace;
 using BetterExperience.Patches;
 using nel;
 using System;
+using System.Collections.Generic;
 using UnityModBase.HControlSpace;
 using UnityModBase.HGuiSpace;
 using UnityModBase.HTranslatorSpace;
@@ -26,6 +27,7 @@ namespace BetterExperience.BControlManager
         private const string SectionWeather = "Weather";
         private const string SectionCurrency = "Currency";
         private const string SectionMiniGame = "MiniGame";
+        private const string SectionDebug = "Debug";
 
         private static bool _initialized;
 
@@ -76,6 +78,13 @@ namespace BetterExperience.BControlManager
         internal static ControlEntry<long> SetCurrencyBarScoreCount { get; private set; }
         internal static ControlEntry<int> SetGuildPoint { get; private set; }
 
+        internal static ControlEntry<GiveCatalogKind> GiveKind { get; private set; }
+        internal static ControlEntry<string> GiveFilter { get; private set; }
+        internal static ControlEntry<List<(string Display, bool Selected)>> GiveChoices { get; private set; }
+        internal static ControlEntry<int> GiveItemGrade { get; private set; }
+        internal static ControlEntry<int> GiveItemCount { get; private set; }
+        internal static ControlEntry<bool> GiveItem { get; private set; }
+
         /// <summary>
         /// 创建控制表并绑定全部实时控制条目。
         /// 通过 <see cref="_initialized"/> 保证幂等，重复调用直接返回；
@@ -95,6 +104,7 @@ namespace BetterExperience.BControlManager
                 InitializeWeatherControls();
                 InitializeCurrencyControls();
                 InitializeMiniGameControls();
+                InitializeDebugGiveControls();
 
                 _initialized = true;
                 BLog.Debug("Runtime control manager initialized.");
@@ -153,6 +163,14 @@ namespace BetterExperience.BControlManager
                 new Translator(
                     chinese: "查看和修改当前游戏中的小游戏状态。",
                     english: "View and modify mini game state in the current game."
+                    )
+                );
+            BService.Control.CreateTable(
+                SectionDebug,
+                new Translator(chinese: "给予", english: "Give"),
+                new Translator(
+                    chinese: "从列表中选择物品、技能或配方后给予或解锁。未读档时无效。",
+                    english: "Choose an item, skill or recipe from the list, then give or unlock it. Does nothing until a save is loaded."
                     )
                 );
         }
@@ -499,6 +517,82 @@ namespace BetterExperience.BControlManager
                 );
         }
 
+        private static void InitializeDebugGiveControls()
+        {
+            GiveKind = Bind(
+                SectionDebug,
+                nameof(GiveKind),
+                HPatches.DebugGive.GetKind,
+                HPatches.DebugGive.SetKind,
+                new Translator(chinese: "给予目录", english: "Give Catalog"),
+                new Translator(
+                    chinese: "选择物品、技能或配方目录。切换后请在下面的列表中勾选一项。",
+                    english: "Choose the item, skill or recipe catalog, then tick one entry in the list below."
+                    ),
+                policy: ControlUpdatePolicy.Never
+                );
+            GiveFilter = Bind(
+                SectionDebug,
+                nameof(GiveFilter),
+                HPatches.DebugGive.GetFilter,
+                HPatches.DebugGive.SetFilter,
+                new Translator(chinese: "名称筛选", english: "Name Filter"),
+                new Translator(
+                    chinese: "按显示名称筛选列表，可留空。",
+                    english: "Filter the list by display name. Leave empty to show all."
+                    ),
+                policy: ControlUpdatePolicy.Never
+                );
+            GiveChoices = Bind(
+                SectionDebug,
+                nameof(GiveChoices),
+                HPatches.DebugGive.GetChoices,
+                HPatches.DebugGive.SetChoices,
+                new Translator(chinese: "选择条目", english: "Select Entry"),
+                new Translator(
+                    chinese: "展开后勾选要给予或解锁的条目。勾选另一项会切换选择，取消勾选即清空。读档后打开本页才会列出游戏数据。",
+                    english: "Expand and tick the entry to give or unlock. Ticking another entry switches the selection; unticking clears it. Open this page after loading a save so the game data is listed."
+                    ),
+                policy: ControlUpdatePolicy.WhenVisibleEverySecond
+                );
+            GiveItemGrade = Bind(
+                SectionDebug,
+                nameof(GiveItemGrade),
+                HPatches.DebugGive.GetGiveItemGrade,
+                HPatches.DebugGive.SetGiveItemGrade,
+                new Translator(chinese: "给予物品品级", english: "Give Item Grade"),
+                new Translator(
+                    chinese: "仅物品目录有效。品级 0–4。独立品级物品会强制为 0。",
+                    english: "Items only. Grade 0–4. Individual-grade items are forced to 0."
+                    ),
+                new UiSliderMetadata(0f, 4f, 1f),
+                ControlUpdatePolicy.Never
+                );
+            GiveItemCount = Bind(
+                SectionDebug,
+                nameof(GiveItemCount),
+                HPatches.DebugGive.GetGiveItemCount,
+                HPatches.DebugGive.SetGiveItemCount,
+                new Translator(chinese: "给予物品数量", english: "Give Item Count"),
+                new Translator(
+                    chinese: "仅物品目录有效。一次给予 1–99。",
+                    english: "Items only. Give 1–99 at a time."
+                    ),
+                new UiSliderMetadata(1f, 99f, 1f),
+                ControlUpdatePolicy.Never
+                );
+            GiveItem = BindPulse(
+                SectionDebug,
+                nameof(GiveItem),
+                HPatches.DebugGive.SetGive,
+                new Translator(chinese: "给予或解锁", english: "Give or Unlock"),
+                new Translator(
+                    chinese: "打开后按当前目录和勾选项执行：物品掉在脚边并拾取，技能直接解锁，配方会揭示并给予配方物品。",
+                    english: "Turn on to apply the ticked entry: items drop at your feet, skills unlock, recipes are revealed and granted."
+                    )
+                );
+        }
+
         /// <summary>
         /// 绑定玩家 HP/MP/EP 等数值属性，统一使用 -1~1000、步进 1 的滑杆。
         /// </summary>
@@ -591,8 +685,10 @@ namespace BetterExperience.BControlManager
         }
 
         /// <summary>
-        /// 绑定一个实时控制条目并接线读写：
-        /// 刷新策略固定为“界面可见时每秒读取一次”，避免每帧执行反射扫描；
+        /// <summary>
+        /// 绑定一个实时控制条目并接线读写。
+        /// 默认刷新策略为“界面可见时每秒读取一次”，避免每帧执行反射扫描；
+        /// 给予类文本/开关可改用不刷新或每帧刷新。
         /// <c>OnValueChanged</c> 只在用户通过界面提交新值时触发（定时刷新缓存不触发），
         /// 因此可直接把新值转发给 <paramref name="valueSetter"/> 写回游戏，不会形成回环。
         /// </summary>
@@ -603,13 +699,14 @@ namespace BetterExperience.BControlManager
             Action<T> valueSetter,
             Translator name,
             Translator description,
-            IUiMetadata metadata = null)
+            IUiMetadata metadata = null,
+            ControlUpdatePolicy policy = null)
         {
             var controlEntry = BService.Control.Bind(
                 tableKey,
                 key,
                 valueGetter,
-                ControlUpdatePolicy.WhenVisibleEverySecond,
+                policy ?? ControlUpdatePolicy.WhenVisibleEverySecond,
                 name,
                 description,
                 metadata
@@ -617,6 +714,23 @@ namespace BetterExperience.BControlManager
 
             controlEntry.OnValueChanged += (sender, value) => valueSetter(value);
             return controlEntry;
+        }
+
+        private static ControlEntry<bool> BindPulse(
+            string tableKey,
+            string key,
+            Action<bool> valueSetter,
+            Translator name,
+            Translator description)
+        {
+            return Bind(
+                tableKey,
+                key,
+                () => false,
+                valueSetter,
+                name,
+                description,
+                policy: ControlUpdatePolicy.WhenVisibleEveryFrame);
         }
 
     }
