@@ -49,7 +49,20 @@ namespace BetterExperience.Patches
                 { SER.DRUNK, () => ConfigManager.EnableImmuneAbnormalityDrunk.Value },
                 { SER.WEB_TRAPPED, () => ConfigManager.EnableImmuneAbnormalityWebTrapped.Value },
                 { SER.STONE, () => ConfigManager.EnableImmuneAbnormalityStone.Value },
-                { SER.ATK_DOWN, () => ConfigManager.EnableImmuneAbnormalityAtkDown.Value }
+                { SER.ATK_DOWN, () => ConfigManager.EnableImmuneAbnormalityAtkDown.Value },
+                { SER.HP_REDUCE, () => ConfigManager.EnableImmuneAbnormalityHpReduce.Value },
+                { SER.POISON, () => ConfigManager.EnableImmuneAbnormalityPoison.Value },
+                { SER.MILKY, () => ConfigManager.EnableImmuneAbnormalityMilky.Value },
+                { SER.STRONG_HOLD, () => ConfigManager.EnableImmuneAbnormalityStrongHold.Value },
+                { SER.EATEN, () => ConfigManager.EnableImmuneAbnormalityEaten.Value },
+                { SER.FAINTED, () => ConfigManager.EnableImmuneAbnormalityFainted.Value },
+                { SER.WORM_TRAPPED, () => ConfigManager.EnableImmuneAbnormalityWormTrapped.Value },
+                { SER.DEF_DOWN, () => ConfigManager.EnableImmuneAbnormalityDefDown.Value },
+                { SER.FORBIDDEN_ORGASM, () => ConfigManager.EnableImmuneAbnormalityForbiddenOrgasm.Value },
+                { SER.ORGASM_INITIALIZE, () => ConfigManager.EnableImmuneAbnormalityOrgasmInitialize.Value },
+                { SER.ORGASM_STACK, () => ConfigManager.EnableImmuneAbnormalityOrgasmStack.Value },
+                { SER.COCOON, () => ConfigManager.EnableImmuneAbnormalityCocoon.Value },
+                { SER.DEATH, () => ConfigManager.EnableImmuneAbnormalityDeath.Value }
             };
 
             [HarmonyPrefix]

@@ -48,6 +48,19 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableImmuneAbnormalityWebTrapped { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityStone { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityAtkDown { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityHpReduce { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityPoison { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityMilky { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityStrongHold { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityEaten { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityFainted { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityWormTrapped { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityDefDown { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityForbiddenOrgasm { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityOrgasmInitialize { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityOrgasmStack { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityCocoon { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneAbnormalityDeath { get; private set; }
         public static ConfigEntry<bool> EnableMouseTeleport { get; private set; }
         public static ConfigEntry<bool> EnableNoclip { get; private set; }
         public static ConfigEntry<bool> EnableNoSatietyDrain { get; private set; }
@@ -475,6 +488,136 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "免疫异常状态：攻击力下降。",
                         english: "Immune abnormality: Atk Down."
+                        )
+                    );
+                EnableImmuneAbnormalityHpReduce = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityHpReduce),
+                    false,
+                    new Translator(chinese: "免疫HP枯竭", english: "Immune HP Reduce"),
+                    new Translator(
+                        chinese: "免疫异常状态：HP 枯竭。",
+                        english: "Immune abnormality: HP Reduce."
+                        )
+                    );
+                EnableImmuneAbnormalityPoison = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityPoison),
+                    false,
+                    new Translator(chinese: "免疫中毒", english: "Immune Poison"),
+                    new Translator(
+                        chinese: "免疫异常状态：中毒。",
+                        english: "Immune abnormality: Poison."
+                        )
+                    );
+                EnableImmuneAbnormalityMilky = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityMilky),
+                    false,
+                    new Translator(chinese: "免疫泌乳", english: "Immune Milky"),
+                    new Translator(
+                        chinese: "免疫异常状态：泌乳。",
+                        english: "Immune abnormality: Milky."
+                        )
+                    );
+                EnableImmuneAbnormalityStrongHold = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityStrongHold),
+                    false,
+                    new Translator(chinese: "免疫拘束", english: "Immune Strong Hold"),
+                    new Translator(
+                        chinese: "免疫异常状态：拘束。",
+                        english: "Immune abnormality: Strong Hold."
+                        )
+                    );
+                EnableImmuneAbnormalityEaten = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityEaten),
+                    false,
+                    new Translator(chinese: "免疫被吞", english: "Immune Eaten"),
+                    new Translator(
+                        chinese: "免疫异常状态：被吞。",
+                        english: "Immune abnormality: Eaten."
+                        )
+                    );
+                EnableImmuneAbnormalityFainted = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityFainted),
+                    false,
+                    new Translator(chinese: "免疫昏倒", english: "Immune Fainted"),
+                    new Translator(
+                        chinese: "免疫异常状态：昏倒。与晕厥不是同一状态。",
+                        english: "Immune abnormality: Fainted. This is not Burst Tired."
+                        )
+                    );
+                EnableImmuneAbnormalityWormTrapped = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityWormTrapped),
+                    false,
+                    new Translator(chinese: "免疫虫困", english: "Immune Worm Trapped"),
+                    new Translator(
+                        chinese: "免疫异常状态：虫困。与地图「启用虫墙」开关相互独立。",
+                        english: "Immune abnormality: Worm Trapped. Independent of the map worm-trap switch."
+                        )
+                    );
+                EnableImmuneAbnormalityDefDown = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityDefDown),
+                    false,
+                    new Translator(chinese: "免疫防御力下降", english: "Immune Def Down"),
+                    new Translator(
+                        chinese: "免疫异常状态：防御力下降。",
+                        english: "Immune abnormality: Def Down."
+                        )
+                    );
+                EnableImmuneAbnormalityForbiddenOrgasm = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityForbiddenOrgasm),
+                    false,
+                    new Translator(chinese: "免疫禁止高潮", english: "Immune Forbidden Orgasm"),
+                    new Translator(
+                        chinese: "免疫异常状态：禁止高潮。",
+                        english: "Immune abnormality: Forbidden Orgasm."
+                        )
+                    );
+                EnableImmuneAbnormalityOrgasmInitialize = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityOrgasmInitialize),
+                    false,
+                    new Translator(chinese: "免疫高潮发动", english: "Immune Orgasm Initialize"),
+                    new Translator(
+                        chinese: "免疫异常状态：高潮发动。",
+                        english: "Immune abnormality: Orgasm Initialize."
+                        )
+                    );
+                EnableImmuneAbnormalityOrgasmStack = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityOrgasmStack),
+                    false,
+                    new Translator(chinese: "免疫高潮蓄积", english: "Immune Orgasm Stack"),
+                    new Translator(
+                        chinese: "免疫异常状态：高潮蓄积。",
+                        english: "Immune abnormality: Orgasm Stack."
+                        )
+                    );
+                EnableImmuneAbnormalityCocoon = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityCocoon),
+                    false,
+                    new Translator(chinese: "免疫茧", english: "Immune Cocoon"),
+                    new Translator(
+                        chinese: "免疫异常状态：茧。",
+                        english: "Immune abnormality: Cocoon."
+                        )
+                    );
+                EnableImmuneAbnormalityDeath = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneAbnormalityDeath),
+                    false,
+                    new Translator(chinese: "免疫死亡状态", english: "Immune Death"),
+                    new Translator(
+                        chinese: "免疫异常状态：死亡状态。",
+                        english: "Immune abnormality: Death."
                         )
                     );
                 EnableMouseTeleport = Config.Bind(
