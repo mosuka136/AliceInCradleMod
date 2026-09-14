@@ -128,6 +128,8 @@
     <Compile Include="Patches\SetEnhancerSlotCountPatch.cs" />
     <Compile Include="Patches\SetHpMpEpPatch.cs" />
     <Compile Include="Patches\SetMaxSatietyPatch.cs" />
+    <Compile Include="Patches\SatietyLogic.cs" />
+    <Compile Include="Patches\SatietyPatch.cs" />
     <Compile Include="Patches\SetOverChargeSlotCountPatch.cs" />
     <Compile Include="Patches\SetReelSpeedPatch.cs" />
     <Compile Include="Patches\SetWalkSpeedPatch.cs" />

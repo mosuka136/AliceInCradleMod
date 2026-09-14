@@ -50,6 +50,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableImmuneAbnormalityAtkDown { get; private set; }
         public static ConfigEntry<bool> EnableMouseTeleport { get; private set; }
         public static ConfigEntry<bool> EnableNoclip { get; private set; }
+        public static ConfigEntry<bool> EnableNoSatietyDrain { get; private set; }
         [EntrySlider(-1f, 10f, 0.1f)]
         public static ConfigEntry<float> SetPlayerWalkSpeed { get; private set; }
         [EntrySlider(0.1f, 5f, 0.1f)]
@@ -494,6 +495,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "允许用热键切换穿墙飞行，默认 Ctrl+N。方向键/WASD 或手柄左摇杆/方向键移动；每次读档、切图后需重新开启。",
                         english: "Allow toggling noclip flight (Ctrl+N by default). Move with arrows/WASD or gamepad left stick/D-pad. Toggle again after loading or changing maps."
+                        )
+                    );
+                EnableNoSatietyDrain = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableNoSatietyDrain),
+                    false,
+                    new Translator(chinese: "启用饱食不消耗", english: "Enable No Satiety Drain"),
+                    new Translator(
+                        chinese: "开启后不再因战斗结算、事件等消化胃里的食物。",
+                        english: "Food in the stomach is no longer digested by battles or events."
                         )
                     );
                 SetPlayerWalkSpeed = Config.Bind(
