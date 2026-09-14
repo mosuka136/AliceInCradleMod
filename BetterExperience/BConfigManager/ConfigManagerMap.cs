@@ -12,10 +12,12 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableBetterSaveSite { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInPuppetNpcDefeated { get; private set; }
         public static ConfigEntry<bool> EnableFastTravelAnywhere { get; private set; }
+        public static ConfigEntry<bool> EnableAllowNightTravel { get; private set; }
         public static ConfigEntry<bool> EnableWormTrap { get; private set; }
         public static ConfigEntry<bool> EnableMapDamage { get; private set; }
         public static ConfigEntry<bool> EnableDrowning { get; private set; }
         public static ConfigEntry<bool> EnableDarkArea { get; private set; }
+        public static ConfigEntry<bool> EnableLockDangerLevel { get; private set; }
         [EntryGui(2)]
         [EntrySlider(1, -1f, 160f, 1f)]
         public static ConfigEntry<bool, int> SetDangerLevel { get; private set; }
@@ -57,8 +59,18 @@ namespace BetterExperience.BConfigManager
                     false,
                     new Translator(chinese: "启用随时快速传送", english: "Enable Fast Travel Anywhere"),
                     new Translator(
-                        chinese: "启用随时快速传送。它将允许玩家在地图上的任何地方快速传送。",
-                        english: "Enable fast travel anywhere. It will allow players to fast travel anywhere on the map."
+                        chinese: "启用随时快速传送。允许不坐椅子传送，并解除夜间与雷暴对快传的限制。剧情锁定的传送不可用。",
+                        english: "Enable fast travel anywhere. Allows travel without sitting on a bench and lifts the night and thunder restriction. Scenario-locked travel stays blocked."
+                        )
+                    );
+                EnableAllowNightTravel = Config.Bind(
+                    SectionMap,
+                    nameof(EnableAllowNightTravel),
+                    false,
+                    new Translator(chinese: "启用夜间椅子传送", english: "Enable Night Bench Travel"),
+                    new Translator(
+                        chinese: "允许在夜间或雷暴时从椅子快速传送。",
+                        english: "Allow bench fast travel at night or during thunder."
                         )
                     );
                 EnableWormTrap = Config.Bind(
@@ -99,6 +111,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用黑暗区域。禁用后特定区域将不再需要魔荧虫提灯照亮。",
                         english: "Enable dark area. After disabling, specific areas will no longer require the Magic Bug Lantern to illuminate."
+                        )
+                    );
+                EnableLockDangerLevel = Config.Bind(
+                    SectionMap,
+                    nameof(EnableLockDangerLevel),
+                    false,
+                    new Translator(chinese: "启用危险度锁定", english: "Enable Lock Danger Level"),
+                    new Translator(
+                        chinese: "锁定当前危险度。战斗结算和事件不再改变危险度。旅馆休息等玩家主动操作仍可能重置。",
+                        english: "Lock the current danger level. Battle results and events will not change it. Player actions such as hotel rest may still reset it."
                         )
                     );
                 SetDangerLevel = BindPreloadValue(

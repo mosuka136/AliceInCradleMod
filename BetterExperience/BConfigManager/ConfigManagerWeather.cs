@@ -10,6 +10,7 @@ namespace BetterExperience.BConfigManager
     {
         // 雾效开关是持久化偏好；具体天气使用双值“读档后预加载”配置，实时修改由 ControlManager 负责。
         public static ConfigEntry<bool> EnableVisualImpactOfFog { get; private set; }
+        public static ConfigEntry<bool> EnableLockWeather { get; private set; }
         [EntryGui(2)]
         public static ConfigEntry<bool, bool> SetWeatherWind { get; private set; }
         [EntryGui(2)]
@@ -42,6 +43,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用雾的视觉效果。关闭后雾将不会显示或遮挡视野。",
                         english: "Enable visual impact of fog. After disabling, the fog will not be displayed or block the view."
+                        )
+                    );
+                EnableLockWeather = Config.Bind(
+                    SectionWeather,
+                    nameof(EnableLockWeather),
+                    false,
+                    new Translator(chinese: "启用天气锁定", english: "Enable Lock Weather"),
+                    new Translator(
+                        chinese: "锁定当前天气，不再随时间轮换。",
+                        english: "Lock the current weather so it no longer rotates over time."
                         )
                     );
                 SetWeatherWind = BindPreloadValue(
