@@ -127,6 +127,8 @@
     <Compile Include="Patches\NoMapDamagePatch.cs" />
     <Compile Include="Patches\RemoveMpBreakPatch.cs" />
     <Compile Include="Patches\SetCaneAttributePatch.cs" />
+    <Compile Include="Patches\CaneQuickSwitchPatch.cs" />
+    <Compile Include="Patches\SetCaneHolderSlotCountPatch.cs" />
     <Compile Include="Patches\SetCurrencyCountPatch.cs" />
     <Compile Include="Patches\SetGuildPointPatch.cs" />
     <Compile Include="Patches\LockGuildPointPatch.cs" />
