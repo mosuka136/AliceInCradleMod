@@ -134,6 +134,8 @@
     <Compile Include="Patches\StorePricePatch.cs" />
     <Compile Include="Patches\InfiniteFoodTicketLogic.cs" />
     <Compile Include="Patches\InfiniteFoodTicketPatch.cs" />
+    <Compile Include="Patches\FoodTicketLogic.cs" />
+    <Compile Include="Patches\SetFoodTicketCountPatch.cs" />
     <Compile Include="Patches\WanderingNpcForceLogic.cs" />
     <Compile Include="Patches\WanderingNpcForcePatch.cs" />
     <Compile Include="Patches\PreventGameOverPatch.cs" />

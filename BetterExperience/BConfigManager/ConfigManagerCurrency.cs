@@ -30,6 +30,9 @@ namespace BetterExperience.BConfigManager
         [EntryGui(2)]
         [EntrySlider(1, -1f, nel.GuildManager.GQ_POINT_MAX, 1f)]
         public static ConfigEntry<bool, int> SetGuildPoint { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 99f, 1f)]
+        public static ConfigEntry<bool, int> SetFoodTicketCount { get; private set; }
         // 商店价格倍率是持续生效的结算规则，不属于存档态覆盖，使用普通单值配置。
         public static ConfigEntry<bool> EnableStorePriceRatio { get; private set; }
         [EntrySlider(0f, 2f, 0.05f)]
@@ -167,6 +170,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置工会积分，同时影响工会等级。-1 表示不修改。",
                         english: "Set guild points, which also affect guild rank. -1 leaves them unchanged."
+                        )
+                    );
+                SetFoodTicketCount = BindPreloadValue(
+                    SectionCurrency,
+                    nameof(SetFoodTicketCount),
+                    -1,
+                    new Translator(chinese: "设置餐券数量", english: "Set Food Ticket Count"),
+                    new Translator(
+                        chinese: "设置当前绑定酒店的食事餐券数量。-1 表示不修改。新增餐券沿用现有最高折扣（无餐券时 50%）；餐券尚未绑定酒店时不会写入。",
+                        english: "Set the food ticket count of the bound hotel. -1 leaves it unchanged. New tickets use the best existing discount (50% when none); does nothing before tickets are bound to a hotel."
                         )
                     );
                 SetBuyPriceRatio = Config.Bind(

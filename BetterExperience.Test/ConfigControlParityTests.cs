@@ -54,12 +54,13 @@ namespace BetterExperience.Test
             nameof(ConfigManager.SetWeatherDenseMist),
             nameof(ConfigManager.SetWeatherPlague),
 
-            // Currency (5)
+            // Currency (6)
             nameof(ConfigManager.SetCurrencyGoldCount),
             nameof(ConfigManager.SetCurrencyCraftsCount),
             nameof(ConfigManager.SetCurrencyJuiceCount),
             nameof(ConfigManager.SetCurrencyBarScoreCount),
-            nameof(ConfigManager.SetGuildPoint)
+            nameof(ConfigManager.SetGuildPoint),
+            nameof(ConfigManager.SetFoodTicketCount)
         };
 
         // 只存在于实时控制、不落盘的会话开关；不要求对应 ConfigEntry<bool, T>。
@@ -104,7 +105,7 @@ namespace BetterExperience.Test
                 .ToArray();
 
             // Assert
-            Assert.Equal(40, ExpectedPreloadEntryNames.Length);
+            Assert.Equal(41, ExpectedPreloadEntryNames.Length);
             Assert.Equal(expectedNames, preloadProperties.Select(property => property.Name).ToArray());
             Assert.Equal(expectedControlNames, controlProperties.Select(property => property.Name).ToArray());
 

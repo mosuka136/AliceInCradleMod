@@ -14,7 +14,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 ## Implemented Features
 
 - Core controls: mod master switch, standalone config file, built-in config UI, Chinese/English localization, config hot reload, log level control
-- QoL features: one-key shop refresh, store buy/sell price ratio, hotel food tickets not consumed, improved save points, access warehouse anywhere, improved fishing, dojo wider timing and auto-hit, reel-related adjustments
+- QoL features: one-key shop refresh, store buy/sell price ratio, hotel food tickets not consumed and count setting, improved save points, access warehouse anywhere, improved fishing, dojo wider timing and auto-hit, reel-related adjustments
 - Battle cane swapping: quick cane switching in battle (configurable or unlimited instant switch charges), damage immunity during the swap action so it cannot be interrupted, adjustable cane holder slot count
 - Cooking: preview mushroom effects and reroll them in the cooking confirmation screen
 - Battle point preview: detailed enemy kinds, contamination, attributes and count ranges

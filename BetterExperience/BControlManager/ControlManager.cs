@@ -81,6 +81,7 @@ namespace BetterExperience.BControlManager
         internal static ControlEntry<long> SetCurrencyJuiceCount { get; private set; }
         internal static ControlEntry<long> SetCurrencyBarScoreCount { get; private set; }
         internal static ControlEntry<int> SetGuildPoint { get; private set; }
+        internal static ControlEntry<int> SetFoodTicketCount { get; private set; }
 
         internal static ControlEntry<GiveCatalogKind> GiveKind { get; private set; }
         internal static ControlEntry<string> GiveFilter { get; private set; }
@@ -527,6 +528,18 @@ namespace BetterExperience.BControlManager
                     english: "Set guild points, which also affect guild rank."
                     ),
                 new UiSliderMetadata(-1f, GuildManager.GQ_POINT_MAX, 1f)
+                );
+            SetFoodTicketCount = Bind(
+                SectionCurrency,
+                nameof(SetFoodTicketCount),
+                HPatches.SetFoodTicketCountPatch.GetFoodTicketCount,
+                HPatches.SetFoodTicketCountPatch.SetFoodTicketCount,
+                new Translator(chinese: "设置餐券数量", english: "Set Food Ticket Count"),
+                new Translator(
+                    chinese: "设置当前绑定酒店的食事餐券数量。新增餐券沿用现有最高折扣（无餐券时 50%）；尚未绑定酒店时请先购买一次含餐券的套餐。",
+                    english: "Set the food ticket count of the bound hotel. New tickets use the best existing discount (50% when none); buy a ticket-included plan first if none are bound."
+                    ),
+                new UiSliderMetadata(-1f, 99f, 1f)
                 );
         }
 
