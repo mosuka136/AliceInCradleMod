@@ -30,6 +30,12 @@ namespace BetterExperience.BConfigManager
         [EntryGui(2)]
         [EntrySlider(1, -1f, nel.GuildManager.GQ_POINT_MAX, 1f)]
         public static ConfigEntry<bool, int> SetGuildPoint { get; private set; }
+        // 商店价格倍率是持续生效的结算规则，不属于存档态覆盖，使用普通单值配置。
+        public static ConfigEntry<bool> EnableStorePriceRatio { get; private set; }
+        [EntrySlider(0f, 2f, 0.05f)]
+        public static ConfigEntry<float> SetBuyPriceRatio { get; private set; }
+        [EntrySlider(0f, 5f, 0.05f)]
+        public static ConfigEntry<float> SetSellPriceRatio { get; private set; }
 
         private const string SectionCurrency = "Currency";
 
@@ -140,6 +146,36 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置工会积分，同时影响工会等级。-1 表示不修改。",
                         english: "Set guild points, which also affect guild rank. -1 leaves them unchanged."
+                        )
+                    );
+                EnableStorePriceRatio = Config.Bind(
+                    SectionCurrency,
+                    nameof(EnableStorePriceRatio),
+                    false,
+                    new Translator(chinese: "启用商店价格倍率", english: "Enable Store Price Ratio"),
+                    new Translator(
+                        chinese: "启用商店价格倍率。同时作用于购买价和出售价，界面显示与实际结算一致。",
+                        english: "Apply price multipliers to stores. Both buying and selling are affected, display and checkout stay consistent."
+                        )
+                    );
+                SetBuyPriceRatio = Config.Bind(
+                    SectionCurrency,
+                    nameof(SetBuyPriceRatio),
+                    1f,
+                    new Translator(chinese: "设置购买价格倍率", english: "Set Buy Price Ratio"),
+                    new Translator(
+                        chinese: "商店购买价格倍率。0 为免费，1 为原价，小于 1 为折扣。",
+                        english: "Store buy price ratio. 0 is free, 1 is vanilla, below 1 is a discount."
+                        )
+                    );
+                SetSellPriceRatio = Config.Bind(
+                    SectionCurrency,
+                    nameof(SetSellPriceRatio),
+                    1f,
+                    new Translator(chinese: "设置出售价格倍率", english: "Set Sell Price Ratio"),
+                    new Translator(
+                        chinese: "商店出售价格倍率。0 为不获利，1 为原价，大于 1 为加价。",
+                        english: "Store sell price ratio. 0 earns nothing, 1 is vanilla, above 1 pays more."
                         )
                     );
             }

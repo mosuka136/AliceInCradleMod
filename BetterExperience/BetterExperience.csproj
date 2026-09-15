@@ -130,6 +130,8 @@
     <Compile Include="Patches\CaneQuickSwitchPatch.cs" />
     <Compile Include="Patches\SetCaneHolderSlotCountPatch.cs" />
     <Compile Include="Patches\SetCurrencyCountPatch.cs" />
+    <Compile Include="Patches\StorePriceLogic.cs" />
+    <Compile Include="Patches\StorePricePatch.cs" />
     <Compile Include="Patches\SetGuildPointPatch.cs" />
     <Compile Include="Patches\LockGuildPointPatch.cs" />
     <Compile Include="Patches\SetBottleHolderCountPatch.cs" />
