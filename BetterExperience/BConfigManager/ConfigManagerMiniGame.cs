@@ -25,6 +25,8 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableMilkNoDrain { get; private set; }
         public static ConfigEntry<bool> EnableMilkNoRunAnger { get; private set; }
         public static ConfigEntry<bool> EnableMilkNoTiredLimit { get; private set; }
+        public static ConfigEntry<bool> EnableDojoWiderTiming { get; private set; }
+        public static ConfigEntry<bool> EnableDojoAutoHit { get; private set; }
 
         private const string SectionMiniGame = "MiniGame";
 
@@ -162,6 +164,26 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "原版连续游玩几局后，奶农会以“牛累了”为由不再开启新的一局（疲劳计数累计到 7）。开启后忽略并清零该计数，可无限连续开局。",
                         english: "Vanilla blocks starting a new round after several games because the cows are tired (a fatigue counter reaching 7). This ignores and resets that counter, allowing unlimited consecutive rounds."
+                        )
+                    );
+                EnableDojoWiderTiming = Config.Bind(
+                    SectionMiniGame,
+                    nameof(EnableDojoWiderTiming),
+                    false,
+                    new Translator(chinese: "道场：判定放宽", english: "Dojo: wider timing window"),
+                    new Translator(
+                        chinese: "把出拳的快/慢判定从原版约 ±14 帧放宽到 3 倍。教程关不生效。",
+                        english: "Widens the early/late punch window from about ±14 frames to 3×. Tutorial stages are unchanged."
+                        )
+                    );
+                EnableDojoAutoHit = Config.Bind(
+                    SectionMiniGame,
+                    nameof(EnableDojoAutoHit),
+                    false,
+                    new Translator(chinese: "道场：自动命中", english: "Dojo: auto hit"),
+                    new Translator(
+                        chinese: "可出拳时自动打出克制手势；自己按任意键也会改成正确手势。教程关不生效。",
+                        english: "Automatically plays the winning hand on the GO beat; any key you press is also corrected. Tutorial stages are unchanged."
                         )
                     );
             }

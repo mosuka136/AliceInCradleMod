@@ -57,6 +57,9 @@
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile />
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="BConfigManager\ConfigManagerMiniGame.cs" />
     <Compile Include="BControlManager\ControlManager.cs" />
@@ -87,6 +90,8 @@
     <Compile Include="Patches\BetterBunAssistPatch.cs" />
     <Compile Include="Patches\FishingMinigameAssistLogic.cs" />
     <Compile Include="Patches\FishingMinigameAssistPatch.cs" />
+    <Compile Include="Patches\DojoAssistLogic.cs" />
+    <Compile Include="Patches\DojoAssistPatch.cs" />
     <Compile Include="Patches\CookingRandomEffectPatch.cs" />
     <Compile Include="Patches\CookingEffectPreview.cs" />
     <Compile Include="Patches\BattleEnemyPreview.cs" />
@@ -169,9 +174,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Buele.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

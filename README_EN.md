@@ -14,7 +14,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 ## Implemented Features
 
 - Core controls: mod master switch, standalone config file, built-in config UI, Chinese/English localization, config hot reload, log level control
-- QoL features: one-key shop refresh, improved save points, access warehouse anywhere, improved fishing, reel-related adjustments
+- QoL features: one-key shop refresh, improved save points, access warehouse anywhere, improved fishing, dojo wider timing and auto-hit, reel-related adjustments
 - Cooking: preview mushroom effects and reroll them in the cooking confirmation screen
 - Battle point preview: detailed enemy kinds, contamination, attributes and count ranges
 - Movement helpers: teleport to the mouse pointer, four-direction noclip flight, and player jump strength multiplier
