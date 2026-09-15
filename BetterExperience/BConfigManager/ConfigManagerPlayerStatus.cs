@@ -64,6 +64,9 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableMouseTeleport { get; private set; }
         public static ConfigEntry<bool> EnableNoclip { get; private set; }
         public static ConfigEntry<bool> EnableNoSatietyDrain { get; private set; }
+        public static ConfigEntry<bool> EnableNoDirtStains { get; private set; }
+        public static ConfigEntry<bool> EnableNoWetten { get; private set; }
+        public static ConfigEntry<bool> EnableAbsorbGachaSkip { get; private set; }
         [EntrySlider(-1f, 10f, 0.1f)]
         public static ConfigEntry<float> SetPlayerWalkSpeed { get; private set; }
         [EntrySlider(0.1f, 5f, 0.1f)]
@@ -648,6 +651,36 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "开启后不再因战斗结算、事件等消化胃里的食物。",
                         english: "Food in the stomach is no longer digested by battles or events."
+                        )
+                    );
+                EnableNoDirtStains = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableNoDirtStains),
+                    false,
+                    new Translator(chinese: "启用不沾污渍", english: "No dirt stains"),
+                    new Translator(
+                        chinese: "不再叠加上去新的泥土、液体、精液等污渍。已有污渍需椅子清洗。",
+                        english: "Blocks new mud, liquid and similar stains. Existing stains need a bench wash."
+                        )
+                    );
+                EnableNoWetten = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableNoWetten),
+                    false,
+                    new Translator(chinese: "启用不浸湿", english: "No wettening"),
+                    new Translator(
+                        chinese: "不再进入浸湿外观。已湿需椅子清理。",
+                        english: "Blocks the wet appearance. Already wet cloth still needs a bench."
+                        )
+                    );
+                EnableAbsorbGachaSkip = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableAbsorbGachaSkip),
+                    false,
+                    new Translator(chinese: "拘束挣脱：自动完成", english: "Absorb gacha: auto complete"),
+                    new Translator(
+                        chinese: "被拘束时自动完成挣脱按键/钟摆。剧情事件 QTE 和自慰小游戏不跳过。",
+                        english: "Automatically finishes the escape mash/pendulum while absorbed. Story event QTEs and the masturbation minigame are not skipped."
                         )
                     );
                 SetPlayerWalkSpeed = Config.Bind(

@@ -92,6 +92,10 @@
     <Compile Include="Patches\FishingMinigameAssistPatch.cs" />
     <Compile Include="Patches\DojoAssistLogic.cs" />
     <Compile Include="Patches\DojoAssistPatch.cs" />
+    <Compile Include="Patches\DirtWetLogic.cs" />
+    <Compile Include="Patches\DirtWetPatch.cs" />
+    <Compile Include="Patches\AbsorbGachaSkipLogic.cs" />
+    <Compile Include="Patches\AbsorbGachaSkipPatch.cs" />
     <Compile Include="Patches\CookingRandomEffectPatch.cs" />
     <Compile Include="Patches\CookingEffectPreview.cs" />
     <Compile Include="Patches\BattleEnemyPreview.cs" />
