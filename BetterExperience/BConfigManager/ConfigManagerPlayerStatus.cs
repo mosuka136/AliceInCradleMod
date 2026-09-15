@@ -19,6 +19,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableMpBreak { get; private set; }
         public static ConfigEntry<bool> EnablePressDamage { get; private set; }
         public static ConfigEntry<bool> EnableFallingToGround { get; private set; }
+        public static ConfigEntry<bool> EnablePreventGameOver { get; private set; }
         public static ConfigEntry<bool> EnableAccessWarehouseAnywhere { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalities { get; private set; }
         public static ConfigEntry<bool> EnableImmuneAbnormalityMpReduce { get; private set; }
@@ -201,6 +202,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "启用摔倒。关闭后，玩家将不会摔倒。",
                         english: "Enable falling to ground. When disabled, players will not fall to the ground."
+                        )
+                    );
+                EnablePreventGameOver = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnablePreventGameOver),
+                    false,
+                    new Translator(chinese: "启用防止败北", english: "Enable Prevent Game Over"),
+                    new Translator(
+                        chinese: "触发败北（含 HP 归零与事件强制败北）时不进入败北画面，玩家以 1 HP 原地恢复继续游戏。战败导致的公会任务失败不再发生；部分剧情强制演出可能受影响。",
+                        english: "When a game over triggers (HP reaching zero or forced event defeats), no defeat screen appears; the player recovers in place with 1 HP and keeps playing. Guild quests no longer fail on defeat; some forced story scenes may be affected."
                         )
                     );
                 EnableAccessWarehouseAnywhere = Config.Bind(
