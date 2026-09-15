@@ -23,7 +23,7 @@ namespace BetterExperience.Test
             nameof(ConfigManager.SetOverChargeSlotCount),
             nameof(ConfigManager.SetEnhancerSlotCount),
 
-            // Cane (17)
+            // Cane (18)
             nameof(ConfigManager.SetCaneSwingSpeed),
             nameof(ConfigManager.SetCaneCastSpeed),
             nameof(ConfigManager.SetCaneBalance),
@@ -41,6 +41,7 @@ namespace BetterExperience.Test
             nameof(ConfigManager.SetCaneDrainAfterLock),
             nameof(ConfigManager.SetCaneCastspeed),
             nameof(ConfigManager.SetCaneMagicPrepareSpeed),
+            nameof(ConfigManager.SetCaneHolderSlotCount),
 
             // Map (1)
             nameof(ConfigManager.SetDangerLevel),
@@ -67,6 +68,7 @@ namespace BetterExperience.Test
             nameof(ControlManager.SetAutoFishing),
             nameof(ControlManager.SetAutoMilk),
             nameof(ControlManager.SetAutoBunServe),
+            nameof(ControlManager.SetCaneInstantSwitchCount),
             nameof(ControlManager.GiveKind),
             nameof(ControlManager.GiveFilter),
             nameof(ControlManager.GiveChoices),
@@ -100,7 +102,7 @@ namespace BetterExperience.Test
                 .ToArray();
 
             // Assert
-            Assert.Equal(39, ExpectedPreloadEntryNames.Length);
+            Assert.Equal(40, ExpectedPreloadEntryNames.Length);
             Assert.Equal(expectedNames, preloadProperties.Select(property => property.Name).ToArray());
             Assert.Equal(expectedControlNames, controlProperties.Select(property => property.Name).ToArray());
 
