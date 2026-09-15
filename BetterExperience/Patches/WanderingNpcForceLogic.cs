@@ -9,11 +9,11 @@ namespace BetterExperience.Patches
     /// </summary>
     public enum SummonWanderingNpcKind
     {
-        [Description("夜莺")]
+        [Description("南丁格尔")]
         Nightingale = 0,
-        [Description("咖啡机")]
+        [Description("咖啡师")]
         CoffeeMaker = 1,
-        [Description("缇尔德")]
+        [Description("提尔德")]
         Tilde = 2,
         [Description("木偶商人")]
         Puppet = 3

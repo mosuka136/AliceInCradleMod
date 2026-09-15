@@ -99,6 +99,26 @@ namespace BetterExperience.BConfigManager
                         english: "Lock current guild points against quest rewards, failure penalties, and shopping."
                         )
                     );
+                EnableStorePriceRatio = Config.Bind(
+                    SectionCurrency,
+                    nameof(EnableStorePriceRatio),
+                    false,
+                    new Translator(chinese: "启用商店价格倍率", english: "Enable Store Price Ratio"),
+                    new Translator(
+                        chinese: "启用商店价格倍率。同时作用于购买价和出售价，界面显示与实际结算一致。",
+                        english: "Apply price multipliers to stores. Both buying and selling are affected, display and checkout stay consistent."
+                        )
+                    );
+                EnableInfiniteFoodTicket = Config.Bind(
+                    SectionCurrency,
+                    nameof(EnableInfiniteFoodTicket),
+                    false,
+                    new Translator(chinese: "启用酒店餐券不消耗", english: "Enable Infinite Food Ticket"),
+                    new Translator(
+                        chinese: "在酒店使用餐券用餐后不消耗餐券，折扣照常生效。更换酒店时原版仍会清空餐券。",
+                        english: "Hotel meals no longer consume food tickets, the discount still applies. Switching hotels still clears them as in vanilla."
+                        )
+                    );
                 SetCurrencyGoldCount = BindPreloadValue(
                     SectionCurrency,
                     nameof(SetCurrencyGoldCount),
@@ -149,16 +169,6 @@ namespace BetterExperience.BConfigManager
                         english: "Set guild points, which also affect guild rank. -1 leaves them unchanged."
                         )
                     );
-                EnableStorePriceRatio = Config.Bind(
-                    SectionCurrency,
-                    nameof(EnableStorePriceRatio),
-                    false,
-                    new Translator(chinese: "启用商店价格倍率", english: "Enable Store Price Ratio"),
-                    new Translator(
-                        chinese: "启用商店价格倍率。同时作用于购买价和出售价，界面显示与实际结算一致。",
-                        english: "Apply price multipliers to stores. Both buying and selling are affected, display and checkout stay consistent."
-                        )
-                    );
                 SetBuyPriceRatio = Config.Bind(
                     SectionCurrency,
                     nameof(SetBuyPriceRatio),
@@ -177,16 +187,6 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "商店出售价格倍率。0 为不获利，1 为原价，大于 1 为加价。",
                         english: "Store sell price ratio. 0 earns nothing, 1 is vanilla, above 1 pays more."
-                        )
-                    );
-                EnableInfiniteFoodTicket = Config.Bind(
-                    SectionCurrency,
-                    nameof(EnableInfiniteFoodTicket),
-                    false,
-                    new Translator(chinese: "启用酒店餐券不消耗", english: "Enable Infinite Food Ticket"),
-                    new Translator(
-                        chinese: "在酒店使用餐券用餐后不消耗餐券，折扣照常生效。更换酒店时原版仍会清空餐券。",
-                        english: "Hotel meals no longer consume food tickets, the discount still applies. Switching hotels still clears them as in vanilla."
                         )
                     );
             }

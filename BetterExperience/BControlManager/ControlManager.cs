@@ -66,7 +66,7 @@ namespace BetterExperience.BControlManager
         internal static ControlEntry<int> SetCaneHolderSlotCount { get; private set; }
 
         internal static ControlEntry<int> SetDangerLevel { get; private set; }
-        internal static ControlEntry<SummonWanderingNpcKind> SummonWanderingNpcKind { get; private set; }
+        internal static ControlEntry<SummonWanderingNpcKind> SummonNpcKind { get; private set; }
         internal static ControlEntry<bool> SummonWanderingNpc { get; private set; }
 
         internal static ControlEntry<bool> SetWeatherWind { get; private set; }
@@ -432,15 +432,15 @@ namespace BetterExperience.BControlManager
                     ),
                 new UiSliderMetadata(-1f, 160f, 1f)
                 );
-            SummonWanderingNpcKind = Bind(
+            SummonNpcKind = Bind(
                 SectionMap,
-                nameof(SummonWanderingNpcKind),
+                nameof(SummonNpcKind),
                 HPatches.WanderingNpcForcePatch.GetSummonKind,
                 HPatches.WanderingNpcForcePatch.SetSummonKind,
-                new Translator(chinese: "传唤流浪商人种类", english: "Summon Wandering Merchant"),
+                new Translator(chinese: "传唤NPC", english: "Summon NPC"),
                 new Translator(
-                    chinese: "选择要传唤的流浪商人：夜莺、咖啡机、缇尔德或木偶商人。",
-                    english: "Choose the wandering merchant to summon: Nightingale, Coffee Maker, Tilde or Puppet."
+                    chinese: "选择要传唤的NPC：南丁格尔、咖啡师、提尔德或木偶商人。",
+                    english: "Choose the NPC to summon: Nightingale, Coffee Maker, Tilde or Puppet."
                     ),
                 policy: ControlUpdatePolicy.Never
                 );
