@@ -66,6 +66,8 @@ namespace BetterExperience.BControlManager
         internal static ControlEntry<int> SetCaneHolderSlotCount { get; private set; }
 
         internal static ControlEntry<int> SetDangerLevel { get; private set; }
+        internal static ControlEntry<SummonWanderingNpcKind> SummonWanderingNpcKind { get; private set; }
+        internal static ControlEntry<bool> SummonWanderingNpc { get; private set; }
 
         internal static ControlEntry<bool> SetWeatherWind { get; private set; }
         internal static ControlEntry<bool> SetWeatherThunder { get; private set; }
@@ -429,6 +431,28 @@ namespace BetterExperience.BControlManager
                     english: "Set the danger level in the current game."
                     ),
                 new UiSliderMetadata(-1f, 160f, 1f)
+                );
+            SummonWanderingNpcKind = Bind(
+                SectionMap,
+                nameof(SummonWanderingNpcKind),
+                HPatches.WanderingNpcForcePatch.GetSummonKind,
+                HPatches.WanderingNpcForcePatch.SetSummonKind,
+                new Translator(chinese: "传唤流浪商人种类", english: "Summon Wandering Merchant"),
+                new Translator(
+                    chinese: "选择要传唤的流浪商人：夜莺、咖啡机、缇尔德或木偶商人。",
+                    english: "Choose the wandering merchant to summon: Nightingale, Coffee Maker, Tilde or Puppet."
+                    ),
+                policy: ControlUpdatePolicy.Never
+                );
+            SummonWanderingNpc = BindPulse(
+                SectionMap,
+                nameof(SummonWanderingNpc),
+                HPatches.WanderingNpcForcePatch.SetSummon,
+                new Translator(chinese: "传唤到当前地图", english: "Summon To Current Map"),
+                new Translator(
+                    chinese: "把所选商人安排到当前地图，切换地图后在长椅点必定出现；剧情未开放或黑名单地图除外。",
+                    english: "Assign the selected merchant to the current map; it always appears at a bench after changing maps, except story-locked maps."
+                    )
                 );
         }
 

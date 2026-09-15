@@ -24,7 +24,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 - Survival/combat protection and statistics: no HP/MP/EP damage, no map damage, abnormal status immunity, infinite shield, cannot be attacked, absorb-gacha auto complete, battle statistics, damage counter, etc.
 - Trap/environment: drowning, crush damage, falling, MP break, worm traps, and fog visual effects can be enabled or disabled through config
 - Limit removals: puppet merchant spawn limits, bench menu limits, treasure chest limits, warehouse region limits, etc.
-- Map and weather: fast travel anywhere (including night and thunder), night bench travel, lock weather, lock danger level, dark area removal in specific zones, forced weather (wind/thunder/mist/drought/dense mist/plague)
+- Map and weather: fast travel anywhere (including night and thunder), night bench travel, lock weather, lock danger level, dark area removal in specific zones, forced weather (wind/thunder/mist/drought/dense mist/plague), summon wandering merchants to the current map
 - Visual features: remove mosaic, no dirt stains, no wettening, texture replacement, external Spine portrait attachment replacement, sensitive content texture toggle, runtime texture reload
 - Hotkey features: supports key combinations, multiple alternative hotkeys, and gamepad input
 - Debug: debug switch; the control page lists items, skills and recipes to give or unlock
