@@ -36,6 +36,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<float> SetBuyPriceRatio { get; private set; }
         [EntrySlider(0f, 5f, 0.05f)]
         public static ConfigEntry<float> SetSellPriceRatio { get; private set; }
+        public static ConfigEntry<bool> EnableInfiniteFoodTicket { get; private set; }
 
         private const string SectionCurrency = "Currency";
 
@@ -176,6 +177,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "商店出售价格倍率。0 为不获利，1 为原价，大于 1 为加价。",
                         english: "Store sell price ratio. 0 earns nothing, 1 is vanilla, above 1 pays more."
+                        )
+                    );
+                EnableInfiniteFoodTicket = Config.Bind(
+                    SectionCurrency,
+                    nameof(EnableInfiniteFoodTicket),
+                    false,
+                    new Translator(chinese: "启用酒店餐券不消耗", english: "Enable Infinite Food Ticket"),
+                    new Translator(
+                        chinese: "在酒店使用餐券用餐后不消耗餐券，折扣照常生效。更换酒店时原版仍会清空餐券。",
+                        english: "Hotel meals no longer consume food tickets, the discount still applies. Switching hotels still clears them as in vanilla."
                         )
                     );
             }
