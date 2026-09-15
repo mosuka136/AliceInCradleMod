@@ -397,8 +397,8 @@ namespace BetterExperience.BControlManager
                 HPatches.CaneQuickSwitch.SetInstantSwitchCount,
                 new Translator(chinese: "设置当前立即切换次数", english: "Set Current Instant Switch Count"),
                 new Translator(
-                    chinese: "设置当前剩余的立即切换法杖次数。未读档时无效。",
-                    english: "Set the remaining instant cane switch charges. Does nothing until a save is loaded."
+                    chinese: "设置当前剩余的立即切换法杖次数。",
+                    english: "Set the remaining instant cane switch charges."
                     ),
                 new UiSliderMetadata(-1f, 99f, 1f)
                 );
@@ -409,8 +409,8 @@ namespace BetterExperience.BControlManager
                 HPatches.SetCaneHolderSlotCountPatch.SetCaneHolderSlotCount,
                 new Translator(chinese: "设置法杖收纳槽数量", english: "Set Cane Holder Slot Count"),
                 new Translator(
-                    chinese: "设置当前法杖收纳杖的槽位数量（每 1 个收纳杖物品提供 1 个槽）。未读档时无效。",
-                    english: "Set the current cane holder slot count (each holder item provides one slot). Does nothing until a save is loaded."
+                    chinese: "设置当前法杖收纳杖的槽位数量。",
+                    english: "Set the current cane holder slot count."
                     ),
                 new UiSliderMetadata(-1f, 20f, 1f)
                 );

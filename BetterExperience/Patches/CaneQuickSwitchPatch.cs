@@ -14,12 +14,11 @@ namespace BetterExperience.Patches
         /// <summary>
         /// 战斗中快速切换法杖：把战斗内装备法杖的耗时动作改写为原版的立即切换路径，
         /// 库存处理完全复用原版逻辑；立即切换次数沿用游戏的
-        /// noel_cane_switchable_in_battle（战斗开始时重置、每次切换递减）。
+        /// noel_cane_switchable_in_battle（战斗开始时重置、每次切换递减；
+        /// 不限次数时不递减且保持至少 1）。
         /// </summary>
         internal static class CaneQuickSwitch
         {
-            internal const int UnlimitedCount = 999999;
-
             private static bool _logged;
 
             internal static bool QuickSwitchOn => IsOn(ConfigManager.EnableCaneQuickSwitchInBattle);
@@ -58,16 +57,27 @@ namespace BetterExperience.Patches
 
             /// <summary>
             /// 战斗开始时游戏按法杖收纳杖内收纳的法杖数量重置次数；按配置覆盖：
-            /// 不限次数写入大数，固定次数直接写入。
+            /// 不限次数仅把次数补足到至少 1（不覆盖更高的原版数量），固定次数直接写入。
             /// </summary>
             internal static void ApplyCountConfig(NelItemManager imng)
             {
                 if (imng == null)
                     return;
                 if (UnlimitedOn)
-                    imng.noel_cane_switchable_in_battle = UnlimitedCount;
-                else if ((ConfigManager.SetCaneInstantSwitchCount?.Value ?? -1f) >= 0f)
-                    imng.noel_cane_switchable_in_battle = (int)ConfigManager.SetCaneInstantSwitchCount.Value;
+                    EnsureUnlimitedFloor(imng);
+                else if ((ConfigManager.SetCaneInstantSwitchCount?.Value ?? -1) >= 0)
+                    imng.noel_cane_switchable_in_battle = ConfigManager.SetCaneInstantSwitchCount.Value;
+            }
+
+            /// <summary>不限次数时把立即切换次数补足到至少 1。</summary>
+            internal static void EnsureUnlimitedFloor(NelItemManager imng = null)
+            {
+                if (!UnlimitedOn)
+                    return;
+                if (imng == null)
+                    imng = GetIMNG();
+                if (imng != null && imng.noel_cane_switchable_in_battle < 1)
+                    imng.noel_cane_switchable_in_battle = 1;
             }
 
             private static bool IsOn(ConfigEntry<bool> entry)
@@ -110,7 +120,11 @@ namespace BetterExperience.Patches
                 {
                     var commands = __result;
                     var index = commands?.IndexOf("equip_cane_in_battle") ?? -1;
-                    if (index < 0 || !CaneQuickSwitch.ShouldRewriteBattleCommand())
+                    if (index < 0)
+                        return;
+                    // 不限次数时先补足次数，菜单标签与门槛判定立即恢复到至少 1。
+                    CaneQuickSwitch.EnsureUnlimitedFloor();
+                    if (!CaneQuickSwitch.ShouldRewriteBattleCommand())
                         return;
                     commands[index] = "equip_cane";
                     CaneQuickSwitch.LogOnce();
@@ -141,6 +155,59 @@ namespace BetterExperience.Patches
                 catch (Exception ex)
                 {
                     BLog.Error($"Unexpected error in {nameof(CaneQuickSwitchCountPatch)} postfix", ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 原版在战斗中执行立即切换后递减次数（fnItemCommandExecuted 的 equip_cane 分支）。
+        /// 不限次数时在方法前后快照并恢复该字段：次数不减少，且始终至少为 1。
+        /// </summary>
+        [HarmonyPatch]
+        public class CaneQuickSwitchKeepCountPatch
+        {
+            public static bool Prepare()
+            {
+                return TargetMethod() != null;
+            }
+
+            public static MethodBase TargetMethod()
+            {
+                var type = AccessTools.TypeByName("nel.gm.UiGMCItem");
+                return type == null ? null : AccessTools.Method(type, "fnItemCommandExecuted");
+            }
+
+            [HarmonyPrefix]
+            public static void Prefix(out int __state)
+            {
+                __state = int.MinValue;
+                try
+                {
+                    __state = CaneQuickSwitch.GetInstantSwitchCount();
+                }
+                catch (Exception ex)
+                {
+                    BLog.Error($"Unexpected error in {nameof(CaneQuickSwitchKeepCountPatch)} prefix", ex);
+                }
+            }
+
+            [HarmonyPostfix]
+            public static void Postfix(int __state)
+            {
+                try
+                {
+                    if (!CaneQuickSwitch.UnlimitedOn)
+                        return;
+                    var imng = GetIMNG();
+                    if (imng == null)
+                        return;
+                    var kept = Math.Max(__state, 1);
+                    if (imng.noel_cane_switchable_in_battle < kept)
+                        imng.noel_cane_switchable_in_battle = kept;
+                }
+                catch (Exception ex)
+                {
+                    BLog.Error($"Unexpected error in {nameof(CaneQuickSwitchKeepCountPatch)} postfix", ex);
                 }
             }
         }

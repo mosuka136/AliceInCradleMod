@@ -61,13 +61,14 @@ namespace BetterExperience.BConfigManager
         [EntryGui(2)]
         [EntrySlider(1, -1f, 255f, 0.1f)]
         public static ConfigEntry<bool, float> SetCaneMagicPrepareSpeed { get; private set; }
-
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 10f, 1f)]
+        public static ConfigEntry<bool, int> SetCaneHolderSlotCount { get; private set; }
+        [EntrySlider(-1f, 99f, 1f)]
+        public static ConfigEntry<int> SetCaneInstantSwitchCount { get; private set; }
         public static ConfigEntry<bool> EnableCaneQuickSwitchInBattle { get; private set; }
         public static ConfigEntry<bool> EnableCaneInstantSwitchUnlimited { get; private set; }
-        [EntrySlider(1, -1f, 99f, 1f)]
-        public static ConfigEntry<float> SetCaneInstantSwitchCount { get; private set; }
         public static ConfigEntry<bool> EnableCaneSwitchNoInterrupt { get; private set; }
-        public static ConfigEntry<bool, int> SetCaneHolderSlotCount { get; private set; }
 
         private const string SectionCane = "Cane";
 
@@ -297,16 +298,34 @@ namespace BetterExperience.BConfigManager
                         english: "Set cane magic prepare speed."
                         )
                     );
+                SetCaneHolderSlotCount = BindPreloadValue(
+                    SectionCane,
+                    nameof(SetCaneHolderSlotCount),
+                    -1,
+                    new Translator(chinese: "设置法杖收纳槽数量", english: "Set Cane Holder Slot Count"),
+                    new Translator(
+                        chinese: "设置法杖收纳杖的槽位数量，-1 表示不调整。",
+                        english: "Set the cane holder slot count; -1 keeps it unchanged. "
+                        )
+                    );
+                SetCaneInstantSwitchCount = Config.Bind(
+                    SectionCane,
+                    nameof(SetCaneInstantSwitchCount),
+                    -1,
+                    new Translator(chinese: "设置每场战斗立即切换次数", english: "Set Cane Instant Switch Count Per Battle"),
+                    new Translator(
+                        chinese: "每场战斗开始时可用的立即切换法杖次数上限，-1 表示不调整。",
+                        english: "Instant cane switch charges per battle. -1 keeps it unchanged."
+                        )
+                    );
                 EnableCaneQuickSwitchInBattle = Config.Bind(
                     SectionCane,
                     nameof(EnableCaneQuickSwitchInBattle),
                     false,
                     new Translator(chinese: "启用战斗中快速切换法杖", english: "Enable Quick Cane Switch In Battle"),
                     new Translator(
-                        chinese: "战斗中从物品菜单装备法杖时改走立即切换路径，不再播放走向并拾取法杖的耗时动作。" +
-                                 "需要立即切换次数有富余，次数耗尽后自动回退原版动作。",
-                        english: "Equip canes from the item menu instantly in battle instead of the timed drop-and-pickup action. " +
-                                 "Requires instant switch charges left; falls back to the vanilla action once depleted."
+                        chinese: "战斗中从物品菜单装备法杖时改走立即切换路径，需要立即切换次数有富余。",
+                        english: "Equip canes from the item menu instantly in battle, requires instant switch charges left."
                         )
                     );
                 EnableCaneInstantSwitchUnlimited = Config.Bind(
@@ -315,18 +334,8 @@ namespace BetterExperience.BConfigManager
                     false,
                     new Translator(chinese: "启用立即切换不限次数", english: "Enable Unlimited Instant Cane Switch"),
                     new Translator(
-                        chinese: "立即切换法杖不消耗次数，视为无限次。开启后忽略“设置每场战斗立即切换次数”。",
-                        english: "Instant cane switches no longer consume charges and are treated as unlimited. Overrides the per-battle count when enabled."
-                        )
-                    );
-                SetCaneInstantSwitchCount = Config.Bind(
-                    SectionCane,
-                    nameof(SetCaneInstantSwitchCount),
-                    -1f,
-                    new Translator(chinese: "设置每场战斗立即切换次数", english: "Set Cane Instant Switch Count Per Battle"),
-                    new Translator(
-                        chinese: "每场战斗开始时可用的立即切换法杖次数上限，-1 表示原版（按法杖收纳杖内收纳的法杖数量）。",
-                        english: "Instant cane switch charges per battle. -1 keeps the vanilla count (canes packed in the cane holder)."
+                        chinese: "立即切换法杖不消耗次数，且次数保持至少 1。开启后忽略“设置每场战斗立即切换次数”。",
+                        english: "Instant cane switches no longer consume charges and the count stays at least 1. Overrides the per-battle count when enabled."
                         )
                     );
                 EnableCaneSwitchNoInterrupt = Config.Bind(
@@ -337,18 +346,6 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "切换法杖的耗时动作期间完全免疫伤害：不受伤、不硬直、不被打断，法杖也不会残留在地上。",
                         english: "Grants full damage immunity during the timed cane swap action: no damage, no flinch, no interruption, and no cane left on the ground."
-                        )
-                    );
-                SetCaneHolderSlotCount = BindPreloadValue(
-                    SectionCane,
-                    nameof(SetCaneHolderSlotCount),
-                    -1,
-                    new Translator(chinese: "设置法杖收纳槽数量", english: "Set Cane Holder Slot Count"),
-                    new Translator(
-                        chinese: "设置法杖收纳杖的槽位数量（每 1 个收纳杖物品提供 1 个槽），-1 表示不调整。" +
-                                 "调整会实际增删背包中的法杖收纳杖，减少时已收纳的法杖会退回背包。",
-                        english: "Set the cane holder slot count (each holder item provides one slot); -1 keeps it unchanged. " +
-                                 "Adjusting adds or removes cane holder items in the backpack; packed canes return to the backpack when reduced."
                         )
                     );
             }
