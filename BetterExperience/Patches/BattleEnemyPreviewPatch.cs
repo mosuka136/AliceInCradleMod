@@ -24,6 +24,14 @@ namespace BetterExperience.Patches
         private const BindingFlags Members = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
         private static readonly ConditionalWeakTable<UILpSummon, Session> Sessions = new ConditionalWeakTable<UILpSummon, Session>();
         private static readonly ConditionalWeakTable<DesignerRowMem, Session> ScrollRows = new ConditionalWeakTable<DesignerRowMem, Session>();
+
+        // 滚动条渐隐任务：面板开始关闭后没有任何原生路径继续驱动滚动条透明度（Mod 的
+        // setAlpha 同步映射随 Restore 拆除，稳定态原生也不逐帧重设 alpha），valotile
+        // 绘制注册更不会随 hide()/SetActive 失效。由该任务在 18 帧内（与 MsgBox.t_hide
+        // 的面板淡出同速）把滚动条透明度从当前值线性降到 0。
+        private const float ScrollFadeFrames = 18f;
+        private static readonly List<ScrollFadeJob> ActiveScrollFades = new List<ScrollFadeJob>();
+        private static bool _scrollFadeDriverRegistered;
         private static readonly FieldInfo LeftField = typeof(UILpSummon).GetField("BxDL", Members);
         private static readonly FieldInfo TitleField = typeof(UILpSummon).GetField("BxT", Members);
         private static readonly FieldInfo BottomField = typeof(UILpSummon).GetField("BxDB", Members);
@@ -54,6 +62,16 @@ namespace BetterExperience.Patches
             internal float ScrollBarAlpha = float.NaN;
         }
 
+        private sealed class ScrollFadeJob
+        {
+            internal Session Owner;
+            internal aBtnMeter[] Bars;
+            internal uint NormalColor;
+            internal uint PushedColor;
+            internal float StartAlpha;
+            internal float Elapsed;
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UILpSummon), nameof(UILpSummon.activate))]
         private static void Activate(UILpSummon __instance)
@@ -81,6 +99,49 @@ namespace BetterExperience.Patches
             }
         }
 
+        // 唤出菜单暂停时，原生 Pause→hide() 链路不会停用 valotile 绘制（Skin.setEnable
+        // 只切换 MeshRenderer），且同步循环依赖的 UILpSummon.run 暂停后不再执行，滚动条
+        // 会以冻结的透明度残留在屏幕上。这里在暂停瞬间把滚动条压到全透明并停用遮罩，
+        // 恢复时按面板当前状态复原（稳定态原生不会再次触发 setAlpha，必须主动重设）。
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UILpSummon), nameof(UILpSummon.Pause))]
+        private static void PauseScrollBars(UILpSummon __instance)
+        {
+            if (!Sessions.TryGetValue(__instance, out var session) || !session.Applied) return;
+            try
+            {
+                RemoveScrollFade(session);
+                session.ScrollBarAlpha = float.NaN;
+                SetScrollBarsAlpha(session, 0f);
+                if (session.ScrollMaskRenderer != null) session.ScrollMaskRenderer.enabled = false;
+                if (session.ScrollMeshRenderer != null) session.ScrollMeshRenderer.enabled = false;
+            }
+            catch (Exception exception)
+            {
+                session.Failed = true;
+                BLog.Error("Unable to hide the battle preview scrollbar on pause.", exception);
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UILpSummon), nameof(UILpSummon.Resume))]
+        private static void ResumeScrollBars(UILpSummon __instance)
+        {
+            if (!Sessions.TryGetValue(__instance, out var session) || !session.Applied) return;
+            try
+            {
+                SyncScrollRendering(session);
+                var box = session.Left.getBox();
+                session.ScrollBarAlpha = float.NaN;
+                SetScrollBarsAlpha(session, box.show_delaying ? 0f : session.Left.alpha * box.alpha * box.alpha);
+            }
+            catch (Exception exception)
+            {
+                session.Failed = true;
+                BLog.Error("Unable to restore the battle preview scrollbar on resume.", exception);
+            }
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UILpSummon), nameof(UILpSummon.releaseTextCache))]
         private static void Invalidate(UILpSummon __instance)
@@ -102,7 +163,11 @@ namespace BetterExperience.Patches
         [HarmonyPatch(typeof(UILpSummon), nameof(UILpSummon.destruct))]
         private static void Destroy(UILpSummon __instance)
         {
-            if (Sessions.TryGetValue(__instance, out var session)) ScrollRows.Remove(session.Left.getRowManager());
+            if (Sessions.TryGetValue(__instance, out var session))
+            {
+                ScrollRows.Remove(session.Left.getRowManager());
+                RemoveScrollFade(session);
+            }
             Sessions.Remove(__instance);
         }
 
@@ -319,6 +384,8 @@ namespace BetterExperience.Patches
 
         private static void ConfigureScrollRendering(Session session)
         {
+            // 新一轮预览会重建同步映射并重设透明度，旧渐隐任务必须让位。
+            RemoveScrollFade(session);
             var scroll = session.Left.getScrollBox();
             var mesh = (MeshDrawer)ScrollMeshField.GetValue(scroll);
             var renderer = scroll.GetComponent<MeshRenderer>();
@@ -377,9 +444,78 @@ namespace BetterExperience.Patches
             foreach (var bar in session.ScrollBars) bar.use_valotile = useValotile;
         }
 
+        private static void BeginScrollFade(Session session)
+        {
+            RemoveScrollFade(session);
+            if (session.ScrollBars == null || session.ScrollBars.Length == 0) return;
+            ActiveScrollFades.Add(new ScrollFadeJob
+            {
+                Owner = session,
+                Bars = session.ScrollBars,
+                NormalColor = session.Left.scroll_normal_color,
+                PushedColor = session.Left.scroll_push_color,
+                StartAlpha = float.IsNaN(session.ScrollBarAlpha) ? 1f : session.ScrollBarAlpha,
+                Elapsed = 0f
+            });
+            if (_scrollFadeDriverRegistered) return;
+            _scrollFadeDriverRegistered = true;
+            UnityModBase.FrameUpdateManager.OnFrameUpdate += StepScrollFades;
+        }
+
+        private static void RemoveScrollFade(Session session)
+        {
+            for (int i = ActiveScrollFades.Count - 1; i >= 0; i--)
+                if (ActiveScrollFades[i].Owner == session)
+                    ActiveScrollFades.RemoveAt(i);
+        }
+
+        private static void StepScrollFades()
+        {
+            if (ActiveScrollFades.Count == 0) return;
+            try
+            {
+                for (int i = ActiveScrollFades.Count - 1; i >= 0; i--)
+                {
+                    var job = ActiveScrollFades[i];
+                    // 面板重新应用预览时，新滚动条已由 setAlpha 同步映射接管，任务让位。
+                    if (job.Owner.Applied && !ReferenceEquals(job.Owner.ScrollBars, job.Bars))
+                    {
+                        ActiveScrollFades.RemoveAt(i);
+                        continue;
+                    }
+                    job.Elapsed += 1f;
+                    float alpha = job.StartAlpha * (1f - job.Elapsed / ScrollFadeFrames);
+                    if (alpha > 0f && !float.IsNaN(alpha))
+                        ApplyScrollFadeAlpha(job, alpha);
+                    else
+                    {
+                        ApplyScrollFadeAlpha(job, 0f);
+                        ActiveScrollFades.RemoveAt(i);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                ActiveScrollFades.Clear();
+                BLog.Error("Unable to fade the battle preview scrollbar.", exception);
+            }
+        }
+
+        private static void ApplyScrollFadeAlpha(ScrollFadeJob job, float alpha)
+        {
+            foreach (var bar in job.Bars)
+                SetScrollBarAlpha(bar.get_Skin(), alpha, job.NormalColor, job.PushedColor);
+        }
+
         private static void Restore(UILpSummon ui, Session session)
         {
             if (!session.Applied) return;
+            // 面板淡出期间滚动条透明度不再有任何驱动方，交给渐隐任务以与面板相同的
+            // 速度降到 0，避免滚动条以冻结的透明度滞留到预览内容消失之后。
+            BeginScrollFade(session);
+            // 遮罩只写入模板缓冲，预览拆除后立即停用，避免影响其他界面。
+            if (session.ScrollMaskRenderer != null) session.ScrollMaskRenderer.enabled = false;
+            if (session.ScrollMeshRenderer != null) session.ScrollMeshRenderer.enabled = false;
             var left = session.Left;
             ScrollRows.Remove(left.getRowManager());
             left.Clear();
