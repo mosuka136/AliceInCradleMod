@@ -10,7 +10,6 @@ namespace BetterExperience.BConfigManager
     public static partial class ConfigManager
     {
         // 热键配置使用 Hotkey 自定义适配器序列化，默认 UnityProvider 实例在初始化时统一创建。
-        public static ConfigEntry<Hotkey> FlushAllStoreHotkey { get; private set; }
         public static ConfigEntry<Hotkey> FlushTextureHotkey { get; private set; }
         public static ConfigEntry<Hotkey> MouseTeleportHotkey { get; private set; }
         public static ConfigEntry<Hotkey> ToggleNoclipHotkey { get; private set; }
@@ -46,16 +45,6 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "切换穿墙飞行，默认 Ctrl+N。",
                         english: "Toggle noclip flight. Default: Ctrl+N."
-                        )
-                    );
-                FlushAllStoreHotkey = Config.Bind(
-                    SectionHotkey,
-                    nameof(FlushAllStoreHotkey),
-                    new Hotkey("F", unityService),
-                    new Translator(chinese: "刷新商店热键", english: "Flush All Store Hotkey"),
-                    new Translator(
-                        chinese: "一键刷新商店的热键。默认值为 F。",
-                        english: "The hotkey to flush all store. Default is F."
                         )
                     );
                 FlushTextureHotkey = Config.Bind(

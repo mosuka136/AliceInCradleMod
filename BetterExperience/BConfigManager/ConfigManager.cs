@@ -27,7 +27,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigSheet Sheet => Config.Sheet;
 
         public static ConfigEntry<bool> EnableBetterExperience { get; private set; }
-        public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
+        public static ConfigEntry<bool> EnableStoreRefresh { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableCookingRandomEffectPreview { get; private set; }
         public static ConfigEntry<bool> EnableGuildQuestBoardRefresh { get; private set; }
@@ -91,14 +91,14 @@ namespace BetterExperience.BConfigManager
                             english: "Enable Better Experience mod, must be set before launching the game."
                             )
                         );
-                    EnableFlushAllStore = Config.Bind(
+                    EnableStoreRefresh = Config.Bind(
                         SectionGeneral,
-                        nameof(EnableFlushAllStore),
+                        nameof(EnableStoreRefresh),
                         false,
-                        new Translator(chinese: "启用一键刷新商店", english: "Enable Flush All Store"),
+                        new Translator(chinese: "启用商店页面刷新", english: "Enable Store Refresh"),
                         new Translator(
-                            chinese: "启用一键刷新商店功能。",
-                            english: "Enable flush all store function."
+                            chinese: "商店主界面命令列表中追加“刷新商品”按钮，重掷当前商店库存；未结账购物车会被回滚。",
+                            english: "Adds a \"Reroll Stock\" button to the store command list. It rerolls the current store's stock; the unfinished cart is rolled back."
                             )
                         );
                     EnableRemoveLimitInBenchMenu = Config.Bind(

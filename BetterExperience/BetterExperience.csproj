@@ -120,7 +120,6 @@
     <Compile Include="Patches\RemoveWarehouseRegionRestrictionsPatch.cs" />
     <Compile Include="Patches\SetBackpackCapacityPatch.cs" />
     <Compile Include="BConfigManager\ConfigManager.cs" />
-    <Compile Include="Patches\FlushStorePatch.cs" />
     <Compile Include="BLogSpace\BLog.cs" />
     <Compile Include="Patches\InfiniteShieldPatch.cs" />
     <Compile Include="Patches\NoHpDamagePatch.cs" />
@@ -132,6 +131,8 @@
     <Compile Include="Patches\SetCurrencyCountPatch.cs" />
     <Compile Include="Patches\StorePriceLogic.cs" />
     <Compile Include="Patches\StorePricePatch.cs" />
+    <Compile Include="Patches\StoreRefreshButtonLogic.cs" />
+    <Compile Include="Patches\StoreRefreshButtonPatch.cs" />
     <Compile Include="Patches\InfiniteFoodTicketLogic.cs" />
     <Compile Include="Patches\InfiniteFoodTicketPatch.cs" />
     <Compile Include="Patches\FoodTicketLogic.cs" />

@@ -13,6 +13,8 @@ namespace BetterExperience.BPatchGUI
         internal readonly static Translator CookingReroll = new Translator("重新随机", "Reroll Effects");
         internal readonly static Translator CookingRandomPreview = new Translator("蘑菇随机效果（预览）", "Mushroom Effects (Preview)");
         internal readonly static Translator GuildBoardRefresh = new Translator("刷新任务板", "Reroll Board");
+        internal readonly static Translator StoreRefreshButton = new Translator("刷新商品", "Reroll Stock");
+        internal readonly static Translator StoreRefreshed = new Translator("已刷新商品库存", "Store stock rerolled");
 
         internal readonly static Translator TeleportTargetBlocked = new Translator("目标位置没有足够空间。", "There is not enough room at the target.");
         internal readonly static Translator NoclipStartBlocked = new Translator("请在有足够空间的空地开启穿墙。", "Start noclip in clear space.");
