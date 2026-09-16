@@ -22,6 +22,8 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableWanderingNpcAlwaysAppear { get; private set; }
         public static ConfigEntry<bool> EnableBattleEnemyPreview { get; private set; }
         public static ConfigEntry<bool> EnableNightSummonerAlwaysOpen { get; private set; }
+        [EntrySlider(-1f, 90f, 0.1f)]
+        public static ConfigEntry<float> SetManaWeedRechargeSeconds { get; private set; }
         [EntryGui(2)]
         [EntrySlider(1, -1f, 160f, 1f)]
         public static ConfigEntry<bool, int> SetDangerLevel { get; private set; }
@@ -165,6 +167,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "夜间限定的战斗点白天也显示为开启并可进入。",
                         english: "Night-only summoner circles appear open and enterable during the day."
+                        )
+                    );
+                SetManaWeedRechargeSeconds = Config.Bind(
+                    SectionMap,
+                    nameof(SetManaWeedRechargeSeconds),
+                    -1f,
+                    new Translator(chinese: "设置魔力草恢复时间", english: "Set Mana Weed Recharge Seconds"),
+                    new Translator(
+                        chinese: "魔力草被采集后最迟多少秒恢复（按 60fps 换算）。-1 保持原版：普通约 40–50 秒，农场小游戏约 22 秒，战后安全状态约 100 秒。",
+                        english: "How many seconds at most until a harvested mana weed recovers (assuming 60fps). -1 keeps vanilla: about 40-50s normally, 22s in the farm minigame, 100s in the post-battle safe state."
                         )
                     );
                 SetDangerLevel = BindPreloadValue(
