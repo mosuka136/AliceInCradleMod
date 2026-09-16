@@ -65,6 +65,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableMouseTeleport { get; private set; }
         public static ConfigEntry<bool> EnableNoclip { get; private set; }
         public static ConfigEntry<bool> EnableNoSatietyDrain { get; private set; }
+        public static ConfigEntry<bool> EnableNoItemConsume { get; private set; }
         public static ConfigEntry<bool> EnableNoDirtStains { get; private set; }
         public static ConfigEntry<bool> EnableNoWetten { get; private set; }
         public static ConfigEntry<bool> EnableAbsorbGachaSkip { get; private set; }
@@ -102,6 +103,8 @@ namespace BetterExperience.BConfigManager
         [EntryGui(2)]
         [EntrySlider(1, -1f, 20f, 1f)]
         public static ConfigEntry<bool, int> SetEnhancerSlotCount { get; private set; }
+        [EntrySlider(0f, 20f, 1f)]
+        public static ConfigEntry<int> SetNoItemConsumeCount { get; private set; }
 
         private const string SectionPlayer = "Player";
 
@@ -664,6 +667,16 @@ namespace BetterExperience.BConfigManager
                         english: "Food in the stomach is no longer digested by battles or events."
                         )
                     );
+                EnableNoItemConsume = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableNoItemConsume),
+                    false,
+                    new Translator(chinese: "启用物品成组不消耗", english: "Enable No Item Consume Above Rows"),
+                    new Translator(
+                        chinese: "以背包格（组）为单位：物品装满的格子数（各品级合计）达到阈值时，快捷使用与背包菜单使用不再消耗数量。",
+                        english: "Counted in inventory rows (stacks): while an item's full rows across grades reach the threshold, quick use and menu use no longer consume it."
+                        )
+                    );
                 EnableNoDirtStains = Config.Bind(
                     SectionPlayer,
                     nameof(EnableNoDirtStains),
@@ -822,6 +835,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置强化插槽数量。将覆盖原始的强化插槽数量。",
                         english: "Set enhancer slot count. It will override the original enhancer slot count."
+                        )
+                    );
+                SetNoItemConsumeCount = Config.Bind(
+                    SectionPlayer,
+                    nameof(SetNoItemConsumeCount),
+                    1,
+                    new Translator(chinese: "设置不消耗的组数阈值", english: "Set No Item Consume Rows"),
+                    new Translator(
+                        chinese: "物品装满的背包格数达到该值时使用不消耗。默认 1 组，设为 0 表示只要有库存就不消耗。",
+                        english: "Using an item is free once its full inventory rows reach this value. Defaults to 1; 0 means always free while in stock."
                         )
                     );
             }
