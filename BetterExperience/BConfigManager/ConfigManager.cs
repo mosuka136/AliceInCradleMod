@@ -32,7 +32,6 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableCookingRandomEffectPreview { get; private set; }
         public static ConfigEntry<bool> EnableGuildQuestBoardRefresh { get; private set; }
         public static ConfigEntry<bool> EnableNoFoodSpoilage { get; private set; }
-        public static ConfigEntry<bool> EnableBattleEnemyPreview { get; private set; }
         public static ConfigEntry<bool> EnableDamageCounter { get; private set; }
         public static ConfigEntry<bool> EnableDebugMode { get; private set; }
         [EntrySlider(-1f, 20f, 0.1f)]
@@ -140,16 +139,6 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "战斗结束后料理不腐败，咖啡机餐券与酒店餐券也不会被清空。",
                             english: "After a battle ends, dishes no longer turn rotten, and coffee maker tickets and hotel food tickets are no longer cleared."
-                            )
-                        );
-                    EnableBattleEnemyPreview = Config.Bind(
-                        SectionGeneral,
-                        nameof(EnableBattleEnemyPreview),
-                        false,
-                        new Translator(chinese: "启用战斗点详细魔物预览", english: "Enable Detailed Battle Enemy Preview"),
-                        new Translator(
-                            chinese: "在战斗点现场显示魔物种类、污染体、强化属性及数量范围；动态增援的数量可能无法确定。",
-                            english: "Show enemy kinds, contamination, attributes and count ranges at battle points. Dynamic reinforcements may have unknown counts."
                             )
                         );
                     EnableDamageCounter = Config.Bind(

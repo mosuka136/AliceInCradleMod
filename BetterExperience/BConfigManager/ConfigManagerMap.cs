@@ -20,6 +20,8 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableLockDangerLevel { get; private set; }
         public static ConfigEntry<bool> EnableAlwaysShowWanderingNpcOnMap { get; private set; }
         public static ConfigEntry<bool> EnableWanderingNpcAlwaysAppear { get; private set; }
+        public static ConfigEntry<bool> EnableBattleEnemyPreview { get; private set; }
+        public static ConfigEntry<bool> EnableNightSummonerAlwaysOpen { get; private set; }
         [EntryGui(2)]
         [EntrySlider(1, -1f, 160f, 1f)]
         public static ConfigEntry<bool, int> SetDangerLevel { get; private set; }
@@ -143,6 +145,26 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "流浪商人在其游走范围内必定出现，不再受原版概率影响；单地图单商人与剧情地图限制保持不变。",
                         english: "Wandering merchants always appear within their walking range instead of the vanilla chance. One merchant per map and story-map restrictions are unchanged."
+                        )
+                    );
+                EnableBattleEnemyPreview = Config.Bind(
+                    SectionMap,
+                    nameof(EnableBattleEnemyPreview),
+                    false,
+                    new Translator(chinese: "启用战斗点详细魔物预览", english: "Enable Detailed Battle Enemy Preview"),
+                    new Translator(
+                        chinese: "在战斗点现场显示魔物种类、污染体、强化属性及数量范围；动态增援的数量可能无法确定。",
+                        english: "Show enemy kinds, contamination, attributes and count ranges at battle points. Dynamic reinforcements may have unknown counts."
+                        )
+                    );
+                EnableNightSummonerAlwaysOpen = Config.Bind(
+                    SectionMap,
+                    nameof(EnableNightSummonerAlwaysOpen),
+                    false,
+                    new Translator(chinese: "启用夜间战斗点常开", english: "Enable Night Summoners Always Open"),
+                    new Translator(
+                        chinese: "夜间限定的战斗点白天也显示为开启并可进入。",
+                        english: "Night-only summoner circles appear open and enterable during the day."
                         )
                     );
                 SetDangerLevel = BindPreloadValue(

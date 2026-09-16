@@ -146,6 +146,7 @@
     <Compile Include="Patches\WanderingNpcForcePatch.cs" />
     <Compile Include="Patches\GuildQuestBoardRefreshLogic.cs" />
     <Compile Include="Patches\GuildQuestBoardRefreshPatch.cs" />
+    <Compile Include="Patches\NightSummonerAlwaysOpenPatch.cs" />
     <Compile Include="Patches\PreventGameOverPatch.cs" />
     <Compile Include="Patches\SetGuildPointPatch.cs" />
     <Compile Include="Patches\LockGuildPointPatch.cs" />
