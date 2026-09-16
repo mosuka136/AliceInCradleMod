@@ -144,6 +144,8 @@
     <Compile Include="Patches\NoItemConsumeIconPatch.cs" />
     <Compile Include="Patches\WanderingNpcForceLogic.cs" />
     <Compile Include="Patches\WanderingNpcForcePatch.cs" />
+    <Compile Include="Patches\GuildQuestBoardRefreshLogic.cs" />
+    <Compile Include="Patches\GuildQuestBoardRefreshPatch.cs" />
     <Compile Include="Patches\PreventGameOverPatch.cs" />
     <Compile Include="Patches\SetGuildPointPatch.cs" />
     <Compile Include="Patches\LockGuildPointPatch.cs" />

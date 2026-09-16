@@ -30,6 +30,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableCookingRandomEffectPreview { get; private set; }
+        public static ConfigEntry<bool> EnableGuildQuestBoardRefresh { get; private set; }
         public static ConfigEntry<bool> EnableNoFoodSpoilage { get; private set; }
         public static ConfigEntry<bool> EnableBattleEnemyPreview { get; private set; }
         public static ConfigEntry<bool> EnableDamageCounter { get; private set; }
@@ -119,6 +120,16 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "选材时预览蘑菇随机效果，并可在制作确认界面重新随机。",
                             english: "Preview mushroom effects while choosing ingredients and reroll them on the cooking confirmation screen."
+                            )
+                        );
+                    EnableGuildQuestBoardRefresh = Config.Bind(
+                        SectionGeneral,
+                        nameof(EnableGuildQuestBoardRefresh),
+                        false,
+                        new Translator(chinese: "启用公会任务板刷新", english: "Enable Guild Quest Board Refresh"),
+                        new Translator(
+                            chinese: "公会柜台选择任务时提供“刷新任务板”按钮，重掷所有未受领的公会任务，已受领任务不受影响。",
+                            english: "Adds a reroll button to the guild counter quest view. It rerolls all unaccepted guild quests; accepted quests are kept."
                             )
                         );
                     EnableNoFoodSpoilage = Config.Bind(
