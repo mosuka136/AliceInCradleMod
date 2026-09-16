@@ -30,6 +30,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableFlushAllStore { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableCookingRandomEffectPreview { get; private set; }
+        public static ConfigEntry<bool> EnableNoFoodSpoilage { get; private set; }
         public static ConfigEntry<bool> EnableBattleEnemyPreview { get; private set; }
         public static ConfigEntry<bool> EnableDamageCounter { get; private set; }
         public static ConfigEntry<bool> EnableDebugMode { get; private set; }
@@ -118,6 +119,16 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "选材时预览蘑菇随机效果，并可在制作确认界面重新随机。",
                             english: "Preview mushroom effects while choosing ingredients and reroll them on the cooking confirmation screen."
+                            )
+                        );
+                    EnableNoFoodSpoilage = Config.Bind(
+                        SectionGeneral,
+                        nameof(EnableNoFoodSpoilage),
+                        false,
+                        new Translator(chinese: "启用食物不腐败", english: "Enable No Food Spoilage"),
+                        new Translator(
+                            chinese: "战斗结束后料理不腐败，咖啡机餐券与酒店餐券也不会被清空。",
+                            english: "After a battle ends, dishes no longer turn rotten, and coffee maker tickets and hotel food tickets are no longer cleared."
                             )
                         );
                     EnableBattleEnemyPreview = Config.Bind(
