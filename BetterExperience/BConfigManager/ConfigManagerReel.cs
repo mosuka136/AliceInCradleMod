@@ -11,10 +11,12 @@ namespace BetterExperience.BConfigManager
     {
         // 转轮速度配置中 -1 表示保留游戏默认速度。
         public static ConfigEntry<bool> EnableBetterReelEffect { get; private set; }
-        public static ConfigEntry<LuckyBagEffect> SpecifiedLuckyBagEffect { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInTreasureChests { get; private set; }
+        public static ConfigEntry<LuckyBagEffect> SpecifiedLuckyBagEffect { get; private set; }
         [EntrySlider(-0.2f, 1f, 0.01f)]
         public static ConfigEntry<float> SetReelSpeed { get; private set; }
+        [EntrySlider(-1f, 10f, 0.1f)]
+        public static ConfigEntry<float> SetReelObtainableRatio { get; private set; }
 
         private const string SectionReel = "Reel";
 
@@ -37,16 +39,6 @@ namespace BetterExperience.BConfigManager
                         english: "Enable better reel effect."
                         )
                     );
-                SpecifiedLuckyBagEffect = Config.Bind(
-                    SectionReel,
-                    nameof(SpecifiedLuckyBagEffect),
-                    LuckyBagEffect.Default,
-                    new Translator(chinese: "指定福袋效果", english: "Specified Lucky Bag Effect"),
-                    new Translator(
-                        chinese: "仅影响福袋转轮。指定效果优先于“更好的转轮效果”，无需开启自动择优。品质与数量仍受原有上限控制。",
-                        english: "Only affects Lucky Bag reels. Takes priority over Better Reel Effect and works independently of it. Existing grade and count limits still apply."
-                        )
-                    );
                 EnableRemoveLimitInTreasureChests = Config.Bind(
                     SectionReel,
                     nameof(EnableRemoveLimitInTreasureChests),
@@ -57,6 +49,16 @@ namespace BetterExperience.BConfigManager
                         english: "Enable removal of the 99-item limit in treasure chests, must be set before launching the game."
                         )
                     );
+                SpecifiedLuckyBagEffect = Config.Bind(
+                    SectionReel,
+                    nameof(SpecifiedLuckyBagEffect),
+                    LuckyBagEffect.Default,
+                    new Translator(chinese: "指定福袋效果", english: "Specified Lucky Bag Effect"),
+                    new Translator(
+                        chinese: "仅影响福袋转轮。指定效果优先于“更好的转轮效果”，无需开启自动择优。品质与数量仍受原有上限控制。",
+                        english: "Only affects Lucky Bag reels. Takes priority over Better Reel Effect and works independently of it. Existing grade and count limits still apply."
+                        )
+                    );
                 SetReelSpeed = Config.Bind(
                     SectionReel,
                     nameof(SetReelSpeed),
@@ -65,6 +67,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置转轮速度。设为 0 和 1 之间的值可调节转轮速度。数值越大速度越慢。",
                         english: "Set reel speed. Set a value between 0 and 1 to adjust the wheel speed. The larger the value, the slower the speed."
+                        )
+                    );
+                SetReelObtainableRatio = Config.Bind(
+                    SectionReel,
+                    nameof(SetReelObtainableRatio),
+                    -1f,
+                    new Translator(chinese: "设置转轮获取数量倍率", english: "Set Reel Obtainable Count Ratio"),
+                    new Translator(
+                        chinese: "战斗后可抽取的转轮数量按该倍率调整。-1 保持原版；结果上限 255。",
+                        english: "The number of item reels obtainable after battles is scaled by this ratio. -1 keeps vanilla; the result is capped at 255."
                         )
                     );
             }

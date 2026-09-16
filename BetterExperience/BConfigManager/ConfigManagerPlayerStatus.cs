@@ -75,6 +75,8 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<float> PlayerJumpMultiplier { get; private set; }
         [EntrySlider(1f, 30f, 1f)]
         public static ConfigEntry<float> NoclipSpeed { get; private set; }
+        [EntrySlider(0f, 20f, 1f)]
+        public static ConfigEntry<int> SetNoItemConsumeCount { get; private set; }
         [EntryGui(2)]
         public static ConfigEntry<bool, int> SetBackpackCapacity { get; private set; }
         [EntryGui(2)]
@@ -103,8 +105,6 @@ namespace BetterExperience.BConfigManager
         [EntryGui(2)]
         [EntrySlider(1, -1f, 20f, 1f)]
         public static ConfigEntry<bool, int> SetEnhancerSlotCount { get; private set; }
-        [EntrySlider(0f, 20f, 1f)]
-        public static ConfigEntry<int> SetNoItemConsumeCount { get; private set; }
 
         private const string SectionPlayer = "Player";
 
@@ -737,6 +737,16 @@ namespace BetterExperience.BConfigManager
                         english: "Map units moved per second, from 1 to 30."
                         )
                     );
+                SetNoItemConsumeCount = Config.Bind(
+                    SectionPlayer,
+                    nameof(SetNoItemConsumeCount),
+                    1,
+                    new Translator(chinese: "设置不消耗的组数阈值", english: "Set No Item Consume Rows"),
+                    new Translator(
+                        chinese: "物品装满的背包格数达到该值时使用不消耗。默认 1 组，设为 0 表示只要有库存就不消耗。",
+                        english: "Using an item is free once its full inventory rows reach this value. Defaults to 1; 0 means always free while in stock."
+                        )
+                    );
                 SetBackpackCapacity = BindPreloadValue(
                     SectionPlayer,
                     nameof(SetBackpackCapacity),
@@ -835,16 +845,6 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置强化插槽数量。将覆盖原始的强化插槽数量。",
                         english: "Set enhancer slot count. It will override the original enhancer slot count."
-                        )
-                    );
-                SetNoItemConsumeCount = Config.Bind(
-                    SectionPlayer,
-                    nameof(SetNoItemConsumeCount),
-                    1,
-                    new Translator(chinese: "设置不消耗的组数阈值", english: "Set No Item Consume Rows"),
-                    new Translator(
-                        chinese: "物品装满的背包格数达到该值时使用不消耗。默认 1 组，设为 0 表示只要有库存就不消耗。",
-                        english: "Using an item is free once its full inventory rows reach this value. Defaults to 1; 0 means always free while in stock."
                         )
                     );
             }

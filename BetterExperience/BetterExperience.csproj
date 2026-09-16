@@ -149,6 +149,8 @@
     <Compile Include="Patches\NightSummonerAlwaysOpenPatch.cs" />
     <Compile Include="Patches\ManaWeedRechargeLogic.cs" />
     <Compile Include="Patches\ManaWeedRechargePatch.cs" />
+    <Compile Include="Patches\SetReelObtainableRatioLogic.cs" />
+    <Compile Include="Patches\SetReelObtainableRatioPatch.cs" />
     <Compile Include="Patches\PreventGameOverPatch.cs" />
     <Compile Include="Patches\SetGuildPointPatch.cs" />
     <Compile Include="Patches\LockGuildPointPatch.cs" />
