@@ -1,6 +1,0 @@
-.venv/
-work/
-bin/
-obj/
-__pycache__/
-*.pyc

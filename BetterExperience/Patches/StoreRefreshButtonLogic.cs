@@ -1,5 +1,3 @@
-using System;
-
 namespace BetterExperience.Patches
 {
     /// <summary>

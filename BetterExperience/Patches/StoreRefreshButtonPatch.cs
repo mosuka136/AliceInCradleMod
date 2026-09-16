@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using UnityModBase.HTranslatorSpace;
 using XX;
 
 namespace BetterExperience.Patches
