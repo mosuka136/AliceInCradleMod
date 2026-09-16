@@ -136,6 +136,8 @@
     <Compile Include="Patches\InfiniteFoodTicketPatch.cs" />
     <Compile Include="Patches\FoodTicketLogic.cs" />
     <Compile Include="Patches\SetFoodTicketCountPatch.cs" />
+    <Compile Include="Patches\WanderingNpcPresenceLogic.cs" />
+    <Compile Include="Patches\WanderingNpcPresencePatch.cs" />
     <Compile Include="Patches\WanderingNpcForceLogic.cs" />
     <Compile Include="Patches\WanderingNpcForcePatch.cs" />
     <Compile Include="Patches\PreventGameOverPatch.cs" />
@@ -205,6 +207,10 @@
     </Reference>
     <Reference Include="better">
       <HintPath>..\ReferenceLibrary\better.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="pixelliner">
+      <HintPath>..\ReferenceLibrary\pixelliner.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

@@ -66,7 +66,7 @@ namespace BetterExperience.BControlManager
         internal static ControlEntry<int> SetCaneHolderSlotCount { get; private set; }
 
         internal static ControlEntry<int> SetDangerLevel { get; private set; }
-        internal static ControlEntry<SummonWanderingNpcKind> SummonNpcKind { get; private set; }
+        internal static ControlEntry<SummonWanderingNpcKind> SummonWanderingNpcKind { get; private set; }
         internal static ControlEntry<bool> SummonWanderingNpc { get; private set; }
 
         internal static ControlEntry<bool> SetWeatherWind { get; private set; }
@@ -433,9 +433,9 @@ namespace BetterExperience.BControlManager
                     ),
                 new UiSliderMetadata(-1f, 160f, 1f)
                 );
-            SummonNpcKind = Bind(
+            SummonWanderingNpcKind = Bind(
                 SectionMap,
-                nameof(SummonNpcKind),
+                nameof(SummonWanderingNpcKind),
                 HPatches.WanderingNpcForcePatch.GetSummonKind,
                 HPatches.WanderingNpcForcePatch.SetSummonKind,
                 new Translator(chinese: "传唤NPC", english: "Summon NPC"),

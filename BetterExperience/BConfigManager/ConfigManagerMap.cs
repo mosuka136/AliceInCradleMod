@@ -18,6 +18,8 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableDrowning { get; private set; }
         public static ConfigEntry<bool> EnableDarkArea { get; private set; }
         public static ConfigEntry<bool> EnableLockDangerLevel { get; private set; }
+        public static ConfigEntry<bool> EnableAlwaysShowWanderingNpcOnMap { get; private set; }
+        public static ConfigEntry<bool> EnableWanderingNpcAlwaysAppear { get; private set; }
         [EntryGui(2)]
         [EntrySlider(1, -1f, 160f, 1f)]
         public static ConfigEntry<bool, int> SetDangerLevel { get; private set; }
@@ -121,6 +123,26 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "锁定当前危险度。战斗结算和事件不再改变危险度。旅馆休息等玩家主动操作仍可能重置。",
                         english: "Lock the current danger level. Battle results and events will not change it. Player actions such as hotel rest may still reset it."
+                        )
+                    );
+                EnableAlwaysShowWanderingNpcOnMap = Config.Bind(
+                    SectionMap,
+                    nameof(EnableAlwaysShowWanderingNpcOnMap),
+                    false,
+                    new Translator(chinese: "启用商人地图常显", english: "Enable Always Show Merchants On Map"),
+                    new Translator(
+                        chinese: "世界地图上始终显示流浪商人位置：南丁格尔不再要求携带铃铛，咖啡师、提尔德、木偶商人以各自颜色的范围圈标出。剧情未解锁的商人不显示。",
+                        english: "Always show wandering merchants on the world map: Nightingale no longer requires her bell, and the Coffee Maker, Tilde and Puppet are marked with colored range circles. Story-locked merchants stay hidden."
+                        )
+                    );
+                EnableWanderingNpcAlwaysAppear = Config.Bind(
+                    SectionMap,
+                    nameof(EnableWanderingNpcAlwaysAppear),
+                    false,
+                    new Translator(chinese: "启用商人必定出现", english: "Enable Merchants Always Appear"),
+                    new Translator(
+                        chinese: "流浪商人在其游走范围内必定出现，不再受原版概率影响；单地图单商人与剧情地图限制保持不变。",
+                        english: "Wandering merchants always appear within their walking range instead of the vanilla chance. One merchant per map and story-map restrictions are unchanged."
                         )
                     );
                 SetDangerLevel = BindPreloadValue(

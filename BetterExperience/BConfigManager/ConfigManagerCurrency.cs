@@ -15,6 +15,8 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableLockCurrencyJuiceCount { get; private set; }
         public static ConfigEntry<bool> EnableLockCurrencyBarScoreCount { get; private set; }
         public static ConfigEntry<bool> EnableLockGuildPoint { get; private set; }
+        public static ConfigEntry<bool> EnableStorePriceRatio { get; private set; }
+        public static ConfigEntry<bool> EnableInfiniteFoodTicket { get; private set; }
         [EntryGui(2)]
         [EntrySlider(1, -1f, 1000000f, 1f)]
         public static ConfigEntry<bool, long> SetCurrencyGoldCount { get; private set; }
@@ -33,13 +35,10 @@ namespace BetterExperience.BConfigManager
         [EntryGui(2)]
         [EntrySlider(1, -1f, 99f, 1f)]
         public static ConfigEntry<bool, int> SetFoodTicketCount { get; private set; }
-        // 商店价格倍率是持续生效的结算规则，不属于存档态覆盖，使用普通单值配置。
-        public static ConfigEntry<bool> EnableStorePriceRatio { get; private set; }
         [EntrySlider(0f, 2f, 0.05f)]
         public static ConfigEntry<float> SetBuyPriceRatio { get; private set; }
         [EntrySlider(0f, 5f, 0.05f)]
         public static ConfigEntry<float> SetSellPriceRatio { get; private set; }
-        public static ConfigEntry<bool> EnableInfiniteFoodTicket { get; private set; }
 
         private const string SectionCurrency = "Currency";
 

@@ -70,7 +70,7 @@ namespace BetterExperience.Test
             nameof(ControlManager.SetAutoMilk),
             nameof(ControlManager.SetAutoBunServe),
             nameof(ControlManager.SetCaneInstantSwitchCount),
-            nameof(ControlManager.SummonNpcKind),
+            nameof(ControlManager.SummonWanderingNpcKind),
             nameof(ControlManager.SummonWanderingNpc),
             nameof(ControlManager.GiveKind),
             nameof(ControlManager.GiveFilter),
