@@ -70,24 +70,7 @@ namespace BetterExperience.Patches
                     if (!_usingItem || count != 1 || Itm == null || __instance != GetInventory())
                         return true;
 
-                    int threshold = ConfigManager.SetNoItemConsumeCount?.Value
-                        ?? NoItemConsumeLogic.ThresholdDefault;
-                    // 以背包格（组）为单位：逐品级统计装满的格子数后合计判定。
-                    int totalCount = __instance.getCount(Itm);
-                    int fullRows = 0;
-                    if (threshold > 0)
-                    {
-                        int stockable = __instance.getItemStockable(Itm);
-                        if (stockable > 0)
-                        {
-                            var countsPerGrade = new int[NoItemConsumeLogic.GradeCount];
-                            for (int g = 0; g < countsPerGrade.Length; g++)
-                                countsPerGrade[g] = __instance.getCount(Itm, g);
-                            fullRows = NoItemConsumeLogic.CountFullRows(countsPerGrade, stockable);
-                        }
-                    }
-
-                    if (!NoItemConsumeLogic.ShouldKeep(fullRows, totalCount, threshold))
+                    if (!WouldKeep(__instance, Itm, out int fullRows))
                         return true;
 
                     BLog.Debug($"{nameof(NoItemConsumePatch)} applied for {Itm.key} (grade {grade}, full rows {fullRows}).");
@@ -100,7 +83,35 @@ namespace BetterExperience.Patches
                 }
             }
 
-            private static bool IsEnabled()
+            /// <summary>
+            /// 当前库存下使用该物品是否会跳过扣减；与扣减拦截、图标特效共用同一判定。
+            /// 以背包格（组）为单位：逐品级统计装满的格子数后合计判定。
+            /// </summary>
+            internal static bool WouldKeep(ItemStorage inventory, NelItem itm, out int fullRows)
+            {
+                fullRows = 0;
+                if (inventory == null || itm == null)
+                    return false;
+
+                int threshold = ConfigManager.SetNoItemConsumeCount?.Value
+                    ?? NoItemConsumeLogic.ThresholdDefault;
+                int totalCount = inventory.getCount(itm);
+                if (threshold > 0)
+                {
+                    int stockable = inventory.getItemStockable(itm);
+                    if (stockable > 0)
+                    {
+                        var countsPerGrade = new int[NoItemConsumeLogic.GradeCount];
+                        for (int g = 0; g < countsPerGrade.Length; g++)
+                            countsPerGrade[g] = inventory.getCount(itm, g);
+                        fullRows = NoItemConsumeLogic.CountFullRows(countsPerGrade, stockable);
+                    }
+                }
+
+                return NoItemConsumeLogic.ShouldKeep(fullRows, totalCount, threshold);
+            }
+
+            internal static bool IsEnabled()
             {
                 return ConfigManager.EnableNoItemConsume?.Value == true;
             }

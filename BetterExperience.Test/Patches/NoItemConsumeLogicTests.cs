@@ -63,5 +63,116 @@ namespace BetterExperience.Test.Patches
             // Assert
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void IconEffectConstants_AreSane()
+        {
+            // Assert
+            Assert.InRange(NoItemConsumeLogic.IconEffectPeriodFrames, 1, 600);
+            Assert.InRange(
+                NoItemConsumeLogic.IconEffectOverlayAlpha,
+                0f,
+                1f);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void HueFromKey_EmptyKeyIsRedHue(string key)
+        {
+            // Act
+            float hue = NoItemConsumeLogic.HueFromKey(key);
+
+            // Assert
+            Assert.Equal(0f, hue);
+        }
+
+        [Fact]
+        public void HueFromKey_IsStablePerKey()
+        {
+            // Act
+            float first = NoItemConsumeLogic.HueFromKey("potion_hp");
+            float second = NoItemConsumeLogic.HueFromKey("potion_hp");
+
+            // Assert
+            Assert.Equal(first, second);
+            Assert.InRange(first, 0f, 1f);
+        }
+
+        [Fact]
+        public void HueFromKey_DistinctKeysUsuallyGetDistinctHues()
+        {
+            // Act
+            float a = NoItemConsumeLogic.HueFromKey("potion_hp");
+            float b = NoItemConsumeLogic.HueFromKey("potion_mp");
+
+            // Assert
+            Assert.NotEqual(a, b);
+        }
+
+        [Theory]
+        [InlineData(0f, 1f, 0f, 0f)]
+        [InlineData(1f / 6f, 1f, 1f, 0f)]
+        [InlineData(2f / 6f, 0f, 1f, 0f)]
+        [InlineData(3f / 6f, 0f, 1f, 1f)]
+        [InlineData(4f / 6f, 0f, 0f, 1f)]
+        [InlineData(5f / 6f, 1f, 0f, 1f)]
+        [InlineData(1f, 1f, 0f, 0f)]
+        public void HueToRgb_MapsPrimaryAndSecondaryHues(
+            float hue,
+            float expectedR,
+            float expectedG,
+            float expectedB)
+        {
+            // Act
+            NoItemConsumeLogic.HueToRgb(hue, out float r, out float g, out float b);
+
+            // Assert
+            Assert.Equal(expectedR, r, 5);
+            Assert.Equal(expectedG, g, 5);
+            Assert.Equal(expectedB, b, 5);
+        }
+
+        [Theory]
+        [InlineData(-1f / 6f, 1f, 0f, 1f)]
+        [InlineData(7f / 6f, 1f, 1f, 0f)]
+        public void HueToRgb_WrapsOutOfRangeHues(
+            float hue,
+            float expectedR,
+            float expectedG,
+            float expectedB)
+        {
+            // Act
+            NoItemConsumeLogic.HueToRgb(hue, out float r, out float g, out float b);
+
+            // Assert
+            Assert.Equal(expectedR, r, 5);
+            Assert.Equal(expectedG, g, 5);
+            Assert.Equal(expectedB, b, 5);
+        }
+
+        [Fact]
+        public void HueToRgb_NanHueFallsBackToWhite()
+        {
+            // Act
+            NoItemConsumeLogic.HueToRgb(float.NaN, out float r, out float g, out float b);
+
+            // Assert
+            Assert.Equal(1f, r);
+            Assert.Equal(1f, g);
+            Assert.Equal(1f, b);
+        }
+
+        [Fact]
+        public void HueToRgb_InterpolatesWithinSector()
+        {
+            // Act
+            NoItemConsumeLogic.HueToRgb(0.5f / 6f, out float r, out float g, out float b);
+
+            // Assert
+            Assert.Equal(1f, r);
+            Assert.Equal(0.5f, g, 5);
+            Assert.Equal(0f, b);
+        }
     }
 }

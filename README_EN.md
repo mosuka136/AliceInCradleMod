@@ -19,7 +19,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 - Cooking: preview mushroom effects and reroll them in the cooking confirmation screen; no food spoilage after battles
 - Battle point preview: detailed enemy kinds, contamination, attributes and count ranges
 - Movement helpers: teleport to the mouse pointer, four-direction noclip flight, and player jump strength multiplier
-- Stat tweaks: HP/MP/EP, currency amount, max satiety, no satiety drain, no item consumption above a count, movement speed, drop multiplier, cane attributes, danger level, etc.
+- Stat tweaks: HP/MP/EP, currency amount, max satiety, no satiety drain, no item consumption above a count (marked by a rainbow-flowing quick-bar icon), movement speed, drop multiplier, cane attributes, danger level, etc.
 - Capacity tweaks: backpack capacity, empty bottle holder slots, enhancer slot count, overcharge slot count, etc.
 - Survival/combat protection and statistics: no HP/MP/EP damage, no map damage, abnormal status immunity, infinite shield, cannot be attacked, absorb-gacha auto complete, prevent game over (recover in place and keep playing), battle statistics, damage counter, etc.
 - Trap/environment: drowning, crush damage, falling, MP break, worm traps, and fog visual effects can be enabled or disabled through config
