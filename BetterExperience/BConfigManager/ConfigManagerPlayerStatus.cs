@@ -68,6 +68,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableNoItemConsume { get; private set; }
         public static ConfigEntry<bool> EnableNoDirtStains { get; private set; }
         public static ConfigEntry<bool> EnableNoWetten { get; private set; }
+        public static ConfigEntry<bool> EnableImmuneEnemyAbsorb { get; private set; }
         public static ConfigEntry<bool> EnableAbsorbGachaSkip { get; private set; }
         [EntrySlider(-1f, 10f, 0.1f)]
         public static ConfigEntry<float> SetPlayerWalkSpeed { get; private set; }
@@ -701,6 +702,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "不再进入浸湿外观。已湿需椅子清理。",
                         english: "Blocks the wet appearance. Already wet cloth still needs a bench."
+                        )
+                    );
+                EnableImmuneEnemyAbsorb = Config.Bind(
+                    SectionPlayer,
+                    nameof(EnableImmuneEnemyAbsorb),
+                    false,
+                    new Translator(chinese: "免疫敌怪拘束攻击", english: "Immune to enemy absorb"),
+                    new Translator(
+                        chinese: "敌怪攻击不会把玩家抓入拘束。与异常状态「免疫拘束」不是同一项。",
+                        english: "Enemy attacks will not absorb the player. This is not the Strong Hold status immunity."
                         )
                     );
                 EnableAbsorbGachaSkip = Config.Bind(

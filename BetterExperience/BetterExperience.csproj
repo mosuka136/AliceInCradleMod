@@ -103,6 +103,8 @@
     <Compile Include="Patches\DirtWetPatch.cs" />
     <Compile Include="Patches\AbsorbGachaSkipLogic.cs" />
     <Compile Include="Patches\AbsorbGachaSkipPatch.cs" />
+    <Compile Include="Patches\ImmuneEnemyAbsorbLogic.cs" />
+    <Compile Include="Patches\ImmuneEnemyAbsorbPatch.cs" />
     <Compile Include="Patches\CookingRandomEffectPatch.cs" />
     <Compile Include="Patches\CookingEffectPreview.cs" />
     <Compile Include="Patches\BattleEnemyPreview.cs" />
