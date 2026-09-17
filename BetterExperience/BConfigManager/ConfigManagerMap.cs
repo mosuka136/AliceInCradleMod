@@ -18,6 +18,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableDrowning { get; private set; }
         public static ConfigEntry<bool> EnableDarkArea { get; private set; }
         public static ConfigEntry<bool> EnableLockDangerLevel { get; private set; }
+        public static ConfigEntry<bool> EnableDepartureMaxReachedDanger { get; private set; }
         public static ConfigEntry<bool> EnableAlwaysShowWanderingNpcOnMap { get; private set; }
         public static ConfigEntry<bool> EnableWanderingNpcAlwaysAppear { get; private set; }
         public static ConfigEntry<bool> EnableBattleEnemyPreview { get; private set; }
@@ -127,6 +128,16 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "锁定当前危险度。战斗结算和事件不再改变危险度。旅馆休息等玩家主动操作仍可能重置。",
                         english: "Lock the current danger level. Battle results and events will not change it. Player actions such as hotel rest may still reset it."
+                        )
+                    );
+                EnableDepartureMaxReachedDanger = Config.Bind(
+                    SectionMap,
+                    nameof(EnableDepartureMaxReachedDanger),
+                    false,
+                    new Translator(chinese: "启用出门可用曾达最高危险度", english: "Enable depart at max reached danger"),
+                    new Translator(
+                        chinese: "出门时，危险度可选该地图曾达到过的最高危险度。",
+                        english: "When leaving a safe area, the danger can go up to the highest danger reached on that map."
                         )
                     );
                 EnableAlwaysShowWanderingNpcOnMap = Config.Bind(

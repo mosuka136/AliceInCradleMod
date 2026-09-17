@@ -124,6 +124,8 @@
     <Compile Include="Patches\WorldStateLock.cs" />
     <Compile Include="Patches\LockWeatherPatch.cs" />
     <Compile Include="Patches\LockDangerLevelPatch.cs" />
+    <Compile Include="Patches\DepartureDangerLogic.cs" />
+    <Compile Include="Patches\DepartureDangerPatch.cs" />
     <Compile Include="Patches\RemoveFogPatch.cs" />
     <Compile Include="Patches\RemovePressDamagePatch.cs" />
     <Compile Include="Patches\RemoveWarehouseRegionRestrictionsPatch.cs" />
