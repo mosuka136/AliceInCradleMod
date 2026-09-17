@@ -63,6 +63,13 @@
   <ItemGroup>
     <Compile Include="BConfigManager\ConfigManagerMiniGame.cs" />
     <Compile Include="BControlManager\ControlManager.cs" />
+    <Compile Include="BControlManager\ControlManagerPlayer.cs" />
+    <Compile Include="BControlManager\ControlManagerCane.cs" />
+    <Compile Include="BControlManager\ControlManagerMap.cs" />
+    <Compile Include="BControlManager\ControlManagerWeather.cs" />
+    <Compile Include="BControlManager\ControlManagerCurrency.cs" />
+    <Compile Include="BControlManager\ControlManagerMiniGame.cs" />
+    <Compile Include="BControlManager\ControlManagerGive.cs" />
     <Compile Include="BConfigManager\ConfigManagerWeather.cs" />
     <Compile Include="BetterExperience.cs" />
     <Compile Include="BConfigManager\ConfigManagerCane.cs" />
