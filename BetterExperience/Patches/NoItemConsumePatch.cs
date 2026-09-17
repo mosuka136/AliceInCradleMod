@@ -60,9 +60,10 @@ namespace BetterExperience.Patches
                 _usingItem = false;
             }
 
+            // 参数列表必须与游戏签名逐项一致：Reduce(Itm, count, grade, fine_row, prefer_unlink_row)。
             [HarmonyPrefix]
             [HarmonyPatch(typeof(ItemStorage), nameof(ItemStorage.Reduce),
-                new[] { typeof(NelItem), typeof(int), typeof(int), typeof(bool) })]
+                new[] { typeof(NelItem), typeof(int), typeof(int), typeof(bool), typeof(bool) })]
             public static bool ReducePrefix(ItemStorage __instance, NelItem Itm, int count, int grade)
             {
                 try
