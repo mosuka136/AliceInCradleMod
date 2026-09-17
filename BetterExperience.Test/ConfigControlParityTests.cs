@@ -72,6 +72,8 @@ namespace BetterExperience.Test
             nameof(ControlManager.SetAutoMilk),
             nameof(ControlManager.SetAutoBunServe),
             nameof(ControlManager.SetCaneInstantSwitchCount),
+            nameof(ControlManager.SetKillEnemies),
+            nameof(ControlManager.SetKillEnemiesOnSpawn),
             nameof(ControlManager.SummonWanderingNpcKind),
             nameof(ControlManager.SummonWanderingNpc),
             nameof(ControlManager.GiveKind),

@@ -9,6 +9,8 @@ namespace BetterExperience.BControlManager
 {
     internal static partial class ControlManager
     {
+        internal static ControlEntry<bool> SetKillEnemies { get; private set; }
+        internal static ControlEntry<bool> SetKillEnemiesOnSpawn { get; private set; }
         internal static ControlEntry<int> SetBackpackCapacity { get; private set; }
         internal static ControlEntry<int> SetBottleHolderCount { get; private set; }
         internal static ControlEntry<int> SetBombHolderSlotCount { get; private set; }
@@ -40,6 +42,28 @@ namespace BetterExperience.BControlManager
                         )
                     );
 
+                SetKillEnemies = Bind(
+                    SectionPlayer,
+                    nameof(SetKillEnemies),
+                    HPatches.KillEnemies.GetKillEnemies,
+                    HPatches.KillEnemies.SetKillEnemies,
+                    new Translator(chinese: "秒杀敌人", english: "Kill Enemies"),
+                    new Translator(
+                        chinese: "开启后玩家造成的伤害会直接击杀敌人。",
+                        english: "Player damage instantly kills enemies."
+                        )
+                    );
+                SetKillEnemiesOnSpawn = Bind(
+                    SectionPlayer,
+                    nameof(SetKillEnemiesOnSpawn),
+                    HPatches.KillEnemiesOnSpawnPatch.GetKillEnemiesOnSpawn,
+                    HPatches.KillEnemiesOnSpawnPatch.SetKillEnemiesOnSpawn,
+                    new Translator(chinese: "出现即秒杀", english: "Kill Enemies on Spawn"),
+                    new Translator(
+                        chinese: "开启后敌人一出现立即死亡。",
+                        english: "Enemies die as soon as they spawn."
+                        )
+                    );
                 SetBackpackCapacity = Bind(
                     SectionPlayer,
                     nameof(SetBackpackCapacity),

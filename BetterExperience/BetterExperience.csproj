@@ -165,6 +165,9 @@
     <Compile Include="Patches\SetBottleHolderCountPatch.cs" />
     <Compile Include="Patches\SetBombHolderSlotCountPatch.cs" />
     <Compile Include="Patches\SetItemReelHolderSlotCountPatch.cs" />
+    <Compile Include="Patches\KillEnemiesPatch.cs" />
+    <Compile Include="Patches\KillEnemiesOnSpawnPatch.cs" />
+    <Compile Include="Patches\EvDebuggerCursorPatch.cs" />
     <Compile Include="Patches\BottleHolderCountOverride.cs" />
     <Compile Include="Patches\SetDangerLevelPatch.cs" />
     <Compile Include="Patches\SetLootDropRatioPatch.cs" />
