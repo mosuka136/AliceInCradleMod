@@ -11,9 +11,11 @@ namespace BetterExperience.Test
     {
         private static readonly string[] ExpectedPreloadEntryNames = new[]
         {
-            // Player (10)
+            // Player (12)
             nameof(ConfigManager.SetBackpackCapacity),
             nameof(ConfigManager.SetBottleHolderCount),
+            nameof(ConfigManager.SetBombHolderSlotCount),
+            nameof(ConfigManager.SetItemReelHolderSlotCount),
             nameof(ConfigManager.SetPlayerHp),
             nameof(ConfigManager.SetPlayerMp),
             nameof(ConfigManager.SetPlayerEp),
@@ -105,7 +107,7 @@ namespace BetterExperience.Test
                 .ToArray();
 
             // Assert
-            Assert.Equal(41, ExpectedPreloadEntryNames.Length);
+            Assert.Equal(43, ExpectedPreloadEntryNames.Length);
             Assert.Equal(expectedNames, preloadProperties.Select(property => property.Name).ToArray());
             Assert.Equal(expectedControlNames, controlProperties.Select(property => property.Name).ToArray());
 

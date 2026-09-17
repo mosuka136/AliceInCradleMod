@@ -163,6 +163,8 @@
     <Compile Include="Patches\SetGuildPointPatch.cs" />
     <Compile Include="Patches\LockGuildPointPatch.cs" />
     <Compile Include="Patches\SetBottleHolderCountPatch.cs" />
+    <Compile Include="Patches\SetBombHolderSlotCountPatch.cs" />
+    <Compile Include="Patches\SetItemReelHolderSlotCountPatch.cs" />
     <Compile Include="Patches\BottleHolderCountOverride.cs" />
     <Compile Include="Patches\SetDangerLevelPatch.cs" />
     <Compile Include="Patches\SetLootDropRatioPatch.cs" />

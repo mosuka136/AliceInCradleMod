@@ -11,6 +11,8 @@ namespace BetterExperience.BControlManager
     {
         internal static ControlEntry<int> SetBackpackCapacity { get; private set; }
         internal static ControlEntry<int> SetBottleHolderCount { get; private set; }
+        internal static ControlEntry<int> SetBombHolderSlotCount { get; private set; }
+        internal static ControlEntry<int> SetItemReelHolderSlotCount { get; private set; }
         internal static ControlEntry<int> SetPlayerHp { get; private set; }
         internal static ControlEntry<int> SetPlayerMp { get; private set; }
         internal static ControlEntry<int> SetPlayerEp { get; private set; }
@@ -47,7 +49,8 @@ namespace BetterExperience.BControlManager
                     new Translator(
                         chinese: "设置当前背包容量。",
                         english: "Set the current backpack capacity."
-                        )
+                        ),
+                    new UiSliderMetadata(0f, 200f, 1f)
                     );
                 SetBottleHolderCount = Bind(
                     SectionPlayer,
@@ -58,7 +61,32 @@ namespace BetterExperience.BControlManager
                     new Translator(
                         chinese: "设置当前空瓶收纳槽位数量。",
                         english: "Set the current bottle holder count."
-                        )
+                        ),
+                    new UiSliderMetadata(0f, 50f, 1f)
+                    );
+                SetBombHolderSlotCount = Bind(
+                    SectionPlayer,
+                    nameof(SetBombHolderSlotCount),
+                    HPatches.SetBombHolderSlotCountPatch.GetBombHolderSlotCount,
+                    HPatches.SetBombHolderSlotCountPatch.SetBombHolderSlotCount,
+                    new Translator(chinese: "设置手雷收纳槽数量", english: "Set Bomb Holder Slot Count"),
+                    new Translator(
+                        chinese: "设置当前手雷收纳槽数量。",
+                        english: "Set the current bomb holder slot count."
+                        ),
+                    new UiSliderMetadata(0f, 20f, 1f)
+                    );
+                SetItemReelHolderSlotCount = Bind(
+                    SectionPlayer,
+                    nameof(SetItemReelHolderSlotCount),
+                    HPatches.SetItemReelHolderSlotCountPatch.GetItemReelHolderSlotCount,
+                    HPatches.SetItemReelHolderSlotCountPatch.SetItemReelHolderSlotCount,
+                    new Translator(chinese: "设置宝箱收纳槽数量", english: "Set Item Reel Holder Slot Count"),
+                    new Translator(
+                        chinese: "设置当前宝箱收纳槽数量。",
+                        english: "Set the current item reel holder slot count."
+                        ),
+                    new UiSliderMetadata(0f, 20f, 1f)
                     );
                 SetPlayerHp = BindPlayerValue(
                     nameof(SetPlayerHp),

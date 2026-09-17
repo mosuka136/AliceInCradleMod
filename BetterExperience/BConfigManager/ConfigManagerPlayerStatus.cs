@@ -82,6 +82,12 @@ namespace BetterExperience.BConfigManager
         [EntryGui(2)]
         public static ConfigEntry<bool, int> SetBottleHolderCount { get; private set; }
         [EntryGui(2)]
+        [EntrySlider(1, -1f, 10f, 1f)]
+        public static ConfigEntry<bool, int> SetBombHolderSlotCount { get; private set; }
+        [EntryGui(2)]
+        [EntrySlider(1, -1f, 10f, 1f)]
+        public static ConfigEntry<bool, int> SetItemReelHolderSlotCount { get; private set; }
+        [EntryGui(2)]
         [EntrySlider(1, -1f, 1000f, 1f)]
         public static ConfigEntry<bool, int> SetPlayerHp { get; private set; }
         [EntryGui(2)]
@@ -765,6 +771,26 @@ namespace BetterExperience.BConfigManager
                     new Translator(
                         chinese: "设置空瓶收纳槽位数量。将覆盖原始的空瓶收纳槽位数量。",
                         english: "Set bottle holder count."
+                        )
+                    );
+                SetBombHolderSlotCount = BindPreloadValue(
+                    SectionPlayer,
+                    nameof(SetBombHolderSlotCount),
+                    -1,
+                    new Translator(chinese: "设置手雷收纳槽数量", english: "Set Bomb Holder Slot Count"),
+                    new Translator(
+                        chinese: "设置手雷收纳槽数量，-1 表示不调整。",
+                        english: "Set the bomb holder slot count; -1 keeps it unchanged. "
+                        )
+                    );
+                SetItemReelHolderSlotCount = BindPreloadValue(
+                    SectionPlayer,
+                    nameof(SetItemReelHolderSlotCount),
+                    -1,
+                    new Translator(chinese: "设置宝箱收纳槽数量", english: "Set Item Reel Holder Slot Count"),
+                    new Translator(
+                        chinese: "设置宝箱收纳槽数量，-1 表示不调整。",
+                        english: "Set the item reel holder slot count; -1 keeps it unchanged. "
                         )
                     );
                 SetPlayerHp = BindPreloadValue(
