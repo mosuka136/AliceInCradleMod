@@ -11,6 +11,8 @@ namespace BetterExperience.BControlManager
     {
         internal static ControlEntry<bool> SetKillEnemies { get; private set; }
         internal static ControlEntry<bool> SetKillEnemiesOnSpawn { get; private set; }
+        internal static ControlEntry<HPatches.PrEgg.EggCateg> SetEggCategory { get; private set; }
+        internal static ControlEntry<int> SetEggCount { get; private set; }
         internal static ControlEntry<int> SetBackpackCapacity { get; private set; }
         internal static ControlEntry<int> SetBottleHolderCount { get; private set; }
         internal static ControlEntry<int> SetBombHolderSlotCount { get; private set; }
@@ -63,6 +65,30 @@ namespace BetterExperience.BControlManager
                         chinese: "开启后敌人一出现立即死亡。",
                         english: "Enemies die as soon as they spawn."
                         )
+                    );
+                SetEggCategory = Bind(
+                    SectionPlayer,
+                    nameof(SetEggCategory),
+                    HPatches.PrEgg.GetEggCategory,
+                    HPatches.PrEgg.SetEggCategory,
+                    new Translator(chinese: "设置怀卵种类", english: "Set Egg Category"),
+                    new Translator(
+                        chinese: "选择要设置的怀卵种类，下方的数量滑条会切换为该种类的当前怀卵数。",
+                        english: "Choose the egg category; the count slider below switches to that category's current count."
+                        ),
+                    policy: ControlUpdatePolicy.Never
+                    );
+                SetEggCount = Bind(
+                    SectionPlayer,
+                    nameof(SetEggCount),
+                    HPatches.PrEgg.GetEggCount,
+                    HPatches.PrEgg.SetEggCount,
+                    new Translator(chinese: "设置怀卵数量", english: "Set Egg Count"),
+                    new Translator(
+                        chinese: "设置所选种类的当前怀卵数量，设为 0 清空该种类。",
+                        english: "Set the current count of the selected egg category; 0 clears it."
+                        ),
+                    new UiSliderMetadata(0f, 99f, 1f)
                     );
                 SetBackpackCapacity = Bind(
                     SectionPlayer,

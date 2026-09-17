@@ -171,6 +171,7 @@
     <Compile Include="Patches\SetItemReelHolderSlotCountPatch.cs" />
     <Compile Include="Patches\KillEnemiesPatch.cs" />
     <Compile Include="Patches\KillEnemiesOnSpawnPatch.cs" />
+    <Compile Include="Patches\SetPrEggCountPatch.cs" />
     <Compile Include="Patches\EvDebuggerCursorPatch.cs" />
     <Compile Include="Patches\BottleHolderCountOverride.cs" />
     <Compile Include="Patches\SetDangerLevelPatch.cs" />

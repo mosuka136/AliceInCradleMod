@@ -74,6 +74,8 @@ namespace BetterExperience.Test
             nameof(ControlManager.SetCaneInstantSwitchCount),
             nameof(ControlManager.SetKillEnemies),
             nameof(ControlManager.SetKillEnemiesOnSpawn),
+            nameof(ControlManager.SetEggCategory),
+            nameof(ControlManager.SetEggCount),
             nameof(ControlManager.SummonWanderingNpcKind),
             nameof(ControlManager.SummonWanderingNpc),
             nameof(ControlManager.GiveKind),
