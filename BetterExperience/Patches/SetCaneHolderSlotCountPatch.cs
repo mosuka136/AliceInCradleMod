@@ -88,8 +88,13 @@ namespace BetterExperience.Patches
                     inventory.Add(item, count - current, 0);
                 else if (current > count)
                 {
-                    // 被法杖占用的收纳行不能直接 Reduce；先解除关联，法杖仍保留在背包中。
-                    inventory.removeWLink(item);
+                    // 被法杖占用的收纳行（WL_OUTER）不可直接扣减；先逐行解除关联，法杖仍保留在背包中。
+                    // ver030g 删除了 removeWLink(NelItem) 重载，改为按物品收集行后逐行 removeWLink(IRow)。
+                    using (var linkedRows = inventory.PopGetItemRowsFor(item))
+                    {
+                        foreach (var row in linkedRows)
+                            inventory.removeWLink(row);
+                    }
                     inventory.Reduce(item, current - count, -1, false);
                 }
 
