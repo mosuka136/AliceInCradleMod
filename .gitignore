@@ -371,4 +371,14 @@ FodyWeavers.xsd
 .github/
 .zcode/
 
-tools/
+# Others
+/tools/
+contact-map.json
+contact-sheet.png
+
+# VSIX 模板工程
+templates/**/bin/
+templates/**/obj/
+templates/AicModTemplate.Vsix/ProjectTemplates/*.zip
+*.vsix
+!*.vsix/

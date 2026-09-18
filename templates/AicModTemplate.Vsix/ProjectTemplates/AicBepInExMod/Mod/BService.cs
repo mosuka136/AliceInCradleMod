@@ -1,0 +1,66 @@
+﻿using $safeprojectname$.BConfigManager;
+using $safeprojectname$.BLogSpace;
+using System;
+using System.IO;
+using UnityModBase.HConfigSpace;
+using UnityModBase.HControlSpace;
+using UnityModBase.HLogSpace;
+using UnityModBase.HProvider;
+using UnityModBase.HUserSpace;
+
+namespace $safeprojectname$
+{
+    internal static class BService
+    {
+        public static UserContext Context { get; private set; }
+        public static UserService Service => Context.Service;
+        public static LogDatabase LogDatabase => Service.LogDatabase;
+        public static LogWriter LogWriter => Service.LogWriter;
+        public static ConfigService Config => Service.Config;
+        public static ControlService Control => Service.Control;
+
+        public static void Initialize(string baseDirectory, BepInExLoggerProvider logger)
+        {
+            try
+            {
+                Context = UserManager.Register(nameof($safeprojectname$), PatchInfo.UserName);
+
+                if (!Directory.Exists(baseDirectory))
+                    Directory.CreateDirectory(baseDirectory);
+
+                var configPath = Path.Combine(baseDirectory, $"{nameof($safeprojectname$)}.cfg");
+                Service.RegisterConfig(typeof(ConfigManager), configPath);
+                ConfigManager.Initialize();
+
+                Service.RegisterLog(Path.Combine(baseDirectory, "logs"), nameof($safeprojectname$), ConfigManager.LogLevel.Value);
+                ConfigManager.EnableLog.OnValueChanged += (s, e) => LogWriter.Enable = e;
+                ConfigManager.LogLevel.OnValueChanged += (s, e) => LogWriter.Level = e;
+                LogWriter.Enable = ConfigManager.EnableLog.Value;
+
+                BepInExLog.Initialize(ConfigManager.BepInExLogLevel.Value, UnityProvider.Instance, logger);
+                ConfigManager.EnableLog.OnValueChanged += (s, e) => BepInExLog.Enable = e;
+                ConfigManager.BepInExLogLevel.OnValueChanged += (s, e) => BepInExLog.Level = e;
+                LogDatabase.OnLogAdded += (entry) => BepInExLog.Log(entry);
+                LogDatabase.OnLogRepeated += (entry) => BepInExLog.Log(entry);
+                BepInExLog.Enable = ConfigManager.EnableLog.Value;
+            }
+            catch (Exception ex)
+            {
+                LogDatabase?.Error($"Failed to initialize {nameof(BService)}", ex, nameof(BService), null, 0);
+            }
+        }
+
+        public static void Dispose()
+        {
+            try
+            {
+                Context?.Dispose();
+                Context = null;
+            }
+            catch (Exception ex)
+            {
+                LogDatabase?.Error($"Failed to dispose {nameof(BService)}", ex, nameof(BService), null, 0);
+            }
+        }
+    }
+}

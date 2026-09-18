@@ -1,0 +1,23 @@
+﻿<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>Alice in Cradle BepInEx Mod Tests</Name>
+    <Description>xunit test project for the Alice in Cradle BepInEx mod skeleton.</Description>
+    <TemplateID>AicBepInExMod.TestProject</TemplateID>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>1100</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <!-- SDK 工程使用隐式 Compile 项，须直接在目标目录创建全部模板文件。 -->
+    <CreateInPlace>true</CreateInPlace>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <!-- 子模板只随根模板的 ProjectCollection 一起创建，不单独出现在新建项目对话框 -->
+    <Hidden>true</Hidden>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="$ext_safeprojectname$.Test.csproj" File="ModTestTemplate.csproj" ReplaceParameters="true">
+      <Folder Name="BPatchGUI" TargetFolderName="BPatchGUI">
+        <ProjectItem TargetFileName="NoticeStateTests.cs" ReplaceParameters="true">NoticeStateTests.cs</ProjectItem>
+      </Folder>
+      <ProjectItem TargetFileName="TestAssemblySettings.cs" ReplaceParameters="false">TestAssemblySettings.cs</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <RootNamespace>$ext_safeprojectname$.Test</RootNamespace>
+    <AssemblyName>$ext_safeprojectname$.Test</AssemblyName>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <!-- 使用父模板的项目名直接生成主工程引用 -->
+  <ItemGroup>
+    <ProjectReference Include="..\$ext_safeprojectname$\$ext_safeprojectname$.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="UnityModBase">
+      <HintPath>..\ReferenceLibrary\UnityModBase.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

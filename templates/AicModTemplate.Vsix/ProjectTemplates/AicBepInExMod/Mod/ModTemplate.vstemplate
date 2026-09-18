@@ -1,0 +1,51 @@
+﻿<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>Alice in Cradle BepInEx Mod</Name>
+    <Description>BepInEx mod project skeleton for Alice in Cradle (main project).</Description>
+    <TemplateID>AicBepInExMod.MainProject</TemplateID>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <!-- SDK 工程使用隐式 Compile 项，须直接在目标目录创建全部模板文件。 -->
+    <CreateInPlace>true</CreateInPlace>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <!-- 子模板只随根模板的 ProjectCollection 一起创建，不单独出现在新建项目对话框 -->
+    <Hidden>true</Hidden>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="$safeprojectname$.csproj" File="ModTemplate.csproj" ReplaceParameters="true">
+      <ProjectItem TargetFileName="$safeprojectname$.cs" ReplaceParameters="true">TemplatePlugin.cs</ProjectItem>
+      <ProjectItem TargetFileName="PatchInfo.cs" ReplaceParameters="true">PatchInfo.cs</ProjectItem>
+      <ProjectItem TargetFileName="BService.cs" ReplaceParameters="true">BService.cs</ProjectItem>
+      <ProjectItem TargetFileName="BepInExLoggerProvider.cs" ReplaceParameters="true">BepInExLoggerProvider.cs</ProjectItem>
+      <Folder Name="BLogSpace" TargetFolderName="BLogSpace">
+        <ProjectItem TargetFileName="BLog.cs" ReplaceParameters="true">BLog.cs</ProjectItem>
+        <ProjectItem TargetFileName="BepInExLog.cs" ReplaceParameters="true">BepInExLog.cs</ProjectItem>
+      </Folder>
+      <Folder Name="BConfigManager" TargetFolderName="BConfigManager">
+        <ProjectItem TargetFileName="ConfigManager.cs" ReplaceParameters="true">ConfigManager.cs</ProjectItem>
+        <ProjectItem TargetFileName="ConfigManagerLog.cs" ReplaceParameters="true">ConfigManagerLog.cs</ProjectItem>
+      </Folder>
+      <Folder Name="BControlManager" TargetFolderName="BControlManager">
+        <ProjectItem TargetFileName="ControlManager.cs" ReplaceParameters="true">ControlManager.cs</ProjectItem>
+      </Folder>
+      <Folder Name="BPatchGUI" TargetFolderName="BPatchGUI">
+        <ProjectItem TargetFileName="NoticeGUI.cs" ReplaceParameters="true">NoticeGUI.cs</ProjectItem>
+        <ProjectItem TargetFileName="NoticeState.cs" ReplaceParameters="true">NoticeState.cs</ProjectItem>
+      </Folder>
+      <Folder Name="Patches" TargetFolderName="Patches">
+        <ProjectItem TargetFileName="HPatches.cs" ReplaceParameters="true">HPatches.cs</ProjectItem>
+        <ProjectItem TargetFileName="DisableDrowningPatch.cs" ReplaceParameters="true">DisableDrowningPatch.cs</ProjectItem>
+      </Folder>
+      <Folder Name="Properties" TargetFolderName="Properties">
+        <ProjectItem TargetFileName="AssemblyInfo.cs" ReplaceParameters="true">AssemblyInfo.cs</ProjectItem>
+      </Folder>
+      <ProjectItem TargetFileName="setup-references.ps1" ReplaceParameters="false">setup-references.ps1</ProjectItem>
+      <ProjectItem TargetFileName="README-DEV.md" ReplaceParameters="true">README-DEV.md</ProjectItem>
+    </Project>
+    <CustomParameters>
+      <CustomParameter Name="$modguidprefix$" Value="com.example" />
+      <CustomParameter Name="$modauthor$" Value="YourName" />
+    </CustomParameters>
+  </TemplateContent>
+</VSTemplate>

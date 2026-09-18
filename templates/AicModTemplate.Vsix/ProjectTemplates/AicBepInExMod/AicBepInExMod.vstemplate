@@ -1,0 +1,24 @@
+﻿<VSTemplate Version="3.0.0" Type="ProjectGroup" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>Alice in Cradle BepInEx Mod</Name>
+    <Description>BepInEx + Harmony 的 Alice in Cradle Mod 骨架：入口、配置、日志、GUI 通知、示例补丁与 xunit 测试工程。创建后先运行主工程内的 setup-references.ps1 填充 ReferenceLibrary。</Description>
+    <Icon>__TemplateIcon.ico</Icon>
+    <PreviewImage>__PreviewImage.png</PreviewImage>
+    <TemplateID>AicBepInExMod.Root</TemplateID>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <DefaultName>AicMod</DefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <ProjectCollection>
+      <ProjectTemplateLink ProjectName="$safeprojectname$" CopyParameters="true">
+        Mod\ModTemplate.vstemplate
+      </ProjectTemplateLink>
+      <ProjectTemplateLink ProjectName="$safeprojectname$.Test" CopyParameters="true">
+        Mod.Test\ModTestTemplate.vstemplate
+      </ProjectTemplateLink>
+    </ProjectCollection>
+  </TemplateContent>
+</VSTemplate>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Language="zh-CN" Id="AicBepInExModTemplate" Version="1.0.1" Publisher="AicModTools" />
+    <DisplayName>Alice in Cradle BepInEx Mod 模板</DisplayName>
+    <Description>新建 Alice in Cradle 的 BepInEx Mod 解决方案（主工程 + xunit 测试工程），包含入口、配置、日志、GUI 通知与示例补丁骨架。</Description>
+    <Icon>Resources\TemplateIcon.ico</Icon>
+    <PreviewImage>Resources\TemplatePreview.png</PreviewImage>
+    <Tags>alice in cradle, bepinex, harmony, mod, unity</Tags>
+  </Metadata>
+  <Installation InstalledByMsi="false" SystemComponent="false" AllUsers="false">
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,19.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+  </Installation>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.VSSDK" Version="[17.0,19.0)" DisplayName="Visual Studio extension development workload" />
+  </Prerequisites>
+  <Dependencies />
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" />
+  </Assets>
+</PackageManifest>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <!-- 显式导入 SDK（而非 Sdk 属性），以便把 VsSDK targets 放在 Sdk.targets 之后：
+       VsSDK 的属性默认值（如 ZipIntermediatePath=$(IntermediateOutputPath)）在导入时求值，
+       若先于 Sdk.targets 导入会拿到空值，导致 GetVSTemplateItems 缺少 TargetPath。 -->
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>AicModTemplate.Vsix</AssemblyName>
+    <RootNamespace>AicModTemplate.Vsix</RootNamespace>
+    <!-- 纯模板 VSIX：不含程序集与 MEF 组件 -->
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <IsPackable>false</IsPackable>
+    <!-- 命令行构建时不自动安装到实验实例 -->
+    <DeployExtension>false</DeployExtension>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.14.2142" />
+  </ItemGroup>
+
+  <!-- 模板载荷只是 VSIX 内容，不参与本工程编译 -->
+  <ItemGroup>
+    <Compile Remove="ProjectTemplates\**" />
+    <None Remove="ProjectTemplates\**" />
+    <EmbeddedResource Remove="ProjectTemplates\**" />
+  </ItemGroup>
+
+  <!-- 模板 zip 由 zip-template.ps1 预先打包（VSSDK 的 VSTemplate 项校验对多工程模板不适用）；
+       GenerateTemplatesManifest 在 CreateVsixContainer 之前就要解压 zip，故两个阶段前都要完成打包。 -->
+  <Target Name="ZipProjectTemplates" BeforeTargets="GenerateTemplatesManifest;CreateVsixContainer">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)zip-template.ps1&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <Content Include="ProjectTemplates\AicBepInExMod.zip" IncludeInVSIX="true" />
+    <Content Include="Resources\TemplateIcon.ico">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\TemplatePreview.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <!-- VSIX 打包目标放在 Sdk.targets 之后导入；任务二进制文件由 Microsoft.VSSDK.BuildTools
+       包通过环境变量重定向提供。需要 VS2022 安装「Visual Studio 扩展开发」工作负载。 -->
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\VSSDK\Microsoft.VsSDK.targets"
+          Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\VSSDK\Microsoft.VsSDK.targets')" />
+
+</Project>
