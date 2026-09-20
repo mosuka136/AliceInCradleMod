@@ -372,9 +372,7 @@ FodyWeavers.xsd
 .zcode/
 
 # Others
-/tools/
-contact-map.json
-contact-sheet.png
+/spine-wardrobe/
 
 # VSIX 模板工程
 templates/**/bin/

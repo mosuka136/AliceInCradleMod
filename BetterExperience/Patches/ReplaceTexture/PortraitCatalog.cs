@@ -15,9 +15,7 @@ namespace BetterExperience.Patches.ReplaceTexture
         internal string JsonPath;
         internal string AtlasPath;
         internal string ImagePath;
-        internal string Json;
         internal string AtlasText;
-        internal byte[] Image;
         internal string Identity => Target + "\n" + JsonKey;
     }
 
@@ -29,7 +27,7 @@ namespace BetterExperience.Patches.ReplaceTexture
         internal readonly HashSet<string> ReservedImages = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         internal readonly List<string> Errors = new List<string>();
 
-        internal static string Resolve(string root, string directory, string relative)
+        internal static string Resolve(string root, string directory, string relative, HashSet<string> verifiedDirectories = null)
         {
             if (string.IsNullOrWhiteSpace(relative) || Path.IsPathRooted(relative) || relative.IndexOf(':') >= 0)
                 throw new InvalidDataException("Expected relative resource path: " + relative);
@@ -37,8 +35,13 @@ namespace BetterExperience.Patches.ReplaceTexture
             if (!Within(root, full)) throw new InvalidDataException("Resource escapes ReplaceTexture: " + relative);
             // Reject reparse points as well as lexical traversal; a junction must not bypass the root or Sensitive rules.
             for (string path = full; path != null && Within(root, path); path = Path.GetDirectoryName(path))
+            {
+                // 同一次扫描内缓存已验证的路径，避免每个资源路径都逐级重复探测文件系统。
+                if (verifiedDirectories != null && verifiedDirectories.Contains(path)) continue;
                 if ((File.Exists(path) || Directory.Exists(path)) && (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0)
                     throw new InvalidDataException("Resource uses a reparse point: " + path);
+                verifiedDirectories?.Add(path);
+            }
             return full;
         }
 
@@ -159,6 +162,8 @@ namespace BetterExperience.Patches.ReplaceTexture
         {
             var result = new PortraitCatalog();
             if (!Directory.Exists(root)) return result;
+            // 本次扫描内已通过 reparse 检查的路径集合，供 Resolve 复用，减少重复的文件系统探测。
+            var verified = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             // Enumeration deliberately never follows directory junctions.
             foreach (string file in Enumerate(root).OrderBy(p => p, StringComparer.OrdinalIgnoreCase))
             {
@@ -170,13 +175,13 @@ namespace BetterExperience.Patches.ReplaceTexture
                     Allowed(sensitive, allowSensitive, file);
                     var manifest = PortraitJson.Parse(File.ReadAllText(file));
                     string dir = Path.GetDirectoryName(file);
-                    string atlasPath = Resolve(root, dir, PortraitJson.String(manifest, "atlas"));
+                    string atlasPath = Resolve(root, dir, PortraitJson.String(manifest, "atlas"), verified);
                     Allowed(sensitive, allowSensitive, atlasPath);
                     string atlasText = File.ReadAllText(atlasPath);
                     var atlas = ReadAtlas(atlasText);
                     // Reserve every page even for a disabled or unsupported multi-page package.
                     foreach (var page in atlas.Pages)
-                        result.ReservedImages.Add(Resolve(root, Path.GetDirectoryName(atlasPath), page.name));
+                        result.ReservedImages.Add(Resolve(root, Path.GetDirectoryName(atlasPath), page.name, verified));
                     if (PortraitJson.Integer(PortraitJson.Get(manifest, "formatVersion")) != 1)
                         throw new InvalidDataException("Unsupported portrait manifest version.");
                     if (atlas.Pages.Count != 1) throw new InvalidDataException("Portrait atlas must contain exactly one page.");
@@ -184,8 +189,8 @@ namespace BetterExperience.Patches.ReplaceTexture
                     {
                         Id = Required(manifest, "id"), Target = Required(manifest, "target"),
                         JsonKey = Required(manifest, "jsonKey"), ManifestPath = file, AtlasPath = atlasPath,
-                        JsonPath = Resolve(root, dir, Required(manifest, "json")), AtlasText = atlasText,
-                        ImagePath = Resolve(root, Path.GetDirectoryName(atlasPath), atlas.Pages[0].name)
+                        JsonPath = Resolve(root, dir, Required(manifest, "json"), verified), AtlasText = atlasText,
+                        ImagePath = Resolve(root, Path.GetDirectoryName(atlasPath), atlas.Pages[0].name, verified)
                     };
                     Allowed(sensitive, allowSensitive, package.JsonPath, package.ImagePath);
                     PortraitJson.Parse(File.ReadAllText(package.JsonPath));
@@ -203,9 +208,11 @@ namespace BetterExperience.Patches.ReplaceTexture
             return result;
         }
 
-        // Activate fully loads the selected, discovered packages. Row sync normally deselects same-target
-        // conflicts beforehand (ResolveSelection); if a conflicting set still reaches this point, the pack
-        // lower in the enabled list wins so a duplicate identity never reaches the catalog.
+        // Activate only selects the enabled, discovered packages; no file IO happens here. Full JSON text and
+        // image bytes load lazily in Build at the actual portrait switch, so toggling rows stays cheap.
+        // Row sync normally deselects same-target conflicts beforehand (ResolveSelection); if a conflicting
+        // set still reaches this point, the pack lower in the enabled list wins so a duplicate identity
+        // never reaches the catalog.
         internal static void Activate(PortraitCatalog catalog, bool enabled, IReadOnlyList<string> enabledIds)
         {
             if (!enabled) return;
@@ -214,18 +221,7 @@ namespace BetterExperience.Patches.ReplaceTexture
                 if (!order.ContainsKey(enabledIds[i])) order[enabledIds[i]] = i;
             var found = new List<PortraitPackage>();
             foreach (var package in catalog.Discovered)
-            {
-                if (!order.ContainsKey(package.Id)) continue;
-                try
-                {
-                    package.Json = File.ReadAllText(package.JsonPath);
-                    PortraitJson.Parse(package.Json);
-                    package.Image = File.ReadAllBytes(package.ImagePath);
-                    ValidateImage(package.Image, ReadAtlas(package.AtlasText));
-                    found.Add(package);
-                }
-                catch (Exception ex) { catalog.Errors.Add(package.ManifestPath + ": " + ex.Message); }
-            }
+                if (order.ContainsKey(package.Id)) found.Add(package);
             foreach (var group in found.GroupBy(p => p.Target, StringComparer.Ordinal).Where(g => g.Count() > 1).ToList())
             {
                 var ranked = group.OrderBy(p => order[p.Id]).ToList();

@@ -319,15 +319,16 @@ namespace BetterExperience.Patches.ReplaceTexture
                     PortraitCatalog.Resolve(PatchInfo.ReplaceImagePath, Path.GetDirectoryName(path), Path.GetFileName(path));
                 texture.MtiText.addLoadKey("_SV");
                 SpineViewer.prepareAtlasAssetsS(texture.MtiText, out var originalAtlas, out var original, package.JsonKey);
-                string merged;
+                // 惰性加载：全量 JSON 与整张 PNG 只在真正切换立绘时读取，配置开关变化不触发 MB 级文件 IO。
+                string json = File.ReadAllText(package.JsonPath);
+                byte[] image = File.ReadAllBytes(package.ImagePath);
                 var atlas = PortraitCatalog.ReadAtlas(package.AtlasText);
-                {
-                    if (atlas.Pages[0].width > SystemInfo.maxTextureSize || atlas.Pages[0].height > SystemInfo.maxTextureSize)
-                        throw new InvalidDataException("Portrait atlas exceeds the device texture size limit.");
-                    merged = PortraitMerger.Merge(original.skeletonJSON.text, package.Json, atlas);
-                }
+                PortraitCatalog.ValidateImage(image, atlas);
+                if (atlas.Pages[0].width > SystemInfo.maxTextureSize || atlas.Pages[0].height > SystemInfo.maxTextureSize)
+                    throw new InvalidDataException("Portrait atlas exceeds the device texture size limit.");
+                string merged = PortraitMerger.Merge(original.skeletonJSON.text, json, atlas);
                 bundle.Image = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-                if (!bundle.Image.LoadImage(package.Image)) throw new InvalidDataException("PNG decoding failed.");
+                if (!bundle.Image.LoadImage(image)) throw new InvalidDataException("PNG decoding failed.");
                 bundle.Image.name = Path.GetFileNameWithoutExtension(package.ImagePath);
                 bundle.Image.wrapMode = TextureWrapMode.Clamp;
                 bundle.Image.filterMode = FilterMode.Bilinear;
