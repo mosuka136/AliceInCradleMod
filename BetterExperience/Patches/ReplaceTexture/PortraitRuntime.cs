@@ -67,6 +67,8 @@ namespace BetterExperience.Patches.ReplaceTexture
         private static readonly List<Bundle> retired = new List<Bundle>();
         private static PortraitCatalog catalog = new PortraitCatalog();
         private static string settings;
+        // 上一次同步后的启用列表行快照，用于识别“本轮从关变开”的行。
+        private static List<(string, bool)> packRows = new List<(string, bool)>();
         private static int revision;
         private static bool stopped;
         private static bool initialized;
@@ -117,10 +119,12 @@ namespace BetterExperience.Patches.ReplaceTexture
             settings = Settings;
             try
             {
-                // 先全量发现并把扫描结果同步进启用列表（自动追加新包行），再按行内开关激活；扫描失败时沿用上一个目录。
+                // 先全量发现并把扫描结果同步进启用列表（自动追加新包行、删除已移除包的行），再按行内开关激活；扫描失败时沿用上一个目录。
                 catalog = PortraitCatalog.Discover(PatchInfo.ReplaceImagePath, PatchInfo.ReplaceSensitiveImagePath,
                     ConfigManager.EnableSensitivities?.Value == true);
                 SyncPackRows(catalog);
+                // 冲突取消选中可能写回了新行集，重取一次快照，避免下一次轮询把同一变更当成新变化再扫一遍。
+                settings = Settings;
                 PortraitCatalog.Activate(catalog, !stopped && ConfigManager.EnableReplacePortrait?.Value == true,
                     EnabledIds());
                 foreach (string error in catalog.Errors) BLog.Warn("Portrait: " + error);
@@ -129,19 +133,42 @@ namespace BetterExperience.Patches.ReplaceTexture
             revision++;
         }
 
-        private static HashSet<string> EnabledIds()
+        private static List<string> EnabledIds()
         {
             return PortraitCatalog.EnabledIds(ConfigManager.EnabledPortraitPacks?.Value);
         }
 
-        // 仅在行集合真的变化时写回，避免每次刷新都触发配置事件并打断界面上未提交的列表编辑。
+        // 同步行集合并自动解决选择冲突：用户启用与已启用包同目标的新包时，之前的启用行被自动取消
+        // （同一目标只保留最新选择的包）；包被移除后对应行也会从列表中删除。仅在行集合真的变化时写回，
+        // 避免每次刷新都触发配置事件并打断界面上未提交的列表编辑。
         private static void SyncPackRows(PortraitCatalog scanned)
         {
             var entry = ConfigManager.EnabledPortraitPacks;
             if (entry == null) return;
             var current = entry.Value ?? new List<(string, bool)>();
-            var synced = PortraitCatalog.SyncRows(scanned.Discovered, current);
-            if (!synced.SequenceEqual(current)) entry.Value = synced;
+            var synced = PortraitCatalog.ResolveSelection(
+                PortraitCatalog.SyncRows(scanned.Discovered, current, ConfigManager.EnableSensitivities?.Value == true),
+                packRows, scanned.Discovered);
+            if (!synced.SequenceEqual(current))
+            {
+                entry.Value = synced;
+                // 自动变更写日志说明原因，避免用户疑惑开关为何被关闭、行为何消失。
+                var deselected = new List<string>();
+                var removed = new List<string>();
+                foreach (var row in current)
+                {
+                    string id = row.Id?.Trim();
+                    if (!row.Enabled || string.IsNullOrEmpty(id)) continue;
+                    if (!synced.Any(row2 => row2.Id?.Trim() == id)) removed.Add(id);
+                    else if (!synced.Any(row2 => row2.Id?.Trim() == id && row2.Enabled)) deselected.Add(id);
+                }
+                if (deselected.Count > 0)
+                    BLog.Info("Portrait: deselected " + string.Join(", ", deselected.Distinct())
+                        + "; the newly selected pack for the same target is kept instead.");
+                if (removed.Count > 0)
+                    BLog.Info("Portrait: removed rows of deleted packs: " + string.Join(", ", removed.Distinct()) + ".");
+            }
+            packRows = synced;
         }
 
         /// <summary>

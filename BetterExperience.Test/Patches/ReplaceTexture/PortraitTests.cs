@@ -175,21 +175,50 @@ namespace BetterExperience.Test.Patches.ReplaceTexture
         public void EnabledIds_OnlyCountsToggledRowsAndDeduplicates()
         {
             var ids = PortraitCatalog.EnabledIds(new[] { (" one ", true), ("", true), (null, true), ("one", true), ("two", false), ("two", true) });
-            Assert.Equal(new HashSet<string> { "one", "two" }, ids);
+            // 有序且按行序去重（保留首次出现位置）：行序是同目标冲突的优先级依据。
+            Assert.Equal(new List<string> { "one", "two" }, ids);
             Assert.Empty(PortraitCatalog.EnabledIds(null));
         }
 
         [Fact]
-        public void SyncRows_AppendsNewPacksDisabledAndKeepsUserToggles()
+        public void SyncRows_KeepsRowOrderAppendsNewAndDropsRemoved()
         {
             var discovered = new[] { Pack("one"), Pack("two"), Pack("three") };
             var current = new List<(string, bool)> { ("two", true), ("gone", true), ("", false), (null, false) };
             var rows = PortraitCatalog.SyncRows(discovered, current);
-            // 扫描到的包按扫描顺序排列：已有行保留用户开关、新包默认关闭；扫描不到的行与空白行原样置尾。
+            // 已知包保持用户行序，新包按发现顺序追加且默认关闭；已移除的包（gone）行被删除，空白行原样置尾。
             Assert.Equal(new List<(string, bool)>
             {
-                ("one", false), ("two", true), ("three", false), ("gone", true), ("", false), (null, false)
+                ("two", true), ("one", false), ("three", false), ("", false), (null, false)
             }, rows);
+        }
+
+        [Fact]
+        public void SyncRows_KeepsUnknownRowsWhenCatalogIsPartiallyHidden()
+        {
+            var discovered = new[] { Pack("one") };
+            var current = new List<(string, bool)> { ("one", true), ("sensitive", true) };
+            // 敏感内容关闭时扫描看不到敏感包，无法区分“移除”与“隐藏”，未知行保留旧的置尾行为。
+            Assert.Equal(new List<(string, bool)> { ("one", true), ("sensitive", true) },
+                PortraitCatalog.SyncRows(discovered, current, false));
+        }
+
+        [Fact]
+        public void ResolveSelection_DeselectsPreviouslyEnabledConflictingRows()
+        {
+            var discovered = new[] { Pack("a", "t1"), Pack("b", "t1"), Pack("c", "t2") };
+            // 用户新启用 b（与已启用的 a 同目标）：自动取消 a，保留最新选择的 b；无冲突的 c 不受影响。
+            var previous = new List<(string, bool)> { ("a", true), ("b", false), ("c", false) };
+            var rows = new List<(string, bool)> { ("a", true), ("b", true), ("c", true) };
+            Assert.Equal(new List<(string, bool)> { ("a", false), ("b", true), ("c", true) },
+                PortraitCatalog.ResolveSelection(rows, previous, discovered));
+            // 启动时已存在的存量冲突（无法判定先后）：保留行序靠后的行。
+            Assert.Equal(new List<(string, bool)> { ("a", false), ("b", true) },
+                PortraitCatalog.ResolveSelection(new List<(string, bool)> { ("a", true), ("b", true) },
+                    Array.Empty<(string, bool)>(), discovered));
+            // 无冲突时行集合保持不变。
+            var quiet = new List<(string, bool)> { ("a", true), ("c", true) };
+            Assert.Equal(quiet, PortraitCatalog.ResolveSelection(quiet, quiet, discovered));
         }
 
         [Fact]
@@ -227,7 +256,8 @@ namespace BetterExperience.Test.Patches.ReplaceTexture
             Assert.False(editor is UnsupportedEditor, editor.GetType().Name);
         }
 
-        private static PortraitPackage Pack(string id) => new PortraitPackage { Id = id };
+        private static PortraitPackage Pack(string id, string target = null) =>
+            new PortraitPackage { Id = id, Target = target ?? id };
 
         [Fact]
         public void Scan_LoadsSelectedPackage()
@@ -239,13 +269,16 @@ namespace BetterExperience.Test.Patches.ReplaceTexture
         }
 
         [Fact]
-        public void Scan_ConflictingTargetsActivateNeitherPackage()
+        public void Scan_ConflictingTargetsKeepTheLaterPackAsFallback()
         {
             CreatePackage("one", "stand_normal");
             CreatePackage("two", "stand_normal");
+            // 正常流程下冲突行已在同步时被自动取消选中（ResolveSelection）；此处把两个同目标包
+            // 直接传入激活，验证兜底行为：保留启用列表靠后的包，避免重复身份导致激活异常。
             var result = Scan(true, "one,two");
-            Assert.Empty(result.Packages);
-            Assert.Contains("stand_normal\nstand_normal", result.Conflicts);
+            Assert.Equal("two", Assert.Single(result.Packages).Value.Id);
+            Assert.Contains(result.Errors, error => error.Contains("two overrides one for target stand_normal"));
+            Assert.Equal("one", Assert.Single(Scan(true, "one").Packages).Value.Id);
         }
 
         [Fact]
@@ -436,7 +469,7 @@ namespace BetterExperience.Test.Patches.ReplaceTexture
         private PortraitCatalog Scan(bool enabled, string ids) =>
             PortraitCatalog.Scan(directory, Path.Combine(directory, "Sensitive"), false, enabled, Ids(ids.Split(',')));
 
-        private static HashSet<string> Ids(params string[] ids) => new HashSet<string>(ids, StringComparer.Ordinal);
+        private static List<string> Ids(params string[] ids) => new List<string>(ids);
 
         private void CreatePackage(string id, string target, string subdirectory = null, string manifestId = null)
         {

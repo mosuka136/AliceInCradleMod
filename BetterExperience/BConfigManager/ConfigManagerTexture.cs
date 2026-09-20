@@ -13,8 +13,6 @@ namespace BetterExperience.BConfigManager
         public static ConfigEntry<bool> EnableReplaceTexture { get; private set; }
         public static ConfigEntry<bool> EnableSensitivities { get; private set; }
         public static ConfigEntry<bool> EnableReplacePortrait { get; private set; }
-
-        // 立绘包启用列表：每行 (包 id, 是否启用)，配置界面展开后逐行显示 id 文本框和启用开关；扫描会把新发现的包自动追加成行。
         public static ConfigEntry<List<(string Id, bool Enabled)>> EnabledPortraitPacks { get; private set; }
 
         internal const string SectionTexture = "Texture";
@@ -70,12 +68,13 @@ namespace BetterExperience.BConfigManager
                 EnabledPortraitPacks = Config.Bind(
                     SectionTexture, nameof(EnabledPortraitPacks), new List<(string, bool)>(),
                     new Translator(chinese: "立绘包列表", english: "Portrait Packs"),
-                    new Translator(chinese: "每行一个立绘包：id 旁边的开关决定是否启用。插件自动扫描 ReplaceTexture，" +
-                                             "扫描到的新包会自动追加到列表末尾（默认关闭）。同一目标只能启用一个包：" +
-                                             "同时启用多个同目标包会冲突，相关包全部不生效并记录错误。文件修改后使用刷新贴图热键。",
+                    new Translator(
+                        chinese: "每行一个立绘包：id 旁边的开关决定是否启用。插件自动扫描 ReplaceTexture，" +
+                                 "同一目标只保留最新选择的包：启用新的同目标包时会自动取消之前启用的包并记录日志。" +
+                                 "修改后使用刷新贴图热键刷新立绘。",
                         english: "One portrait pack per row; the toggle next to the id decides whether it is enabled. " +
-                                 "The plugin auto-scans ReplaceTexture and appends newly found packs at the end of the list (disabled by default). " +
-                                 "Only one pack per target may be enabled: enabling several packs with the same target conflicts, none of them applies, and errors are logged. " +
+                                 "Only the latest selection is kept per target: enabling a new pack for an already enabled target " +
+                                 "automatically deselects the previous one and logs the change. " +
                                  "Use the texture refresh hotkey after changing pack files."));
             }
             catch (Exception ex)
