@@ -26,7 +26,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 - Limit removals: puppet merchant spawn limits, bench menu limits, treasure chest limits, warehouse region limits, etc.
 - Map and weather: fast travel anywhere (including night and thunder), night bench travel, lock weather, lock danger level, depart at the highest danger reached, dark area removal in specific zones, forced weather (wind/thunder/mist/drought/dense mist/plague), summon wandering merchants to the current map, merchants always visible on the map and always appearing, night-only summoners open in daytime, mana weed recharge time cap
 - Guild quests: one-key quest board refresh inside the guild counter (reroll all unaccepted quests while selecting one; accepted ones are kept)
-- Visual features: remove mosaic, no dirt stains, no wettening, texture replacement, external Spine portrait attachment replacement, sensitive content texture toggle, runtime texture reload
+- Visual features: remove mosaic, no dirt stains, no wettening, resource replacement, sensitive-content toggle, runtime resource reload
 - Hotkey features: supports key combinations, multiple alternative hotkeys, and gamepad input
 - Debug: debug switch; the control page lists items, skills and recipes to give or unlock
 
@@ -51,72 +51,12 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 3. Launch the game once to generate the mod config file, log directory, and texture directory.
 4. Edit `BepInEx/plugins/BetterExperience/BetterExperience.cfg`, or press `F1` in game to open the built-in config UI.
 5. To apply manual config-file changes during gameplay, save the file first, then press your configured `Reload Config` hotkey in game; the default is `Ctrl+R`.
-6. To use texture replacement, put `.png` or `.btep` files into `BepInEx/plugins/BetterExperience/ReplaceTexture/`; put sensitive textures into `BepInEx/plugins/BetterExperience/ReplaceTexture/Sensitive/`; press `Ctrl+T` in game to reload textures.
+6. For custom portrait replacement, see the [custom portrait replacement guide (Chinese)](CUSTOM_PORTRAIT_REPLACEMENT.md).
 
 ## Supported Versions
 
 - `Alice In Cradle`: `ver030d`
 - `BepInEx`: `v5.4.23.5`
-
-## Texture Replacement Usage
-
-### Steps
-
-1. Use `AssetStudioGUI.exe` to export the texture you want to replace.
-2. Edit the texture as needed, then save it as a PNG-format file with a `.png` or `.btep` extension.
-3. Open `BepInEx/plugins/BetterExperience/ReplaceTexture/`.
-4. Copy replacement textures into that directory; sensitive textures can be placed in the `Sensitive/` subdirectory; the filename without extension must match the original resource name.
-5. Launch the game, press `F1` to open the built-in config UI, and enable `Enable Replace Texture`; if you want to load sensitive textures, make sure `Enable Sensitivities` is also enabled.
-6. Restart the game, or press `Ctrl+T` during gameplay to reload textures and apply the replacement.
-
-### Quick Troubleshooting
-
-- No visible change after replacement: check the directory, filename, file format, and config toggles, then inspect the loading logs in `BepInEx/plugins/BetterExperience/logs/`.
-- Duplicate texture name not loaded: only one file with the same name is loaded across directories; duplicates are skipped and recorded in the log.
-- Broken body or limb layout after replacement: this usually means the game version changed the texture layout. Re-export the texture from the current game version, adjust the mask or alignment in an image editor, and save it again.
-
-## External Portrait Attachment Replacement
-
-This feature reads external Spine export files and replaces Region, Mesh, and Linked Mesh attachments. The game's original bones, slots, constraints, skin state, and animations remain unchanged. Attachment images and mesh shapes can be modified.
-
-### File Layout and Manifest
-
-Uses the directory `BetterExperience/ReplaceTexture`:
-
-```text
-ReplaceTexture/
-    stand_normal.png                 Whole-texture replacement as before, optional
-    stand_normal.portrait.json       Attachment pack entry point
-    stand_normal.attachments.json   Spine-exported JSON
-    stand_normal.attachments.atlas  Spine-exported single-page atlas
-    stand_normal.attachments.png    Atlas image
-```
-
-`stand_normal.portrait.json` example:
-
-```json
-{
-    "formatVersion": 1,
-    "id": "stand-normal-cloth-demo",
-    "target": "stand_normal",
-    "jsonKey": "stand_normal",
-    "json": "stand_normal.attachments.json",
-    "atlas": "stand_normal.attachments.atlas"
-}
-```
-
-`target` is the game's `SvTexture.key`; `jsonKey` is the skeleton JSON resource key it uses. The two are usually identical, but for CGs with JSON variants you must fill in the actual key. `id` is case-sensitive. The entry file must end with `.portrait.json`; other filenames can be customized.
-
-JSON and atlas paths are relative to the manifest; the PNG path is specified by the first line of the atlas and is relative to the atlas. All paths must stay inside `ReplaceTexture`; absolute paths, directory traversal to the outside, and symbolic links/junctions are not accepted. The existing `Sensitive` toggle covers the manifest and all of its dependency files: a manifest in the regular directory cannot reference `Sensitive` content while that toggle is off.
-
-### Asset Creation Requirements
-
-1. Base your work on the original assets of the matching game version. Currently only Spine **4.1** JSON is accepted.
-2. Keep bone order, bone initial transforms, slots, constraints, and skin constraint definitions identical. External animations are not merged; the original animations are used at runtime.
-3. Provide same-named attachments through the original `skin / slot / attachment` lookup keys; attachments that are not provided keep their original versions. You cannot add new skins, slots, or attachments, nor modify functional attachments such as paths, colliders, or clipping.
-4. Keep the attachment's original atlas region names (including effect naming such as `EM` and `ND`). Export a single-page atlas containing all regions referenced by the merged attachments; you cannot pack only the modified images.
-5. Export straight-alpha PNGs; do not use PMA or attachment sequences. The PNG size must match the atlas declaration, and device texture size limits are also validated at runtime. Rotated slices support 0° and 90°.
-6. Meshes without Deform dependencies may change vertex counts, triangles, and weights, but may only bind to the original bones. When Deform dependencies exist, you must preserve the UV/vertex correspondence order, triangles, hull/edges, and bone influences with weights; modifying the corresponding vertex coordinates is allowed. Linked Meshes additionally validate the parent mesh, skin, and deform inheritance relationships.
 
 ## License
 

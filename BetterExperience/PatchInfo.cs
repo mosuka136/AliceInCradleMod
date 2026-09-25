@@ -27,6 +27,5 @@ namespace BetterExperience
 
         public static readonly string ReplaceImagePath = Path.Combine(PluginPath, "ReplaceTexture");
         public static readonly string ReplaceSensitiveImagePath = Path.Combine(ReplaceImagePath, "Sensitive");
-        public static readonly string[] ReplaceImageSupportedExtensions = { ".png", ".btep" };
     }
 }

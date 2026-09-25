@@ -16,7 +16,7 @@ using UnityModBase.BepInExLauncher;
 namespace BetterExperience
 {
     /// <summary>
-    /// BepInEx 插件入口，负责按启动顺序初始化配置、日志、贴图替换和 Harmony 补丁。
+    /// BepInEx 插件入口，负责按启动顺序初始化配置、日志、资源替换和 Harmony 补丁。
     /// 该类只协调插件级生命周期，不承载具体补丁逻辑；具体行为由 <c>Patches</c> 下的 Harmony Patch 类实现。
     /// Unity 生命周期方法由主线程调用，当前实现未设计为从后台线程重复初始化。
     /// </summary>
@@ -42,8 +42,7 @@ namespace BetterExperience
 
                 BLog.Info($"{nameof(BetterExperience)} startup initialized. Version={PatchInfo.BepInPluginVersion}");
 
-                PortraitRuntime.Initialize();
-                TextureManager.Initialize(PatchInfo.ReplaceImagePath, PatchInfo.ReplaceSensitiveImagePath, PatchInfo.ReplaceImageSupportedExtensions);
+                ReplacementRuntime.Initialize();
 
                 // Harmony 注册失败时跳过单个补丁类，避免某个补丁因目标方法变更导致整个插件不可用。
                 var harmony = new Harmony(PatchInfo.HarmonyPluginId);
@@ -65,7 +64,7 @@ namespace BetterExperience
         public void Update()
         {
             PlayerMovementController.Update();
-            PortraitRuntime.PollSettings();
+            ReplacementRuntime.PollSettings();
         }
 
         public void OnDisable()
@@ -76,7 +75,7 @@ namespace BetterExperience
 
         public void OnDestroy()
         {
-            PortraitRuntime.Stop();
+            ReplacementRuntime.Stop();
             PlayerMovementController.Dispose();
             NoticeGUI.ClearAll();
             BService.Dispose();

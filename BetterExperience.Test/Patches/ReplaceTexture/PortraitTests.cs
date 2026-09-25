@@ -228,7 +228,7 @@ namespace BetterExperience.Test.Patches.ReplaceTexture
             var current = new List<(string, bool)> { ("one", false), ("two", true) };
             var rows = PortraitCatalog.SyncRows(discovered, current);
             Assert.Equal(current, rows);
-            // 已同步的列表再次同步应产生相同内容，PortraitRuntime 据此跳过写回。
+            // 已同步的列表再次同步应产生相同内容，运行时据此跳过写回。
             Assert.Equal(current, PortraitCatalog.SyncRows(discovered, rows));
         }
 
@@ -426,7 +426,11 @@ namespace BetterExperience.Test.Patches.ReplaceTexture
                 prepare.GetParameters().Select(p => p.Name));
             Assert.Equal(typeof(bool), typeof(nel.BetobetoManager.SvTexture).GetMethod("cleanExecute").ReturnType);
             Assert.Equal("_jsonkey", typeof(XX.SpineViewer).GetMethod("switchSkeletonJson").GetParameters().Single().Name);
-            foreach (var type in new[] { typeof(PortraitResourcePatch), typeof(PortraitViewerPatch) })
+            foreach (var type in new[]
+            {
+                typeof(global::BetterExperience.Patches.ReplacementSpineResourcePatch),
+                typeof(global::BetterExperience.Patches.ReplacementSpineViewerPatch)
+            })
                 Assert.DoesNotContain(type.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic),
                     method => new[] { "Prepare", "Cleanup", "TargetMethod", "TargetMethods" }.Contains(method.Name));
         }

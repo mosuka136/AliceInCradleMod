@@ -4,207 +4,193 @@ using BetterExperience.Patches.ReplaceTexture;
 using HarmonyLib;
 using nel;
 using System;
-using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityModBase;
 using UnityModBase.HClassAttribute;
 using XX;
+using Object = UnityEngine.Object;
 
 namespace BetterExperience.Patches
 {
     public partial class HPatches
     {
-        /// <summary>
-        /// 在游戏贴图加载/清理路径上替换外部图片资源。
-        /// 该补丁分别处理普通 MTI 图片和 Spine 渲染贴图，并缓存原始贴图以支持热键刷新时恢复。
-        /// </summary>
         [HarmonyPatch]
-        public class ReplaceTexturePatch
+        public static class ReplaceTexturePatch
         {
-            private static bool _initialized = false;
-
-            // Spine 贴图需要在 cleanExecute 后重新贴图；普通图片需要保留 MTIOneImage 到原始 Texture 的映射。
-            private static readonly List<BetobetoManager.SvTexture> _spineTexture = new List<BetobetoManager.SvTexture>();
-            private static readonly Dictionary<string, MTIOneImage> _pictureTexture = new Dictionary<string, MTIOneImage>();
-            private static readonly Dictionary<MTIOneImage, Texture> _originalPictureTexture = new Dictionary<MTIOneImage, Texture>();
-            private static readonly Dictionary<BetobetoManager.SvTexture, Texture> _originalSpineTexture = new Dictionary<BetobetoManager.SvTexture, Texture>();
+            private static bool initialized;
 
             [InitializeOnGameBoot]
             public static void Initialize()
             {
-                if (_initialized)
-                    return;
-
+                if (initialized) return;
                 FrameUpdateManager.OnFrameUpdate += Update;
-
-                _initialized = true;
-                BLog.Debug($"{nameof(ReplaceTexturePatch)} initialized.");
+                initialized = true;
+                BLog.Debug(nameof(ReplaceTexturePatch) + " initialized.");
             }
 
-            public static void Update()
+            private static void Update()
             {
-                if (ConfigManager.EnableReplaceTexture?.Value != true && ConfigManager.EnableReplacePortrait?.Value != true && !PortraitRuntime.HasWork)
-                    return;
-
-                if (ConfigManager.FlushTextureHotkey?.Value?.WasPressedThisFrame() == true)
-                {
-                    try
-                    {
-                        // Refresh 会重扫立绘包目录并让已显示的立绘立即重切到新资源。
-                        PortraitRuntime.Refresh();
-                        // 刷新时先恢复原资源，再重新加载外部图片，避免把已替换贴图当作下一轮的“原图”。
-                        RestoreOriginalTexture();
-
-                        TextureManager.Reload();
-
-                        foreach (var texture in new List<BetobetoManager.SvTexture>(_spineTexture))
-                        {
-                            if (texture != null && !PortraitRuntime.HasActive(texture))
-                                texture.cleanExecute();
-                        }
-
-                        foreach (var texture in _pictureTexture)
-                        {
-                            TryReplace(texture.Value, texture.Key);
-                        }
-
-                        BLog.Info("Textures flushed.");
-                    }
-                    catch (Exception ex)
-                    {
-                        BLog.Error($"Unexpected error while flushing textures.", ex);
-                    }
-                }
-            }
-
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(BetobetoManager.SvTexture), nameof(BetobetoManager.SvTexture.cleanExecute))]
-            public static void CleanExecutePostfix(BetobetoManager.SvTexture __instance, bool __result)
-            {
-                try
-                {
-                    if (!__result || PortraitRuntime.HasActive(__instance) || !ConfigManager.EnableReplaceTexture.Value)
-                        return;
-
-                    if (__instance.MtiImage0 == null || __instance.MtiImage0.Image == null)
-                    {
-                        BLog.Debug("SvTexture has no image.");
-                        return;
-                    }
-
-                    if (!_spineTexture.Contains(__instance))
-                        _spineTexture.Add(__instance);
-
-                    var imageName = __instance.MtiImage0.Image.name;
-                    var image = TextureManager.GetReplaceTexture(imageName);
-                    if (image == null)
-                    {
-                        BLog.Debug("No replacement texture found for " + imageName);
-                        return;
-                    }
-
-                    if (!_originalSpineTexture.ContainsKey(__instance))
-                        _originalSpineTexture[__instance] = __instance.MtiImage0.Image;
-
-                    TryReplace(__instance, image);
-                    BLog.Info($"SvTexture {imageName} replaced.");
-                }
-                catch (Exception ex)
-                {
-                    BLog.Error($"Unexpected error in {nameof(ReplaceTexturePatch)}", ex);
-                }
+                if (ConfigManager.FlushTextureHotkey?.Value?.WasPressedThisFrame() != true) return;
+                try { ReplacementRuntime.Refresh(); }
+                catch (Exception ex) { BLog.Error("Unexpected error while refreshing resource replacements.", ex); }
             }
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(MTI), nameof(MTI.LoadContainerOneImage))]
-            public static void LoadContainerOneImagePostfix(MTIOneImage __result, string asset_key, string load_key, string image_key)
+            private static void LoadMti(MTIOneImage __result, string asset_key, string image_key)
             {
-                try
-                {
-                    if (!ConfigManager.EnableReplaceTexture.Value)
-                        return;
-
-                    _pictureTexture[asset_key] = __result;
-
-                    BLog.Debug($"Try replace texture for {asset_key}.");
-                    TryReplace(__result, asset_key);
-                }
-                catch (Exception ex)
-                {
-                    BLog.Error($"Unexpected error in {nameof(ReplaceTexturePatch)}", ex);
-                }
+                try { ReplacementRuntime.RegisterMti(__result, asset_key, image_key); }
+                catch (Exception ex) { BLog.Error("Unexpected error while registering an MTI image.", ex); }
             }
+        }
+    }
 
-            public static void TryReplace(MTIOneImage mti, string asset_key)
+    [HarmonyPatch(typeof(Resources), nameof(Resources.Load), new[] { typeof(string), typeof(Type) })]
+    internal static class ReplacementResourcesTypedPatch
+    {
+        [HarmonyPostfix]
+        private static void Load(string __0, Type __1, ref Object __result)
+        {
+            __result = ReplacementRuntime.ReplaceResource(__0, __1, __result);
+        }
+    }
+
+    [HarmonyPatch]
+    internal static class ReplacementResourcesPatch
+    {
+        public static MethodBase TargetMethod()
+        {
+            foreach (var method in typeof(Resources).GetMethods(BindingFlags.Public | BindingFlags.Static))
             {
-                if (mti == null)
-                    return;
-
-                var split = asset_key.Split('/');
-                if (split.Length < 2)
-                    return;
-                // 游戏资源键通常形如 "目录/图片名"，替换文件只使用图片名匹配。
-                var name = split[1];
-
-                var texture = TextureManager.GetReplaceTexture(name);
-                if (texture == null)
-                    return;
-
-                var image = Traverse.Create(mti).Field<MImage>("LImage_").Value;
-                if (image == null)
-                    return;
-
-                if (image.Tx == null || image.Tx == texture)
-                    return;
-
-                if (!_originalPictureTexture.ContainsKey(mti))
-                    _originalPictureTexture[mti] = image.Tx;
-
-                TextureManager.CopyTextureProperties(image.Tx, texture);
-                image.Tx = texture;
-
-                BLog.Info($"ReplaceTexture: {name}");
+                if (method.Name != nameof(Resources.Load) || method.IsGenericMethod) continue;
+                var parameters = method.GetParameters();
+                if (parameters.Length == 1 && parameters[0].ParameterType == typeof(string)) return method;
             }
+            throw new MissingMethodException(typeof(Resources).FullName, nameof(Resources.Load) + "(string)");
+        }
 
-            public static void TryReplace(BetobetoManager.SvTexture svTexture, Texture image)
-            {
-                if (svTexture != null && PortraitRuntime.HasActive(svTexture))
-                    return;
-                if (svTexture == null || svTexture.MtiImage0 == null || svTexture.MtiImage0.Image == null)
-                    return;
+        [HarmonyPostfix]
+        private static void Load(string __0, ref Object __result)
+        {
+            __result = ReplacementRuntime.ReplaceResource(__0, null, __result);
+        }
+    }
 
-                if (image == null)
-                    return;
+    [HarmonyPatch]
+    internal static class ReplacementSpineResourcePatch
+    {
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(BetobetoManager.SvTexture), nameof(BetobetoManager.SvTexture.prepareAtlasAssets))]
+        private static bool PrepareAtlas(BetobetoManager.SvTexture __instance,
+            ref Spine.Unity.SpineAtlasAsset _SpAtlasAsset, ref Spine.Unity.SkeletonDataAsset _SpDataAsset,
+            Material[] AMtr, string replace_json_key)
+        {
+            if (!ReplacementRuntime.Prepare(__instance, replace_json_key, AMtr, out var atlas, out var data)) return true;
+            _SpAtlasAsset = atlas;
+            _SpDataAsset = data;
+            return false;
+        }
 
-                TextureManager.CopyTextureProperties(svTexture.MtiImage0.Image, image);
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(BetobetoManager.SvTexture), nameof(BetobetoManager.SvTexture.cleanExecute))]
+        private static bool Clean(BetobetoManager.SvTexture __instance, ref bool __result)
+        {
+            if (!ReplacementRuntime.HasActive(__instance)) return true;
+            __result = ReplacementRuntime.Clean(__instance);
+            return false;
+        }
 
-                var Base = svTexture.getRendered();
-                BLIT.PasteTo(Base, image, Base.width * 0.5f, Base.height * 0.5f, 1f);
-            }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(BetobetoManager.SvTexture), nameof(BetobetoManager.SvTexture.releaseAtlasData))]
+        private static void Release(BetobetoManager.SvTexture __instance) => ReplacementRuntime.Released(__instance);
 
-            public static void RestoreOriginalTexture()
-            {
-                foreach (var texture in _originalSpineTexture)
-                {
-                    try
-                    {
-                        TryReplace(texture.Key, texture.Value);
-                    }
-                    catch (Exception ex)
-                    {
-                        BLog.Error($"Error restoring original spine texture for {texture.Key.MtiImage0.Image.name}", ex);
-                    }
-                }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(BetobetoManager.SvTexture), nameof(BetobetoManager.SvTexture.runBetobeto))]
+        private static bool Dirt(BetobetoManager.SvTexture __instance, int cur_dirt, ref bool __result)
+        {
+            if (!ReplacementRuntime.HasActive(__instance) || ReplacementRuntime.DirtEnabled(__instance)) return true;
+            __instance.prepareTexture();
+            __instance.dirt_index = cur_dirt;
+            __result = true;
+            return false;
+        }
+    }
 
-                foreach (var texture in _originalPictureTexture)
-                {
-                    var image = Traverse.Create(texture.Key).Field<MImage>("LImage_").Value;
-                    if (image == null)
-                        continue;
+    [HarmonyPatch]
+    internal static class ReplacementSpineViewerPatch
+    {
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(SpineViewerNel), "prepareAtlasAssets")]
+        private static void Register(SpineViewerNel __instance) => ReplacementRuntime.Register(__instance);
 
-                    image.Tx = texture.Value;
-                }
-            }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(SpineViewerNel), nameof(SpineViewerNel.clearAnim))]
+        private static void BeforeClear(SpineViewerNel __instance) => ReplacementRuntime.BeforeSwitch(__instance);
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(SpineViewerNel), nameof(SpineViewerNel.clearAnim))]
+        private static void AfterClear(SpineViewerNel __instance) => ReplacementRuntime.AfterSwitch(__instance);
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(SpineViewer), nameof(SpineViewer.switchSkeletonJson))]
+        private static void SwitchJson(SpineViewer __instance, string _jsonkey)
+        {
+            if (__instance is SpineViewerNel viewer) ReplacementRuntime.BeforeSwitch(viewer, _jsonkey);
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(SpineViewer), "FindBone")]
+        private static void FindBone(SpineViewer __instance, ref string __0)
+        {
+            __0 = ReplacementRuntime.MapBone(__instance, __0);
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(SpineViewer), "existBone")]
+        private static void ExistBone(SpineViewer __instance, ref string __0)
+        {
+            __0 = ReplacementRuntime.MapBone(__instance, __0);
+        }
+    }
+
+    [HarmonyPatch]
+    internal static class ReplacementDisplayPatch
+    {
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIPictureBodySpine), "get_scale")]
+        private static void Scale(UIPictureBodySpine __instance, ref float __result)
+        {
+            __result = ReplacementRuntime.ApplyDisplay(__instance, "scale", __result);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIPictureBodySpine), "get_shift_ux")]
+        private static void OffsetX(UIPictureBodySpine __instance, ref float __result)
+        {
+            __result = ReplacementRuntime.ApplyDisplay(__instance, "shift_ux", __result);
+            ReplacementRuntime.ApplyRightShift(__instance, ref __result);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIPictureBodySpine), "get_shift_uy")]
+        private static void OffsetY(UIPictureBodySpine __instance, ref float __result)
+        {
+            __result = ReplacementRuntime.ApplyDisplay(__instance, "shift_uy", __result);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIPictureBodySpine), "get_base_swidth")]
+        private static void Width(UIPictureBodySpine __instance, ref float __result)
+        {
+            __result = ReplacementRuntime.ApplyDisplay(__instance, "base_swidth", __result);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIPictureBodySpine), "get_base_sheight")]
+        private static void Height(UIPictureBodySpine __instance, ref float __result)
+        {
+            __result = ReplacementRuntime.ApplyDisplay(__instance, "base_sheight", __result);
         }
     }
 }

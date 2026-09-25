@@ -8,12 +8,11 @@ namespace BetterExperience.BConfigManager
 {
     public static partial class ConfigManager
     {
-        // 贴图配置影响资源加载阶段；替换贴图开关关闭时不会扫描外部图片目录。
+        // 资源替换配置影响资源加载阶段；总开关关闭时仅保留清单选项，不激活外部资源。
         public static ConfigEntry<bool> EnableMosaic { get; private set; }
-        public static ConfigEntry<bool> EnableReplaceTexture { get; private set; }
+        public static ConfigEntry<bool> EnableResourceReplacement { get; private set; }
         public static ConfigEntry<bool> EnableSensitivities { get; private set; }
-        public static ConfigEntry<bool> EnableReplacePortrait { get; private set; }
-        public static ConfigEntry<List<(string Id, bool Enabled)>> EnabledPortraitPacks { get; private set; }
+        public static ConfigEntry<List<(string Id, bool Enabled)>> EnabledReplacementPacks { get; private set; }
 
         internal const string SectionTexture = "Texture";
 
@@ -26,11 +25,12 @@ namespace BetterExperience.BConfigManager
             {
                 Config.CreateTable(SectionTexture, new Translator(chinese: "贴图", english: "Texture"));
 
-                EnableReplacePortrait = Config.Bind(
-                    SectionTexture, nameof(EnableReplacePortrait), false,
-                    new Translator(chinese: "启用立绘附件替换", english: "Enable Portrait Attachments"),
-                    new Translator(chinese: "自动扫描 ReplaceTexture 中的 .portrait.json 清单，保留原骨骼和动画。修改在下一次立绘切换时生效，使用刷新贴图热键可立即生效。",
-                        english: "Auto-scan .portrait.json manifests from ReplaceTexture, preserving original bones and animations. Changes apply at the next portrait switch, or immediately via the texture refresh hotkey."));
+                EnableResourceReplacement = Config.Bind(
+                    SectionTexture, nameof(EnableResourceReplacement), false,
+                    new Translator(chinese: "启用资源替换", english: "Enable Resource Replacement"),
+                    new Translator(
+                        chinese: "扫描 ReplaceTexture 中的 v2 .replacement.json 资源包。资源包可按列表顺序分层替换普通图片、Spine 图集、骨骼、插槽、皮肤、附件、约束、事件和动画；靠后的包优先。",
+                        english: "Scan v2 .replacement.json packs in ReplaceTexture. Packs layer in list order and can replace regular images, Spine atlases, bones, slots, skins, attachments, constraints, events, and animations; later packs have higher priority."));
                 EnableMosaic = Config.Bind(
                     SectionTexture,
                     nameof(EnableMosaic),
@@ -41,41 +41,22 @@ namespace BetterExperience.BConfigManager
                         english: "Enable mosaic effect."
                         )
                     );
-                EnableReplaceTexture = Config.Bind(
-                    SectionTexture,
-                    nameof(EnableReplaceTexture),
-                    false,
-                    new Translator(chinese: "启用替换贴图", english: "Enable Replace Texture"),
-                    new Translator(
-                        chinese: "启用替换贴图。将使用 BetterExperience\\ReplaceTexture 文件夹中的贴图替换原始贴图。\n" +
-                                 "请确保需要替换的文件和被替换的文件名相同。支持的文件格式为png文件，后缀可为.png或.btep。",
-                        english: "Enable replace texture. " +
-                                 "It will use the texture from the BetterExperience\\ReplaceTexture folder to replace the original texture.\n" +
-                                 "Please ensure that the file to be replaced has the same name as the original file.\n" +
-                                 "Supported file formats are PNG files, with extensions .png or .btep."
-                        )
-                    );
                 EnableSensitivities = Config.Bind(
                     SectionTexture,
                     nameof(EnableSensitivities),
                     true,
-                    new Translator(chinese: "启用敏感内容贴图", english: "Enable Sensitivities"),
+                    new Translator(chinese: "启用敏感内容资源", english: "Enable Sensitivities"),
                     new Translator(
-                        chinese: "启用敏感内容贴图。若关闭，将不会加载 BetterExperience\\ReplaceTexture\\Sensitive 文件夹中的贴图来替换原始贴图。",
-                        english: "Enable sensitivities. If disabled, textures in the BetterExperience\\ReplaceTexture\\Sensitive folder will not be loaded to replace the original textures."
+                        chinese: "启用 Sensitive 目录中的资源包。若关闭，其中的清单及全部依赖会立即失去替换授权。",
+                        english: "Enable replacement packs under Sensitive. If disabled, their manifests and all dependencies immediately lose replacement authorization."
                         )
                     );
-                EnabledPortraitPacks = Config.Bind(
-                    SectionTexture, nameof(EnabledPortraitPacks), new List<(string, bool)>(),
-                    new Translator(chinese: "立绘包列表", english: "Portrait Packs"),
+                EnabledReplacementPacks = Config.Bind(
+                    SectionTexture, nameof(EnabledReplacementPacks), new List<(string, bool)>(),
+                    new Translator(chinese: "资源替换包列表", english: "Replacement Packs"),
                     new Translator(
-                        chinese: "每行一个立绘包：id 旁边的开关决定是否启用。插件自动扫描 ReplaceTexture，" +
-                                 "同一目标只保留最新选择的包：启用新的同目标包时会自动取消之前启用的包并记录日志。" +
-                                 "修改后使用刷新贴图热键刷新立绘。",
-                        english: "One portrait pack per row; the toggle next to the id decides whether it is enabled. " +
-                                 "Only the latest selection is kept per target: enabling a new pack for an already enabled target " +
-                                 "automatically deselects the previous one and logs the change. " +
-                                 "Use the texture refresh hotkey after changing pack files."));
+                        chinese: "每行一个资源包。启用包按当前行序组合，越靠后优先级越高；同一目标的多个包不会自动互斥。修改文件或顺序后使用刷新贴图热键。",
+                        english: "One replacement pack per row. Enabled packs compose in row order, with later rows taking priority; packs targeting the same resource remain enabled together. Use the texture refresh hotkey after editing files or order."));
             }
             catch (Exception ex)
             {
