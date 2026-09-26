@@ -70,6 +70,12 @@
     <Compile Include="BControlManager\ControlManagerCurrency.cs" />
     <Compile Include="BControlManager\ControlManagerMiniGame.cs" />
     <Compile Include="BControlManager\ControlManagerGive.cs" />
+    <Compile Include="BControlManager\ControlManagerPortrait.cs" />
+    <Compile Include="Patches\PortraitControlLogic.cs" />
+    <Compile Include="Patches\PortraitControlSession.cs" />
+    <Compile Include="Patches\PortraitControlCatalog.cs" />
+    <Compile Include="Patches\PortraitControlRuntime.cs" />
+    <Compile Include="Patches\PortraitControlPatch.cs" />
     <Compile Include="BConfigManager\ConfigManagerWeather.cs" />
     <Compile Include="BetterExperience.cs" />
     <Compile Include="BConfigManager\ConfigManagerCane.cs" />

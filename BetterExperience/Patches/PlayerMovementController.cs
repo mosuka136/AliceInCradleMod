@@ -8,7 +8,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityModBase.HGuiSpace;
-using UnityModBase.HotkeyManager;
+using UnityModBase.HotkeySpace;
 using XX;
 
 namespace BetterExperience.Patches

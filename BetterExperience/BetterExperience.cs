@@ -65,16 +65,19 @@ namespace BetterExperience
         {
             PlayerMovementController.Update();
             ReplacementRuntime.PollSettings();
+            PortraitControlRuntime.Update();
         }
 
         public void OnDisable()
         {
+            PortraitControlRuntime.Stop(true);
             PlayerMovementController.Stop();
             NoticeGUI.ClearAll();
         }
 
         public void OnDestroy()
         {
+            PortraitControlRuntime.Stop(true);
             ReplacementRuntime.Stop();
             PlayerMovementController.Dispose();
             NoticeGUI.ClearAll();

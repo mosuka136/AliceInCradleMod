@@ -83,7 +83,14 @@ namespace BetterExperience.Test
             nameof(ControlManager.GiveChoices),
             nameof(ControlManager.GiveItemGrade),
             nameof(ControlManager.GiveItemCount),
-            nameof(ControlManager.GiveItem)
+            nameof(ControlManager.GiveItem),
+            nameof(ControlManager.PortraitFilter),
+            nameof(ControlManager.PortraitPoses),
+            nameof(ControlManager.PortraitPresets),
+            nameof(ControlManager.PortraitStates),
+            nameof(ControlManager.PortraitAdditional),
+            nameof(ControlManager.ApplyPortrait),
+            nameof(ControlManager.LockPortrait)
         };
 
         [Fact]

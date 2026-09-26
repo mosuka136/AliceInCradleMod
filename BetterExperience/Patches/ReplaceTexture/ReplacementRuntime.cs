@@ -99,6 +99,7 @@ namespace BetterExperience.Patches.ReplaceTexture
         private static ReplacementCatalog catalog = new ReplacementCatalog();
         private static string settings;
         private static int revision;
+        internal static int Revision => revision;
         private static bool stopped;
         private static bool initialized;
         private static bool spineAvailable;

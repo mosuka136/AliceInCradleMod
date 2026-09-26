@@ -1,7 +1,7 @@
 using BetterExperience.BLogSpace;
 using System;
 using UnityModBase.HConfigSpace;
-using UnityModBase.HotkeyManager;
+using UnityModBase.HotkeySpace;
 using UnityModBase.HProvider;
 using UnityModBase.HTranslatorSpace;
 

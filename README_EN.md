@@ -26,7 +26,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 - Limit removals: puppet merchant spawn limits, bench menu limits, treasure chest limits, warehouse region limits, etc.
 - Map and weather: fast travel anywhere (including night and thunder), night bench travel, lock weather, lock danger level, depart at the highest danger reached, dark area removal in specific zones, forced weather (wind/thunder/mist/drought/dense mist/plague), summon wandering merchants to the current map, merchants always visible on the map and always appearing, night-only summoners open in daytime, mana weed recharge time cap
 - Guild quests: one-key quest board refresh inside the guild counter (reroll all unaccepted quests while selecting one; accepted ones are kept)
-- Visual features: remove mosaic, no dirt stains, no wettening, resource replacement, sensitive-content toggle, runtime resource reload
+- Visual features: switch and lock HUD portrait poses and states, remove mosaic, no dirt stains, no wettening, resource replacement, sensitive-content toggle, runtime resource reload
 - Hotkey features: supports key combinations, multiple alternative hotkeys, and gamepad input
 - Debug: debug switch; the control page lists items, skills and recipes to give or unlock
 
