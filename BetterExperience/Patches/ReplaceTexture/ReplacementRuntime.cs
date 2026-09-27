@@ -17,11 +17,15 @@ using Object = UnityEngine.Object;
 namespace BetterExperience.Patches.ReplaceTexture
 {
     // Unity resources and all replacement state are touched only from the Unity main thread.
-    internal static class ReplacementRuntime
+    internal static partial class ReplacementRuntime
     {
         private sealed class SpineState
         {
             internal SpineBundle Current;
+            internal SpineBundle Preview;
+            internal ReplacementTarget PreviewTarget;
+            internal SpineBundle Shown => Preview ?? Current;
+            internal string ShownKey => Preview != null ? PreviewTarget.JsonKey : JsonKey;
             internal int Attempt = -1;
             internal string JsonKey;
             internal string PendingKey;
@@ -130,13 +134,13 @@ namespace BetterExperience.Patches.ReplaceTexture
         private static readonly FieldInfo cachedAtlas = AccessTools.Field(typeof(SpineAtlasAsset), "atlas");
         private static readonly MethodInfo initializeData = AccessTools.Method(typeof(SkeletonDataAsset), "InitializeWithData", new[] { typeof(SkeletonData) });
 
-        internal static bool HasWork => spineStates.Values.Any(state => state.Current != null)
+        internal static bool HasWork => spineStates.Values.Any(state => state.Shown != null)
             || mtiRecords.Values.Any(record => record.Replacement != null)
             || resourceRecords.Values.Any(record => record.Replacement != null);
 
         internal static bool HasActive(BetobetoManager.SvTexture texture)
         {
-            return texture != null && spineStates.TryGetValue(texture, out var state) && state.Current != null;
+            return texture != null && spineStates.TryGetValue(texture, out var state) && state.Shown != null;
         }
 
         internal static void Initialize()
@@ -268,6 +272,27 @@ namespace BetterExperience.Patches.ReplaceTexture
                 }
                 catch (Exception ex) { BLog.Error("Replacement refresh failed for one Spine viewer.", ex); }
             }
+            RevokeUnauthorizedPreviews();
+            PortraitControlRuntime.OnReplacementSelectionChanged(force
+                ? new List<ReplacementTarget>() : selection.NewlyEnabledPortraits(previous));
+        }
+
+        internal static bool PreviewTargetEnabled(ReplacementTarget target) => target != null && Enabled && spineAvailable
+            && selection.Authorizes(new[] { target.Owner }) && selection.Layers(target.Identity).Contains(target)
+            && !selection.Invalid(target.Identity)
+            && (!target.Owner.Sensitive || ConfigManager.EnableSensitivities?.Value == true);
+
+        internal static PortraitPreviewReadiness PreviewReadiness(UIPictureBodySpine body, ReplacementTarget target)
+        {
+            if (!PreviewTargetEnabled(target)) return PortraitPreviewReadiness.Failed;
+            var viewer = body?.getViewer();
+            var texture = viewer?.getSvTexture();
+            if (texture == null || texture.key != target.SpineKey
+                || (viewer.replace_json_key ?? texture.MtiText.default_json_key) != target.JsonKey)
+                return PortraitPreviewReadiness.Failed;
+            return spineStates.TryGetValue(texture, out var state) && state.Preview != null
+                && ReferenceEquals(state.PreviewTarget, target)
+                ? PortraitPreviewReadiness.Ready : PortraitPreviewReadiness.Failed;
         }
 
         private static List<string> EnabledIds() =>
@@ -398,11 +423,11 @@ namespace BetterExperience.Patches.ReplaceTexture
             string key = jsonKey ?? viewer.replace_json_key ?? texture.MtiText.default_json_key;
             Change(texture, key, viewer.getMaterial(), viewer);
             if (jsonKey != null && spineStates.TryGetValue(texture, out var state)
-                && state.Current != null && state.JsonKey == key)
+                && state.Shown != null && state.ShownKey == key)
             {
-                viewerAtlas.SetValue(viewer, state.Current.Atlas);
-                viewerData.SetValue(viewer, state.Current.Data);
-                viewerContainer.SetValue(viewer, state.Current.Atlas.GetAtlas(false));
+                viewerAtlas.SetValue(viewer, state.Shown.Atlas);
+                viewerData.SetValue(viewer, state.Shown.Data);
+                viewerContainer.SetValue(viewer, state.Shown.Atlas.GetAtlas(false));
             }
             ApplyClipping(viewer);
         }
@@ -414,16 +439,16 @@ namespace BetterExperience.Patches.ReplaceTexture
             data = null;
             if (!spineAvailable || texture == null || materials == null || materials.Length == 0) return false;
             string key = jsonKey ?? texture.MtiText.default_json_key;
-            if (!spineStates.TryGetValue(texture, out var existing) || existing.Attempt < 0)
+            if (!spineStates.TryGetValue(texture, out var existing) || (existing.Preview == null && existing.Attempt < 0))
                 Change(texture, key, materials[0], null);
-            if (!spineStates.TryGetValue(texture, out var state) || state.Current == null) return false;
-            if (state.JsonKey != key) throw new InvalidOperationException("Spine JSON variant changed outside a safe switch.");
-            state.Current.Bind(materials);
-            svAtlas.SetValue(texture, state.Current.Atlas);
-            svData.SetValue(texture, state.Current.Data);
+            if (!spineStates.TryGetValue(texture, out var state) || state.Shown == null) return false;
+            if (state.ShownKey != key) throw new InvalidOperationException("Spine JSON variant changed outside a safe switch.");
+            state.Shown.Bind(materials);
+            svAtlas.SetValue(texture, state.Shown.Atlas);
+            svData.SetValue(texture, state.Shown.Data);
             texture.preapreAtlasDepth();
-            atlas = state.Current.Atlas;
-            data = state.Current.Data;
+            atlas = state.Shown.Atlas;
+            data = state.Shown.Data;
             return true;
         }
 
@@ -437,7 +462,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             if (material == null) return false;
             var old = state.Current;
             var switchingAnimator = switching == null ? null : animator.GetValue(switching);
-            if (LiveViewers().Any(viewer => viewer != switching && viewer.enabled && viewer.getSvTexture() == texture
+            if (state.Preview == null && LiveViewers().Any(viewer => viewer != switching && viewer.enabled && viewer.getSvTexture() == texture
                 && !ReferenceEquals(animator.GetValue(viewer), switchingAnimator))) return false;
             string identity = SpineIdentity(texture.key, key);
             var layers = ActiveLayers(identity);
@@ -518,20 +543,32 @@ namespace BetterExperience.Patches.ReplaceTexture
             state.Attempt = revision;
             state.JsonKey = key;
             if (old == null && candidate == null) return false;
-            Invalidate(texture, old);
             state.Current = candidate;
+            // 正常组合继续后台更新，但不能盖住临时预览。
+            if (state.Preview != null)
+            {
+                ForgetReserved(texture, old);
+                if (old != null) retired.Add(old);
+                return false;
+            }
+            RebindShown(texture, state, old);
+            if (old != null) retired.Add(old);
+            BLog.Info(candidate == null ? "Spine replacement restored: " + texture.key
+                : "Spine replacement activated: " + string.Join(" + ", candidate.Sources.Select(source => source.Id)));
+            return true;
+        }
+
+        private static void RebindShown(BetobetoManager.SvTexture texture, SpineState state, SpineBundle old)
+        {
+            Invalidate(texture, old);
             var rendered = texture.getRendered();
             texture.releaseTexture();
             if (rendered != null) Object.Destroy(rendered);
             depth.SetValue(texture, null);
             texture.atlas_depth_written = false;
-            svAtlas.SetValue(texture, candidate?.Atlas);
-            svData.SetValue(texture, candidate?.Data);
-            if (old != null) retired.Add(old);
+            svAtlas.SetValue(texture, state.Shown?.Atlas);
+            svData.SetValue(texture, state.Shown?.Data);
             displayRevision++;
-            BLog.Info(candidate == null ? "Spine replacement restored: " + texture.key
-                : "Spine replacement activated: " + string.Join(" + ", candidate.Sources.Select(source => source.Id)));
-            return true;
         }
 
         private static void Cancel(SpineState state)
@@ -641,8 +678,8 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         internal static bool Clean(BetobetoManager.SvTexture texture)
         {
-            if (!spineStates.TryGetValue(texture, out var state) || state.Current == null) return false;
-            var image = state.Current.Image;
+            if (!spineStates.TryGetValue(texture, out var state) || state.Shown == null) return false;
+            var image = state.Shown.Image;
             var previous = RenderTexture.active;
             try
             {
@@ -657,24 +694,24 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         internal static bool DirtEnabled(BetobetoManager.SvTexture texture)
         {
-            return !spineStates.TryGetValue(texture, out var state) || state.Current == null
-                || state.Current.Composition.DirtEnabled;
+            return !spineStates.TryGetValue(texture, out var state) || state.Shown == null
+                || state.Shown.Composition.DirtEnabled;
         }
 
         internal static string MapBone(SpineViewer viewer, string name)
         {
             if (name == null || !(viewer is SpineViewerNel nelViewer)) return name;
             var texture = nelViewer.getSvTexture();
-            if (texture != null && spineStates.TryGetValue(texture, out var state) && state.Current != null
-                && state.Current.Composition.BoneMap.TryGetValue(name, out string mapped)) return mapped;
+            if (texture != null && spineStates.TryGetValue(texture, out var state) && state.Shown != null
+                && state.Shown.Composition.BoneMap.TryGetValue(name, out string mapped)) return mapped;
             return name;
         }
 
         internal static float ApplyDisplay(UIPictureBodySpine body, string property, float value)
         {
             var texture = body?.getViewer()?.getSvTexture();
-            if (texture == null || !spineStates.TryGetValue(texture, out var state) || state.Current == null) return value;
-            var display = state.Current.Composition.Display;
+            if (texture == null || !spineStates.TryGetValue(texture, out var state) || state.Shown == null) return value;
+            var display = state.Shown.Composition.Display;
             switch (property)
             {
                 case "scale": return value * (display.ScaleMultiplier ?? 1f);
@@ -699,11 +736,11 @@ namespace BetterExperience.Patches.ReplaceTexture
         internal static void ApplyRightShift(UIPictureBodySpine body, ref float value)
         {
             var texture = body?.getViewer()?.getSvTexture();
-            if (texture == null || !spineStates.TryGetValue(texture, out var state) || state.Current == null
-                || !state.Current.Composition.Display.RightShift.HasValue) return;
+            if (texture == null || !spineStates.TryGetValue(texture, out var state) || state.Shown == null
+                || !state.Shown.Composition.Display.RightShift.HasValue) return;
             float old = body.rightshift_px;
             float side = GetPositionRight(body);
-            value += side * (state.Current.Composition.Display.RightShift.Value - old) / 64f;
+            value += side * (state.Shown.Composition.Display.RightShift.Value - old) / 64f;
         }
 
         private static float GetPositionRight(UIPictureBodySpine body)
@@ -721,7 +758,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             if (clipping == null || viewer == null) return;
             var texture = viewer.getSvTexture();
             bool enabled = texture != null && spineStates.TryGetValue(texture, out var state)
-                && state.Current != null && state.Current.Composition.HasClipping;
+                && state.Shown != null && state.Shown.Composition.HasClipping;
             if (animator.GetValue(viewer) is SkeletonRenderer renderer) clipping.SetValue(renderer, enabled);
         }
 
@@ -1070,12 +1107,22 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
         }
 
+        private static void ForgetReserved(BetobetoManager.SvTexture texture, SpineBundle old)
+        {
+            if (old == null) return;
+            foreach (var viewer in LiveViewers().Where(item => item.getSvTexture() == texture))
+                if (reserved.GetValue(viewer) is IDictionary cache) cache.Remove(old.Data);
+        }
+
         internal static void Released(BetobetoManager.SvTexture texture)
         {
+            if (previewBuild?.Texture == texture) CancelPreviewBuild();
             if (!spineStates.TryGetValue(texture, out var state)) return;
             Cancel(state);
-            Invalidate(texture, state.Current);
+            Invalidate(texture, state.Shown);
+            ForgetReserved(texture, state.Current);
             if (state.Current != null) retired.Add(state.Current);
+            if (state.Preview != null) retired.Add(state.Preview);
             spineStates.Remove(texture);
             depth.SetValue(texture, null);
             Collect();

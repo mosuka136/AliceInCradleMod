@@ -55,8 +55,8 @@ namespace BetterExperience.BConfigManager
                     SectionTexture, nameof(EnabledReplacementPacks), new List<(string, bool)>(),
                     new Translator(chinese: "资源替换包列表", english: "Replacement Packs"),
                     new Translator(
-                        chinese: "每行一个资源包。启用包按当前行序组合，越靠后优先级越高；同一目标的多个包不会自动互斥。修改文件或顺序后使用刷新贴图热键。",
-                        english: "One replacement pack per row. Enabled packs compose in row order, with later rows taking priority; packs targeting the same resource remain enabled together. Use the texture refresh hotkey after editing files or order."));
+                        chinese: "每行一个资源包。启用包按当前行序组合，越靠后优先级越高；同一目标的多个包不会自动互斥。新启用立绘包加载完成后，会先预览对应姿态约 2 秒，再恢复。修改资源文件后使用刷新贴图热键。",
+                        english: "One replacement pack per row. Enabled packs compose in row order, with later rows taking priority; packs targeting the same resource remain enabled together. Once loaded, newly enabled portrait packs preview a matching pose for about 2 seconds, then restore the previous pose, lock and normal ordering. Use the texture refresh hotkey after editing resource files."));
             }
             catch (Exception ex)
             {

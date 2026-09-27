@@ -14,7 +14,7 @@ using XX;
 namespace BetterExperience.Patches
 {
     /// <summary>仅在 Unity 主线程控制当前 HUD 立绘，不写入角色状态或存档。</summary>
-    internal static class PortraitControlRuntime
+    internal static partial class PortraitControlRuntime
     {
         private static readonly PortraitControlSession Session = new PortraitControlSession();
         private static readonly object NoticeOwner = new object();
@@ -37,13 +37,18 @@ namespace BetterExperience.Patches
         private static byte sensitiveLevel;
         private static bool refreshRequired;
 
-        internal static bool Blocks(UIPictureBase picture) => Session.Blocks(picture);
-        internal static bool Protects(UIPictureBase picture) => Session.Protects(picture);
-        internal static bool LocksAnimation(UIPicture picture) => Session.Locked && Session.Protects(picture);
+        internal static bool Blocks(UIPictureBase picture) => ControlFor(picture).Blocks(picture);
+        internal static bool Protects(UIPictureBase picture) => ControlFor(picture).Protects(picture);
+        internal static bool LocksAnimation(UIPicture picture)
+        {
+            var control = ControlFor(picture);
+            return control.Protects(picture) && (control.Locked || ReferenceEquals(control, Preview.Control));
+        }
 
         internal static bool TryAdditional(UIPicture picture, out UIPictureBase.EMSTATE_ADD value)
         {
-            var selection = ReferenceEquals(Session.Owner, picture) ? rollbackOverride ?? Session.OverrideFor(picture) : null;
+            var control = ControlFor(picture);
+            var selection = ReferenceEquals(control.Owner, picture) ? rollbackOverride ?? control.OverrideFor(picture) : null;
             value = selection?.Additional ?? 0;
             return selection.HasValue;
         }
@@ -90,6 +95,7 @@ namespace BetterExperience.Patches
             int index = PortraitControlLogic.SelectOne(rows, labels, shownPoses.FindIndex(entry => draft?.Pose == entry.Pose));
             if (index < 0)
             {
+                EndReplacementPreview(true);
                 draft = null;
                 Session.CancelPending();
                 return;
@@ -148,6 +154,7 @@ namespace BetterExperience.Patches
 
         private static void Changed()
         {
+            EndReplacementPreview(true);
             if (Session.LockRequested) Queue(true);
             else Session.CancelPending();
         }
@@ -166,6 +173,7 @@ namespace BetterExperience.Patches
 
         private static void Queue(bool lockAfter)
         {
+            EndReplacementPreview(true);
             try
             {
                 EnsureCatalog();
@@ -174,6 +182,8 @@ namespace BetterExperience.Patches
                     NoticeGUI.Show("请在读档后选择立绘姿态。", owner: NoticeOwner);
                     return;
                 }
+                // 明确的面板操作优先于尚未完成的预览恢复。
+                EndReplacementPreview(false);
                 if (!ReferenceEquals(Session.Owner, picture))
                 {
                     Stop(restore: true, clearSelection: false);
@@ -189,6 +199,7 @@ namespace BetterExperience.Patches
 
         internal static void Update()
         {
+            if (UpdateReplacementPreview()) return;
             if (Session.Owner == null) return;
             if (ConfigManager.EnableBetterExperience?.Value != true)
             {
@@ -312,8 +323,10 @@ namespace BetterExperience.Patches
 
         internal static void Stop(bool restore, bool clearSelection = true)
         {
-            var picture = Session.Owner as UIPicture;
-            bool touched = Session.HasPending || Session.Active.HasValue;
+            var picture = Session.Owner as UIPicture ?? Preview.Control.Owner as UIPicture;
+            bool touched = Session.HasPending || Session.Active.HasValue || Preview.Active;
+            EndReplacementPreview(false);
+            NoticeGUI.Clear(PreviewNoticeOwner);
             Session.Reset();
             refreshRequired = false;
             rollbackOverride = null;
@@ -329,6 +342,11 @@ namespace BetterExperience.Patches
                 catalogSource = null;
             }
             if (!restore || !touched || picture == null || picture.Gob == null || !picture.gob_prepared) return;
+            RestoreGamePortrait(picture);
+        }
+
+        private static void RestoreGamePortrait(UIPicture picture)
+        {
             try
             {
                 ClearFader(picture);
@@ -349,11 +367,13 @@ namespace BetterExperience.Patches
 
         internal static void OnDestroyed(UIPicture picture)
         {
-            if (ReferenceEquals(Session.Owner, picture) || ReferenceEquals(catalogOwner, picture)) Stop(false);
+            if (ReferenceEquals(Session.Owner, picture) || ReferenceEquals(catalogOwner, picture)
+                || ReferenceEquals(Preview.Control.Owner, picture)) Stop(false);
         }
 
         internal static void OnScriptReload(UIPictureBase picture)
         {
+            if (ReferenceEquals(Preview.Control.Owner, picture)) EndReplacementPreview(true);
             if (ReferenceEquals(Session.Owner, picture)) refreshRequired = true;
         }
 

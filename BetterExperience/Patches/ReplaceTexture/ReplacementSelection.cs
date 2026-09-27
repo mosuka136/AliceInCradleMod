@@ -47,6 +47,9 @@ namespace BetterExperience.Patches.ReplaceTexture
                     : target.ResourcePath == key && target.ObjectType == objectType));
 
         internal bool Invalid(string identity) => invalid.Contains(identity);
+        internal List<ReplacementTarget> NewlyEnabledPortraits(ReplacementSelection previous) => targets
+            .Where(target => target.Type == "spine" && !Invalid(target.Identity)
+                && !previous.Authorizes(new[] { target.Owner })).ToList();
         internal bool Authorizes(IEnumerable<ReplacementPackage> sources) => Enabled
             && sources.Where(source => source != null).All(source => EnabledIds.Contains(source.Id)
                 && (!source.Sensitive || AllowSensitive));

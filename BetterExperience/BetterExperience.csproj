@@ -73,6 +73,8 @@
     <Compile Include="BControlManager\ControlManagerPortrait.cs" />
     <Compile Include="Patches\PortraitControlLogic.cs" />
     <Compile Include="Patches\PortraitControlSession.cs" />
+    <Compile Include="Patches\PortraitPreviewSession.cs" />
+    <Compile Include="Patches\PortraitReplacementPreview.cs" />
     <Compile Include="Patches\PortraitControlCatalog.cs" />
     <Compile Include="Patches\PortraitControlRuntime.cs" />
     <Compile Include="Patches\PortraitControlPatch.cs" />
@@ -213,6 +215,8 @@
     <Compile Include="Patches\ReplaceTexture\SpineComposer.cs" />
     <Compile Include="Patches\ReplaceTexture\ReplacementRuntime.cs" />
     <Compile Include="Patches\ReplaceTexture\ReplacementSelection.cs" />
+    <Compile Include="Patches\ReplaceTexture\ReplacementPreview.cs" />
+    <Compile Include="Patches\ReplaceTexture\ReplacementPreviewResources.cs" />
     <Compile Include="Patches\ReplaceTexture\ReplacementWork.cs" />
     <Compile Include="Patches\ReplaceTexture\ReplacementPreparation.cs" />
     <Compile Include="PatchInfo.cs" />
