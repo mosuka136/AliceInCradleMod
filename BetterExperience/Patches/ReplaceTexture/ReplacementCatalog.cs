@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace BetterExperience.Patches.ReplaceTexture
 {
@@ -71,13 +72,16 @@ namespace BetterExperience.Patches.ReplaceTexture
         // 存在读不出 id 的清单时为 false：此时无法判定未知配置行归属，不能删除任何未知行。
         internal bool DeclaredIdsComplete = true;
 
-        internal static ReplacementCatalog Discover(string root, string sensitive, bool allowSensitive)
+        internal static ReplacementCatalog Discover(string root, string sensitive, bool allowSensitive,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var result = new ReplacementCatalog();
             if (!Directory.Exists(root)) return result;
             var verified = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (string file in Enumerate(root).OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (!file.EndsWith(".replacement.json", StringComparison.OrdinalIgnoreCase)) continue;
                 // 先单独读出清单声明的 id 再做完整解析：敏感包被关闭或清单解析失败时也要登记 id，
                 // 否则这些包的配置行会被误判成“包已被删除”而清除。
@@ -103,6 +107,7 @@ namespace BetterExperience.Patches.ReplaceTexture
                 }
                 catch (Exception ex) { result.Errors.Add(file + ": " + ex.Message); }
             }
+            cancellationToken.ThrowIfCancellationRequested();
             foreach (var duplicate in result.Packages.GroupBy(package => package.Id, StringComparer.Ordinal)
                 .Where(group => group.Count() > 1).ToList())
             {

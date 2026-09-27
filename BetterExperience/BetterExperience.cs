@@ -71,9 +71,12 @@ namespace BetterExperience
         public void OnDisable()
         {
             PortraitControlRuntime.Stop(true);
+            ReplacementRuntime.Stop();
             PlayerMovementController.Stop();
             NoticeGUI.ClearAll();
         }
+
+        public void OnEnable() => ReplacementRuntime.Resume();
 
         public void OnDestroy()
         {

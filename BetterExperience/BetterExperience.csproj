@@ -212,6 +212,9 @@
     <Compile Include="Patches\ReplaceTexture\ReplacementResourcePaths.cs" />
     <Compile Include="Patches\ReplaceTexture\SpineComposer.cs" />
     <Compile Include="Patches\ReplaceTexture\ReplacementRuntime.cs" />
+    <Compile Include="Patches\ReplaceTexture\ReplacementSelection.cs" />
+    <Compile Include="Patches\ReplaceTexture\ReplacementWork.cs" />
+    <Compile Include="Patches\ReplaceTexture\ReplacementPreparation.cs" />
     <Compile Include="PatchInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Patches\RemoveLimitInTreasureChestsPatch.cs" />

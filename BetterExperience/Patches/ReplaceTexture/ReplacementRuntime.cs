@@ -24,6 +24,10 @@ namespace BetterExperience.Patches.ReplaceTexture
             internal SpineBundle Current;
             internal int Attempt = -1;
             internal string JsonKey;
+            internal string PendingKey;
+            internal ReplacementWork<PreparedSpine> Pending;
+            internal SkeletonDataAsset PendingOriginal;
+            internal float PendingSince;
         }
 
         private sealed class SpineBundle : IDisposable
@@ -75,6 +79,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             internal ReplacementPackage Source;
             internal string SourceIdentity;
             internal int Attempt = -1;
+            internal ReplacementWork<byte[]> Pending;
         }
 
         private sealed class ResourceRecord
@@ -87,6 +92,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             internal ReplacementPackage Source;
             internal string SourceIdentity;
             internal int Attempt = -1;
+            internal ReplacementWork<byte[]> Pending;
         }
 
         private static readonly Dictionary<BetobetoManager.SvTexture, SpineState> spineStates =
@@ -97,9 +103,14 @@ namespace BetterExperience.Patches.ReplaceTexture
         private static readonly Dictionary<string, ResourceRecord> resourceRecords =
             new Dictionary<string, ResourceRecord>(StringComparer.Ordinal);
         private static ReplacementCatalog catalog = new ReplacementCatalog();
-        private static string settings;
+        private static readonly ReplacementSelectionDelay selectionDelay = new ReplacementSelectionDelay();
+        private static ReplacementSelection selection = new ReplacementSelection(catalog, null, false, false);
+        private static ReplacementWork<ReplacementCatalog> scan;
+        private static bool lastSensitive;
         private static int revision;
-        internal static int Revision => revision;
+        private static int displayRevision;
+        private static int uploadFrame = -1;
+        internal static int Revision => displayRevision;
         private static bool stopped;
         private static bool initialized;
         private static bool spineAvailable;
@@ -116,6 +127,8 @@ namespace BetterExperience.Patches.ReplaceTexture
         private static readonly FieldInfo reserved = AccessTools.Field(typeof(SpineViewer), "ORsvData");
         private static readonly FieldInfo mtiImage = AccessTools.Field(typeof(MTIOneImage), "LImage_");
         private static readonly FieldInfo clipping = AccessTools.Field(typeof(SkeletonRenderer), "useClipping");
+        private static readonly FieldInfo cachedAtlas = AccessTools.Field(typeof(SpineAtlasAsset), "atlas");
+        private static readonly MethodInfo initializeData = AccessTools.Method(typeof(SkeletonDataAsset), "InitializeWithData", new[] { typeof(SkeletonData) });
 
         internal static bool HasWork => spineStates.Values.Any(state => state.Current != null)
             || mtiRecords.Values.Any(record => record.Replacement != null)
@@ -133,13 +146,22 @@ namespace BetterExperience.Patches.ReplaceTexture
             spineAvailable = new MemberInfo[]
             {
                 svAtlas, svData, depth, allocate, viewerAtlas, viewerData, viewerContainer,
-                viewerTexture, animator, reserved
+                viewerTexture, animator, reserved, cachedAtlas, initializeData
             }.All(member => member != null);
             if (!spineAvailable) BLog.Warn("Spine resource replacement disabled: game interfaces do not match.");
             if (mtiImage == null) BLog.Warn("MTI resource replacement disabled: image container interface does not match.");
             Directory.CreateDirectory(PatchInfo.ReplaceImagePath);
             Directory.CreateDirectory(PatchInfo.ReplaceSensitiveImagePath);
-            Reload();
+            lastSensitive = ConfigManager.EnableSensitivities?.Value == true;
+            selectionDelay.Reset(Settings);
+            // 初次 Resources.Load 的返回对象会被游戏持有；必须在注册补丁前建立完整目录。
+            // 仅启动时同步扫描，游戏内开关变化使用目录快照，手动刷新走后台扫描。
+            try
+            {
+                AcceptCatalog(ReplacementCatalog.Discover(PatchInfo.ReplaceImagePath,
+                    PatchInfo.ReplaceSensitiveImagePath, lastSensitive));
+            }
+            catch (Exception ex) { BLog.Error("Initial replacement discovery failed.", ex); }
         }
 
         private static string Settings => stopped + "|" + ConfigManager.EnableResourceReplacement?.Value + "|"
@@ -147,37 +169,105 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         internal static void PollSettings()
         {
-            if (!initialized) return;
-            if (settings != Settings)
+            if (!initialized || stopped) return;
+            bool sensitive = ConfigManager.EnableSensitivities?.Value == true;
+            if (sensitive != lastSensitive)
             {
+                lastSensitive = sensitive;
+                scan?.Dispose();
+                scan = null;
+                // 撤销敏感授权立即生效；重新授权时后台补扫可能未载入的敏感目录。
+                ApplySelection(false);
                 Reload();
-                RefreshMtiSpineTextures();
-                ReplayLiveSpines();
             }
+            if (scan != null && scan.TryTake(out var scanned, out var error))
+            {
+                scan = null;
+                if (error != null) BLog.Error("Replacement discovery failed; keeping the previous catalog.", error);
+                else AcceptCatalog(scanned);
+            }
+            if (selectionDelay.Ready(Settings, Time.unscaledTime, !Enabled)) ApplySelection(false);
+            if (selectionDelay.Waiting) return;
             RetryMtiRecords();
+            RefreshResourceRecords();
+            PumpSpines();
             Collect();
+        }
+
+        private static void AcceptCatalog(ReplacementCatalog scanned)
+        {
+            SyncPackRows(scanned);
+            catalog = scanned;
+            foreach (string message in catalog.Errors) BLog.Warn("Replacement: " + message);
+            ApplySelection(true);
+            BLog.Info("Resource replacement catalog refreshed.");
         }
 
         internal static void Reload()
         {
-            if (!initialized) return;
-            settings = Settings;
-            try
-            {
-                var scanned = ReplacementCatalog.Discover(PatchInfo.ReplaceImagePath,
-                    PatchInfo.ReplaceSensitiveImagePath, ConfigManager.EnableSensitivities?.Value == true);
-                SyncPackRows(scanned);
-                catalog = scanned;
-                foreach (string error in catalog.Errors) BLog.Warn("Replacement: " + error);
-                settings = Settings;
-            }
-            catch (Exception ex)
-            {
-                BLog.Error("Replacement discovery failed; keeping the previous catalog.", ex);
-            }
+            if (!initialized || stopped) return;
+            scan?.Dispose();
+            string root = PatchInfo.ReplaceImagePath, sensitive = PatchInfo.ReplaceSensitiveImagePath;
+            bool allow = ConfigManager.EnableSensitivities?.Value == true;
+            scan = new ReplacementWork<ReplacementCatalog>(token => ReplacementCatalog.Discover(root, sensitive, allow, token));
+        }
+
+        private static void ApplySelection(bool force)
+        {
+            var previous = selection;
+            selection = new ReplacementSelection(catalog, EnabledIds(), Enabled, ConfigManager.EnableSensitivities?.Value == true);
+            selectionDelay.Reset(Settings);
             revision++;
+            foreach (var pair in spineStates)
+            {
+                var state = pair.Value;
+                string identity = SpineIdentity(pair.Key.key, state.PendingKey ?? state.JsonKey);
+                if (!force && previous.SameSpine(selection, identity)
+                    && (state.Current == null || CanRetain(state.Current.Sources, identity)))
+                { if (state.Attempt >= 0) state.Attempt = revision; }
+                else { Cancel(state); state.Attempt = -1; }
+            }
+            foreach (var record in mtiRecords.Values)
+            {
+                if (!force && previous.SameTexture(selection, "mti", record.AssetKey, record.ImageKey, null)
+                    && (record.Source == null || CanRetain(new[] { record.Source }, record.SourceIdentity))) record.Attempt = revision;
+                else { record.Pending?.Dispose(); record.Pending = null; record.Attempt = -1; }
+            }
+            foreach (var record in resourceRecords.Values)
+            {
+                if (!force && previous.SameTexture(selection, "resources", record.Path, null, record.ObjectType)
+                    && (record.Source == null || CanRetain(new[] { record.Source }, record.SourceIdentity))) record.Attempt = revision;
+                else { record.Pending?.Dispose(); record.Pending = null; record.Attempt = -1; }
+            }
             RetryMtiRecords();
             RefreshResourceRecords();
+            RefreshMtiSpineTextures(previous, force);
+            foreach (var viewer in LiveViewers())
+            {
+                var texture = viewer.getSvTexture();
+                if (texture == null || viewer.getBaseAnimName() == null) continue;
+                string key = viewer.replace_json_key ?? texture.MtiText.default_json_key;
+                string identity = SpineIdentity(texture.key, key);
+                if ((!force && previous.SameSpine(selection, identity)
+                    && (!spineStates.TryGetValue(texture, out var unchanged) || unchanged.Attempt == revision))
+                    || (!HasActive(texture) && !HasLayers(identity))) continue;
+                try
+                {
+                    if (!viewer.enabled)
+                    {
+                        // 隐藏姿态等下次显示时再准备，但撤销授权的旧资源立即释放。
+                        if (spineStates.TryGetValue(texture, out var hidden) && hidden.Current != null
+                            && !CanRetain(hidden.Current.Sources, identity) && Install(texture, hidden, key, null))
+                        {
+                            Replay(viewer);
+                            hidden.Attempt = -1;
+                        }
+                        continue;
+                    }
+                    if (Change(texture, key, viewer.getMaterial(), viewer)) Replay(viewer);
+                }
+                catch (Exception ex) { BLog.Error("Replacement refresh failed for one Spine viewer.", ex); }
+            }
         }
 
         private static List<string> EnabledIds() =>
@@ -217,33 +307,42 @@ namespace BetterExperience.Patches.ReplaceTexture
         internal static void Refresh()
         {
             Reload();
-            RefreshMtiSpineTextures();
-            ReplayLiveSpines();
-            Collect();
-            BLog.Info("Resource replacements refreshed.");
         }
 
-        private static void ReplayLiveSpines()
+        private static void PumpSpines()
         {
+            var visible = new HashSet<BetobetoManager.SvTexture>();
             foreach (var viewer in LiveViewers())
             {
                 try
                 {
                     var texture = viewer.getSvTexture();
-                    if (texture == null) continue;
+                    if (texture == null || !viewer.enabled) continue;
+                    visible.Add(texture);
+                    if (!spineStates.TryGetValue(texture, out var state)) continue;
+                    if (state.Pending == null ? state.Attempt >= 0 : !state.Pending.IsCompleted) continue;
                     string key = viewer.replace_json_key ?? texture.MtiText.default_json_key;
-                    string identity = SpineIdentity(texture.key, key);
-                    if (!HasActive(texture) && !HasLayers(identity)) continue;
-                    string animation = viewer.getBaseAnimName();
-                    if (animation == null) continue;
-                    string[] skins = CaptureSkinNames(viewer.GetSkeleton()?.SkinList);
-                    var entry = viewer.getTrack(0);
-                    int loopFrame = entry?.Animation == null ? -1000 : viewer.getAnmLoopFrame(entry.Animation);
-                    viewer.clearAnim(animation, loopFrame, skins.FirstOrDefault());
-                    viewer.mergeSkins(skins);
+                    if ((state.Pending == null || key == state.PendingKey) && viewer.getBaseAnimName() != null
+                        && Change(texture, key, viewer.getMaterial(), viewer)) Replay(viewer);
                 }
                 catch (Exception ex) { BLog.Error("Replacement refresh failed for one Spine viewer.", ex); }
             }
+            // 已离开画面的请求不长期持有临时明文；再次显示时可重新准备。
+            foreach (var pair in spineStates)
+                if (!visible.Contains(pair.Key) && pair.Value.Pending != null
+                    && Time.unscaledTime - pair.Value.PendingSince > 15f)
+                { Cancel(pair.Value); pair.Value.Attempt = -1; }
+        }
+
+        private static void Replay(SpineViewerNel viewer)
+        {
+            string animation = viewer.getBaseAnimName();
+            if (animation == null) return;
+            string[] skins = CaptureSkinNames(viewer.GetSkeleton()?.SkinList);
+            var entry = viewer.getTrack(0);
+            int loopFrame = entry?.Animation == null ? -1000 : viewer.getAnmLoopFrame(entry.Animation);
+            viewer.clearAnim(animation, loopFrame, skins.FirstOrDefault());
+            viewer.mergeSkins(skins);
         }
 
         internal static string[] CaptureSkinNames(IEnumerable<Skin> skins)
@@ -253,12 +352,13 @@ namespace BetterExperience.Patches.ReplaceTexture
                 .Select(skin => skin.Name).Distinct(StringComparer.Ordinal).ToArray();
         }
 
-        private static void RefreshMtiSpineTextures()
+        private static void RefreshMtiSpineTextures(ReplacementSelection previous, bool force)
         {
             foreach (var texture in LiveViewers().Select(viewer => viewer.getSvTexture())
                 .Where(texture => texture != null && !HasActive(texture)).Distinct())
             {
                 if (!mtiRecords.TryGetValue(texture.MtiImage0, out var record) || record.Image == null) continue;
+                if (!force && previous.SameTexture(selection, "mti", record.AssetKey, record.ImageKey, null)) continue;
                 try { texture.cleanExecute(); }
                 catch (Exception ex) { BLog.Error("Failed to refresh an MTI-backed Spine texture: " + texture.key, ex); }
             }
@@ -266,9 +366,21 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         internal static void Stop()
         {
+            if (!initialized || stopped) return;
             stopped = true;
-            Reload();
+            scan?.Dispose();
+            scan = null;
+            ApplySelection(true);
             RestoreOrdinary();
+        }
+
+        internal static void Resume()
+        {
+            if (!initialized || !stopped) return;
+            stopped = false;
+            lastSensitive = ConfigManager.EnableSensitivities?.Value == true;
+            ApplySelection(false);
+            Reload();
         }
 
         internal static void Register(SpineViewerNel viewer)
@@ -315,53 +427,97 @@ namespace BetterExperience.Patches.ReplaceTexture
             return true;
         }
 
-        private static void Change(BetobetoManager.SvTexture texture, string key, Material material,
+        private static bool Change(BetobetoManager.SvTexture texture, string key, Material material,
             SpineViewerNel switching)
         {
             if (!spineStates.TryGetValue(texture, out var state)) spineStates.Add(texture, state = new SpineState());
-            if (state.Attempt == revision && state.JsonKey == key) return;
-            if (material == null) return;
+            if (state.Pending != null && state.PendingKey != key) { Cancel(state); state.Attempt = -1; }
+            if (state.Attempt == revision && state.JsonKey == key && state.Pending == null) return false;
+            if (selectionDelay.Waiting && state.JsonKey == key) return false;
+            if (material == null) return false;
             var old = state.Current;
             var switchingAnimator = switching == null ? null : animator.GetValue(switching);
             if (LiveViewers().Any(viewer => viewer != switching && viewer.enabled && viewer.getSvTexture() == texture
-                && !ReferenceEquals(animator.GetValue(viewer), switchingAnimator))) return;
+                && !ReferenceEquals(animator.GetValue(viewer), switchingAnimator))) return false;
             string identity = SpineIdentity(texture.key, key);
             var layers = ActiveLayers(identity);
             SpineBundle candidate = null;
             bool damaged = HasInvalidLayer(identity) || (old != null && HasUnidentifiedErrors(old.Sources));
             if (damaged)
             {
+                Cancel(state);
                 BLog.Warn("Spine replacement target is damaged: " + texture.key + "/" + key + ".");
                 if (old != null && state.JsonKey == key && CanRetain(old.Sources, identity))
                 {
                     state.Attempt = revision;
-                    return;
+                    return false;
                 }
             }
             else if (layers.Count > 0)
             {
-                try { candidate = Build(texture, layers, material); }
+                try
+                {
+                    if (state.Pending == null)
+                    {
+                        texture.MtiText.addLoadKey("_SV");
+                        texture.MtiImage0.addLoadKey("_SV", false);
+                        SpineViewer.prepareAtlasAssetsS(texture.MtiText, out var originalAtlas, out var originalData, key);
+                        state.PendingOriginal = originalData;
+                        string originalJson = originalData.skeletonJSON.text;
+                        string originalAtlasText = originalAtlas.atlasFile.text;
+                        float originalScale = originalData.scale;
+                        string root = PatchInfo.ReplaceImagePath, sensitive = PatchInfo.ReplaceSensitiveImagePath;
+                        bool allow = selection.AllowSensitive;
+                        state.PendingKey = key;
+                        state.PendingSince = Time.unscaledTime;
+                        state.Pending = new ReplacementWork<PreparedSpine>(token => ReplacementPreparation.Spine(
+                            originalJson, originalAtlasText, originalScale, layers, root, sensitive, allow, token));
+                        state.Attempt = revision;
+                    }
+                    if (!state.Pending.IsCompleted || !ClaimUpload())
+                    {
+                        if (old == null) { state.JsonKey = key; return false; }
+                        if (state.JsonKey == key && CanRetain(old.Sources, identity)) return false;
+                        return Install(texture, state, key, null);
+                    }
+                    var original = state.PendingOriginal;
+                    state.Pending.TryTake(out var prepared, out var error);
+                    Cancel(state);
+                    if (error != null) throw error;
+                    if (original == null) throw new InvalidOperationException("Original Spine data was released while preparing a replacement.");
+                    candidate = Build(texture, layers, material, prepared, original);
+                }
                 catch (Exception ex)
                 {
+                    Cancel(state);
                     BLog.Error("Spine replacement rejected for " + texture.key + "/" + key
                         + "; retaining the last usable composition when authorized.", ex);
                     if (old != null && state.JsonKey == key
                         && CanRetain(old.Sources, identity))
                     {
                         state.Attempt = revision;
-                        return;
+                        return false;
                     }
                 }
             }
-            else if (old != null && state.JsonKey == key
-                && CanRetain(old.Sources, identity))
+            else
             {
-                state.Attempt = revision;
-                return;
+                Cancel(state);
+                if (old != null && state.JsonKey == key && CanRetain(old.Sources, identity))
+                {
+                    state.Attempt = revision;
+                    return false;
+                }
             }
+            return Install(texture, state, key, candidate);
+        }
+
+        private static bool Install(BetobetoManager.SvTexture texture, SpineState state, string key, SpineBundle candidate)
+        {
+            var old = state.Current;
             state.Attempt = revision;
             state.JsonKey = key;
-            if (old == null && candidate == null) return;
+            if (old == null && candidate == null) return false;
             Invalidate(texture, old);
             state.Current = candidate;
             var rendered = texture.getRendered();
@@ -372,33 +528,42 @@ namespace BetterExperience.Patches.ReplaceTexture
             svAtlas.SetValue(texture, candidate?.Atlas);
             svData.SetValue(texture, candidate?.Data);
             if (old != null) retired.Add(old);
+            displayRevision++;
             BLog.Info(candidate == null ? "Spine replacement restored: " + texture.key
                 : "Spine replacement activated: " + string.Join(" + ", candidate.Sources.Select(source => source.Id)));
+            return true;
+        }
+
+        private static void Cancel(SpineState state)
+        {
+            state.Pending?.Dispose();
+            state.Pending = null;
+            state.PendingOriginal = null;
+            state.PendingKey = null;
+        }
+
+        private static bool ClaimUpload()
+        {
+            if (uploadFrame == Time.frameCount) return false;
+            uploadFrame = Time.frameCount;
+            return true;
         }
 
         private static SpineBundle Build(BetobetoManager.SvTexture texture, List<ReplacementTarget> layers,
-            Material material)
+            Material material, PreparedSpine prepared, SkeletonDataAsset originalData)
         {
             var bundle = new SpineBundle();
             try
             {
                 foreach (var layer in layers) ValidateCurrent(layer);
                 foreach (var source in layers.Select(layer => layer.Owner).Distinct()) bundle.Sources.Add(source);
-                texture.MtiText.addLoadKey("_SV");
-                texture.MtiImage0.addLoadKey("_SV", false);
-                SpineViewer.prepareAtlasAssetsS(texture.MtiText, out var originalAtlasAsset, out var originalData,
-                    layers[0].JsonKey);
-                string atlasText = LastPath(layers, layer => layer.AtlasPath) is string atlasPath
-                    ? ReplacementResourceIO.ReadText(atlasPath) : originalAtlasAsset.atlasFile.text;
-                var metadataAtlas = PortraitCatalog.ReadAtlas(atlasText);
-                if (metadataAtlas.Pages.Count != 1) throw new InvalidDataException("Only single-page Spine atlases are supported.");
+                string atlasText = prepared.AtlasText;
+                var metadataAtlas = prepared.Atlas;
                 string imagePath = LastPath(layers, layer => layer.ImagePath);
                 if (imagePath != null)
                 {
-                    byte[] bytes = ReplacementResourceIO.ReadBytes(imagePath);
-                    PortraitCatalog.ValidateImage(bytes, metadataAtlas);
                     var image = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-                    if (!image.LoadImage(bytes))
+                    if (!image.LoadImage(prepared.ImageBytes))
                     {
                         Object.Destroy(image);
                         throw new InvalidDataException("PNG decoding failed.");
@@ -417,7 +582,7 @@ namespace BetterExperience.Patches.ReplaceTexture
                 }
                 if (bundle.Image.width > SystemInfo.maxTextureSize || bundle.Image.height > SystemInfo.maxTextureSize)
                     throw new InvalidDataException("Spine atlas exceeds the device texture size limit.");
-                bundle.Composition = SpineComposer.Compose(originalData.skeletonJSON.text, layers, metadataAtlas);
+                bundle.Composition = prepared.Composition;
                 if (bundle.Composition.DirtMode == "auto" && !bundle.Composition.DirtEnabled)
                     BLog.Info("Spine dirt effect disabled because the composed atlas has no compatible EM/ND region: "
                         + texture.key + "/" + layers[0].JsonKey);
@@ -426,6 +591,9 @@ namespace BetterExperience.Patches.ReplaceTexture
                 bundle.JsonText = new TextAsset(bundle.Composition.Json);
                 bundle.Atlas = SpineAtlasAsset.CreateRuntimeInstance(bundle.AtlasText,
                     new[] { bundle.StagingMaterial }, false, asset => new MaterialLoader(bundle.StagingMaterial));
+                // 后台 Atlas 已按 Unity 的约定翻转 UV；沿用同一对象，避免附件引用旧图集或二次翻转。
+                foreach (var page in metadataAtlas.Pages) page.rendererObject = bundle.StagingMaterial;
+                cachedAtlas.SetValue(bundle.Atlas, metadataAtlas);
                 bundle.Data = ScriptableObject.CreateInstance<SkeletonDataAsset>();
                 bundle.Data.atlasAssets = new AtlasAssetBase[] { bundle.Atlas };
                 bundle.Data.skeletonJSON = bundle.JsonText;
@@ -437,8 +605,7 @@ namespace BetterExperience.Patches.ReplaceTexture
                     ? new string[0] : (string[])originalData.toAnimation.Clone();
                 bundle.Data.duration = originalData.duration == null
                     ? new float[0] : (float[])originalData.duration.Clone();
-                if (bundle.Data.GetSkeletonData(false) == null)
-                    throw new InvalidDataException("Game Spine parser rejected the composed resource.");
+                initializeData.Invoke(bundle.Data, new object[] { bundle.Composition.PreparedData });
                 bundle.Bind(new[] { material });
                 return bundle;
             }
@@ -584,15 +751,17 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         private static void TryApply(MtiRecord record)
         {
-            if (record.Attempt == revision && record.Image != null) return;
+            if (selectionDelay.Waiting) return;
+            if (record.Attempt == revision && record.Image != null && record.Pending == null) return;
             var image = mtiImage.GetValue(record.Container) as MImage;
             if (image == null || image.Tx == null) return;
             record.Image = image;
             if (record.Original == null) record.Original = image.Tx;
-            var layer = ActiveTextureLayers("mti", record.AssetKey, record.ImageKey, null).LastOrDefault();
+            var layer = Enabled ? selection.Texture("mti", record.AssetKey, record.ImageKey, null) : null;
             if (HasInvalidTextureLayer("mti", record.AssetKey, record.ImageKey, null)
                 || (record.Source != null && HasUnidentifiedErrors(new[] { record.Source })))
             {
+                record.Pending?.Dispose(); record.Pending = null;
                 BLog.Warn("MTI replacement target is damaged: " + record.AssetKey + ".");
                 if (record.Replacement == null || !CanRetain(new[] { record.Source }, record.SourceIdentity)) Restore(record);
                 record.Attempt = revision;
@@ -600,6 +769,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
             if (layer == null)
             {
+                record.Pending?.Dispose(); record.Pending = null;
                 if (record.Replacement != null && CanRetain(new[] { record.Source }, record.SourceIdentity))
                 {
                     record.Attempt = revision;
@@ -611,15 +781,27 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
             try
             {
+                if (record.Replacement != null && !CanRetain(new[] { record.Source }, record.SourceIdentity)) Restore(record);
+                if (record.Pending == null)
+                {
+                    record.Pending = PrepareTexture(layer);
+                    record.Attempt = revision;
+                }
+                if (!record.Pending.IsCompleted || !ClaimUpload()) return;
+                record.Pending.TryTake(out var bytes, out var error);
+                record.Pending = null;
+                if (error != null) throw error;
                 ValidateCurrent(layer);
-                record.Replacement = LoadStableTexture(layer.ImagePath, record.Original, record.Replacement);
+                record.Replacement = LoadStableTexture(bytes, record.Original, record.Replacement);
                 record.Source = layer.Owner;
                 record.SourceIdentity = layer.Identity;
                 record.Image.Tx = record.Replacement;
                 record.Attempt = revision;
+                RefreshMtiUsers(record);
             }
             catch (Exception ex)
             {
+                record.Pending?.Dispose(); record.Pending = null;
                 BLog.Error("MTI replacement rejected: " + record.AssetKey, ex);
                 if (record.Replacement == null || !CanRetain(new[] { record.Source }, record.SourceIdentity)) Restore(record);
                 record.Attempt = revision;
@@ -638,7 +820,7 @@ namespace BetterExperience.Patches.ReplaceTexture
                 record = new ResourceRecord { Path = path, ObjectType = objectType, Original = original };
                 resourceRecords.Add(key, record);
             }
-            ApplyResource(record);
+            ApplyResource(record, firstAccess: true);
             return record.Replacement ?? original;
         }
 
@@ -647,13 +829,16 @@ namespace BetterExperience.Patches.ReplaceTexture
             foreach (var record in resourceRecords.Values.ToArray()) ApplyResource(record);
         }
 
-        private static void ApplyResource(ResourceRecord record)
+        private static void ApplyResource(ResourceRecord record, bool firstAccess = false)
         {
-            if (record.Attempt == revision) return;
-            var layer = ActiveTextureLayers("resources", record.Path, null, record.ObjectType).LastOrDefault();
+            if (selectionDelay.Waiting && !firstAccess) return;
+            if (record.Attempt == revision && record.Pending == null) return;
+            if (record.Original == null) { DisposeResource(record); record.Attempt = revision; return; }
+            var layer = Enabled ? selection.Texture("resources", record.Path, null, record.ObjectType) : null;
             if (HasInvalidTextureLayer("resources", record.Path, null, record.ObjectType)
                 || (record.Source != null && HasUnidentifiedErrors(new[] { record.Source })))
             {
+                record.Pending?.Dispose(); record.Pending = null;
                 BLog.Warn("Resources replacement target is damaged: " + record.Path + " (" + record.ObjectType + ").");
                 if (record.Replacement == null || !CanRetain(new[] { record.Source }, record.SourceIdentity))
                     DisposeResource(record);
@@ -662,6 +847,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
             if (layer == null)
             {
+                record.Pending?.Dispose(); record.Pending = null;
                 if (record.Replacement != null && CanRetain(new[] { record.Source }, record.SourceIdentity))
                 {
                     record.Attempt = revision;
@@ -673,9 +859,31 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
             try
             {
+                if (record.Replacement != null && !CanRetain(new[] { record.Source }, record.SourceIdentity)) DisposeResource(record);
+                byte[] bytes;
+                if (firstAccess && record.Replacement == null)
+                {
+                    // Resources.Load 的首次返回值会被调用方永久持有，不能先返回原对象再偷偷换引用。
+                    // 这个入口保持同步首载；已有替换对象的刷新继续在后台准备并原位更新。
+                    record.Pending?.Dispose(); record.Pending = null;
+                    bytes = ReplacementPreparation.Texture(layer, PatchInfo.ReplaceImagePath,
+                        PatchInfo.ReplaceSensitiveImagePath, selection.AllowSensitive, default(System.Threading.CancellationToken));
+                }
+                else
+                {
+                    if (record.Pending == null)
+                    {
+                        record.Pending = PrepareTexture(layer);
+                        record.Attempt = revision;
+                    }
+                    if (!record.Pending.IsCompleted || !ClaimUpload()) return;
+                    record.Pending.TryTake(out bytes, out var error);
+                    record.Pending = null;
+                    if (error != null) throw error;
+                }
                 ValidateCurrent(layer);
                 Texture source = record.Original is Sprite sprite ? sprite.texture : (Texture)record.Original;
-                record.Texture = LoadStableTexture(layer.ImagePath, source, record.Texture);
+                record.Texture = LoadStableTexture(bytes, source, record.Texture);
                 if (record.ObjectType == "Texture2D") record.Replacement = record.Texture;
                 else if (!(record.Replacement is Sprite)) record.Replacement = CreateSprite((Sprite)record.Original, record.Texture);
                 record.Source = layer.Owner;
@@ -684,15 +892,32 @@ namespace BetterExperience.Patches.ReplaceTexture
             }
             catch (Exception ex)
             {
+                record.Pending?.Dispose(); record.Pending = null;
                 BLog.Error("Resources replacement rejected: " + record.Path + " (" + record.ObjectType + ")", ex);
                 if (record.Replacement == null || !CanRetain(new[] { record.Source }, record.SourceIdentity)) DisposeResource(record);
                 record.Attempt = revision;
             }
         }
 
-        private static Texture2D LoadStableTexture(string path, Texture source, Texture2D stable)
+        private static ReplacementWork<byte[]> PrepareTexture(ReplacementTarget layer)
         {
-            byte[] bytes = ReplacementResourceIO.ReadBytes(path);
+            string root = PatchInfo.ReplaceImagePath, sensitive = PatchInfo.ReplaceSensitiveImagePath;
+            bool allow = selection.AllowSensitive;
+            return new ReplacementWork<byte[]>(token => ReplacementPreparation.Texture(layer, root, sensitive, allow, token));
+        }
+
+        private static void RefreshMtiUsers(MtiRecord record)
+        {
+            foreach (var texture in LiveViewers().Select(viewer => viewer.getSvTexture())
+                .Where(texture => texture != null && texture.MtiImage0 == record.Container && !HasActive(texture)).Distinct())
+            {
+                try { texture.cleanExecute(); displayRevision++; }
+                catch (Exception ex) { BLog.Error("Failed to refresh an MTI-backed Spine texture: " + texture.key, ex); }
+            }
+        }
+
+        private static Texture2D LoadStableTexture(byte[] bytes, Texture source, Texture2D stable)
+        {
             var candidate = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             if (!candidate.LoadImage(bytes))
             {
@@ -744,15 +969,19 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         private static void Restore(MtiRecord record)
         {
+            record.Pending?.Dispose(); record.Pending = null;
+            bool changed = record.Replacement != null;
             if (record.Image != null && record.Original != null) record.Image.Tx = record.Original;
             if (record.Replacement != null) Object.Destroy(record.Replacement);
             record.Replacement = null;
             record.Source = null;
             record.SourceIdentity = null;
+            if (changed) RefreshMtiUsers(record);
         }
 
         private static void DisposeResource(ResourceRecord record)
         {
+            record.Pending?.Dispose(); record.Pending = null;
             if (record.Replacement is Sprite sprite) Object.Destroy(sprite);
             if (record.Texture != null) Object.Destroy(record.Texture);
             record.Replacement = null;
@@ -769,11 +998,10 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         private static bool CanRetain(IEnumerable<ReplacementPackage> packages, string identity)
         {
-            if (!Enabled) return false;
-            var enabled = new HashSet<string>(EnabledIds(), StringComparer.Ordinal);
+            if (!Enabled || !selection.Authorizes(packages)) return false;
             foreach (var package in packages.Where(package => package != null).Distinct())
             {
-                if (!enabled.Contains(package.Id) || !File.Exists(package.ManifestPath)) return false;
+                if (!File.Exists(package.ManifestPath)) return false;
                 if (package.Sensitive && ConfigManager.EnableSensitivities?.Value != true) return false;
                 try
                 {
@@ -791,19 +1019,8 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         private static void ValidateCurrent(ReplacementTarget target)
         {
-            var paths = new[]
-            {
-                target.Owner.ManifestPath, target.ImagePath, target.AtlasPath, target.JsonPath
-            }.Where(path => path != null);
-            foreach (string path in paths)
-            {
-                if (!File.Exists(path)) throw new FileNotFoundException("Replacement dependency was removed.", path);
-                PortraitCatalog.Resolve(PatchInfo.ReplaceImagePath, Path.GetDirectoryName(path), Path.GetFileName(path));
-                if (PortraitCatalog.Within(PatchInfo.ReplaceSensitiveImagePath, path) != target.Owner.Sensitive)
-                    throw new InvalidDataException("Replacement dependencies crossed the Sensitive boundary.");
-                if (target.Owner.Sensitive && ConfigManager.EnableSensitivities?.Value != true)
-                    throw new InvalidDataException("Sensitive content is disabled.");
-            }
+            ReplacementPreparation.Validate(new[] { target }, PatchInfo.ReplaceImagePath,
+                PatchInfo.ReplaceSensitiveImagePath, ConfigManager.EnableSensitivities?.Value == true);
         }
 
         private static bool HasUnidentifiedErrors(IEnumerable<ReplacementPackage> packages)
@@ -818,47 +1035,18 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         private static bool HasInvalidLayer(string identity)
         {
-            if (!Enabled) return false;
-            var packages = catalog.Packages.ToDictionary(package => package.Id, StringComparer.Ordinal);
-            return EnabledIds().Any(id => packages.TryGetValue(id, out var package)
-                && package.InvalidTargetIdentities.Contains(identity));
+            return Enabled && selection.Invalid(identity);
         }
 
         private static bool HasInvalidTextureLayer(string loader, string key, string imageKey, string objectType)
         {
-            if (!Enabled) return false;
-            string exact = loader == "mti" ? "texture\nmti\n" + key + "\n" + (imageKey ?? "")
-                : "texture\nresources\n" + key + "\n" + objectType;
-            string wildcard = loader == "mti" ? "texture\nmti\n" + key + "\n" : exact;
-            var packages = catalog.Packages.ToDictionary(package => package.Id, StringComparer.Ordinal);
-            return EnabledIds().Any(id => packages.TryGetValue(id, out var package)
-                && (package.InvalidTargetIdentities.Contains(exact)
-                    || package.InvalidTargetIdentities.Contains(wildcard)));
+            return Enabled && selection.InvalidTexture(loader, key, imageKey, objectType);
         }
 
         private static List<ReplacementTarget> ActiveLayers(string identity)
         {
             if (!Enabled) return new List<ReplacementTarget>();
-            return catalog.Layers(identity, EnabledIds()).ToList();
-        }
-
-        private static IEnumerable<ReplacementTarget> ActiveTextureLayers(string loader, string key,
-            string imageKey, string objectType)
-        {
-            if (!Enabled) yield break;
-            var packages = catalog.Packages.ToDictionary(package => package.Id, StringComparer.Ordinal);
-            foreach (string id in EnabledIds())
-            {
-                if (!packages.TryGetValue(id, out var package)) continue;
-                foreach (var target in package.Targets)
-                {
-                    if (target.Type != "texture" || target.Loader != loader) continue;
-                    if (loader == "mti" && target.AssetKey == key
-                        && (target.ImageKey == null || target.ImageKey == imageKey)) yield return target;
-                    if (loader == "resources" && target.ResourcePath == key && target.ObjectType == objectType)
-                        yield return target;
-                }
-            }
+            return selection.Layers(identity).ToList();
         }
 
         private static bool HasLayers(string identity) => ActiveLayers(identity).Count > 0;
@@ -885,6 +1073,7 @@ namespace BetterExperience.Patches.ReplaceTexture
         internal static void Released(BetobetoManager.SvTexture texture)
         {
             if (!spineStates.TryGetValue(texture, out var state)) return;
+            Cancel(state);
             Invalidate(texture, state.Current);
             if (state.Current != null) retired.Add(state.Current);
             spineStates.Remove(texture);

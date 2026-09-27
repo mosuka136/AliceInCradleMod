@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace BetterExperience.Patches.ReplaceTexture
 {
@@ -16,6 +17,7 @@ namespace BetterExperience.Patches.ReplaceTexture
         internal string DirtMode;
         internal bool DirtEnabled;
         internal bool HasClipping;
+        internal SkeletonData PreparedData;
     }
 
     internal static class SpineComposer
@@ -38,8 +40,10 @@ namespace BetterExperience.Patches.ReplaceTexture
         private static readonly Regex DirtRegion = new Regex(
             "^(EM\\d*_|ND\\d*_|m\\d+_|f\\d+_*m\\d+_)[\\w \\-]+$", RegexOptions.CultureInvariant);
 
-        internal static SpineCompositionResult Compose(string originalJson, IReadOnlyList<ReplacementTarget> layers, Atlas atlas)
+        internal static SpineCompositionResult Compose(string originalJson, IReadOnlyList<ReplacementTarget> layers, Atlas atlas,
+            float? runtimeScale = null, CancellationToken cancellationToken = default(CancellationToken))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (layers == null || layers.Count == 0) throw new InvalidDataException("Spine composition has no layers.");
             if (atlas == null || atlas.Pages.Count != 1) throw new InvalidDataException("Spine composition requires one atlas page.");
             var original = PortraitJson.Parse(originalJson);
@@ -57,6 +61,7 @@ namespace BetterExperience.Patches.ReplaceTexture
 
             foreach (var layer in layers)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (layer.JsonPath != null)
                 {
                     var source = PortraitJson.Parse(ReplacementResourceIO.ReadText(layer.JsonPath));
@@ -92,13 +97,18 @@ namespace BetterExperience.Patches.ReplaceTexture
             ValidateStructure(result, atlas);
 
             string json = PortraitJson.Serialize(result);
-            new SkeletonJson(atlas).ReadSkeletonData(new StringReader(json));
+            cancellationToken.ThrowIfCancellationRequested();
+            // 与 SpineAtlasAsset.GetAtlas 的坐标约定一致；只在运行时准备路径翻转一次。
+            if (runtimeScale.HasValue) atlas.FlipV();
+            var reader = new SkeletonJson(atlas) { Scale = runtimeScale.HasValue ? display.SkeletonScale ?? runtimeScale.Value : 1f };
+            var data = reader.ReadSkeletonData(new StringReader(json));
             bool compatibleDirt = atlas.Regions.Any(region => DirtRegion.IsMatch(region.name));
             if (dirt == "legacy" && !compatibleDirt)
                 throw new InvalidDataException("effects.dirt=legacy requires a compatible EM/ND atlas region.");
             var composition = new SpineCompositionResult
             {
                 Json = json,
+                PreparedData = runtimeScale.HasValue ? data : null,
                 Display = display,
                 DirtMode = dirt,
                 DirtEnabled = dirt == "legacy" || (dirt == "auto" && compatibleDirt),
