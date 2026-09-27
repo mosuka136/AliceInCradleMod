@@ -59,7 +59,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             {
                 if (layer.JsonPath != null)
                 {
-                    var source = PortraitJson.Parse(File.ReadAllText(layer.JsonPath));
+                    var source = PortraitJson.Parse(ReplacementResourceIO.ReadText(layer.JsonPath));
                     RequireVersion(source);
                     var sections = layer.Sections.Contains("all")
                         ? new HashSet<string>(AllSections, StringComparer.Ordinal)

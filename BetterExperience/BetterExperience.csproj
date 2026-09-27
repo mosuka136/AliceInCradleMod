@@ -207,6 +207,9 @@
     <Compile Include="Patches\ReplaceTexture\PortraitCatalog.cs" />
     <Compile Include="Patches\ReplaceTexture\PortraitMerger.cs" />
     <Compile Include="Patches\ReplaceTexture\ReplacementCatalog.cs" />
+    <Compile Include="Patches\ReplaceTexture\ReplacementResourceIO.cs" />
+    <Compile Include="Patches\ReplaceTexture\ReplacementResourceKeys.cs" />
+    <Compile Include="Patches\ReplaceTexture\ReplacementResourcePaths.cs" />
     <Compile Include="Patches\ReplaceTexture\SpineComposer.cs" />
     <Compile Include="Patches\ReplaceTexture\ReplacementRuntime.cs" />
     <Compile Include="PatchInfo.cs" />

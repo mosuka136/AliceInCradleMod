@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BetterExperience\BetterExperience.csproj" />
+    <ProjectReference Include="..\BetterExperience.ResourceEncryptor\BetterExperience.ResourceEncryptor.csproj" Aliases="ResourceEncryptor" />
   </ItemGroup>
 
   <ItemGroup>

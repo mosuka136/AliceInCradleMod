@@ -46,7 +46,56 @@ ReplaceTexture/
 
 `EnabledReplacementPacks` 的顺序参与合成：列表越靠后优先级越高。同一目标可以同时启用多个包，不会自动互斥。
 
-每轮扫描都会同步这个列表：新发现的包按发现顺序追加（默认关闭），清单文件已从 `ReplaceTexture` 删除的包对应的行会被自动清除。只要清单文件还在磁盘上，行就会连同开关状态保留，包括关闭 `EnableSensitivities` 时看不到的敏感包、解析失败的清单和 `id` 重复的清单。如果某个清单连 `id` 都读不出来（JSON 损坏、缺少 `id`、文件无法读取），本轮不会删除任何未知行，避免误删。
+每轮扫描都会同步这个列表：新发现的包按发现顺序追加（默认不启用），清单文件已从 `ReplaceTexture` 删除的包对应的行会被自动清除。只要清单文件还在磁盘上，行就会连同开关状态保留，包括关闭 `EnableSensitivities` 时看不到的敏感包、解析失败的清单和 `id` 重复的清单。如果某个清单连 `id` 都读不出来（JSON 损坏、缺少 `id`、文件无法读取），本轮不会删除任何未知行。
+
+## 加密资源
+
+v2 清单、PNG、atlas 和 Spine JSON 均支持明文、密文及混合加载。文件名、扩展名、目录结构、相对引用和清单的 `formatVersion: 2` 保持不变。插件按文件头自动识别并解密；未带加密标记的文件继续使用原有读取方式，文本保留 BOM 识别。
+
+### 作者制作工具
+
+作者机器安装 .NET 8 SDK 后，在仓库根目录运行：
+
+```powershell
+dotnet run --project BetterExperience.ResourceEncryptor/BetterExperience.ResourceEncryptor.csproj -- encrypt --input "D:/Assets/ReplaceTexture" --output "D:/Assets/EncryptedReplaceTexture"
+```
+
+也可以先构建再执行：
+
+```powershell
+dotnet build BetterExperience.ResourceEncryptor/BetterExperience.ResourceEncryptor.csproj -c Release
+dotnet BetterExperience.ResourceEncryptor/bin/Release/net8.0/BetterExperience.ResourceEncryptor.dll encrypt --input "D:/Assets/ReplaceTexture" --output "D:/Assets/EncryptedReplaceTexture"
+```
+
+- 输入为资源根目录；`Sensitive` 必须位于该根目录下，才能按游戏相同的边界规则验证。
+- 输出目录必须不存在，其父目录必须已存在；输入与输出不能相同或互相包含。文件、目录及其祖先不能使用链接或 junction。
+- 工具扫描全部 v2 `.replacement.json` 清单，只输出清单及其 `image`、`atlas`、`spine.json` 引用的文件。共享依赖去重，保留相对路径；未引用的工程文件、图片等不输出。
+- 支持明文、密文或混合输入。密文输入先校验、解密，再以新随机 IV 加密，避免重复封装。源文件始终保留。
+- 先验证清单、路径、依赖和已有密文的完整性，再在输出父目录的临时目录中生成密文；逐文件回读并与验证阶段的明文摘要比较，全部通过才重命名为输出目录。失败会清理本次临时结果，输出目录不会出现半成品。
+- 工具检查资源格式和依赖，不代替游戏中的 Spine 合成、动画兼容及显示验收。
+- 退出码：`0` 成功，`1` 资源处理失败，`2` 命令参数错误。使用 `--help` 查看命令格式。
+
+将输出目录中的内容复制进游戏的 `ReplaceTexture`，保持子目录结构。替换同一资源包时覆盖原文件，不要同时安装具有相同 `id` 的明文和密文副本。只需部分加密时，可将输出中的指定文件覆盖到资源包对应位置，其余文件保持明文。
+
+### 二进制封装
+
+当前封装版本为 `1`，密钥编号为 `1`，与清单版本 `2` 相互独立。每个文件按下表连续存储，整数均为小端序：
+
+| 偏移 | 长度 | 内容 |
+| --- | --- | --- |
+| 0 | 8 | ASCII 魔数 `BEREENC\0`，末字节为零 |
+| 8 | 1 | 封装版本 `1` |
+| 9 | 4 | 无符号 `keyId` |
+| 13 | 16 | 每个文件独立生成的随机 IV |
+| 29 | 8 | 无符号密文长度 `N` |
+| 37 | N | AES-256-CBC 密文，PKCS7 填充 |
+| 37 + N | 32 | HMAC-SHA256，覆盖前面的完整头部和密文 |
+
+`N` 必须是正的 16 字节倍数，文件总长度必须恰为 `69 + N`。AES 与 HMAC 使用独立的 32 字节随机密钥，内置于 `ReplacementResourceKeys.cs`，插件和作者工具共享该源码。后续轮换密钥时，应增加新编号并保留旧编号的密钥及解密分支；不要重新生成或覆盖已发布编号的密钥。
+
+读取时先完整校验 HMAC，以恒定时间比较校验码，通过后才解密；顺序遵循 [Microsoft CBC 安全建议](https://learn.microsoft.com/en-us/dotnet/standard/security/vulnerabilities-cbc-mode)。校验和解密使用同一个文件句柄。PNG 扫描会校验全部密文，只解密所需文件头及用于验证填充的末块。
+
+识别到完整魔数后，未知版本、未知密钥、错误长度、截断、HMAC 或填充校验失败都会报错。失败继续遵守下文的授权保留和原版回退规则；清单解密失败导致无法读出 `id` 时，本轮扫描保留未知配置行。Sensitive 开关、资源包顺序、刷新和路径限制对密文同样生效。
 
 ## 完整清单示例
 

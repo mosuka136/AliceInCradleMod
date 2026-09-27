@@ -389,13 +389,13 @@ namespace BetterExperience.Patches.ReplaceTexture
                 SpineViewer.prepareAtlasAssetsS(texture.MtiText, out var originalAtlasAsset, out var originalData,
                     layers[0].JsonKey);
                 string atlasText = LastPath(layers, layer => layer.AtlasPath) is string atlasPath
-                    ? File.ReadAllText(atlasPath) : originalAtlasAsset.atlasFile.text;
+                    ? ReplacementResourceIO.ReadText(atlasPath) : originalAtlasAsset.atlasFile.text;
                 var metadataAtlas = PortraitCatalog.ReadAtlas(atlasText);
                 if (metadataAtlas.Pages.Count != 1) throw new InvalidDataException("Only single-page Spine atlases are supported.");
                 string imagePath = LastPath(layers, layer => layer.ImagePath);
                 if (imagePath != null)
                 {
-                    byte[] bytes = File.ReadAllBytes(imagePath);
+                    byte[] bytes = ReplacementResourceIO.ReadBytes(imagePath);
                     PortraitCatalog.ValidateImage(bytes, metadataAtlas);
                     var image = new Texture2D(2, 2, TextureFormat.RGBA32, false);
                     if (!image.LoadImage(bytes))
@@ -692,7 +692,7 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         private static Texture2D LoadStableTexture(string path, Texture source, Texture2D stable)
         {
-            byte[] bytes = File.ReadAllBytes(path);
+            byte[] bytes = ReplacementResourceIO.ReadBytes(path);
             var candidate = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             if (!candidate.LoadImage(bytes))
             {

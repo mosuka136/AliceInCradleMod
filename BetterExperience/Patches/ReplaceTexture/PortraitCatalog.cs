@@ -28,30 +28,10 @@ namespace BetterExperience.Patches.ReplaceTexture
         internal readonly List<string> Errors = new List<string>();
 
         internal static string Resolve(string root, string directory, string relative, HashSet<string> verifiedDirectories = null)
-        {
-            if (string.IsNullOrWhiteSpace(relative) || Path.IsPathRooted(relative) || relative.IndexOf(':') >= 0)
-                throw new InvalidDataException("Expected relative resource path: " + relative);
-            string full = Path.GetFullPath(Path.Combine(directory, relative));
-            if (!Within(root, full)) throw new InvalidDataException("Resource escapes ReplaceTexture: " + relative);
-            // Reject reparse points as well as lexical traversal; a junction must not bypass the root or Sensitive rules.
-            for (string path = full; path != null && Within(root, path); path = Path.GetDirectoryName(path))
-            {
-                // 同一次扫描内缓存已验证的路径，避免每个资源路径都逐级重复探测文件系统。
-                if (verifiedDirectories != null && verifiedDirectories.Contains(path)) continue;
-                if ((File.Exists(path) || Directory.Exists(path)) && (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0)
-                    throw new InvalidDataException("Resource uses a reparse point: " + path);
-                verifiedDirectories?.Add(path);
-            }
-            return full;
-        }
+            => ReplacementResourcePaths.Resolve(root, directory, relative, verifiedDirectories);
 
         internal static bool Within(string root, string path)
-        {
-            string prefix = Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            string full = Path.GetFullPath(path);
-            return full.Equals(prefix, StringComparison.OrdinalIgnoreCase)
-                || full.StartsWith(prefix + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
-        }
+            => ReplacementResourcePaths.Within(root, path);
 
         internal static void Allowed(string sensitive, bool allowSensitive, params string[] paths)
         {

@@ -86,7 +86,7 @@ namespace BetterExperience.Patches.ReplaceTexture
                 string declared = null;
                 try
                 {
-                    json = PortraitJson.Parse(File.ReadAllText(file));
+                    json = PortraitJson.Parse(ReplacementResourceIO.ReadText(file));
                     declared = PortraitJson.String(json, "id")?.Trim();
                 }
                 catch (Exception ex) { unreadable = ex; }
@@ -252,7 +252,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             if (atlas != null)
             {
                 target.AtlasPath = Resource(root, sensitive, directory, atlas, packageSensitive, verified);
-                if (PortraitCatalog.ReadAtlas(File.ReadAllText(target.AtlasPath)).Pages.Count != 1)
+                if (PortraitCatalog.ReadAtlas(ReplacementResourceIO.ReadText(target.AtlasPath)).Pages.Count != 1)
                     throw new InvalidDataException("Spine replacement atlas must contain exactly one page.");
             }
             object spineValue = PortraitJson.Get(json, "spine");
@@ -260,7 +260,7 @@ namespace BetterExperience.Patches.ReplaceTexture
             {
                 var spine = PortraitJson.Object(spineValue);
                 target.JsonPath = Resource(root, sensitive, directory, Required(spine, "json"), packageSensitive, verified);
-                PortraitJson.Parse(File.ReadAllText(target.JsonPath));
+                PortraitJson.Parse(ReplacementResourceIO.ReadText(target.JsonPath));
                 foreach (object sectionValue in PortraitJson.Array(PortraitJson.Get(spine, "replace")))
                 {
                     string section = sectionValue as string ?? throw new InvalidDataException("Spine replace entries must be strings.");
@@ -358,12 +358,8 @@ namespace BetterExperience.Patches.ReplaceTexture
 
         private static void ValidatePngHeader(string path)
         {
-            byte[] header = new byte[33];
-            using (var stream = File.OpenRead(path))
-            {
-                int read = stream.Read(header, 0, header.Length);
-                if (read != header.Length) throw new InvalidDataException("Expected PNG with IHDR.");
-            }
+            byte[] header = ReplacementResourceIO.ReadPrefix(path, 33);
+            if (header.Length != 33) throw new InvalidDataException("Expected PNG with IHDR.");
             byte[] signature = { 137, 80, 78, 71, 13, 10, 26, 10 };
             if (!header.Take(8).SequenceEqual(signature)) throw new InvalidDataException("Expected PNG with IHDR.");
         }
