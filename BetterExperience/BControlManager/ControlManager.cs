@@ -39,7 +39,6 @@ namespace BetterExperience.BControlManager
             InitializeCurrency();
             InitializeMiniGame();
             InitializeGive();
-            InitializePortrait();
 
             _initialized = true;
             BLog.Debug("Runtime control manager initialized.");

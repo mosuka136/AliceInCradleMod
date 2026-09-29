@@ -25,7 +25,5 @@ namespace BetterExperience
         public static readonly string LoggerPath = Path.Combine(PluginPath, "logs");
         public const string LoggerName = "BetterExperience.log";
 
-        public static readonly string ReplaceImagePath = Path.Combine(PluginPath, "ReplaceTexture");
-        public static readonly string ReplaceSensitiveImagePath = Path.Combine(ReplaceImagePath, "Sensitive");
     }
 }

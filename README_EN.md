@@ -9,7 +9,7 @@
 
 `BetterExperience` is an `Alice In Cradle` mod built on top of `BepInEx` and `Harmony`.
 
-This mod uses `Harmony` patches to modify game logic at runtime, providing configurable QoL improvements, stat tweaks, limit removals, convenience features, a built-in visual config UI, battle statistics, and texture replacement support. Most features can be enabled or disabled through the config file or the in-game config UI.
+This mod uses `Harmony` patches to modify game logic at runtime, providing configurable QoL improvements, stat tweaks, limit removals, convenience features, a built-in visual config UI, and battle statistics. Most features can be enabled or disabled through the config file or the in-game config UI.
 
 ## Implemented Features
 
@@ -26,7 +26,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 - Limit removals: puppet merchant spawn limits, bench menu limits, treasure chest limits, warehouse region limits, etc.
 - Map and weather: fast travel anywhere (including night and thunder), night bench travel, lock weather, lock danger level, depart at the highest danger reached, dark area removal in specific zones, forced weather (wind/thunder/mist/drought/dense mist/plague), summon wandering merchants to the current map, merchants always visible on the map and always appearing, night-only summoners open in daytime, mana weed recharge time cap
 - Guild quests: one-key quest board refresh inside the guild counter (reroll all unaccepted quests while selecting one; accepted ones are kept)
-- Visual features: switch and lock HUD portrait poses and states, remove mosaic, no dirt stains, no wettening, resource replacement, sensitive-content toggle, runtime resource reload
+- Visual features: remove mosaic, no dirt stains, no wettening
 - Hotkey features: supports key combinations, multiple alternative hotkeys, and gamepad input
 - Debug: debug switch; the control page lists items, skills and recipes to give or unlock
 
@@ -48,10 +48,9 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 
 1. Build or download `BetterExperience.dll` ([download](https://github.com/mosuka136/AliceInCradleMod/releases)).
 2. Put `BetterExperience.dll` into `BepInEx/plugins/BetterExperience/` (or `BepInEx/plugins/`) under the game directory.
-3. Launch the game once to generate the mod config file, log directory, and texture directory.
+3. Launch the game once to generate the mod config file and log directory.
 4. Edit `BepInEx/plugins/BetterExperience/BetterExperience.cfg`, or press `F1` in game to open the built-in config UI.
 5. To apply manual config-file changes during gameplay, save the file first, then press your configured `Reload Config` hotkey in game; the default is `Ctrl+R`.
-6. For custom portrait replacement, see the [custom portrait replacement guide (Chinese)](CUSTOM_PORTRAIT_REPLACEMENT.md).
 
 ## Supported Versions
 

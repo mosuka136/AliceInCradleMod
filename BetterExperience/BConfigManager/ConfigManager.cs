@@ -27,6 +27,7 @@ namespace BetterExperience.BConfigManager
         public static ConfigSheet Sheet => Config.Sheet;
 
         public static ConfigEntry<bool> EnableBetterExperience { get; private set; }
+        public static ConfigEntry<bool> EnableMosaic { get; private set; }
         public static ConfigEntry<bool> EnableStoreRefresh { get; private set; }
         public static ConfigEntry<bool> EnableRemoveLimitInBenchMenu { get; private set; }
         public static ConfigEntry<bool> EnableCookingRandomEffectPreview { get; private set; }
@@ -89,6 +90,16 @@ namespace BetterExperience.BConfigManager
                         new Translator(
                             chinese: "启用更好的体验模组，必须在游戏启动前设置。",
                             english: "Enable Better Experience mod, must be set before launching the game."
+                            )
+                        );
+                    EnableMosaic = Config.Bind(
+                        SectionGeneral,
+                        nameof(EnableMosaic),
+                        false,
+                        new Translator(chinese: "启用马赛克效果", english: "Enable Mosaic"),
+                        new Translator(
+                            chinese: "启用马赛克效果。",
+                            english: "Enable mosaic effect."
                             )
                         );
                     EnableStoreRefresh = Config.Bind(
@@ -184,7 +195,6 @@ namespace BetterExperience.BConfigManager
                 InitializeMapTrap();
                 InitializeCurrency();
                 InitializeMiniGame();
-                InitializeTexture();
                 InitializeHotkey();
                 InitializeLog();
 
