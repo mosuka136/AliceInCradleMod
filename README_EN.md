@@ -7,28 +7,33 @@
 
 ## Overview
 
-`BetterExperience` is an `Alice In Cradle` mod built on top of `BepInEx` and `Harmony`.
+`BetterExperience` is an `Alice In Cradle` mod built on top of `BepInEx`, `Harmony`, and `UnityModBase`.
 
-This mod uses `Harmony` patches to modify game logic at runtime, providing configurable QoL improvements, stat tweaks, limit removals, convenience features, a built-in visual config UI, and battle statistics. Most features can be enabled or disabled through the config file or the in-game config UI.
+This mod uses `Harmony` patches to modify game logic at runtime, providing configurable QoL improvements, stat tweaks, limit removals, minigame assistance, and battle statistics. Chinese/English configuration, log, and live-control windows are provided through `UnityModBase` to enable features or adjust the current game state.
 
 ## Implemented Features
 
-- Core controls: mod master switch, standalone config file, built-in config UI, Chinese/English localization, config hot reload, log level control
-- QoL features: one-key shop refresh, store buy/sell price ratio, hotel food tickets not consumed and count setting, improved save points, access warehouse anywhere, improved fishing, dojo wider timing and auto-hit, reel-related adjustments (including obtainable reel count ratio)
+- Core controls: mod master switch, standalone config file, Chinese/English configuration/log/live-control windows, automatic config saving and hot reload, automatic application of preset values after loading a save, log level control
+- QoL features: refresh button inside the shop screen, store buy/sell price multipliers, hotel food tickets not consumed and count setting, improved save points, access warehouse anywhere
+- Fishing assistance: automatic aiming, casting, hooking, marker tracking, and result confirmation; adjustable marker movement, catcher size and hit margin, miss drain multiplier, and reel-in count
+- Milking assistance: automatically find cows and milk at full charge, release at full charge, wider overhold timing, no milk drain, run without disturbing cows, remove the cow-tiredness limit on starting new rounds
+- Bar assistance: automatic drink delivery, disable customer grabs and QTEs, prevent blurred drink icons and slow walking at low stamina, eat snacks while carrying drinks
+- Dojo assistance: wider timing window and automatic winning gestures
+- Reel adjustments: improved reel effects, specified lucky bag effects, reel speed, and a multiplier for the number of reels available after battles
 - Battle cane swapping: quick cane switching in battle (configurable or unlimited instant switch charges), damage immunity during the swap action so it cannot be interrupted, adjustable cane holder slot count
-- Cooking: preview mushroom effects and reroll them in the cooking confirmation screen; no food spoilage after battles
+- Cooking: preview mushroom effects and reroll them in the cooking confirmation screen; prevent food spoilage and preserve coffee maker tickets and hotel food tickets after battles
 - Battle point preview: detailed enemy kinds, contamination, attributes and count ranges
 - Movement helpers: teleport to the mouse pointer, four-direction noclip flight, and player jump strength multiplier
-- Stat tweaks: HP/MP/EP, currency amount, max satiety, no satiety drain, no item consumption above a count (marked by a rainbow-flowing quick-bar icon), movement speed, drop multiplier, cane attributes, danger level, egg count and category, etc.
+- Stat tweaks: HP/MP/EP, currency amount, bar score, guild points and rank, max satiety, no satiety drain, no item consumption when a threshold of full inventory slots is met (marked by a rainbow-flowing quick-bar icon), movement speed, drop multiplier, cane attributes, danger level, egg count and category, etc.; currency, bar score, and guild points can be locked
 - Capacity tweaks: backpack capacity, empty bottle holder slots, treasure box holder slots, bomb holder slots, enhancer slot count, overcharge slot count, etc.
 - Survival/combat protection and statistics: no HP/MP/EP damage, no map damage, abnormal status immunity, infinite shield, cannot be attacked, immune to enemy absorb, absorb-gacha auto complete, prevent game over (recover in place and keep playing), kill enemies instantly (on attack or on spawn), battle statistics, damage counter, etc.
 - Trap/environment: drowning, crush damage, falling, MP break, worm traps, and fog visual effects can be enabled or disabled through config
 - Limit removals: puppet merchant spawn limits, bench menu limits, treasure chest limits, warehouse region limits, etc.
 - Map and weather: fast travel anywhere (including night and thunder), night bench travel, lock weather, lock danger level, depart at the highest danger reached, dark area removal in specific zones, forced weather (wind/thunder/mist/drought/dense mist/plague), summon wandering merchants to the current map, merchants always visible on the map and always appearing, night-only summoners open in daytime, mana weed recharge time cap
 - Guild quests: one-key quest board refresh inside the guild counter (reroll all unaccepted quests while selecting one; accepted ones are kept)
-- Visual features: remove mosaic, no dirt stains, no wettening
+- Visual features: remove mosaic, no dirt stains, no wetness
 - Hotkey features: supports key combinations, multiple alternative hotkeys, and gamepad input
-- Debug: debug switch; the control page lists items, skills and recipes to give or unlock
+- Debug and item grants: debug switch; the live-control Give page lets you filter items, skills, or recipes by name, set item grade and quantity, and give or unlock the selected entry
 
 ## Usage
 
@@ -36,6 +41,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 
 - `Alice In Cradle` installed ([download](https://get.aliceincradle.dev/win/))
 - `BepInEx` installed correctly ([download](https://github.com/BepInEx/BepInEx/releases))
+- `UnityModBase` (UMB) ([download](https://github.com/mosuka136/UnityModBase/releases))
 
 ### 2. Install BepInEx
 
@@ -44,18 +50,50 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 3. Launch the game once and wait for `BepInEx` initialization.
 4. Close the game.
 
-### 3. Install BetterExperience
+### 3. Install UnityModBase
+
+1. Build or download `UnityModBase.dll` and `UnityModBase.BepInExLauncher.dll`.
+2. Put both files into `BepInEx/plugins/` under the game directory. Keep a single copy if other mods also use them.
+
+`UnityModBase` provides this mod's configuration, logging, hotkeys, and live-control windows. Both DLLs are required.
+
+### 4. Install BetterExperience
 
 1. Build or download `BetterExperience.dll` ([download](https://github.com/mosuka136/AliceInCradleMod/releases)).
 2. Put `BetterExperience.dll` into `BepInEx/plugins/BetterExperience/` (or `BepInEx/plugins/`) under the game directory.
 3. Launch the game once to generate the mod config file and log directory.
-4. Edit `BepInEx/plugins/BetterExperience/BetterExperience.cfg`, or press `F1` in game to open the built-in config UI.
-5. To apply manual config-file changes during gameplay, save the file first, then press your configured `Reload Config` hotkey in game; the default is `Ctrl+R`.
+4. Press `F1` in game, select `BetterExperience`, and enable the features you want; you can also edit `BepInEx/plugins/BetterExperience/BetterExperience.cfg`.
+5. After loading a save, press `F3` to open live controls, adjust current values, or enable automatic fishing, milking, and drink serving.
+6. To apply manual config-file changes during gameplay, save the file first, then press `Ctrl+R` to reload. Restart the game for options marked as requiring setup before launch.
+
+### 5. Configuration and Live Controls
+
+- **Configuration (`F1`)**: stores feature switches, multipliers, and preferences. UI changes are saved automatically.
+- **Live controls (`F3`)**: view and change the current game state, including player stats, holder slots, currency and points, weather and danger level, eggs, merchant summoning, minigame automation, and item/skill/recipe grants. Control entries themselves are not written to the mod config file.
+- **Logs (`F2`)**: view runtime logs. Log files are stored in `BepInEx/plugins/BetterExperience/logs/`.
+
+### 6. Default Hotkeys
+
+| Hotkey | Action |
+| --- | --- |
+| `F1` | Open configuration |
+| `F2` | Open logs |
+| `F3` | Open live controls |
+| `Ctrl+G` | Teleport to the mouse position (requires Enable Mouse Teleport) |
+| `Ctrl+N` | Toggle noclip flight (requires Enable Noclip Hotkey) |
+
+Window and config-reload hotkeys are configured in `UnityModBase`; teleport and noclip hotkeys are configured in this mod's Hotkey section. Hotkeys support keyboard combinations, gamepad input, and multiple alternatives separated by commas.
+
+Move during noclip flight with the arrow keys, `WASD`, or the gamepad left stick/D-pad. Toggle it again after loading a save or changing maps.
 
 ## Supported Versions
 
-- `Alice In Cradle`: `ver030d`
+- `Alice In Cradle`: `ver030h`
 - `BepInEx`: `v5.4.23.5`
+
+## Mod Development Template
+
+The repository includes a VSIX project template for Visual Studio 2022/2026. It generates a BepInEx and UnityModBase mod project (.NET Framework 4.7.2) and an xUnit test project (.NET 8). See the [template guide (Chinese)](templates/README.md) for build, installation, and usage instructions.
 
 ## License
 
