@@ -26,9 +26,11 @@ namespace BetterExperience.Patches
                     typeof(AttackInfo),
                     typeof(bool),
                     typeof(bool),
+                    typeof(bool),
                     typeof(bool) },
                 new ArgumentType[] {
                     ArgumentType.Out,
+                    ArgumentType.Normal,
                     ArgumentType.Normal,
                     ArgumentType.Normal,
                     ArgumentType.Normal,

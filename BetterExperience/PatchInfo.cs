@@ -13,10 +13,10 @@ namespace BetterExperience
         public static readonly Translator UserName = new Translator("更好的体验", "BetterExperience");
 
         public const string BepInPluginId = "com.buele.betterexperience";
-        public const string BepInPluginVersion = "2.1.1";
+        public const string BepInPluginVersion = "3.0.0";
 
         public const string HarmonyPluginId = "com.buele.betterexperience";
-        public const string HarmonyPluginVersion = "2.1.1";
+        public const string HarmonyPluginVersion = "3.0.0";
 
         public static readonly string PluginPath = Path.Combine(Paths.PluginPath, nameof(BetterExperience));
 
