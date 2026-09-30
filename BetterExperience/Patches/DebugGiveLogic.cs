@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using UnityModBase.HClassAttribute;
 
 namespace BetterExperience.Patches
 {
     internal enum GiveCatalogKind
     {
-        [Description("物品")]
+        [EnumGuiDescription("物品", "Item")]
         Item = 0,
-        [Description("技能")]
+        [EnumGuiDescription("技能", "Skill")]
         Skill = 1,
-        [Description("配方")]
+        [EnumGuiDescription("配方", "Recipe")]
         Recipe = 2
     }
 

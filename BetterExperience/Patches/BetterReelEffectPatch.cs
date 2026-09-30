@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using UnityModBase.HClassAttribute;
 
 namespace BetterExperience.Patches
 {
@@ -199,23 +200,23 @@ namespace BetterExperience.Patches
 
             public enum LuckyBagEffect
             {
-                [Description("保持原行为 / Default")]
+                [EnumGuiDescription("保持原行为", "Default")]
                 Default,
-                [Description("数量 +1 / Amount +1")]
+                [EnumGuiDescription("数量 +1", "Amount +1")]
                 CountAdd1,
-                [Description("数量 +2 / Amount +2")]
+                [EnumGuiDescription("数量 +2", "Amount +2")]
                 CountAdd2,
-                [Description("数量 +3 / Amount +3")]
+                [EnumGuiDescription("数量 +3", "Amount +3")]
                 CountAdd3,
-                [Description("品质 +1 / Grade +1")]
+                [EnumGuiDescription("品质 +1", "Grade +1")]
                 GradeAdd1,
-                [Description("品质 +2 / Grade +2")]
+                [EnumGuiDescription("品质 +2", "Grade +2")]
                 GradeAdd2,
-                [Description("品质 +3 / Grade +3")]
+                [EnumGuiDescription("品质 +3", "Grade +3")]
                 GradeAdd3,
-                [Description("数量 ×2 / Amount ×2")]
+                [EnumGuiDescription("数量 ×2", "Amount ×2")]
                 CountMultiply2,
-                [Description("金币 +100 / Gold +100")]
+                [EnumGuiDescription("金币 +100", "Gold +100")]
                 MoneyAdd100
             }
         }

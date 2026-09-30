@@ -1,5 +1,6 @@
-using System.ComponentModel;
 using nel;
+using System.ComponentModel;
+using UnityModBase.HClassAttribute;
 
 namespace BetterExperience.Patches
 {
@@ -9,13 +10,13 @@ namespace BetterExperience.Patches
     /// </summary>
     public enum SummonWanderingNpcKind
     {
-        [Description("南丁格尔")]
+        [EnumGuiDescription("南丁格尔", "Nightingale")]
         Nightingale = 0,
-        [Description("咖啡师")]
+        [EnumGuiDescription("咖啡师", "CoffeeMaker")]
         CoffeeMaker = 1,
-        [Description("提尔德")]
+        [EnumGuiDescription("提尔德", "Tilde")]
         Tilde = 2,
-        [Description("木偶商人")]
+        [EnumGuiDescription("木偶商人", "Puppet")]
         Puppet = 3
     }
 

@@ -2,6 +2,7 @@ using BetterExperience.BLogSpace;
 using nel;
 using System;
 using System.ComponentModel;
+using UnityModBase.HClassAttribute;
 
 namespace BetterExperience.Patches
 {
@@ -16,13 +17,13 @@ namespace BetterExperience.Patches
         {
             internal enum EggCateg
             {
-                [Description("幼虫")] Worm = 0,
-                [Description("史莱姆")] Slime = 1,
-                [Description("蘑菇")] Mush = 2,
-                [Description("巨人的精液")] GolemOd = 3,
-                [Description("野猪")] Pig = 4,
-                [Description("妖狐的精液")] Fox = 5,
-                [Description("山蜘蛛")] BossSpider = 6
+                [EnumGuiDescription("幼虫", "Larvae")] Worm = 0,
+                [EnumGuiDescription("史莱姆", "Slime")] Slime = 1,
+                [EnumGuiDescription("蘑菇", "Mushroom")] Mush = 2,
+                [EnumGuiDescription("巨人的精液", "Golem Sperm")] GolemOd = 3,
+                [EnumGuiDescription("野猪", "Boar")] Pig = 4,
+                [EnumGuiDescription("妖狐的精液", "Fox Sperm")] Fox = 5,
+                [EnumGuiDescription("山蜘蛛", "Mountain Spider")] BossSpider = 6
             }
 
             internal const int CountMin = 0;
