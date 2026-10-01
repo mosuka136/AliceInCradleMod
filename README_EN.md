@@ -13,7 +13,6 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 
 ## Implemented Features
 
-- Core controls: mod master switch, standalone config file, Chinese/English configuration/log/live-control windows, automatic config saving and hot reload, automatic application of preset values after loading a save, log level control
 - QoL features: refresh button inside the shop screen, store buy/sell price multipliers, hotel food tickets not consumed and count setting, improved save points, access warehouse anywhere
 - Fishing assistance: automatic aiming, casting, hooking, marker tracking, and result confirmation; adjustable marker movement, catcher size and hit margin, miss drain multiplier, and reel-in count
 - Milking assistance: automatically find cows and milk at full charge, release at full charge, wider overhold timing, no milk drain, run without disturbing cows, remove the cow-tiredness limit on starting new rounds
@@ -29,10 +28,9 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 - Survival/combat protection and statistics: no HP/MP/EP damage, no map damage, abnormal status immunity, infinite shield, cannot be attacked, immune to enemy absorb, absorb-gacha auto complete, prevent game over (recover in place and keep playing), kill enemies instantly (on attack or on spawn), battle statistics, damage counter, etc.
 - Trap/environment: drowning, crush damage, falling, MP break, worm traps, and fog visual effects can be enabled or disabled through config
 - Limit removals: puppet merchant spawn limits, bench menu limits, treasure chest limits, warehouse region limits, etc.
-- Map and weather: fast travel anywhere (including night and thunder), night bench travel, lock weather, lock danger level, depart at the highest danger reached, dark area removal in specific zones, forced weather (wind/thunder/mist/drought/dense mist/plague), summon wandering merchants to the current map, merchants always visible on the map and always appearing, night-only summoners open in daytime, mana weed recharge time cap
-- Guild quests: one-key quest board refresh inside the guild counter (reroll all unaccepted quests while selecting one; accepted ones are kept)
+- Map and weather: fast travel anywhere, night bench travel, lock weather, lock danger level, depart at the highest danger reached, dark area removal in specific zones, forced weather, summon wandering merchants to the current map, merchants always visible on the map and always appearing, night-only summoners open in daytime, mana weed recharge time cap
+- Guild quests: one-key quest board refresh inside the guild counter
 - Visual features: remove mosaic, no dirt stains, no wetness
-- Hotkey features: supports key combinations, multiple alternative hotkeys, and gamepad input
 - Debug and item grants: debug switch; the live-control Give page lets you filter items, skills, or recipes by name, set item grade and quantity, and give or unlock the selected entry
 
 ## Usage
@@ -69,7 +67,7 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 ### 5. Configuration and Live Controls
 
 - **Configuration (`F1`)**: stores feature switches, multipliers, and preferences. UI changes are saved automatically.
-- **Live controls (`F3`)**: view and change the current game state, including player stats, holder slots, currency and points, weather and danger level, eggs, merchant summoning, minigame automation, and item/skill/recipe grants. Control entries themselves are not written to the mod config file.
+- **Live controls (`F3`)**: view and change the current game state. Control entries themselves are not written to the mod config file.
 - **Logs (`F2`)**: view runtime logs. Log files are stored in `BepInEx/plugins/BetterExperience/logs/`.
 
 ### 6. Default Hotkeys
@@ -84,12 +82,11 @@ This mod uses `Harmony` patches to modify game logic at runtime, providing confi
 
 Window and config-reload hotkeys are configured in `UnityModBase`; teleport and noclip hotkeys are configured in this mod's Hotkey section. Hotkeys support keyboard combinations, gamepad input, and multiple alternatives separated by commas.
 
-Move during noclip flight with the arrow keys, `WASD`, or the gamepad left stick/D-pad. Toggle it again after loading a save or changing maps.
-
 ## Supported Versions
 
 - `Alice In Cradle`: `ver030h`
 - `BepInEx`: `v5.4.23.5`
+- `UnityModBase`: `v1.1.0`
 
 ## Mod Development Template
 
